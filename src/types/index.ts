@@ -1,25 +1,76 @@
 // Core type definitions for VCT Manager
-// These will be expanded as features are built
+// Re-export all types from individual modules
 
-export type Region = 'Americas' | 'EMEA' | 'Pacific' | 'China';
+// Player types
+export type {
+  PlayerStats,
+  PlayerContract,
+  PlayerCareerStats,
+  PlayerPreferences,
+  Player,
+  Coach,
+  CoachType,
+  Region,
+} from './player';
 
-export type SeasonPhase =
-  | 'offseason'
-  | 'kickoff'
-  | 'stage1'
-  | 'stage2'
-  | 'masters1'
-  | 'masters2'
-  | 'champions';
+// Team types
+export type {
+  Team,
+  TeamFinances,
+  TeamChemistry,
+  TeamStandings,
+  Transaction,
+  TransactionType,
+  Loan,
+  MonthlyRevenue,
+  MonthlyExpenses,
+} from './team';
 
-export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
+// Match types
+export type {
+  Match,
+  MatchResult,
+  MatchStatus,
+  MapResult,
+  PlayerMapPerformance,
+  RoundInfo,
+} from './match';
 
-export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
+// Calendar types
+export type {
+  GameCalendar,
+  CalendarEvent,
+  CalendarEventType,
+  SeasonPhase,
+} from './calendar';
 
-// Re-export types from individual files as they are created
-// export * from './player';
-// export * from './team';
-// export * from './match';
-// export * from './competition';
-// export * from './calendar';
-// export * from './economy';
+// Competition types
+export type {
+  Tournament,
+  TournamentFormat,
+  TournamentStatus,
+  TournamentRegion,
+  CompetitionType,
+  BracketStructure,
+  BracketRound,
+  BracketMatch,
+  BracketMatchStatus,
+  BracketType,
+  TeamSource,
+  Destination,
+  PrizePool,
+} from './competition';
+
+// Economy types
+export type {
+  TrainingFocus,
+  TrainingIntensity,
+  TrainingSession,
+  TrainingResult,
+  TrainingFactors,
+  PlayerFatigue,
+  Difficulty,
+  DifficultySettings,
+} from './economy';
+
+export { DIFFICULTY_SETTINGS } from './economy';
