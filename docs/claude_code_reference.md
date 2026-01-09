@@ -419,7 +419,7 @@ Please create a session summary:
 4. Known issues
 5. Next steps
 
-Save to: docs/session-logs/[DATE].md
+Save to: docs/session-logs/[DATE]-[Feature].md
 ```
 
 Then commit your work:
