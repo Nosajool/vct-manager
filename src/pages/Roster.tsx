@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { useGameStore } from '../store';
 import { RosterList } from '../components/roster/RosterList';
 import { FreeAgentList } from '../components/roster/FreeAgentList';
+import { ContractNegotiationModal } from '../components/roster/ContractNegotiationModal';
+import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
 import { gameInitService } from '../services/GameInitService';
+import type { Player } from '../types';
 
 type RosterTab = 'myteam' | 'freeagents';
 
@@ -12,15 +15,14 @@ export function Roster() {
   const [activeTab, setActiveTab] = useState<RosterTab>('myteam');
   const [isInitializing, setIsInitializing] = useState(false);
 
+  // Modal states
+  const [signingPlayer, setSigningPlayer] = useState<Player | null>(null);
+  const [releasingPlayer, setReleasingPlayer] = useState<Player | null>(null);
+
   const gameStarted = useGameStore((state) => state.gameStarted);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);
-
-  // Store actions
-  const updatePlayer = useGameStore((state) => state.updatePlayer);
-  const removePlayerFromTeam = useGameStore((state) => state.removePlayerFromTeam);
-  const addPlayerToTeam = useGameStore((state) => state.addPlayerToTeam);
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
   const allPlayers = Object.values(players);
@@ -46,58 +48,29 @@ export function Roster() {
     setIsInitializing(false);
   };
 
-  // Handle releasing a player
-  const handleReleasePlayer = (playerId: string) => {
-    if (!playerTeamId) return;
-
-    const confirmed = window.confirm(
-      'Are you sure you want to release this player?'
-    );
-    if (!confirmed) return;
-
-    // Remove from team
-    removePlayerFromTeam(playerTeamId, playerId);
-
-    // Update player's teamId to null
-    updatePlayer(playerId, { teamId: null, contract: null });
+  // Open contract negotiation modal for signing
+  const handleSignPlayer = (playerId: string) => {
+    const player = players[playerId];
+    if (player) {
+      setSigningPlayer(player);
+    }
   };
 
-  // Handle signing a player
-  const handleSignPlayer = (playerId: string) => {
-    if (!playerTeamId || !playerTeam) return;
-
+  // Open release confirmation modal
+  const handleReleasePlayer = (playerId: string) => {
     const player = players[playerId];
-    if (!player) return;
-
-    // Check roster space
-    const totalRoster =
-      playerTeam.playerIds.length + playerTeam.reservePlayerIds.length;
-    if (totalRoster >= 10) {
-      alert('Roster is full! Release a player first.');
-      return;
+    if (player) {
+      setReleasingPlayer(player);
     }
+  };
 
-    // Simple contract for now (will be expanded later)
-    const salary = 100000 + Math.floor(Math.random() * 200000);
-    const contract = {
-      salary,
-      bonusPerWin: Math.round(salary * 0.01),
-      yearsRemaining: 2,
-      endDate: new Date(
-        Date.now() + 2 * 365 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-    };
+  // Refresh data after successful operations
+  const handleSigningSuccess = () => {
+    setSigningPlayer(null);
+  };
 
-    // Add to team (active if < 5, else reserve)
-    if (playerTeam.playerIds.length < 5) {
-      addPlayerToTeam(playerTeamId, playerId);
-    } else {
-      // Add to reserve
-      useGameStore.getState().addPlayerToReserve(playerTeamId, playerId);
-    }
-
-    // Update player
-    updatePlayer(playerId, { teamId: playerTeamId, contract });
+  const handleReleaseSuccess = () => {
+    setReleasingPlayer(null);
   };
 
   // Not started yet - show start game UI
@@ -187,6 +160,26 @@ export function Roster() {
         <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-8 text-center">
           <p className="text-vct-gray">No team selected</p>
         </div>
+      )}
+
+      {/* Contract Negotiation Modal */}
+      {signingPlayer && playerTeam && (
+        <ContractNegotiationModal
+          player={signingPlayer}
+          team={playerTeam}
+          onClose={() => setSigningPlayer(null)}
+          onSuccess={handleSigningSuccess}
+        />
+      )}
+
+      {/* Release Player Modal */}
+      {releasingPlayer && playerTeam && (
+        <ReleasePlayerModal
+          player={releasingPlayer}
+          team={playerTeam}
+          onClose={() => setReleasingPlayer(null)}
+          onSuccess={handleReleaseSuccess}
+        />
       )}
     </div>
   );
