@@ -1,0 +1,267 @@
+// PlayerDetailModal - Full player stats and actions
+
+import type { Player, PlayerStats } from '../../types';
+import { playerGenerator } from '../../engine/player';
+
+interface PlayerDetailModalProps {
+  player: Player;
+  onClose: () => void;
+  onSign?: () => void;
+  onRelease?: () => void;
+  isOnPlayerTeam?: boolean;
+}
+
+export function PlayerDetailModal({
+  player,
+  onClose,
+  onSign,
+  onRelease,
+  isOnPlayerTeam = false,
+}: PlayerDetailModalProps) {
+  const overall = playerGenerator.calculateOverall(player.stats);
+
+  const formatSalary = (salary: number): string => {
+    if (salary >= 1000000) {
+      return `$${(salary / 1000000).toFixed(2)}M`;
+    }
+    return `$${(salary / 1000).toFixed(0)}K`;
+  };
+
+  const getStatColor = (value: number): string => {
+    if (value >= 85) return 'bg-yellow-500';
+    if (value >= 75) return 'bg-green-500';
+    if (value >= 65) return 'bg-blue-500';
+    if (value >= 55) return 'bg-vct-gray';
+    return 'bg-red-500';
+  };
+
+  const statLabels: Record<keyof PlayerStats, string> = {
+    mechanics: 'Mechanics',
+    igl: 'Leadership',
+    mental: 'Mental',
+    clutch: 'Clutch',
+    vibes: 'Vibes',
+    lurking: 'Lurking',
+    entry: 'Entry',
+    support: 'Support',
+    stamina: 'Stamina',
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
+          <div className="flex items-center gap-4">
+            {/* Overall */}
+            <div
+              className={`
+                w-20 h-20 rounded-lg flex items-center justify-center
+                font-bold text-3xl bg-vct-dark border-2
+                ${overall >= 85 ? 'border-yellow-500 text-yellow-400' : ''}
+                ${overall >= 75 && overall < 85 ? 'border-green-500 text-green-400' : ''}
+                ${overall >= 65 && overall < 75 ? 'border-blue-500 text-blue-400' : ''}
+                ${overall < 65 ? 'border-vct-gray text-vct-gray' : ''}
+              `}
+            >
+              {overall}
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold text-vct-light">{player.name}</h2>
+              <p className="text-vct-gray">
+                {player.age} years • {player.nationality}
+              </p>
+              <p className="text-sm text-vct-red font-medium">{player.region}</p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="text-vct-gray hover:text-vct-light transition-colors text-2xl"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Stats Grid */}
+          <div>
+            <h3 className="text-lg font-semibold text-vct-light mb-4">
+              Attributes
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {(Object.entries(player.stats) as [keyof PlayerStats, number][]).map(
+                ([stat, value]) => (
+                  <div key={stat} className="flex items-center gap-3">
+                    <span className="w-24 text-sm text-vct-gray">
+                      {statLabels[stat]}
+                    </span>
+                    <div className="flex-1 h-2 bg-vct-dark rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${getStatColor(value)}`}
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+                    <span className="w-8 text-right text-sm text-vct-light font-medium">
+                      {value}
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* Form, Morale, Potential */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-vct-dark rounded-lg p-4 text-center">
+              <p className="text-vct-gray text-sm mb-1">Form</p>
+              <p className="text-2xl font-bold text-vct-light">{player.form}</p>
+            </div>
+            <div className="bg-vct-dark rounded-lg p-4 text-center">
+              <p className="text-vct-gray text-sm mb-1">Morale</p>
+              <p className="text-2xl font-bold text-vct-light">{player.morale}</p>
+            </div>
+            <div className="bg-vct-dark rounded-lg p-4 text-center">
+              <p className="text-vct-gray text-sm mb-1">Potential</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {player.potential}
+              </p>
+            </div>
+          </div>
+
+          {/* Contract */}
+          <div>
+            <h3 className="text-lg font-semibold text-vct-light mb-3">
+              Contract
+            </h3>
+            {player.contract ? (
+              <div className="bg-vct-dark rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-vct-gray text-sm">Annual Salary</p>
+                    <p className="text-xl font-bold text-vct-light">
+                      {formatSalary(player.contract.salary)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-vct-gray text-sm">Years Remaining</p>
+                    <p className="text-xl font-bold text-vct-light">
+                      {player.contract.yearsRemaining}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-vct-gray text-sm">Win Bonus</p>
+                    <p className="text-lg text-vct-light">
+                      {formatSalary(player.contract.bonusPerWin)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-vct-gray text-sm">Contract Ends</p>
+                    <p className="text-lg text-vct-light">
+                      {new Date(player.contract.endDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                <p className="text-green-400 font-medium">Free Agent</p>
+                <p className="text-vct-gray text-sm mt-1">
+                  This player is available for signing
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Career Stats */}
+          <div>
+            <h3 className="text-lg font-semibold text-vct-light mb-3">
+              Career Stats
+            </h3>
+            <div className="bg-vct-dark rounded-lg p-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-vct-light">
+                    {player.careerStats.matchesPlayed}
+                  </p>
+                  <p className="text-vct-gray text-sm">Matches</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-400">
+                    {player.careerStats.wins}
+                  </p>
+                  <p className="text-vct-gray text-sm">Wins</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-red-400">
+                    {player.careerStats.losses}
+                  </p>
+                  <p className="text-vct-gray text-sm">Losses</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {player.careerStats.tournamentsWon}
+                  </p>
+                  <p className="text-vct-gray text-sm">Titles</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-vct-gray/20 text-center">
+                <div>
+                  <p className="text-lg font-bold text-vct-light">
+                    {player.careerStats.avgKills.toFixed(1)}
+                  </p>
+                  <p className="text-vct-gray text-xs">Avg Kills</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-vct-light">
+                    {player.careerStats.avgDeaths.toFixed(1)}
+                  </p>
+                  <p className="text-vct-gray text-xs">Avg Deaths</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-vct-light">
+                    {(
+                      player.careerStats.avgKills / player.careerStats.avgDeaths
+                    ).toFixed(2)}
+                  </p>
+                  <p className="text-vct-gray text-xs">K/D Ratio</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="p-6 border-t border-vct-gray/20 flex justify-end gap-3">
+          {!player.teamId && onSign && (
+            <button
+              onClick={onSign}
+              className="px-6 py-2 bg-green-600 text-white font-medium rounded
+                         hover:bg-green-500 transition-colors"
+            >
+              Sign Player
+            </button>
+          )}
+          {isOnPlayerTeam && onRelease && (
+            <button
+              onClick={onRelease}
+              className="px-6 py-2 bg-red-600 text-white font-medium rounded
+                         hover:bg-red-500 transition-colors"
+            >
+              Release Player
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-vct-dark border border-vct-gray/30 text-vct-light
+                       font-medium rounded hover:bg-vct-gray/20 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

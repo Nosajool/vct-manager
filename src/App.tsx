@@ -2,6 +2,7 @@
 
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
+import { Roster } from './pages/Roster';
 import { useActiveView } from './store';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
       case 'dashboard':
         return <Dashboard />;
       case 'roster':
-        return <PlaceholderPage title="Roster" description="Coming in Phase 1" />;
+        return <Roster />;
       case 'schedule':
         return <PlaceholderPage title="Schedule" description="Coming in Phase 3" />;
       case 'training':
