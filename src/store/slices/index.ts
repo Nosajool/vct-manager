@@ -10,3 +10,8 @@ export {
   type BulkSimulationProgress,
 } from './uiSlice';
 export { createMatchSlice, type MatchSlice } from './matchSlice';
+export {
+  createCompetitionSlice,
+  type CompetitionSlice,
+  type StandingsEntry,
+} from './competitionSlice';

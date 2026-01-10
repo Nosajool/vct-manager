@@ -4,6 +4,7 @@ import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Roster } from './pages/Roster';
 import { Schedule } from './pages/Schedule';
+import { TournamentPage } from './pages/Tournament';
 import { useActiveView } from './store';
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
       case 'match':
         return <PlaceholderPage title="Match" description="Coming in Phase 2" />;
       case 'tournament':
-        return <PlaceholderPage title="Tournament" description="Coming in Phase 4" />;
+        return <TournamentPage />;
       default:
         return <Dashboard />;
     }

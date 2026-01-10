@@ -14,3 +14,4 @@ export {
   type TimeAdvanceResult,
 } from './CalendarService';
 export { TrainingService, trainingService } from './TrainingService';
+export { TournamentService, tournamentService } from './TournamentService';

@@ -1,0 +1,351 @@
+// TournamentEngine
+// Pure class with no React/store dependencies
+// Handles tournament creation and configuration
+
+import type {
+  Tournament,
+  TournamentFormat,
+  CompetitionType,
+  TournamentRegion,
+  PrizePool,
+  BracketStructure,
+  Team,
+} from '../../types';
+import type { StandingsEntry } from '../../store/slices/competitionSlice';
+import { bracketManager } from './BracketManager';
+
+// Prize pool distributions by competition type (percentage of total)
+const PRIZE_DISTRIBUTIONS: Record<CompetitionType, Record<number, number>> = {
+  kickoff: {
+    1: 0.40,
+    2: 0.20,
+    3: 0.12,
+    4: 0.08,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
+  stage1: {
+    1: 0.35,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
+  stage2: {
+    1: 0.35,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
+  masters: {
+    1: 0.35,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
+  champions: {
+    1: 0.30,
+    2: 0.18,
+    3: 0.12,
+    4: 0.08,
+    5: 0.06,
+    6: 0.06,
+    7: 0.05,
+    8: 0.05,
+    9: 0.025,
+    10: 0.025,
+    11: 0.025,
+    12: 0.025,
+  },
+};
+
+// Default prize pools by competition type (in dollars)
+const DEFAULT_PRIZE_POOLS: Record<CompetitionType, number> = {
+  kickoff: 500000,
+  stage1: 200000,
+  stage2: 200000,
+  masters: 1000000,
+  champions: 2500000,
+};
+
+// Tournament duration in days by format
+const TOURNAMENT_DURATION: Record<TournamentFormat, number> = {
+  single_elim: 3,
+  double_elim: 7,
+  triple_elim: 14,
+  round_robin: 35, // ~5 weeks for league play
+};
+
+/**
+ * TournamentEngine handles tournament creation and prize calculations.
+ * Pure class with no store dependencies.
+ */
+export class TournamentEngine {
+  /**
+   * Create a new tournament with bracket
+   */
+  createTournament(
+    name: string,
+    type: CompetitionType,
+    format: TournamentFormat,
+    region: TournamentRegion,
+    teamIds: string[],
+    startDate: Date,
+    totalPrizePool?: number
+  ): Tournament {
+    const id = `tournament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    // Calculate prize pool
+    const prizePoolAmount = totalPrizePool || DEFAULT_PRIZE_POOLS[type];
+    const prizePool = this.calculatePrizePool(type, prizePoolAmount);
+
+    // Calculate end date based on format
+    const durationDays = TOURNAMENT_DURATION[format];
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + durationDays);
+
+    // Generate bracket based on format (with special seeding for Kickoff)
+    const bracket = this.generateBracket(format, teamIds, type);
+
+    const tournament: Tournament = {
+      id,
+      name,
+      type,
+      format,
+      region,
+      teamIds,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      prizePool,
+      bracket,
+      status: 'upcoming',
+    };
+
+    return tournament;
+  }
+
+  /**
+   * Calculate prize pool distribution
+   */
+  calculatePrizePool(type: CompetitionType, totalPool: number): PrizePool {
+    const distribution = PRIZE_DISTRIBUTIONS[type];
+
+    return {
+      first: Math.round(totalPool * distribution[1]),
+      second: Math.round(totalPool * distribution[2]),
+      third: Math.round(totalPool * distribution[3]),
+      fourth: distribution[4] ? Math.round(totalPool * distribution[4]) : undefined,
+      fifthSixth: distribution[5] ? Math.round(totalPool * distribution[5]) : undefined,
+      seventhEighth: distribution[7] ? Math.round(totalPool * distribution[7]) : undefined,
+    };
+  }
+
+  /**
+   * Calculate prize distribution as a placement map
+   */
+  calculatePrizeDistribution(
+    type: CompetitionType,
+    totalPool: number
+  ): Record<number, number> {
+    const distribution = PRIZE_DISTRIBUTIONS[type];
+    const result: Record<number, number> = {};
+
+    for (const [placement, percentage] of Object.entries(distribution)) {
+      result[parseInt(placement)] = Math.round(totalPool * percentage);
+    }
+
+    return result;
+  }
+
+  /**
+   * Seed teams based on standings or default order
+   * Returns array where index is seed-1 and value is position in teamIds
+   */
+  seedTeams(teams: Team[], standings?: StandingsEntry[]): number[] {
+    if (!standings || standings.length === 0) {
+      // Default seeding: by team rating or index
+      return teams.map((_, i) => i + 1);
+    }
+
+    // Create standing lookup
+    const standingMap = new Map<string, number>();
+    standings.forEach((entry, index) => {
+      standingMap.set(entry.teamId, index);
+    });
+
+    // Sort teams by standing position
+    const sortedIndices = teams
+      .map((team, originalIndex) => ({
+        originalIndex,
+        standingPosition: standingMap.get(team.id) ?? 999,
+      }))
+      .sort((a, b) => a.standingPosition - b.standingPosition)
+      .map(({ originalIndex }) => originalIndex + 1);
+
+    return sortedIndices;
+  }
+
+  /**
+   * Get tournament type display name
+   */
+  getTypeName(type: CompetitionType): string {
+    const names: Record<CompetitionType, string> = {
+      kickoff: 'Kickoff',
+      stage1: 'Stage 1',
+      stage2: 'Stage 2',
+      masters: 'Masters',
+      champions: 'Champions',
+    };
+    return names[type];
+  }
+
+  /**
+   * Get format display name
+   */
+  getFormatName(format: TournamentFormat): string {
+    const names: Record<TournamentFormat, string> = {
+      single_elim: 'Single Elimination',
+      double_elim: 'Double Elimination',
+      triple_elim: 'Triple Elimination',
+      round_robin: 'Round Robin',
+    };
+    return names[format];
+  }
+
+  /**
+   * Generate bracket based on format
+   */
+  private generateBracket(
+    format: TournamentFormat,
+    teamIds: string[],
+    type?: CompetitionType
+  ): BracketStructure {
+    // For Kickoff triple elim, use special seeding:
+    // Top 4 get byes (seeds 1-4), bottom 8 are randomly drawn (seeds 5-12)
+    if (format === 'triple_elim' && type === 'kickoff') {
+      const seeding = this.generateKickoffSeeding(teamIds.length);
+      return bracketManager.generateTripleElimination(teamIds, seeding);
+    }
+
+    switch (format) {
+      case 'single_elim':
+        return bracketManager.generateSingleElimination(teamIds);
+      case 'double_elim':
+        return bracketManager.generateDoubleElimination(teamIds);
+      case 'triple_elim':
+        return bracketManager.generateTripleElimination(teamIds);
+      case 'round_robin':
+        return bracketManager.generateRoundRobin(teamIds);
+      default:
+        return bracketManager.generateSingleElimination(teamIds);
+    }
+  }
+
+  /**
+   * Generate Kickoff tournament seeding
+   * Top 4 teams (Champions qualifiers) get byes to Round 2
+   * Remaining teams are randomly drawn for Round 1
+   */
+  generateKickoffSeeding(numTeams: number): number[] {
+    // Teams are assumed to be sorted by previous season performance
+    // First 4 teams (indices 0-3) = Champions qualifiers = get byes (seeds 1-4)
+    // Remaining teams (indices 4-11) = randomly drawn for R1 (seeds 5-12+)
+
+    const seeding: number[] = [];
+    const numByeTeams = Math.min(4, numTeams);
+    const numDrawnTeams = numTeams - numByeTeams;
+
+    // Top 4 get seeds 1-4 (bye positions)
+    for (let i = 0; i < numByeTeams; i++) {
+      seeding.push(i + 1);
+    }
+
+    // Remaining teams get random seeds 5-N
+    const remainingSeeds = Array.from(
+      { length: numDrawnTeams },
+      (_, i) => i + numByeTeams + 1
+    );
+
+    // Fisher-Yates shuffle for random draw
+    for (let i = remainingSeeds.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [remainingSeeds[i], remainingSeeds[j]] = [remainingSeeds[j], remainingSeeds[i]];
+    }
+
+    seeding.push(...remainingSeeds);
+
+    return seeding;
+  }
+
+  /**
+   * Get default format for a competition type
+   */
+  getDefaultFormat(type: CompetitionType): TournamentFormat {
+    const defaults: Record<CompetitionType, TournamentFormat> = {
+      kickoff: 'triple_elim',
+      stage1: 'round_robin',
+      stage2: 'round_robin',
+      masters: 'double_elim',
+      champions: 'double_elim',
+    };
+    return defaults[type];
+  }
+
+  /**
+   * Get expected team count for a competition type
+   */
+  getExpectedTeamCount(type: CompetitionType): number {
+    const counts: Record<CompetitionType, number> = {
+      kickoff: 16,
+      stage1: 10,
+      stage2: 10,
+      masters: 12,
+      champions: 16,
+    };
+    return counts[type];
+  }
+
+  /**
+   * Validate tournament can be created
+   */
+  validateTournament(
+    teamIds: string[],
+    _type: CompetitionType,
+    format: TournamentFormat
+  ): { valid: boolean; error?: string } {
+    const minTeams = format === 'round_robin' ? 2 : 2;
+    const maxTeams = format === 'round_robin' ? 20 : 64;
+
+    if (teamIds.length < minTeams) {
+      return { valid: false, error: `At least ${minTeams} teams required` };
+    }
+
+    if (teamIds.length > maxTeams) {
+      return { valid: false, error: `Maximum ${maxTeams} teams allowed` };
+    }
+
+    // Check for duplicates
+    const uniqueTeams = new Set(teamIds);
+    if (uniqueTeams.size !== teamIds.length) {
+      return { valid: false, error: 'Duplicate teams not allowed' };
+    }
+
+    return { valid: true };
+  }
+}
+
+// Export singleton instance
+export const tournamentEngine = new TournamentEngine();

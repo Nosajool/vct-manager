@@ -140,6 +140,8 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
     { name: 'MIBR', orgValue: 3200000, fanbase: 78 },
     { name: 'Leviatán', orgValue: 2800000, fanbase: 68 },
     { name: 'KRÜ Esports', orgValue: 2500000, fanbase: 65 },
+    { name: 'G2 Esports', orgValue: 4000000, fanbase: 82 },
+    { name: '2GAME Esports', orgValue: 2200000, fanbase: 58 },
   ],
   EMEA: [
     { name: 'Fnatic', orgValue: 4500000, fanbase: 92 },
@@ -152,6 +154,8 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
     { name: 'BBL Esports', orgValue: 2600000, fanbase: 68 },
     { name: 'Giants Gaming', orgValue: 2500000, fanbase: 65 },
     { name: 'KOI', orgValue: 3000000, fanbase: 78 },
+    { name: 'Gentle Mates', orgValue: 2400000, fanbase: 60 },
+    { name: 'Apeks', orgValue: 2300000, fanbase: 55 },
   ],
   Pacific: [
     { name: 'Paper Rex', orgValue: 3500000, fanbase: 88 },
@@ -164,6 +168,8 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
     { name: 'Team Secret', orgValue: 3000000, fanbase: 72 },
     { name: 'Talon Esports', orgValue: 2600000, fanbase: 68 },
     { name: 'Rex Regum Qeon', orgValue: 2400000, fanbase: 62 },
+    { name: 'BLEED Esports', orgValue: 2300000, fanbase: 58 },
+    { name: 'Nongshim RedForce', orgValue: 2800000, fanbase: 65 },
   ],
   China: [
     { name: 'EDward Gaming', orgValue: 4500000, fanbase: 90 },
@@ -176,6 +182,8 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
     { name: 'Wolves Esports', orgValue: 2500000, fanbase: 62 },
     { name: 'Titan Esports Club', orgValue: 2400000, fanbase: 60 },
     { name: 'TYLOO', orgValue: 3000000, fanbase: 72 },
+    { name: 'Trace Esports', orgValue: 2300000, fanbase: 58 },
+    { name: 'Attacking Soul Esports', orgValue: 2200000, fanbase: 55 },
   ],
 };
 
@@ -248,7 +256,7 @@ export const ROSTER_SIZE = {
 /**
  * Number of teams per region
  */
-export const TEAMS_PER_REGION = 10;
+export const TEAMS_PER_REGION = 12;
 
 /**
  * Number of free agents per region

@@ -7,6 +7,7 @@ import { createTeamSlice, type TeamSlice } from './slices/teamSlice';
 import { createGameSlice, type GameSlice } from './slices/gameSlice';
 import { createUISlice, type UISlice } from './slices/uiSlice';
 import { createMatchSlice, type MatchSlice } from './slices/matchSlice';
+import { createCompetitionSlice, type CompetitionSlice } from './slices/competitionSlice';
 import {
   autoSave,
   saveManager,
@@ -16,7 +17,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice;
 
 // Create the combined store with auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -26,6 +27,7 @@ export const useGameStore = create<GameState>()(
     ...createGameSlice(...args),
     ...createUISlice(...args),
     ...createMatchSlice(...args),
+    ...createCompetitionSlice(...args),
   }))
 );
 
@@ -35,6 +37,7 @@ export type { TeamSlice } from './slices/teamSlice';
 export type { GameSlice } from './slices/gameSlice';
 export type { UISlice, ActiveView, BulkSimulationProgress } from './slices/uiSlice';
 export type { MatchSlice } from './slices/matchSlice';
+export type { CompetitionSlice, StandingsEntry } from './slices/competitionSlice';
 
 // ============================================
 // Save/Load API
@@ -158,6 +161,27 @@ export const useMatchResult = (matchId: string) =>
 
 export const useAllMatches = () =>
   useGameStore((state) => Object.values(state.matches));
+
+export const useTournament = (tournamentId: string) =>
+  useGameStore((state) => state.tournaments[tournamentId]);
+
+export const useActiveTournaments = () =>
+  useGameStore((state) =>
+    Object.values(state.tournaments).filter((t) => t.status === 'in_progress')
+  );
+
+export const useCurrentTournament = () =>
+  useGameStore((state) => {
+    const tournaments = Object.values(state.tournaments);
+    const active = tournaments.find((t) => t.status === 'in_progress');
+    if (active) return active;
+    return tournaments
+      .filter((t) => t.status === 'upcoming')
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
+  });
+
+export const useAllTournaments = () =>
+  useGameStore((state) => Object.values(state.tournaments));
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';

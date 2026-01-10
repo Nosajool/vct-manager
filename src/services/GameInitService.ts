@@ -5,6 +5,7 @@ import { useGameStore } from '../store';
 import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
+import { tournamentEngine } from '../engine/competition';
 import type { Region } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 
@@ -78,6 +79,35 @@ export class GameInitService {
     );
     store.addCalendarEvents(scheduleEvents);
     console.log(`Generated ${scheduleEvents.length} calendar events`);
+
+    // Generate initial Kickoff tournament for player's region
+    console.log('Generating Kickoff tournament...');
+    const regionTeams = teams.filter((t) => t.region === playerRegion);
+
+    // Sort teams by strength (orgValue + fanbase) - top 4 will get byes as "Champions qualifiers"
+    // In subsequent seasons, this would be based on previous season performance
+    const sortedRegionTeams = [...regionTeams].sort((a, b) => {
+      const strengthA = a.organizationValue + a.fanbase * 10000;
+      const strengthB = b.organizationValue + b.fanbase * 10000;
+      return strengthB - strengthA; // Descending order (strongest first)
+    });
+    const regionTeamIds = sortedRegionTeams.map((t) => t.id);
+
+    // For Kickoff: 12 teams, top 4 get byes, bottom 8 play R1 via random draw
+    const kickoffTeamIds = regionTeamIds.slice(0, 12);
+    if (kickoffTeamIds.length > 0) {
+      const kickoffTournament = tournamentEngine.createTournament(
+        `VCT ${playerRegion} Kickoff 2026`,
+        'kickoff',
+        'triple_elim',
+        playerRegion,
+        kickoffTeamIds,
+        new Date(seasonStartDate),
+        500000
+      );
+      store.addTournament(kickoffTournament);
+      console.log(`Created Kickoff tournament with ${kickoffTeamIds.length} teams`);
+    }
 
     // Mark game as initialized and started
     store.setInitialized(true);

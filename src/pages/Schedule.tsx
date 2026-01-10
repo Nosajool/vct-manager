@@ -5,19 +5,29 @@ import { useGameStore } from '../store';
 import { matchService } from '../services';
 import { MatchCard } from '../components/match/MatchCard';
 import { MatchResult } from '../components/match/MatchResult';
+import { TournamentCardMini } from '../components/tournament';
 import type { Match } from '../types';
 
 type ScheduleTab = 'upcoming' | 'results';
+type MatchFilter = 'all' | 'league' | 'tournament';
 
 export function Schedule() {
   const [activeTab, setActiveTab] = useState<ScheduleTab>('upcoming');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [matchFilter, setMatchFilter] = useState<MatchFilter>('all');
 
   const gameStarted = useGameStore((state) => state.gameStarted);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const matches = useGameStore((state) => state.matches);
+  const tournaments = useGameStore((state) => state.tournaments);
+  const setActiveView = useGameStore((state) => state.setActiveView);
+
+  const activeTournaments = useMemo(
+    () => Object.values(tournaments).filter((t) => t.status === 'in_progress'),
+    [tournaments]
+  );
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
@@ -29,17 +39,26 @@ export function Schedule() {
       .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate));
   }, [matches, playerTeamId]);
 
+  // Apply filter
+  const filteredMatches = useMemo(() => {
+    if (matchFilter === 'all') return teamMatches;
+    if (matchFilter === 'tournament') {
+      return teamMatches.filter((m) => m.tournamentId);
+    }
+    return teamMatches.filter((m) => !m.tournamentId);
+  }, [teamMatches, matchFilter]);
+
   const upcomingMatches = useMemo(
-    () => teamMatches.filter((m) => m.status === 'scheduled'),
-    [teamMatches]
+    () => filteredMatches.filter((m) => m.status === 'scheduled'),
+    [filteredMatches]
   );
 
   const completedMatches = useMemo(
     () =>
-      teamMatches
+      filteredMatches
         .filter((m) => m.status === 'completed')
         .sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate)),
-    [teamMatches]
+    [filteredMatches]
   );
 
   // Handle match simulation
@@ -152,29 +171,74 @@ export function Schedule() {
         )}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-vct-gray/20">
-        <button
-          onClick={() => setActiveTab('upcoming')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'upcoming'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Upcoming ({upcomingMatches.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('results')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'results'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Results ({completedMatches.length})
-        </button>
+      {/* Tabs and Filter */}
+      <div className="flex items-center justify-between border-b border-vct-gray/20">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('upcoming')}
+            className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+              activeTab === 'upcoming'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Upcoming ({upcomingMatches.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+              activeTab === 'results'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Results ({completedMatches.length})
+          </button>
+        </div>
+
+        {/* Filter */}
+        <div className="flex gap-1 pb-2">
+          {(['all', 'league', 'tournament'] as MatchFilter[]).map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setMatchFilter(filter)}
+              className={`px-3 py-1 text-xs rounded ${
+                matchFilter === filter
+                  ? 'bg-vct-red text-white'
+                  : 'bg-vct-gray/20 text-vct-gray hover:text-white'
+              }`}
+            >
+              {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Active Tournaments Banner */}
+      {activeTournaments.length > 0 && (
+        <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-vct-red uppercase">
+              Active Tournaments
+            </h3>
+            <button
+              onClick={() => setActiveView('tournament')}
+              className="text-xs text-vct-gray hover:text-white"
+            >
+              View All
+            </button>
+          </div>
+          <div className="space-y-1">
+            {activeTournaments.map((tournament) => (
+              <TournamentCardMini
+                key={tournament.id}
+                tournament={tournament}
+                onClick={() => setActiveView('tournament')}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       {activeTab === 'upcoming' ? (
