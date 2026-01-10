@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
+import { eventScheduler } from '../engine/calendar';
 import type { Region } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 
@@ -60,10 +61,23 @@ export class GameInitService {
     // Apply difficulty settings to player's team
     this.applyDifficultySettings(playerTeamId, difficulty);
 
-    // Set calendar to start of season
-    store.setCurrentDate(new Date().toISOString());
+    // Set calendar to start of season (January 1, 2026)
+    const seasonStartDate = '2026-01-01T00:00:00.000Z';
+    store.setCurrentDate(seasonStartDate);
     store.setCurrentPhase('kickoff');
     store.setCurrentSeason(1);
+    store.setLastSaveDate(seasonStartDate);
+
+    // Generate season schedule (matches, salary payments, etc.)
+    console.log('Generating season schedule...');
+    const scheduleEvents = eventScheduler.generateInitialSchedule(
+      playerTeamId,
+      teams,
+      seasonStartDate,
+      2026
+    );
+    store.addCalendarEvents(scheduleEvents);
+    console.log(`Generated ${scheduleEvents.length} calendar events`);
 
     // Mark game as initialized and started
     store.setInitialized(true);

@@ -8,3 +8,9 @@ export {
   type ReleaseResult,
 } from './ContractService';
 export { MatchService, matchService } from './MatchService';
+export {
+  CalendarService,
+  calendarService,
+  type TimeAdvanceResult,
+} from './CalendarService';
+export { TrainingService, trainingService } from './TrainingService';

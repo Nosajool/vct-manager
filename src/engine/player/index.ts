@@ -14,3 +14,5 @@ export {
   type NegotiationFactors,
   type SalaryExpectation,
 } from './ContractNegotiator';
+
+export { PlayerDevelopment, playerDevelopment } from './PlayerDevelopment';
