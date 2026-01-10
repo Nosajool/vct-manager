@@ -1,8 +1,8 @@
 // Dashboard Page - Main game interface with calendar and time controls
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useGameStore } from '../store';
-import { matchService, type TimeAdvanceResult } from '../services';
+import { matchService, economyService, type TimeAdvanceResult } from '../services';
 import {
   CalendarView,
   TimeControls,
@@ -27,6 +27,16 @@ export function Dashboard() {
   const teamCount = Object.keys(teams).length;
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
   const nextMatch = getNextMatchEvent();
+
+  // Get financial summary
+  const financialSummary = useMemo(() => {
+    if (!playerTeamId) return null;
+    try {
+      return economyService.getFinancialSummary(playerTeamId);
+    } catch {
+      return null;
+    }
+  }, [playerTeamId, playerTeam?.finances]);
 
   // Handle time advancement
   const handleTimeAdvanced = (result: TimeAdvanceResult) => {
@@ -107,13 +117,23 @@ export function Dashboard() {
               <h2 className="text-2xl font-bold text-vct-light">{playerTeam.name}</h2>
               <p className="text-vct-gray">{playerTeam.region} | Season {calendar.currentSeason}</p>
             </div>
-            <div className="text-right">
-              <p className="text-vct-light font-bold text-xl">
-                {playerTeam.standings.wins}W - {playerTeam.standings.losses}L
-              </p>
-              <p className="text-vct-gray text-sm">
-                Balance: ${(playerTeam.finances.balance / 1000).toFixed(0)}K
-              </p>
+            <div className="flex items-center gap-8">
+              <div className="text-center">
+                <p className="text-vct-light font-bold text-xl">
+                  {playerTeam.standings.wins}W - {playerTeam.standings.losses}L
+                </p>
+                <p className="text-vct-gray text-sm">Record</p>
+              </div>
+              <div className="text-right">
+                <p className={`font-bold text-xl ${playerTeam.finances.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {economyService.formatCurrency(playerTeam.finances.balance)}
+                </p>
+                {financialSummary && (
+                  <p className={`text-sm ${financialSummary.netCashFlow >= 0 ? 'text-green-400/70' : 'text-red-400/70'}`}>
+                    {financialSummary.netCashFlow >= 0 ? '+' : ''}{economyService.formatCurrency(financialSummary.netCashFlow)}/mo
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -174,16 +194,16 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Phase 3 Complete Banner */}
+      {/* Phase 5 Complete Banner */}
       <div className="bg-gradient-to-r from-green-500/10 to-vct-dark border border-green-500/30 rounded-lg p-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-            <span className="text-2xl text-green-400">3</span>
+            <span className="text-2xl text-green-400">5</span>
           </div>
           <div>
-            <h2 className="text-xl font-bold text-vct-light">Phase 3: Calendar System</h2>
+            <h2 className="text-xl font-bold text-vct-light">Phase 5: Economy System</h2>
             <p className="text-vct-gray">
-              Time progression, event scheduling, and player training
+              Financial management, sponsorships, loans, and prize distribution
             </p>
           </div>
         </div>
@@ -191,18 +211,18 @@ export function Dashboard() {
 
       {/* Phase Checklist */}
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-vct-light mb-4">Phase 3 Checklist</h3>
+        <h3 className="text-lg font-semibold text-vct-light mb-4">Phase 5 Checklist</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <ChecklistItem checked label="Enhanced gameSlice with calendar" />
-          <ChecklistItem checked label="TimeProgression engine" />
-          <ChecklistItem checked label="EventScheduler engine" />
-          <ChecklistItem checked label="CalendarService orchestration" />
-          <ChecklistItem checked label="Season schedule generation" />
-          <ChecklistItem checked label="PlayerDevelopment engine" />
-          <ChecklistItem checked label="TrainingService" />
-          <ChecklistItem checked label="Calendar UI components" />
-          <ChecklistItem checked label="Time control buttons" />
-          <ChecklistItem checked label="Training modal" />
+          <ChecklistItem checked label="EconomyEngine core calculations" />
+          <ChecklistItem checked label="EconomyService orchestration" />
+          <ChecklistItem checked label="Monthly salary processing" />
+          <ChecklistItem checked label="Prize money distribution" />
+          <ChecklistItem checked label="Sponsorship system" />
+          <ChecklistItem checked label="Loan system" />
+          <ChecklistItem checked label="Finances page UI" />
+          <ChecklistItem checked label="Transaction history" />
+          <ChecklistItem checked label="Financial health tracking" />
+          <ChecklistItem checked label="Dashboard financial widgets" />
         </div>
       </div>
 

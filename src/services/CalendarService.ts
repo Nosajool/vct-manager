@@ -3,6 +3,7 @@
 
 import { useGameStore } from '../store';
 import { timeProgression, eventScheduler } from '../engine/calendar';
+import { economyService } from './EconomyService';
 import type { CalendarEvent } from '../types';
 
 /**
@@ -258,33 +259,24 @@ export class CalendarService {
 
   /**
    * Process a salary payment event
-   * Deducts player salaries from team balance
+   * Uses EconomyService to process full monthly finances
    */
   processSalaryPayment(event: CalendarEvent): void {
     const state = useGameStore.getState();
     const teams = Object.values(state.teams);
 
+    // Process monthly finances for all teams
     for (const team of teams) {
-      const roster = [...team.playerIds, ...team.reservePlayerIds];
-      let totalSalaries = 0;
+      try {
+        const result = economyService.processMonthlyFinances(team.id);
 
-      // Calculate total monthly salaries
-      for (const playerId of roster) {
-        const player = state.players[playerId];
-        if (player?.contract) {
-          totalSalaries += player.contract.salary;
+        // Log warnings for player's team
+        if (team.id === state.playerTeamId && result.warnings.length > 0) {
+          console.warn('Financial warnings:', result.warnings);
+          // TODO: Show notifications to player
         }
-      }
-
-      // Deduct from team balance
-      if (totalSalaries > 0) {
-        state.updateTeamFinances(team.id, {
-          balance: team.finances.balance - totalSalaries,
-          monthlyExpenses: {
-            ...team.finances.monthlyExpenses,
-            playerSalaries: totalSalaries,
-          },
-        });
+      } catch (error) {
+        console.error(`Error processing finances for team ${team.id}:`, error);
       }
     }
 

@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import { bracketManager, tournamentEngine } from '../engine/competition';
 import { matchService } from './MatchService';
+import { economyService } from './EconomyService';
 import type {
   Tournament,
   TournamentFormat,
@@ -256,32 +257,49 @@ export class TournamentService {
     }
 
     const placements = bracketManager.getFinalPlacements(tournament.bracket);
-    const prizeDistribution = tournamentEngine.calculatePrizeDistribution(
-      tournament.type,
-      tournament.prizePool.first +
-        tournament.prizePool.second +
-        tournament.prizePool.third +
-        (tournament.prizePool.fourth || 0) +
-        (tournament.prizePool.fifthSixth || 0) * 2 +
-        (tournament.prizePool.seventhEighth || 0) * 2
+
+    // Convert placements to array format for economyService
+    const placementArray: { teamId: string; placement: number }[] = [];
+    for (const [placement, teamId] of Object.entries(placements)) {
+      if (teamId) {
+        placementArray.push({
+          teamId,
+          placement: parseInt(placement),
+        });
+      }
+    }
+
+    // Build prize pool object from tournament prizes
+    const prizePool: Record<number, number> = {
+      1: tournament.prizePool.first,
+      2: tournament.prizePool.second,
+      3: tournament.prizePool.third,
+    };
+    if (tournament.prizePool.fourth) {
+      prizePool[4] = tournament.prizePool.fourth;
+    }
+    if (tournament.prizePool.fifthSixth) {
+      prizePool[5] = tournament.prizePool.fifthSixth;
+      prizePool[6] = tournament.prizePool.fifthSixth;
+    }
+    if (tournament.prizePool.seventhEighth) {
+      prizePool[7] = tournament.prizePool.seventhEighth;
+      prizePool[8] = tournament.prizePool.seventhEighth;
+    }
+
+    // Use economyService to distribute prizes (creates transactions)
+    const distributions = economyService.distributePrizeMoney(
+      prizePool,
+      placementArray,
+      tournament.name
     );
 
-    // Award prizes to teams
-    for (const [placement, teamId] of Object.entries(placements)) {
-      const prize = prizeDistribution[parseInt(placement)];
-      if (prize && teamId) {
-        const team = state.teams[teamId];
-        if (team) {
-          // Update team finances (add prize money)
-          state.updateTeam(teamId, {
-            finances: {
-              ...team.finances,
-              balance: team.finances.balance + prize,
-            },
-          });
-          console.log(`Awarded $${prize.toLocaleString()} to ${team.name} (${placement}${this.getPlacementSuffix(parseInt(placement))} place)`);
-        }
-      }
+    // Log distributions
+    for (const dist of distributions) {
+      const team = state.teams[dist.teamId];
+      console.log(
+        `Awarded $${dist.amount.toLocaleString()} to ${team?.name || dist.teamId} (${dist.placement}${this.getPlacementSuffix(dist.placement)} place)`
+      );
     }
   }
 

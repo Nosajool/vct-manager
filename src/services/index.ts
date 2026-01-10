@@ -15,3 +15,10 @@ export {
 } from './CalendarService';
 export { TrainingService, trainingService } from './TrainingService';
 export { TournamentService, tournamentService } from './TournamentService';
+export {
+  EconomyService,
+  economyService,
+  type SponsorshipResult,
+  type LoanResult,
+  type FinancialSummary,
+} from './EconomyService';

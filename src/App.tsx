@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Roster } from './pages/Roster';
 import { Schedule } from './pages/Schedule';
 import { TournamentPage } from './pages/Tournament';
+import { Finances } from './pages/Finances';
 import { useActiveView } from './store';
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
       case 'training':
         return <PlaceholderPage title="Training" description="Coming in Phase 3" />;
       case 'finances':
-        return <PlaceholderPage title="Finances" description="Coming in Phase 5" />;
+        return <Finances />;
       case 'match':
         return <PlaceholderPage title="Match" description="Coming in Phase 2" />;
       case 'tournament':
