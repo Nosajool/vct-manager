@@ -9,10 +9,12 @@ import {
   TodayActivities,
   TrainingModal,
 } from '../components/calendar';
+import { ScrimModal } from '../components/scrim';
 import type { CalendarEvent } from '../types';
 
 export function Dashboard() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
+  const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
 
   const players = useGameStore((state) => state.players);
@@ -70,6 +72,11 @@ export function Dashboard() {
   // Handle training click
   const handleTrainingClick = () => {
     setTrainingModalOpen(true);
+  };
+
+  // Handle scrim click
+  const handleScrimClick = () => {
+    setScrimModalOpen(true);
   };
 
   // Show loading state if not initialized
@@ -147,6 +154,7 @@ export function Dashboard() {
           <TodayActivities
             onMatchClick={handleMatchClick}
             onTrainingClick={handleTrainingClick}
+            onScrimClick={handleScrimClick}
           />
 
           {/* Calendar View */}
@@ -230,6 +238,12 @@ export function Dashboard() {
       <TrainingModal
         isOpen={trainingModalOpen}
         onClose={() => setTrainingModalOpen(false)}
+      />
+
+      {/* Scrim Modal */}
+      <ScrimModal
+        isOpen={scrimModalOpen}
+        onClose={() => setScrimModalOpen(false)}
       />
     </div>
   );

@@ -20,6 +20,7 @@ export type CalendarEventType =
   | 'sponsorship_renewal'
   | 'season_end'
   | 'training_available'
+  | 'scrim_available'
   | 'rest_day';
 
 export interface CalendarEvent {

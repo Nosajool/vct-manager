@@ -6,6 +6,7 @@ import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { tournamentEngine } from '../engine/competition';
+import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import type { Region } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 
@@ -61,6 +62,19 @@ export class GameInitService {
 
     // Apply difficulty settings to player's team
     this.applyDifficultySettings(playerTeamId, difficulty);
+
+    // Initialize map pools for all T1 teams (Phase 6 - Scrim System)
+    console.log('Initializing map pools for teams...');
+    for (const team of teams) {
+      const mapPool = scrimEngine.createDefaultMapPool();
+      store.updateTeamMapPool(team.id, mapPool);
+    }
+
+    // Generate T2/T3 teams from free agents (Phase 6 - Scrim System)
+    console.log('Generating T2/T3 scrim partner teams...');
+    const tierTeams = tierTeamGenerator.generateAllTierTeams(freeAgents);
+    store.addTierTeams(tierTeams);
+    console.log(`Generated ${tierTeams.length} T2/T3 teams for scrim practice`);
 
     // Set calendar to start of season (January 1, 2026)
     const seasonStartDate = '2026-01-01T00:00:00.000Z';
@@ -159,6 +173,7 @@ export class GameInitService {
   getGameSummary(): {
     totalPlayers: number;
     totalTeams: number;
+    totalTierTeams: number;
     freeAgents: number;
     playersByRegion: Record<Region, number>;
     teamsByRegion: Record<Region, number>;
@@ -166,6 +181,7 @@ export class GameInitService {
     const store = useGameStore.getState();
     const players = Object.values(store.players);
     const teams = Object.values(store.teams);
+    const tierTeams = Object.values(store.tierTeams);
 
     const playersByRegion: Record<Region, number> = {
       Americas: 0,
@@ -192,6 +208,7 @@ export class GameInitService {
     return {
       totalPlayers: players.length,
       totalTeams: teams.length,
+      totalTierTeams: tierTeams.length,
       freeAgents: players.filter((p) => p.teamId === null).length,
       playersByRegion,
       teamsByRegion,

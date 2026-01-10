@@ -8,8 +8,11 @@ import type {
   MatchResult,
   MapResult,
   PlayerMapPerformance,
+  MapPoolStrength,
+  MapStrength,
 } from '../../types';
 import { MAPS, ALL_AGENTS } from '../../utils/constants';
+import { SCRIM_CONSTANTS } from '../../types/scrim';
 
 // Stat weights for team strength calculation
 const STAT_WEIGHTS = {
@@ -30,16 +33,24 @@ export class MatchSimulator {
   /**
    * Simulate a complete match between two teams
    * Best-of-3 format (first to 2 maps)
+   * @param teamA - First team
+   * @param teamB - Second team
+   * @param playersA - Players on team A
+   * @param playersB - Players on team B
+   * @param mapPoolA - Optional map pool for team A (applies map-specific bonuses)
+   * @param mapPoolB - Optional map pool for team B (applies map-specific bonuses)
    */
   simulate(
     teamA: Team,
     teamB: Team,
     playersA: Player[],
-    playersB: Player[]
+    playersB: Player[],
+    mapPoolA?: MapPoolStrength,
+    mapPoolB?: MapPoolStrength
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-    // Calculate team strengths
+    // Calculate base team strengths
     const strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
     const strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall);
 
@@ -54,12 +65,18 @@ export class MatchSimulator {
     for (const map of selectedMaps) {
       if (mapsWonA >= 2 || mapsWonB >= 2) break;
 
+      // Get map-specific strengths for each team
+      const mapStrengthA = mapPoolA?.maps[map];
+      const mapStrengthB = mapPoolB?.maps[map];
+
       const mapResult = this.simulateMap(
         map,
         strengthA,
         strengthB,
         playersA,
-        playersB
+        playersB,
+        mapStrengthA,
+        mapStrengthB
       );
       maps.push(mapResult);
 
@@ -134,18 +151,53 @@ export class MatchSimulator {
   }
 
   /**
+   * Calculate map strength bonus (0 to MAX_MAP_BONUS based on attributes)
+   */
+  private calculateMapBonus(mapStrength: MapStrength): number {
+    const attrs = mapStrength.attributes;
+    const average =
+      (attrs.executes +
+        attrs.retakes +
+        attrs.utility +
+        attrs.communication +
+        attrs.mapControl +
+        attrs.antiStrat) /
+      6;
+    // Scale from 0 to MAX_MAP_BONUS (15%) based on overall strength
+    return (average / 100) * SCRIM_CONSTANTS.MAX_MAP_BONUS;
+  }
+
+  /**
    * Simulate a single map
+   * @param mapStrengthA - Optional map-specific strength for team A
+   * @param mapStrengthB - Optional map-specific strength for team B
    */
   private simulateMap(
     mapName: string,
     teamAStrength: number,
     teamBStrength: number,
     playersA: Player[],
-    playersB: Player[]
+    playersB: Player[],
+    mapStrengthA?: MapStrength,
+    mapStrengthB?: MapStrength
   ): MapResult {
+    // Apply map-specific bonuses if available
+    let adjustedStrengthA = teamAStrength;
+    let adjustedStrengthB = teamBStrength;
+
+    if (mapStrengthA) {
+      const mapBonus = this.calculateMapBonus(mapStrengthA);
+      adjustedStrengthA *= 1 + mapBonus;
+    }
+
+    if (mapStrengthB) {
+      const mapBonus = this.calculateMapBonus(mapStrengthB);
+      adjustedStrengthB *= 1 + mapBonus;
+    }
+
     // Calculate win probability for each round
-    const totalStrength = teamAStrength + teamBStrength;
-    const probA = teamAStrength / totalStrength;
+    const totalStrength = adjustedStrengthA + adjustedStrengthB;
+    const probA = adjustedStrengthA / totalStrength;
 
     // Simulate rounds
     let scoreA = 0;

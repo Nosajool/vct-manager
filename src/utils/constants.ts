@@ -262,3 +262,117 @@ export const TEAMS_PER_REGION = 12;
  * Number of free agents per region
  */
 export const FREE_AGENTS_PER_REGION = 30;
+
+/**
+ * T2 Academy/Challenger team templates by region
+ * These teams have moderate skill (60-70 overall) and 70% scrim efficiency
+ */
+export const T2_TEAM_TEMPLATES: Record<Region, string[]> = {
+  Americas: [
+    'Sentinels Academy',
+    'C9 Challengers',
+    '100T Academy',
+    'NRG Rising',
+    'LOUD Academy',
+    'FURIA Challengers',
+    'G2 Academy',
+    'Leviatán Rising',
+  ],
+  EMEA: [
+    'Fnatic Academy',
+    'TL Rising',
+    'Karmine Academy',
+    'NAVI Junior',
+    'Heretics Academy',
+    'Vitality Rising',
+    'Giants Academy',
+    'KOI Challengers',
+  ],
+  Pacific: [
+    'PRX Academy',
+    'DRX Challengers',
+    'T1 Academy',
+    'Gen.G Rising',
+    'ZETA Academy',
+    'Secret Rising',
+    'Talon Academy',
+    'Global Rising',
+  ],
+  China: [
+    'EDG Academy',
+    'BLG Rising',
+    'FPX Challengers',
+    'JDG Academy',
+    'Nova Rising',
+    'Dragon Academy',
+    'TYLOO Junior',
+    'Titan Rising',
+  ],
+};
+
+/**
+ * T3 Amateur/Community team templates by region
+ * These teams have lower skill (45-60 overall) and 40% scrim efficiency
+ */
+export const T3_TEAM_TEMPLATES: Record<Region, string[]> = {
+  Americas: [
+    'Radiant Warriors',
+    'Immortal Stars',
+    'Diamond Kings',
+    'Ranked Demons',
+    'Weekend Warriors',
+    'Stack Masters',
+    'Five Stack',
+    'Grind Time',
+  ],
+  EMEA: [
+    'Amateur Elite',
+    'Grassroots Gaming',
+    'Community Champions',
+    'Rising Talent',
+    'EU Grinders',
+    'Nordic Wolves',
+    'Iberian Lions',
+    'UK Titans',
+  ],
+  Pacific: [
+    'APAC Stars',
+    'SEA Champions',
+    'Japan Rising',
+    'Korea Grinders',
+    'Pacific Storm',
+    'Southeast Elite',
+    'Oceanic Wolves',
+    'Asia United',
+  ],
+  China: [
+    'CN Stars',
+    'Dragon Warriors',
+    'Phoenix Rising',
+    'Jade Elite',
+    'Golden Dragons',
+    'Red Warriors',
+    'Dynasty Gaming',
+    'Imperial Forces',
+  ],
+};
+
+/**
+ * T2 team stat ranges (overall 60-70)
+ */
+export const T2_STAT_RANGES = {
+  min: 55,
+  max: 72,
+  potentialMin: 65,
+  potentialMax: 80,
+};
+
+/**
+ * T3 team stat ranges (overall 45-60)
+ */
+export const T3_STAT_RANGES = {
+  min: 40,
+  max: 62,
+  potentialMin: 55,
+  potentialMax: 72,
+};

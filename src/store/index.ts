@@ -8,6 +8,7 @@ import { createGameSlice, type GameSlice } from './slices/gameSlice';
 import { createUISlice, type UISlice } from './slices/uiSlice';
 import { createMatchSlice, type MatchSlice } from './slices/matchSlice';
 import { createCompetitionSlice, type CompetitionSlice } from './slices/competitionSlice';
+import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
 import {
   autoSave,
   saveManager,
@@ -17,7 +18,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice;
 
 // Create the combined store with auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -28,6 +29,7 @@ export const useGameStore = create<GameState>()(
     ...createUISlice(...args),
     ...createMatchSlice(...args),
     ...createCompetitionSlice(...args),
+    ...createScrimSlice(...args),
   }))
 );
 
@@ -38,6 +40,7 @@ export type { GameSlice } from './slices/gameSlice';
 export type { UISlice, ActiveView, BulkSimulationProgress } from './slices/uiSlice';
 export type { MatchSlice } from './slices/matchSlice';
 export type { CompetitionSlice, StandingsEntry } from './slices/competitionSlice';
+export type { ScrimSlice } from './slices/scrimSlice';
 
 // ============================================
 // Save/Load API
@@ -182,6 +185,31 @@ export const useCurrentTournament = () =>
 
 export const useAllTournaments = () =>
   useGameStore((state) => Object.values(state.tournaments));
+
+// ============================================
+// Scrim-related selector hooks (Phase 6)
+// ============================================
+
+export const useTierTeams = () =>
+  useGameStore((state) => Object.values(state.tierTeams));
+
+export const useTierTeamsByRegion = (region: string) =>
+  useGameStore((state) =>
+    Object.values(state.tierTeams).filter((t) => t.region === region)
+  );
+
+export const useScrimHistory = (limit?: number) =>
+  useGameStore((state) =>
+    limit ? state.scrimHistory.slice(-limit) : state.scrimHistory
+  );
+
+export const useMapPool = (teamId: string) =>
+  useGameStore((state) => state.teams[teamId]?.mapPool);
+
+export const usePlayerTeamMapPool = () =>
+  useGameStore((state) =>
+    state.playerTeamId ? state.teams[state.playerTeamId]?.mapPool : undefined
+  );
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';

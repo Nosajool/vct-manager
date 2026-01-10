@@ -74,3 +74,22 @@ export type {
 } from './economy';
 
 export { DIFFICULTY_SETTINGS } from './economy';
+
+// Scrim types
+export type {
+  TeamTier,
+  TierTeam,
+  ScrimRelationship,
+  RelationshipEventType,
+  RelationshipEvent,
+  MapStrengthAttributes,
+  MapStrength,
+  MapPoolStrength,
+  ScrimFormat,
+  ScrimIntensity,
+  ScrimOptions,
+  ScrimResult,
+  WeeklyScrimTracker,
+} from './scrim';
+
+export { SCRIM_CONSTANTS } from './scrim';

@@ -207,6 +207,47 @@ export class EventScheduler {
   }
 
   /**
+   * Generate scrim availability events
+   * Scrims are available on days without matches (similar to training)
+   * Teams can do up to 4 scrims per week
+   */
+  scheduleScrimDays(
+    startDate: string,
+    endDate: string,
+    matchDates: string[]
+  ): CalendarEvent[] {
+    const events: CalendarEvent[] = [];
+    const matchDateSet = new Set(
+      matchDates.map((d) => new Date(d).toDateString())
+    );
+
+    const current = new Date(startDate);
+    const end = new Date(endDate);
+
+    while (current <= end) {
+      const dateString = current.toDateString();
+
+      // If no match on this day, scrim is available
+      if (!matchDateSet.has(dateString)) {
+        events.push({
+          id: this.generateId('scrim'),
+          date: current.toISOString(),
+          type: 'scrim_available',
+          required: false,
+          processed: false,
+          data: {
+            description: 'Scrim session available',
+          },
+        });
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    return events;
+  }
+
+  /**
    * Generate rest day events (one per week, typically Sunday)
    */
   scheduleRestDays(startDate: string, weeks: number): CalendarEvent[] {
@@ -308,6 +349,10 @@ export class EventScheduler {
     const seasonEndDate = this.addDays(startDate, 365); // Full year
     const trainingEvents = this.scheduleTrainingDays(startDate, seasonEndDate, matchDates);
     allEvents.push(...trainingEvents);
+
+    // Generate scrim availability days (available on non-match days)
+    const scrimEvents = this.scheduleScrimDays(startDate, seasonEndDate, matchDates);
+    allEvents.push(...scrimEvents);
 
     // Add tournament phase markers
     for (const phase of EventScheduler.SEASON_STRUCTURE) {

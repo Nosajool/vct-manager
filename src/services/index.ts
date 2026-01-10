@@ -22,3 +22,4 @@ export {
   type LoanResult,
   type FinancialSummary,
 } from './EconomyService';
+export { ScrimService, scrimService } from './ScrimService';

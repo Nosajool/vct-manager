@@ -288,6 +288,7 @@ export class TimeProgression {
       sponsorship_renewal: [],
       season_end: [],
       training_available: [],
+      scrim_available: [],
       rest_day: [],
     };
 

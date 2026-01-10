@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import { timeProgression, eventScheduler } from '../engine/calendar';
 import { economyService } from './EconomyService';
+import { scrimService } from './ScrimService';
 import type { CalendarEvent } from '../types';
 
 /**
@@ -54,7 +55,11 @@ export class CalendarService {
       } else if (event.type === 'match') {
         // Matches need player attention
         needsAttention.push(event);
-      } else if (event.type === 'training_available' || event.type === 'rest_day') {
+      } else if (
+        event.type === 'training_available' ||
+        event.type === 'scrim_available' ||
+        event.type === 'rest_day'
+      ) {
         // Optional events - player can choose to act or skip
         needsAttention.push(event);
       } else {
@@ -147,6 +152,9 @@ export class CalendarService {
 
     // Advance the date
     state.advanceWeek();
+
+    // Apply weekly map decay for player's team (Phase 6 - Scrim System)
+    scrimService.applyWeeklyMapDecay();
 
     // Check auto-save
     const autoSaveTriggered = timeProgression.shouldAutoSave(

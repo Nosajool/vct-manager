@@ -2,6 +2,7 @@
 // Based on VCT Manager Technical Specification
 
 import type { Region } from './player';
+import type { MapPoolStrength, ScrimRelationship } from './scrim';
 
 export type TransactionType =
   | 'signing_bonus'
@@ -90,4 +91,8 @@ export interface Team {
 
   // Performance
   standings: TeamStandings;
+
+  // Scrim system (Phase 6)
+  mapPool?: MapPoolStrength;  // Map strengths for the team
+  scrimRelationships?: Record<string, ScrimRelationship>;  // teamId -> relationship
 }
