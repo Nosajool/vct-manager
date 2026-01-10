@@ -303,6 +303,12 @@ export class EventScheduler {
     });
     allEvents.push(...matchEvents);
 
+    // Generate training days (available on non-match days)
+    const matchDates = matchEvents.map((e) => e.date);
+    const seasonEndDate = this.addDays(startDate, 365); // Full year
+    const trainingEvents = this.scheduleTrainingDays(startDate, seasonEndDate, matchDates);
+    allEvents.push(...trainingEvents);
+
     // Add tournament phase markers
     for (const phase of EventScheduler.SEASON_STRUCTURE) {
       if (phase.phase !== 'offseason') {
