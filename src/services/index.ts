@@ -7,3 +7,4 @@ export {
   type SigningResult,
   type ReleaseResult,
 } from './ContractService';
+export { MatchService, matchService } from './MatchService';

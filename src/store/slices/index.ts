@@ -9,3 +9,4 @@ export {
   type ActiveView,
   type BulkSimulationProgress,
 } from './uiSlice';
+export { createMatchSlice, type MatchSlice } from './matchSlice';

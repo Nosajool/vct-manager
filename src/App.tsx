@@ -3,6 +3,7 @@
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Roster } from './pages/Roster';
+import { Schedule } from './pages/Schedule';
 import { useActiveView } from './store';
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
       case 'roster':
         return <Roster />;
       case 'schedule':
-        return <PlaceholderPage title="Schedule" description="Coming in Phase 3" />;
+        return <Schedule />;
       case 'training':
         return <PlaceholderPage title="Training" description="Coming in Phase 3" />;
       case 'finances':

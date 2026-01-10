@@ -6,6 +6,7 @@ import { createPlayerSlice, type PlayerSlice } from './slices/playerSlice';
 import { createTeamSlice, type TeamSlice } from './slices/teamSlice';
 import { createGameSlice, type GameSlice } from './slices/gameSlice';
 import { createUISlice, type UISlice } from './slices/uiSlice';
+import { createMatchSlice, type MatchSlice } from './slices/matchSlice';
 import {
   autoSave,
   saveManager,
@@ -15,7 +16,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice;
 
 // Create the combined store with auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -24,6 +25,7 @@ export const useGameStore = create<GameState>()(
     ...createTeamSlice(...args),
     ...createGameSlice(...args),
     ...createUISlice(...args),
+    ...createMatchSlice(...args),
   }))
 );
 
@@ -32,6 +34,7 @@ export type { PlayerSlice } from './slices/playerSlice';
 export type { TeamSlice } from './slices/teamSlice';
 export type { GameSlice } from './slices/gameSlice';
 export type { UISlice, ActiveView, BulkSimulationProgress } from './slices/uiSlice';
+export type { MatchSlice } from './slices/matchSlice';
 
 // ============================================
 // Save/Load API
@@ -146,6 +149,15 @@ export const useError = () =>
 
 export const useIsSimulating = () =>
   useGameStore((state) => state.isSimulating);
+
+export const useMatch = (matchId: string) =>
+  useGameStore((state) => state.matches[matchId]);
+
+export const useMatchResult = (matchId: string) =>
+  useGameStore((state) => state.results[matchId]);
+
+export const useAllMatches = () =>
+  useGameStore((state) => Object.values(state.matches));
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';
