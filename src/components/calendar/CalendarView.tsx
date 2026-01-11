@@ -12,6 +12,7 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
   const calendar = useGameStore((state) => state.calendar);
   const getUpcomingEvents = useGameStore((state) => state.getUpcomingEvents);
   const teams = useGameStore((state) => state.teams);
+  const setActiveView = useGameStore((state) => state.setActiveView);
 
   const upcomingEvents = getUpcomingEvents(maxEvents);
 
@@ -130,7 +131,10 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
       {/* Show More Link */}
       {showFullSchedule && upcomingEvents.length >= maxEvents && (
         <div className="mt-3 pt-2 border-t border-vct-gray/10">
-          <button className="text-sm text-vct-red hover:text-vct-red/80 transition-colors">
+          <button
+            onClick={() => setActiveView('schedule')}
+            className="text-sm text-vct-red hover:text-vct-red/80 transition-colors"
+          >
             View Full Schedule
           </button>
         </div>
