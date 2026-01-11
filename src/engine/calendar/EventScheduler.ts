@@ -138,6 +138,70 @@ export class EventScheduler {
   }
 
   /**
+   * Generate match schedule only during league phases (Stage 1 and Stage 2)
+   * Avoids tournament phases (Kickoff, Masters 1, Masters 2, Champions) and offseason
+   */
+  generateLeagueMatchSchedule(options: {
+    seasonStartDate: string;
+    leaguePhases: SeasonStructure[];
+    matchesPerWeek: number;
+    playerTeamId: string;
+    opponents: Team[];
+  }): CalendarEvent[] {
+    const { seasonStartDate, leaguePhases, matchesPerWeek, playerTeamId, opponents } = options;
+
+    if (opponents.length === 0 || leaguePhases.length === 0) {
+      return [];
+    }
+
+    const events: CalendarEvent[] = [];
+    const daysBetweenMatches = Math.floor(7 / matchesPerWeek);
+
+    // Shuffle opponents for variety
+    const shuffledOpponents = this.shuffleArray([...opponents]);
+    let opponentIndex = 0;
+
+    // Schedule matches within each league phase
+    for (const phase of leaguePhases) {
+      const phaseStartDate = this.addDays(seasonStartDate, phase.startOffset);
+      const phaseEndDate = this.addDays(seasonStartDate, phase.startOffset + phase.duration);
+      let currentDate = phaseStartDate;
+
+      while (new Date(currentDate) < new Date(phaseEndDate)) {
+        // Get opponent (cycle through if more matches than opponents)
+        const opponent = shuffledOpponents[opponentIndex % shuffledOpponents.length];
+
+        // Alternate home/away
+        const isHome = opponentIndex % 2 === 0;
+        const homeTeamId = isHome ? playerTeamId : opponent.id;
+        const awayTeamId = isHome ? opponent.id : playerTeamId;
+
+        events.push({
+          id: this.generateId('match'),
+          date: currentDate,
+          type: 'match',
+          required: true,
+          processed: false,
+          data: {
+            matchId: this.generateId('match-instance'),
+            homeTeamId,
+            awayTeamId,
+            homeTeamName: isHome ? 'Your Team' : opponent.name,
+            awayTeamName: isHome ? opponent.name : 'Your Team',
+            isPlayerMatch: true,
+            phase: phase.phase,
+          },
+        });
+
+        opponentIndex++;
+        currentDate = this.addDays(currentDate, daysBetweenMatches);
+      }
+    }
+
+    return events;
+  }
+
+  /**
    * Generate salary payment events (1st of each month)
    */
   scheduleSalaryPayments(startDate: string, months: number): CalendarEvent[] {
@@ -334,11 +398,16 @@ export class EventScheduler {
     allEvents.push(...salaryEvents);
 
     // For Phase 3, simplified match schedule:
-    // Generate 24 matches over Kickoff + Stage 1 + Stage 2 periods
-    const matchEvents = this.generatePlayerMatchSchedule({
-      startDate,
+    // Generate league matches only during Stage 1 and Stage 2 periods
+    // Avoid all tournament phases (Kickoff, Masters 1, Masters 2, Champions) and offseason
+    const leaguePhases = EventScheduler.SEASON_STRUCTURE.filter(
+      (s) => s.phase === 'stage1' || s.phase === 'stage2'
+    );
+
+    const matchEvents = this.generateLeagueMatchSchedule({
+      seasonStartDate: startDate,
+      leaguePhases,
       matchesPerWeek: 2,
-      totalMatches: 24,
       playerTeamId,
       opponents,
     });
