@@ -94,6 +94,27 @@ export class GameInitService {
     store.addCalendarEvents(scheduleEvents);
     console.log(`Generated ${scheduleEvents.length} calendar events`);
 
+    // Create Match entities for all match calendar events
+    // This ensures the Schedule page can find and simulate these matches
+    const matchEvents = scheduleEvents.filter((e) => e.type === 'match');
+    for (const event of matchEvents) {
+      const data = event.data as {
+        matchId: string;
+        homeTeamId: string;
+        awayTeamId: string;
+      };
+      if (data.matchId && data.homeTeamId && data.awayTeamId) {
+        store.addMatch({
+          id: data.matchId,
+          teamAId: data.homeTeamId,
+          teamBId: data.awayTeamId,
+          scheduledDate: event.date,
+          status: 'scheduled',
+        });
+      }
+    }
+    console.log(`Created ${matchEvents.length} match entities`);
+
     // Generate initial Kickoff tournament for player's region
     console.log('Generating Kickoff tournament...');
     const regionTeams = teams.filter((t) => t.region === playerRegion);

@@ -5,7 +5,8 @@ import { useGameStore } from '../store';
 import { timeProgression, eventScheduler } from '../engine/calendar';
 import { economyService } from './EconomyService';
 import { scrimService } from './ScrimService';
-import type { CalendarEvent } from '../types';
+import { matchService } from './MatchService';
+import type { CalendarEvent, MatchResult } from '../types';
 
 /**
  * Result of advancing time
@@ -17,6 +18,7 @@ export interface TimeAdvanceResult {
   processedEvents: CalendarEvent[];
   skippedEvents: CalendarEvent[];
   needsAttention: CalendarEvent[]; // Events that require player action (matches)
+  simulatedMatches: MatchResult[]; // Matches that were auto-simulated
   autoSaveTriggered: boolean;
 }
 
@@ -45,6 +47,7 @@ export class CalendarService {
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
     const needsAttention: CalendarEvent[] = [];
+    const simulatedMatches: MatchResult[] = [];
 
     // Process each event based on type
     for (const event of unprocessedEvents) {
@@ -53,8 +56,15 @@ export class CalendarService {
         this.processSalaryPayment(event);
         processedEvents.push(event);
       } else if (event.type === 'match') {
-        // Matches need player attention
-        needsAttention.push(event);
+        // Auto-simulate matches
+        const result = this.simulateMatchEvent(event);
+        if (result) {
+          simulatedMatches.push(result);
+          processedEvents.push(event);
+        } else {
+          // If simulation failed, mark as needing attention
+          needsAttention.push(event);
+        }
       } else if (
         event.type === 'training_available' ||
         event.type === 'scrim_available' ||
@@ -94,6 +104,7 @@ export class CalendarService {
       processedEvents,
       skippedEvents,
       needsAttention,
+      simulatedMatches,
       autoSaveTriggered,
     };
   }
@@ -118,28 +129,22 @@ export class CalendarService {
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
     const needsAttention: CalendarEvent[] = [];
+    const simulatedMatches: MatchResult[] = [];
 
-    // Check for matches first - they require attention
-    const matches = eventsInWeek.filter((e) => e.type === 'match');
-    if (matches.length > 0) {
-      // Can't skip a week with matches - needs attention
-      needsAttention.push(...matches);
-      return {
-        success: false,
-        daysAdvanced: 0,
-        newDate: currentDate,
-        processedEvents: [],
-        skippedEvents: [],
-        needsAttention,
-        autoSaveTriggered: false,
-      };
-    }
-
-    // Process events
+    // Process events (including auto-simulating matches)
     for (const event of eventsInWeek) {
       if (event.type === 'salary_payment') {
         this.processSalaryPayment(event);
         processedEvents.push(event);
+      } else if (event.type === 'match') {
+        // Auto-simulate matches
+        const result = this.simulateMatchEvent(event);
+        if (result) {
+          simulatedMatches.push(result);
+          processedEvents.push(event);
+        } else {
+          needsAttention.push(event);
+        }
       } else if (timeProgression.isRequiredEventType(event.type)) {
         state.markEventProcessed(event.id);
         processedEvents.push(event);
@@ -173,6 +178,7 @@ export class CalendarService {
       processedEvents,
       skippedEvents,
       needsAttention,
+      simulatedMatches,
       autoSaveTriggered,
     };
   }
@@ -196,25 +202,13 @@ export class CalendarService {
         processedEvents: [],
         skippedEvents: [],
         needsAttention: [],
+        simulatedMatches: [],
         autoSaveTriggered: false,
       };
     }
 
-    // Check if match is today
-    if (timeProgression.isSameDay(currentDate, nextMatch.date)) {
-      return {
-        success: true,
-        daysAdvanced: 0,
-        newDate: currentDate,
-        processedEvents: [],
-        skippedEvents: [],
-        needsAttention: [nextMatch],
-        autoSaveTriggered: false,
-      };
-    }
-
-    // Get all events between now and the match
-    const eventsBeforeMatch = timeProgression.getUnprocessedEventsBetween(
+    // Get all events between now and the match (inclusive)
+    const eventsToProcess = timeProgression.getUnprocessedEventsBetween(
       currentDate,
       nextMatch.date,
       state.calendar.scheduledEvents
@@ -222,14 +216,20 @@ export class CalendarService {
 
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
+    const simulatedMatches: MatchResult[] = [];
 
-    // Process events (excluding the match itself)
-    for (const event of eventsBeforeMatch) {
-      if (event.id === nextMatch.id) continue; // Skip the match
-
+    // Process events (including the target match)
+    for (const event of eventsToProcess) {
       if (event.type === 'salary_payment') {
         this.processSalaryPayment(event);
         processedEvents.push(event);
+      } else if (event.type === 'match') {
+        // Auto-simulate ALL matches including the target
+        const result = this.simulateMatchEvent(event);
+        if (result) {
+          simulatedMatches.push(result);
+          processedEvents.push(event);
+        }
       } else if (timeProgression.isRequiredEventType(event.type)) {
         state.markEventProcessed(event.id);
         processedEvents.push(event);
@@ -260,7 +260,8 @@ export class CalendarService {
       newDate: nextMatch.date,
       processedEvents,
       skippedEvents,
-      needsAttention: [nextMatch],
+      needsAttention: [],
+      simulatedMatches,
       autoSaveTriggered,
     };
   }
@@ -290,6 +291,38 @@ export class CalendarService {
 
     // Mark event as processed
     state.markEventProcessed(event.id);
+  }
+
+  /**
+   * Simulate a match from a calendar event
+   * Returns the match result if successful, null otherwise
+   */
+  simulateMatchEvent(event: CalendarEvent): MatchResult | null {
+    const state = useGameStore.getState();
+    const data = event.data as {
+      matchId?: string;
+      homeTeamId?: string;
+      awayTeamId?: string;
+    };
+
+    if (!data.matchId) {
+      console.warn('Match event has no matchId:', event.id);
+      state.markEventProcessed(event.id);
+      return null;
+    }
+
+    // Try to simulate the match
+    const result = matchService.simulateMatch(data.matchId);
+
+    if (result) {
+      // Mark calendar event as processed
+      state.markEventProcessed(event.id);
+      console.log(`Auto-simulated match: ${data.matchId}`);
+    } else {
+      console.warn(`Failed to simulate match: ${data.matchId}`);
+    }
+
+    return result;
   }
 
   /**
