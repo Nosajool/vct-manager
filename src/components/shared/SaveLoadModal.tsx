@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+
+// Parse date string as local time to avoid timezone issues
+function parseAsLocalDate(dateStr: string): Date {
+  const datePart = dateStr.split('T')[0];
+  const [year, month, day] = datePart.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
 import {
   listSaves,
   saveGame,
@@ -210,7 +217,7 @@ function SaveSlotCard({
                 Season {slot.metadata.season}
               </p>
               <p>
-                {format(new Date(slot.metadata.currentDate), 'MMM dd, yyyy')}
+                {format(parseAsLocalDate(slot.metadata.currentDate), 'MMM dd, yyyy')}
                 {' • '}
                 {formatPlaytime(slot.metadata.playtime)} played
               </p>

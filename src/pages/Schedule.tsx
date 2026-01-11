@@ -99,10 +99,9 @@ export function Schedule() {
   // Handle time advancement
   const handleTimeAdvanced = (result: TimeAdvanceResult) => {
     setLastAdvanceResult(result);
-    // Update selected date if it was advanced past
-    if (selectedDate && new Date(selectedDate) < new Date(calendar.currentDate)) {
-      setSelectedDate(calendar.currentDate);
-    }
+    // Always update selected date and view date to the new current date
+    setSelectedDate(result.newDate);
+    setViewDate(result.newDate);
     setTimeout(() => setLastAdvanceResult(null), 3000);
   };
 

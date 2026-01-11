@@ -8,14 +8,21 @@ interface HeaderProps {
   onLoadClick: () => void;
 }
 
+// Parse date string as local time to avoid timezone issues
+function parseAsLocalDate(dateStr: string): Date {
+  const datePart = dateStr.split('T')[0];
+  const [year, month, day] = datePart.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export function Header({ onSaveClick, onLoadClick }: HeaderProps) {
   const currentDate = useCurrentDate();
   const currentPhase = useGameStore((state) => state.calendar.currentPhase);
   const currentSeason = useGameStore((state) => state.calendar.currentSeason);
 
-  // Format the date for display
+  // Format the date for display (parse as local time to avoid timezone issues)
   const formattedDate = currentDate
-    ? format(new Date(currentDate), 'MMM dd, yyyy')
+    ? format(parseAsLocalDate(currentDate), 'MMM dd, yyyy')
     : 'Not Started';
 
   // Format phase for display

@@ -5,8 +5,8 @@ import { useGameStore } from '../store';
 import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
-import { tournamentEngine } from '../engine/competition';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
+import { tournamentService } from './TournamentService';
 import type { Region } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 
@@ -131,7 +131,8 @@ export class GameInitService {
     // For Kickoff: 12 teams, top 4 get byes, bottom 8 play R1 via random draw
     const kickoffTeamIds = regionTeamIds.slice(0, 12);
     if (kickoffTeamIds.length > 0) {
-      const kickoffTournament = tournamentEngine.createTournament(
+      // Use TournamentService to properly create tournament with calendar events
+      tournamentService.createTournament(
         `VCT ${playerRegion} Kickoff 2026`,
         'kickoff',
         'triple_elim',
@@ -140,7 +141,6 @@ export class GameInitService {
         new Date(seasonStartDate),
         500000
       );
-      store.addTournament(kickoffTournament);
       console.log(`Created Kickoff tournament with ${kickoffTeamIds.length} teams`);
     }
 

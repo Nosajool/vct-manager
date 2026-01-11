@@ -300,10 +300,21 @@ export class TimeProgression {
   }
 
   /**
+   * Parse date string to local Date object
+   * Handles both "YYYY-MM-DD" and ISO formats, treating the date as local time
+   */
+  private parseAsLocalDate(dateStr: string): Date {
+    // Extract YYYY-MM-DD portion from either "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS.sssZ"
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  /**
    * Format date for display
    */
   formatDate(isoDate: string): string {
-    const date = new Date(isoDate);
+    const date = this.parseAsLocalDate(isoDate);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       year: 'numeric',
@@ -316,7 +327,7 @@ export class TimeProgression {
    * Format date for short display (no year)
    */
   formatDateShort(isoDate: string): string {
-    const date = new Date(isoDate);
+    const date = this.parseAsLocalDate(isoDate);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
