@@ -1,4 +1,4 @@
-// Schedule Page - View and simulate matches
+// Schedule Page - Visual calendar view for matches and events
 
 import { useState, useCallback, useMemo } from 'react';
 import { useGameStore } from '../store';
@@ -7,23 +7,24 @@ import { MatchResult } from '../components/match/MatchResult';
 import { TournamentCardMini } from '../components/tournament';
 import {
   TimeControls,
-  TodayActivities,
   TrainingModal,
+  MonthCalendar,
+  DayDetailPanel,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
 import type { Match, CalendarEvent } from '../types';
 
-type ScheduleTab = 'upcoming' | 'results';
-type MatchFilter = 'all' | 'league' | 'tournament';
+type ViewMode = 'calendar' | 'results';
 
 export function Schedule() {
-  const [activeTab, setActiveTab] = useState<ScheduleTab>('upcoming');
+  const [viewMode, setViewMode] = useState<ViewMode>('calendar');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [matchFilter, setMatchFilter] = useState<MatchFilter>('all');
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [viewDate, setViewDate] = useState<string | null>(null);
 
   const gameStarted = useGameStore((state) => state.gameStarted);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
@@ -31,8 +32,10 @@ export function Schedule() {
   const matches = useGameStore((state) => state.matches);
   const tournaments = useGameStore((state) => state.tournaments);
   const calendar = useGameStore((state) => state.calendar);
-  const getUpcomingEvents = useGameStore((state) => state.getUpcomingEvents);
   const setActiveView = useGameStore((state) => state.setActiveView);
+
+  // Initialize viewDate to current date if not set
+  const currentViewDate = viewDate || calendar.currentDate;
 
   const activeTournaments = useMemo(
     () => Object.values(tournaments).filter((t) => t.status === 'in_progress'),
@@ -41,7 +44,12 @@ export function Schedule() {
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
-  // Get match events from calendar for the player's team
+  // Get all events for calendar display
+  const allEvents = useMemo(() => {
+    return calendar.scheduledEvents;
+  }, [calendar.scheduledEvents]);
+
+  // Get match events for the player's team (for results view)
   const matchEvents = useMemo(() => {
     if (!playerTeamId) return [];
     return calendar.scheduledEvents
@@ -52,49 +60,25 @@ export function Schedule() {
         const awayTeamId = data?.awayTeamId as string;
         return homeTeamId === playerTeamId || awayTeamId === playerTeamId;
       })
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => b.date.localeCompare(a.date)); // Newest first for results
   }, [calendar.scheduledEvents, playerTeamId]);
 
-  // Apply filter to match events
-  const filteredMatchEvents = useMemo(() => {
-    if (matchFilter === 'all') return matchEvents;
-    if (matchFilter === 'tournament') {
-      return matchEvents.filter((e) => {
-        const data = e.data as Record<string, unknown>;
-        return !!data?.tournamentId;
-      });
-    }
-    return matchEvents.filter((e) => {
-      const data = e.data as Record<string, unknown>;
-      return !data?.tournamentId;
-    });
-  }, [matchEvents, matchFilter]);
-
-  // Split into upcoming (not processed) and completed (processed)
-  const upcomingMatchEvents = useMemo(
-    () => filteredMatchEvents.filter((e) => !e.processed),
-    [filteredMatchEvents]
-  );
-
+  // Completed match events for results view
   const completedMatchEvents = useMemo(
-    () => filteredMatchEvents.filter((e) => e.processed).sort((a, b) => b.date.localeCompare(a.date)),
-    [filteredMatchEvents]
+    () => matchEvents.filter((e) => e.processed),
+    [matchEvents]
   );
-
 
   // Handle match simulation
   const handleSimulate = useCallback(
     (matchId: string) => {
       setIsSimulating(true);
 
-      // Simulate with a small delay for UX
       setTimeout(() => {
         const result = matchService.simulateMatch(matchId);
         setIsSimulating(false);
 
         if (result) {
-          // Switch to results tab and show the completed match
-          setActiveTab('results');
           const match = matches[matchId];
           if (match) {
             setSelectedMatch({ ...match, status: 'completed' });
@@ -112,46 +96,31 @@ export function Schedule() {
     }
   };
 
-  // Create a test match if none exist
-  const handleCreateTestMatch = () => {
-    if (!playerTeamId) return;
-
-    // Find another team in the same region
-    const otherTeams = Object.values(teams).filter(
-      (t) => t.id !== playerTeamId && t.region === playerTeam?.region
-    );
-
-    if (otherTeams.length === 0) return;
-
-    const opponent = otherTeams[Math.floor(Math.random() * otherTeams.length)];
-    const today = new Date().toISOString().split('T')[0];
-
-    matchService.createMatch(playerTeamId, opponent.id, today);
-  };
-
   // Handle time advancement
   const handleTimeAdvanced = (result: TimeAdvanceResult) => {
     setLastAdvanceResult(result);
+    // Update selected date if it was advanced past
+    if (selectedDate && new Date(selectedDate) < new Date(calendar.currentDate)) {
+      setSelectedDate(calendar.currentDate);
+    }
     setTimeout(() => setLastAdvanceResult(null), 3000);
   };
 
   // Handle match reached via time controls
   const handleMatchReached = (matchEvent: CalendarEvent) => {
-    console.log('Match reached:', matchEvent);
+    // Select the match date when reached
+    setSelectedDate(matchEvent.date);
+    setViewDate(matchEvent.date);
   };
 
-  // Handle match simulation from TodayActivities
-  const handleMatchClick = (matchEvent: CalendarEvent) => {
-    const data = matchEvent.data as Record<string, unknown>;
-    const matchId = data?.matchId as string;
+  // Handle date selection from calendar
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+  };
 
-    if (matchId) {
-      const result = matchService.simulateMatch(matchId);
-      if (result) {
-        useGameStore.getState().markEventProcessed(matchEvent.id);
-        setActiveTab('results');
-      }
-    }
+  // Handle month change
+  const handleMonthChange = (date: string) => {
+    setViewDate(date);
   };
 
   // Handle training click
@@ -163,9 +132,6 @@ export function Schedule() {
   const handleScrimClick = () => {
     setScrimModalOpen(true);
   };
-
-  // Get all upcoming events for the full schedule view
-  const allUpcomingEvents = getUpcomingEvents(50);
 
   // Not started yet
   if (!gameStarted) {
@@ -213,10 +179,10 @@ export function Schedule() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-vct-light">Full Schedule</h1>
+          <h1 className="text-2xl font-bold text-vct-light">Schedule</h1>
           {playerTeam && (
             <p className="text-vct-gray mt-1">
-              {playerTeam.name} - {playerTeam.region} | {calendar.currentDate}
+              {playerTeam.name} - {playerTeam.region}
             </p>
           )}
         </div>
@@ -253,40 +219,23 @@ export function Schedule() {
         )}
       </div>
 
-      {/* Today's Activities & Time Controls */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <TodayActivities
-            onMatchClick={handleMatchClick}
-            onTrainingClick={handleTrainingClick}
-            onScrimClick={handleScrimClick}
-          />
-        </div>
-        <div>
-          <TimeControls
-            onTimeAdvanced={handleTimeAdvanced}
-            onMatchReached={handleMatchReached}
-          />
-        </div>
-      </div>
-
-      {/* Tabs and Filter */}
+      {/* View Mode Toggle */}
       <div className="flex items-center justify-between border-b border-vct-gray/20">
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab('upcoming')}
+            onClick={() => setViewMode('calendar')}
             className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-              activeTab === 'upcoming'
+              viewMode === 'calendar'
                 ? 'text-vct-red border-vct-red'
                 : 'text-vct-gray border-transparent hover:text-vct-light'
             }`}
           >
-            Upcoming ({upcomingMatchEvents.length})
+            Calendar
           </button>
           <button
-            onClick={() => setActiveTab('results')}
+            onClick={() => setViewMode('results')}
             className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-              activeTab === 'results'
+              viewMode === 'results'
                 ? 'text-vct-red border-vct-red'
                 : 'text-vct-gray border-transparent hover:text-vct-light'
             }`}
@@ -295,21 +244,13 @@ export function Schedule() {
           </button>
         </div>
 
-        {/* Filter */}
-        <div className="flex gap-1 pb-2">
-          {(['all', 'league', 'tournament'] as MatchFilter[]).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setMatchFilter(filter)}
-              className={`px-3 py-1 text-xs rounded ${
-                matchFilter === filter
-                  ? 'bg-vct-red text-white'
-                  : 'bg-vct-gray/20 text-vct-gray hover:text-white'
-              }`}
-            >
-              {filter.charAt(0).toUpperCase() + filter.slice(1)}
-            </button>
-          ))}
+        {/* Time Controls - inline */}
+        <div className="pb-2">
+          <TimeControls
+            compact
+            onTimeAdvanced={handleTimeAdvanced}
+            onMatchReached={handleMatchReached}
+          />
         </div>
       </div>
 
@@ -339,101 +280,46 @@ export function Schedule() {
         </div>
       )}
 
-      {/* Content */}
-      {activeTab === 'upcoming' ? (
-        <div className="space-y-4">
-          {upcomingMatchEvents.length > 0 ? (
-            <>
-              {isSimulating && (
-                <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4 text-center">
-                  <p className="text-vct-light animate-pulse">
-                    Simulating match...
-                  </p>
-                </div>
-              )}
-              <div className="grid gap-4 md:grid-cols-2">
-                {upcomingMatchEvents.map((event) => {
-                  const data = event.data as Record<string, unknown>;
-                  const homeTeamId = data?.homeTeamId as string;
-                  const awayTeamId = data?.awayTeamId as string;
-                  const homeTeam = teams[homeTeamId];
-                  const awayTeam = teams[awayTeamId];
-                  const matchId = data?.matchId as string;
-                  const isTournament = !!data?.tournamentId;
+      {/* Main Content */}
+      {viewMode === 'calendar' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Calendar Grid */}
+          <div className="lg:col-span-2">
+            <MonthCalendar
+              currentDate={calendar.currentDate}
+              viewDate={currentViewDate}
+              events={allEvents}
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              onMonthChange={handleMonthChange}
+            />
+          </div>
 
-                  // Check if match is today
-                  const matchDate = new Date(event.date).toDateString();
-                  const currentDate = new Date(calendar.currentDate).toDateString();
-                  const isMatchToday = matchDate === currentDate;
-
-                  return (
-                    <div
-                      key={event.id}
-                      className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-vct-gray">{event.date}</span>
-                        <div className="flex items-center gap-2">
-                          {isMatchToday && (
-                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-500/20 text-green-400">
-                              Today
-                            </span>
-                          )}
-                          {isTournament && (
-                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-500/20 text-purple-400">
-                              Tournament
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-center flex-1">
-                          <p className={`font-semibold ${homeTeamId === playerTeamId ? 'text-vct-red' : 'text-vct-light'}`}>
-                            {homeTeam?.name || 'TBD'}
-                          </p>
-                        </div>
-                        <div className="px-4 text-vct-gray text-sm">vs</div>
-                        <div className="text-center flex-1">
-                          <p className={`font-semibold ${awayTeamId === playerTeamId ? 'text-vct-red' : 'text-vct-light'}`}>
-                            {awayTeam?.name || 'TBD'}
-                          </p>
-                        </div>
-                      </div>
-                      {matchId && (
-                        <div className="mt-3 pt-3 border-t border-vct-gray/20">
-                          {isMatchToday ? (
-                            <button
-                              onClick={() => handleSimulate(matchId)}
-                              disabled={isSimulating}
-                              className="w-full px-4 py-2 bg-vct-red hover:bg-vct-red/80 disabled:opacity-50 text-white rounded text-sm font-medium transition-colors"
-                            >
-                              Simulate Match
-                            </button>
-                          ) : (
-                            <p className="text-center text-sm text-vct-gray">
-                              Advance time to match day to simulate
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+          {/* Day Details Panel */}
+          <div>
+            {selectedDate ? (
+              <DayDetailPanel
+                selectedDate={selectedDate}
+                currentDate={calendar.currentDate}
+                events={allEvents}
+                teams={teams}
+                playerTeamId={playerTeamId}
+                onSimulateMatch={handleSimulate}
+                onTrainingClick={handleTrainingClick}
+                onScrimClick={handleScrimClick}
+                isSimulating={isSimulating}
+              />
+            ) : (
+              <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
+                <p className="text-vct-gray text-center py-8">
+                  Select a date to view details
+                </p>
               </div>
-            </>
-          ) : (
-            <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-8 text-center">
-              <p className="text-vct-gray mb-4">No upcoming matches scheduled</p>
-              <button
-                onClick={handleCreateTestMatch}
-                className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded font-medium transition-colors"
-              >
-                Schedule Test Match
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       ) : (
+        /* Results View */
         <div className="space-y-4">
           {completedMatchEvents.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
@@ -510,40 +396,6 @@ export function Schedule() {
         </div>
       )}
 
-      {/* Full Upcoming Events */}
-      <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
-        <h3 className="text-lg font-semibold text-vct-light mb-4">
-          All Upcoming Events ({allUpcomingEvents.length})
-        </h3>
-        {allUpcomingEvents.length === 0 ? (
-          <p className="text-sm text-vct-gray/60 italic">No upcoming events scheduled</p>
-        ) : (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {allUpcomingEvents.map((event) => {
-              const style = getEventStyle(event.type);
-              return (
-                <div
-                  key={event.id}
-                  className="flex items-center justify-between p-3 rounded bg-vct-darker"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
-                      {style.label}
-                    </span>
-                    <span className="text-sm text-vct-light">
-                      {getEventDescription(event, teams)}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm text-vct-gray">{event.date}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
       {/* Match Result Modal */}
       {selectedMatch && selectedMatch.status === 'completed' && (
         <MatchResult
@@ -565,53 +417,4 @@ export function Schedule() {
       />
     </div>
   );
-}
-
-// Helper function for event styling
-function getEventStyle(type: string): { bg: string; text: string; label: string } {
-  switch (type) {
-    case 'match':
-      return { bg: 'bg-vct-red/20', text: 'text-vct-red', label: 'Match' };
-    case 'salary_payment':
-      return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Salary' };
-    case 'training_available':
-      return { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Training' };
-    case 'rest_day':
-      return { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Rest' };
-    case 'tournament_start':
-      return { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Tournament' };
-    case 'tournament_end':
-      return { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Tournament' };
-    case 'scrim_available':
-      return { bg: 'bg-orange-500/20', text: 'text-orange-400', label: 'Scrim' };
-    default:
-      return { bg: 'bg-vct-gray/20', text: 'text-vct-gray', label: 'Event' };
-  }
-}
-
-// Helper function for event descriptions
-function getEventDescription(event: CalendarEvent, teams: Record<string, { name: string }>): string {
-  const data = event.data as Record<string, unknown>;
-
-  switch (event.type) {
-    case 'match': {
-      const homeTeamName = data?.homeTeamName as string || teams[data?.homeTeamId as string]?.name || 'TBD';
-      const awayTeamName = data?.awayTeamName as string || teams[data?.awayTeamId as string]?.name || 'TBD';
-      return `${homeTeamName} vs ${awayTeamName}`;
-    }
-    case 'salary_payment':
-      return 'Monthly salaries due';
-    case 'training_available':
-      return 'Training session available';
-    case 'rest_day':
-      return 'Scheduled rest day';
-    case 'tournament_start':
-      return `${data?.tournamentName || 'Tournament'} begins`;
-    case 'tournament_end':
-      return `${data?.tournamentName || 'Tournament'} ends`;
-    case 'scrim_available':
-      return 'Scrim session available';
-    default:
-      return event.type.replace(/_/g, ' ');
-  }
 }
