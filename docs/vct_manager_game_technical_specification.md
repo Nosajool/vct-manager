@@ -27,87 +27,94 @@ Browser-based Valorant Champions Tour (VCT) management simulation game. Single-p
 src/
 ├── engine/              # Pure game logic (no React dependencies)
 │   ├── match/
-│   │   ├── MatchSimulator.ts
-│   │   ├── RoundSimulator.ts
-│   │   └── MatchStatistics.ts
+│   │   ├── MatchSimulator.ts    # Probabilistic match simulation
+│   │   └── index.ts
 │   ├── competition/
-│   │   ├── ScheduleGenerator.ts
-│   │   ├── BracketManager.ts
-│   │   ├── TournamentEngine.ts
-│   │   └── SeasonManager.ts
+│   │   ├── BracketManager.ts    # Bracket generation and advancement
+│   │   ├── TournamentEngine.ts  # Tournament creation and configuration
+│   │   ├── ScheduleGenerator.ts # VCT season schedule generation
+│   │   ├── SeasonManager.ts     # Season progression logic
+│   │   └── index.ts
 │   ├── player/
-│   │   ├── PlayerGenerator.ts
-│   │   ├── PlayerDevelopment.ts
-│   │   ├── ContractNegotiator.ts
-│   │   └── ChemistryCalculator.ts
+│   │   ├── PlayerGenerator.ts   # Procedural player generation
+│   │   ├── PlayerDevelopment.ts # Training and stat improvement
+│   │   ├── ContractNegotiator.ts # Contract negotiation logic
+│   │   └── index.ts
 │   ├── team/
-│   │   ├── TeamManager.ts
-│   │   ├── EconomyEngine.ts
-│   │   └── RosterManager.ts
+│   │   ├── TeamManager.ts       # Team generation
+│   │   ├── EconomyEngine.ts     # Financial calculations
+│   │   └── index.ts
 │   ├── calendar/
-│   │   ├── TimeProgression.ts
-│   │   └── EventScheduler.ts
-│   └── ai/
-│       ├── AIManager.ts
-│       ├── SimpleAI.ts
-│       └── CompetitiveAI.ts
+│   │   ├── TimeProgression.ts   # Date helpers and event processing
+│   │   ├── EventScheduler.ts    # Season and event scheduling
+│   │   └── index.ts
+│   └── scrim/                   # Scrim system (Phase 6)
+│       ├── ScrimEngine.ts       # Scrim simulation and improvements
+│       ├── TierTeamGenerator.ts # T2/T3 team generation
+│       └── index.ts
 │
 ├── store/               # Zustand state management
-│   ├── index.ts         # Root store configuration
+│   ├── index.ts         # Root store with save/load API
 │   ├── slices/
-│   │   ├── gameSlice.ts        # Current date, season, phase
-│   │   ├── teamSlice.ts        # Player's team state
-│   │   ├── playerSlice.ts      # All players (normalized)
-│   │   ├── competitionSlice.ts # Schedules, brackets, standings
-│   │   ├── matchSlice.ts       # Match results, history
-│   │   └── uiSlice.ts          # UI-specific state
+│   │   ├── gameSlice.ts        # Calendar, season, phase
+│   │   ├── teamSlice.ts        # Teams (normalized by ID)
+│   │   ├── playerSlice.ts      # Players (normalized by ID)
+│   │   ├── competitionSlice.ts # Tournaments and standings
+│   │   ├── matchSlice.ts       # Matches and results
+│   │   ├── scrimSlice.ts       # Tier teams and scrim history
+│   │   ├── uiSlice.ts          # UI state
+│   │   └── index.ts
 │   └── middleware/
-│       └── persistence.ts      # Auto-save logic
+│       ├── persistence.ts      # Auto-save and SaveManager
+│       └── index.ts
 │
-├── services/            # Orchestration layer
-│   ├── MatchService.ts
-│   ├── TournamentService.ts
-│   ├── ContractService.ts
-│   ├── TrainingService.ts
-│   ├── SimulationService.ts
-│   └── AIService.ts
+├── services/            # Orchestration layer (store + engine)
+│   ├── GameInitService.ts      # Game initialization
+│   ├── MatchService.ts         # Match simulation orchestration
+│   ├── TournamentService.ts    # Tournament lifecycle
+│   ├── ContractService.ts      # Player signing/release
+│   ├── TrainingService.ts      # Training orchestration
+│   ├── CalendarService.ts      # Time progression orchestration
+│   ├── EconomyService.ts       # Financial operations
+│   ├── ScrimService.ts         # Scrim orchestration
+│   └── index.ts
 │
 ├── db/                  # IndexedDB configuration
-│   ├── schema.ts
-│   └── database.ts
+│   ├── schema.ts        # Save slot types
+│   ├── database.ts      # Dexie database class
+│   └── index.ts
 │
 ├── types/               # TypeScript type definitions
-│   ├── player.ts
-│   ├── team.ts
-│   ├── match.ts
-│   ├── competition.ts
-│   ├── calendar.ts
-│   ├── economy.ts
+│   ├── player.ts        # Player, PlayerStats, Coach
+│   ├── team.ts          # Team, TeamFinances, Transaction, Loan
+│   ├── match.ts         # Match, MatchResult, MapResult
+│   ├── competition.ts   # Tournament, BracketStructure, BracketMatch
+│   ├── calendar.ts      # GameCalendar, CalendarEvent, SeasonPhase
+│   ├── economy.ts       # TrainingSession, TrainingResult, Difficulty
+│   ├── scrim.ts         # MapPoolStrength, ScrimRelationship, TierTeam
 │   └── index.ts
 │
 ├── components/          # React UI components
-│   ├── layout/
-│   ├── roster/
-│   ├── schedule/
-│   ├── match/
-│   ├── training/
-│   ├── finances/
-│   └── shared/
+│   ├── layout/          # Header, Navigation, Layout
+│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal
+│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TimeControls, TrainingModal
+│   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable
+│   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable
+│   ├── scrim/           # ScrimModal, MapPoolView, RelationshipView
+│   └── shared/          # SaveLoadModal
 │
 ├── pages/               # Top-level route components
-│   ├── Dashboard.tsx
-│   ├── Roster.tsx
-│   ├── Schedule.tsx
-│   ├── Match.tsx
-│   ├── Training.tsx
-│   └── Finances.tsx
+│   ├── Dashboard.tsx    # Main hub with calendar and activities
+│   ├── Roster.tsx       # Roster and free agent management
+│   ├── Schedule.tsx     # Match schedule and results
+│   ├── Tournament.tsx   # Tournament brackets and simulation
+│   ├── Finances.tsx     # Financial management
+│   └── index.ts
 │
 ├── utils/
-│   ├── constants.ts
-│   ├── helpers.ts
-│   └── validators.ts
+│   └── constants.ts     # Names, nationalities, team templates
 │
-└── App.tsx
+└── App.tsx              # Main app with view routing
 ```
 
 ---
@@ -464,35 +471,94 @@ export interface PlayerMapPerformance {
 
 ### Calendar System
 ```typescript
+// Note: All dates are stored as ISO strings (YYYY-MM-DD) for serialization
 export interface GameCalendar {
-  currentDate: Date;
+  currentDate: string;      // ISO date string
   currentSeason: number;
   currentPhase: SeasonPhase;
-  
+  lastSaveDate: string;     // For auto-save tracking
+
   // Event queue (pre-scheduled)
   scheduledEvents: CalendarEvent[];
 }
 
-export type SeasonPhase = 'offseason' | 'kickoff' | 'stage1' | 'stage2' | 
+export type SeasonPhase = 'offseason' | 'kickoff' | 'stage1' | 'stage2' |
                           'masters1' | 'masters2' | 'champions';
 
 export interface CalendarEvent {
   id: string;
-  date: Date;
+  date: string;           // ISO date string
   type: CalendarEventType;
-  data: any;  // Event-specific data
+  data: any;              // Event-specific data
   processed: boolean;
 }
 
-export type CalendarEventType = 
+export type CalendarEventType =
   | 'match'
   | 'tournament_start'
   | 'tournament_end'
+  | 'tournament_match'      // Individual tournament bracket matches
   | 'transfer_window_open'
   | 'transfer_window_close'
   | 'salary_payment'
   | 'sponsorship_renewal'
+  | 'training_available'    // Days when training is possible
+  | 'scrim_available'       // Days when scrims are possible
   | 'season_end';
+```
+
+### Scrim System (Phase 6)
+```typescript
+export type TeamTier = 'T1' | 'T2' | 'T3';
+
+// T2/T3 teams for scrim partners
+export interface TierTeam {
+  id: string;
+  name: string;
+  tier: TeamTier;
+  region: Region;
+  playerIds: string[];
+  avgOverall: number;
+}
+
+// Relationship with scrim partner
+export interface ScrimRelationship {
+  teamId: string;
+  tier: TeamTier;
+  relationshipScore: number;  // 0-100
+  vodLeakRisk: number;        // 0-100
+  totalScrims: number;
+  lastScrimDate: string | null;
+}
+
+// Map strength attributes (6 dimensions)
+export interface MapStrengthAttributes {
+  executes: number;       // Site takes and set plays
+  retakes: number;        // Defensive recovery
+  utility: number;        // Smoke lineups, molly spots
+  communication: number;  // Callouts, coordination
+  mapControl: number;     // Mid control, lurks
+  antiStrat: number;      // Counter-strategies
+}
+
+export interface MapStrength {
+  mapName: string;
+  attributes: MapStrengthAttributes;
+  lastPracticed: string | null;
+}
+
+export interface MapPoolStrength {
+  maps: Record<string, MapStrength>;  // mapName -> strength
+}
+
+export const SCRIM_CONSTANTS = {
+  MAX_WEEKLY_SCRIMS: 4,
+  TIER_EFFICIENCY: { T1: 1.0, T2: 0.7, T3: 0.4 },
+  BASE_RELATIONSHIP: { SAME_REGION: 50, CROSS_REGION: 20 },
+  MAP_DECAY_RATE: 0.02,       // 2% per week
+  MAX_MAP_ATTRIBUTE: 85,
+  MAX_MAP_BONUS: 0.15,        // 15% bonus in matches
+};
 ```
 
 ---
@@ -500,46 +566,47 @@ export type CalendarEventType =
 ## State Management
 
 ### Zustand Store Structure
+
+The store uses a flat structure with slices combined at the root level (simpler than nested `entities` object):
+
 ```typescript
+// GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice
+
 interface GameState {
-  // Normalized entities
-  entities: {
-    players: Record<string, Player>;
-    teams: Record<string, Team>;
-    coaches: Record<string, Coach>;
-    matches: Record<string, Match>;
-    tournaments: Record<string, Tournament>;
-  };
-  
-  // Calendar
+  // PlayerSlice - Normalized players
+  players: Record<string, Player>;
+
+  // TeamSlice - Normalized teams
+  teams: Record<string, Team>;
+  playerTeamId: string | null;
+
+  // MatchSlice - Matches and results
+  matches: Record<string, Match>;
+  results: Record<string, MatchResult>;
+
+  // CompetitionSlice - Tournaments and standings
+  tournaments: Record<string, Tournament>;
+  standings: Record<string, StandingsEntry[]>;
+
+  // ScrimSlice - Tier teams and scrim history
+  tierTeams: Record<string, TierTeam>;
+  scrimHistory: ScrimResult[];
+
+  // GameSlice - Calendar and game state
+  initialized: boolean;
+  gameStarted: boolean;
   calendar: GameCalendar;
-  
-  // Player's team
-  playerTeamId: string;
-  
-  // Match history (current season = full, older = compressed)
-  matchHistory: {
-    currentSeason: MatchResult[];
-    archivedSeasons: CompressedSeasonHistory[];
-  };
-  
-  // UI state
-  ui: {
-    selectedPlayerId?: string;
-    selectedMatchId?: string;
-    activeView: string;
-  };
+
+  // UISlice - UI-specific state
+  activeView: ActiveView;
+  selectedPlayerId: string | null;
+  selectedMatchId: string | null;
+  error: string | null;
+  isSimulating: boolean;
+  bulkSimulation: BulkSimulationProgress | null;
 }
 
-interface CompressedSeasonHistory {
-  season: number;
-  totalMatches: number;
-  teamPerformance: {
-    wins: number;
-    losses: number;
-  };
-  notableMatches: MatchResult[];  // Playoffs, important games only
-}
+type ActiveView = 'dashboard' | 'roster' | 'schedule' | 'tournament' | 'finances';
 ```
 
 ### Store Slices Pattern
@@ -887,67 +954,99 @@ jobs:
 
 ## Development Phases Checklist
 
-### Phase 0: Foundation ✓
-- [ ] Project setup (Vite + React + TypeScript)
-- [ ] Git initialization and GitHub repo creation
-- [ ] GitHub Actions workflow for auto-deployment
-- [ ] Install dependencies (Zustand, Dexie, Tailwind)
-- [ ] Directory structure
-- [ ] Core type definitions
-- [ ] Basic Zustand store with one slice
-- [ ] Dexie database setup
-- [ ] Save/load functionality
-- [ ] Create docs/ folder with ARCHITECTURE.md, CODING_STANDARDS.md
+### Phase 0: Foundation ✓ (Complete)
+- [x] Project setup (Vite + React + TypeScript)
+- [x] Git initialization and GitHub repo creation
+- [x] Install dependencies (Zustand, Dexie, Tailwind)
+- [x] Directory structure
+- [x] Core type definitions
+- [x] Zustand store with 7 slices
+- [x] Dexie database setup
+- [x] Save/load functionality with 3 manual + auto-save slots
+- [x] UI shell with navigation
 
-### Phase 1: Roster Management
-- [ ] Player generator (scrape VLR or mock data)
-- [ ] Player slice (actions + selectors)
-- [ ] Team slice
-- [ ] Roster screen UI
-- [ ] Free agent list
-- [ ] Contract negotiation system
-- [ ] Sign/release players
+### Phase 1: Roster Management ✓ (Complete)
+- [x] PlayerGenerator engine (procedural generation, 400+ players)
+- [x] Player slice (CRUD + selectors)
+- [x] Team slice (40 teams across 4 regions)
+- [x] TeamManager engine
+- [x] Roster screen UI (active/reserve, player cards)
+- [x] Free agent list with filtering/sorting
+- [x] ContractNegotiator engine (preference-based evaluation)
+- [x] ContractService (sign/release flows)
+- [x] Contract negotiation modal with acceptance probability
 
-### Phase 2: Match Simulation
-- [ ] MatchSimulator class (probabilistic)
-- [ ] Match slice
-- [ ] Simulate match flow
-- [ ] Match result display
-- [ ] Player performance stats
-- [ ] Match history view
+### Phase 2: Match Simulation ✓ (Complete)
+- [x] MatchSimulator class (probabilistic, team strength calculation)
+- [x] Match slice (matches + results)
+- [x] MatchService (simulation + side effects)
+- [x] Match result display (Scoreboard, PlayerStatsTable)
+- [x] Player performance stats (K/D/A, ACS)
+- [x] Match history view
+- [x] Form/career stats updates post-match
 
-### Phase 3: Calendar System
-- [ ] Calendar slice
-- [ ] TimeProgression engine
-- [ ] EventScheduler
-- [ ] Advance day/week UI
-- [ ] Event processing
-- [ ] Training system (basic)
+### Phase 3: Calendar System ✓ (Complete)
+- [x] GameSlice (calendar, phase, events)
+- [x] TimeProgression engine
+- [x] EventScheduler (VCT season structure)
+- [x] Time controls (Advance Day/Week/Jump to Match)
+- [x] Auto-simulation of matches on time advancement
+- [x] PlayerDevelopment engine (training system)
+- [x] TrainingService and TrainingModal
+- [x] MonthCalendar and DayDetailPanel UI components
 
-### Phase 4: Competition Structure
-- [ ] BracketManager class
-- [ ] TournamentEngine
-- [ ] Single elimination
-- [ ] Double elimination
-- [ ] Triple elimination
-- [ ] Tournament bracket UI
-- [ ] Standings/leaderboards
+### Phase 4: Competition Structure ✓ (Complete)
+- [x] BracketManager class (all bracket operations)
+- [x] TournamentEngine (tournament creation)
+- [x] ScheduleGenerator (VCT season generation)
+- [x] SeasonManager (phase transitions)
+- [x] Single elimination brackets
+- [x] Double elimination brackets
+- [x] Triple elimination brackets (VCT Kickoff format)
+- [x] Tournament bracket UI (BracketView, BracketMatch)
+- [x] Standings/leaderboards (StandingsTable)
+- [x] TournamentService (full tournament lifecycle)
 
-### Phase 5: Economy
-- [ ] EconomyEngine
-- [ ] Finance tracking
-- [ ] Salary payments
-- [ ] Prize money distribution
-- [ ] Sponsorships
-- [ ] Loan system
+### Phase 5: Economy ✓ (Complete)
+- [x] EconomyEngine (monthly processing, sponsorships, loans)
+- [x] EconomyService (orchestration)
+- [x] Finance tracking (balance, revenue, expenses)
+- [x] Salary payments (automatic on calendar events)
+- [x] Prize money distribution
+- [x] Sponsorship system (templates, requirements, contracts)
+- [x] Loan system (interest rates, terms, early payoff)
+- [x] Finances page with tabs (Overview, Transactions, Sponsorships, Loans)
 
-### Phase 6: Polish
-- [ ] Chemistry system
-- [ ] Advanced training
+### Phase 6: Scrim System ✓ (Complete)
+- [x] ScrimEngine (scrim simulation, map improvements)
+- [x] TierTeamGenerator (T2/T3 teams)
+- [x] ScrimSlice (tier teams, scrim history)
+- [x] ScrimService (scheduling, weekly limits)
+- [x] Map pool strength system (6 attributes per map)
+- [x] Relationship system (events, VOD leak risk)
+- [x] Weekly scrim limits (4 per week)
+- [x] Map decay mechanics (2% weekly)
+- [x] Match simulation map bonus (up to 15%)
+- [x] ScrimModal, MapPoolView, RelationshipView components
+
+### Phase 7: Schedule Improvements ✓ (Complete)
+- [x] Unified match-calendar architecture
+- [x] Match entities linked to calendar events
+- [x] Tournament matches shown in Schedule page
+- [x] Auto-simulation on time advancement
+- [x] "Today" badge and simulate button visibility fixes
+- [x] Timezone bug fixes (local date parsing)
+
+### Future Phases (Not Started)
+- [ ] Chemistry system as standalone engine class
 - [ ] Coach system
-- [ ] AI improvements
+- [ ] AI team improvements (smarter decisions)
+- [ ] Transfer market (team-to-team trades)
+- [ ] Round-by-round detailed simulation
+- [ ] Agent mastery system
+- [ ] Map veto system
 - [ ] Performance optimizations
-- [ ] UI/UX polish
+- [ ] Mobile responsiveness improvements
 
 ---
 
@@ -958,29 +1057,30 @@ jobs:
 | **State Management** | Zustand | Lightweight, TypeScript-friendly, easy persistence |
 | **Persistence** | IndexedDB (Dexie) | Handles large datasets, no circular reference issues |
 | **Data Structure** | Normalized by ID | Prevents circular refs, easy serialization |
+| **Store Structure** | Flat slices (not nested entities) | Simpler composition, direct access |
+| **Date Storage** | ISO strings, not Date objects | Clean serialization, timezone consistency |
 | **Time System** | Hybrid (events + rules) | Scheduled events for matches, rules for training/recovery |
-| **Training** | Instant with fatigue cap | Simple UX, prevents spam, allows strategic planning |
-| **Match Sim** | Phased approach | Start simple, enhance iteratively without breaking |
-| **Bracket System** | Declarative graph | Generate once, update immutably, easy to render |
-| **AI** | Tiered complexity | Start simple, improve over time via interface |
-| **Save System** | 3 manual + auto-save | Weekly auto-save, full current season history |
-| **Chemistry** | Pairwise + bonuses | Affects specific stats, updates after matches |
+| **Time Advancement** | Auto-simulate matches | Less clicking, matches auto-run when time passes |
+| **Training** | Instant with weekly limits (2/player) | Simple UX, prevents spam, strategic planning |
+| **Match Sim** | Probabilistic team strength | Weighted stats, chemistry/form modifiers |
+| **Bracket System** | Immutable updates | Generate once, update immutably, easy to render |
+| **Triple Elim** | 3 winners (no grand final) | Matches VCT Kickoff format exactly |
+| **AI** | Simple random (not smart yet) | Start simple, improve over time via interface |
+| **Save System** | 3 manual + auto-save (slot 0) | Auto-save every 7 in-game days |
+| **Chemistry** | Team-level only (not pairwise yet) | Simpler to implement, affects match sim |
 | **Economy** | Full system + loans | Teams can go into debt, must manage carefully |
-| **Player Negotiations** | Preference-based | Players evaluate offers based on multiple factors |
-| **Error Handling** | User-friendly recovery | Show errors, allow recovery, preserve game state |
+| **Scrim System** | Tier-based partners (T1/T2/T3) | Map practice, relationships, competitive depth |
+| **Map Pool** | 6 attributes + decay | Meaningful scrim choices, affects match sim |
+| **Player Negotiations** | Preference-based | Players evaluate salary, team quality, region |
+| **League Scheduling** | Stage 1/2 only (not during tournaments) | Matches VCT competitive calendar |
+| **Error Handling** | Graceful degradation | Show errors, preserve state, allow recovery |
 | **Loading States** | Context-dependent | Instant for single match, progress for bulk |
-| **Game Initialization** | Flexible setup | Choose starting roster, VLR data (procedural fallback) |
-| **Time Progression** | Player-controlled | Fast-forward to events, but allow off-day activities |
-| **Tournament Simulation** | Bulk option available | Can simulate entire tournament with progress tracking |
 | **Browser Support** | Modern only | Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ |
-| **Undo/Redo** | Not in Phase 1 | Add later if users request it |
-| **Difficulty** | Cosmetic initially | Affects starting budget only |
-| **Mobile** | Desktop-first | Basic responsive, optimize later |
-| **Feature Flags** | Not initially | Can add if needed for partial features |
+| **Undo/Redo** | Not implemented | Add later if users request it |
+| **Mobile** | Desktop-first | Basic responsive, needs improvement |
 | **i18n** | English only | Structured for future localization |
-| **Audio** | Not initially | Add sound effects in polish phase |
-| **Achievements** | Future feature | After core functionality complete |
-| **Social Sharing** | Season summary cards | Reddit/Discord/Twitter sharing in future |
+| **Audio** | Not implemented | Future polish phase |
+| **Achievements** | Not implemented | After core functionality complete |
 
 ## Additional Architecture Details
 
@@ -1636,3 +1736,102 @@ Ready to begin Phase 0 with Claude Code:
 7. **Implement save/load**
 
 Once foundation is solid, we can iterate quickly through the remaining phases!
+
+---
+
+## Implementation Notes (Lessons Learned)
+
+This section documents key decisions and patterns that evolved during implementation.
+
+### 1. Date Serialization
+
+**Problem**: JavaScript `Date` objects don't serialize cleanly to JSON/IndexedDB.
+
+**Solution**: All dates are stored as ISO strings (`"2026-01-15"`). When displaying dates, use `parseAsLocalDate()` helper to avoid timezone issues:
+
+```typescript
+// WRONG: Creates UTC date, displays wrong in local timezone
+const date = new Date("2026-01-15");
+
+// CORRECT: Parse as local date
+function parseAsLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+```
+
+### 2. Flat Store vs Nested Entities
+
+**Original spec** had `entities: { players, teams, ... }` nested structure.
+
+**Implementation** uses flat structure at store root level. Benefits:
+- Simpler slice composition
+- Easier direct access (`state.players` vs `state.entities.players`)
+- No breaking change to existing patterns
+
+### 3. Match-Calendar Linking
+
+**Problem**: Match data was duplicated between calendar events and match store, causing desync.
+
+**Solution**: Calendar events reference match IDs; Match entities are the source of truth:
+- Season matches: Created in store during game init
+- Tournament matches: Created when bracket matches become "ready"
+- Calendar events link via `data.matchId`
+
+### 4. VCT Season Structure
+
+Implemented authentic VCT calendar with distinct phases:
+
+| Phase | Days | Type |
+|-------|------|------|
+| Kickoff | 0-28 | Tournament (Triple Elim) |
+| Stage 1 | 35-91 | League |
+| Masters 1 | 98-112 | Tournament |
+| Stage 2 | 119-175 | League |
+| Masters 2 | 182-196 | Tournament |
+| Champions | 245-266 | Tournament |
+| Offseason | 273+ | No matches |
+
+League matches are only scheduled during Stage 1 and Stage 2 phases.
+
+### 5. Triple Elimination (VCT Kickoff)
+
+The Kickoff format has **3 winners** (Alpha, Beta, Omega) instead of a single champion:
+- Upper (Alpha) bracket: 0 losses
+- Middle (Beta) bracket: 1 loss
+- Lower (Omega) bracket: 2 losses
+
+Each bracket has its own "final" match. No grand final - the three finals produce three qualifiers for Masters.
+
+### 6. Architecture Compliance Checklist
+
+When adding new features, verify:
+
+✅ **Engine classes** - No React imports, no store access, pure functions
+✅ **Services** - Use `useGameStore.getState()` for state access, call engines
+✅ **Components** - Read from store via hooks, call services, no business logic
+✅ **Types** - All dates as strings, IDs not nested objects (normalized)
+✅ **State updates** - Immutable (spread operators), never mutate
+
+### 7. Known Technical Debt
+
+| Area | Issue | Priority |
+|------|-------|----------|
+| ChemistryCalculator | Should be extracted as standalone engine class | Low |
+| AI Teams | No smart decision-making yet (uses random/simple logic) | Medium |
+| Round Simulation | Currently simplified (no detailed round-by-round) | Low |
+| Coach System | Types defined but not implemented | Medium |
+| Mobile | Desktop-first, needs responsive improvements | Low |
+
+### 8. Testing Strategy
+
+- **Engine tests**: Pure function tests with Vitest
+- **Manual testing**: Start new game to test full flow (existing saves may have stale data)
+- **Timezone testing**: Test in different timezones for date display bugs
+
+### 9. Performance Considerations
+
+- Store selectors should be stable (avoid creating new functions each render)
+- Bulk operations should use `addPlayers()` / `addTeams()` instead of individual adds
+- Calendar events should be cleaned up after processing (`clearProcessedEvents()`)
+- Scrim history capped at 50 entries to prevent unbounded growth
