@@ -20,8 +20,6 @@ function App() {
         return <Roster />;
       case 'schedule':
         return <Schedule />;
-      case 'training':
-        return <PlaceholderPage title="Training" description="Coming in Phase 3" />;
       case 'finances':
         return <Finances />;
       case 'match':
@@ -53,5 +51,4 @@ function PlaceholderPage({ title, description }: PlaceholderPageProps) {
     </div>
   );
 }
-
 export default App;

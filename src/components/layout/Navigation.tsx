@@ -13,7 +13,6 @@ const navItems: NavItem[] = [
   { id: 'roster', label: 'Roster', icon: '👥' },
   { id: 'schedule', label: 'Schedule', icon: '📅' },
   { id: 'tournament', label: 'Tournament', icon: '🏆' },
-  { id: 'training', label: 'Training', icon: '💪' },
   { id: 'finances', label: 'Finances', icon: '💰' },
 ];
 

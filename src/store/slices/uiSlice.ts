@@ -8,7 +8,6 @@ export type ActiveView =
   | 'roster'
   | 'schedule'
   | 'match'
-  | 'training'
   | 'finances'
   | 'tournament';
 
