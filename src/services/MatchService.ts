@@ -3,6 +3,7 @@
 
 import { useGameStore } from '../store';
 import { matchSimulator } from '../engine/match';
+import { tournamentService } from './TournamentService';
 import type { Match, MatchResult, Player, Team } from '../types';
 
 export class MatchService {
@@ -47,8 +48,13 @@ export class MatchService {
     // Update result's matchId to the actual match
     result.matchId = matchId;
 
-    // Apply all updates to the store
+// Apply all updates to the store
     this.applyMatchResult(match, result, playersA, playersB);
+
+    // Advance tournament bracket if this is a tournament match
+    if (match.tournamentId) {
+      tournamentService.advanceTournament(match.tournamentId, matchId, result);
+    }
 
     return result;
   }

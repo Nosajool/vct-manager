@@ -1813,8 +1813,18 @@ When adding new features, verify:
 ✅ **Components** - Read from store via hooks, call services, no business logic
 ✅ **Types** - All dates as strings, IDs not nested objects (normalized)
 ✅ **State updates** - Immutable (spread operators), never mutate
+✅ **Cross-service integration** - When simulating a match that belongs to a tournament, the service must also advance the tournament bracket (e.g., MatchService calls TournamentService.advanceTournament for tournament matches)
 
-### 7. Known Technical Debt
+### 7. Cross-Service Integration Rules
+
+When a match is simulated, the system must ensure all related state is updated correctly:
+
+- **Regular season matches**: Update match status, team standings, player stats
+- **Tournament matches**: Additionally advance the tournament bracket by calling `TournamentService.advanceTournament()`
+
+This ensures consistency regardless of which entry point triggers the match simulation (Schedule page, Tournament page, or auto-simulation).
+
+### 8. Known Technical Debt
 
 | Area | Issue | Priority |
 |------|-------|----------|
@@ -1824,18 +1834,18 @@ When adding new features, verify:
 | Mobile | Desktop-first, needs responsive improvements | Low |
 | CalendarEvent.data | Uses `unknown` type, should use structured event data types | Medium |
 
-### 8. Testing Strategy
+### 9. Testing Strategy
 
 - **Engine tests**: Pure function tests with Vitest
 - **Manual testing**: Start new game to test full flow (existing saves may have stale data)
 - **Timezone testing**: Test in different timezones for date display bugs
 
-### 9. Performance Considerations
+### 10. Performance Considerations
 
 - Store selectors should be stable (avoid creating new functions each render)
 - Bulk operations should use `addPlayers()` / `addTeams()` instead of individual adds
 - Calendar events should be cleaned up after processing (`clearProcessedEvents()`)
-- Scrim history capped at 50 entries to prevent unbounded growth- Scrim history capped at 50 entries to prevent unbounded growth
+- Scrim history capped at 50 entries to prevent unbounded growth
 
 ## Session End Checklist
 
