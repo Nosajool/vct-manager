@@ -1,6 +1,6 @@
 // DayDetailPanel - Shows details for a selected calendar day
 
-import type { CalendarEvent, MatchEventData, SalaryPaymentEventData, TournamentEventData, RestDayEventData } from '../../types';
+import type { CalendarEvent, MatchEventData, Match } from '../../types';
 import { timeProgression } from '../../engine/calendar';
 
 interface DayDetailPanelProps {
@@ -8,8 +8,10 @@ interface DayDetailPanelProps {
   currentDate: string;
   events: CalendarEvent[];
   teams: Record<string, { id: string; name: string }>;
+  matches: Record<string, Match>;
   playerTeamId: string | null;
   onSimulateMatch: (matchId: string) => void;
+  onViewMatch: (match: Match) => void;
   onTrainingClick: () => void;
   onScrimClick: () => void;
   isSimulating: boolean;
@@ -47,8 +49,10 @@ export function DayDetailPanel({
   currentDate,
   events,
   teams,
+  matches,
   playerTeamId,
   onSimulateMatch,
+  onViewMatch,
   onTrainingClick,
   onScrimClick,
   isSimulating,
@@ -115,6 +119,10 @@ export function DayDetailPanel({
               const awayTeam = teams[awayTeamId];
               const matchId = data.matchId;
               const isTournament = !!data.tournamentId;
+              
+              // Look up match from store to get current status
+              const match = matchId ? matches[matchId] : undefined;
+              const hasResult = match?.status === 'completed' && match.result;
 
               return (
                 <div
@@ -131,7 +139,7 @@ export function DayDetailPanel({
                           Tournament
                         </span>
                       )}
-                      {event.processed && (
+                      {hasResult && (
                         <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-500/20 text-green-400">
                           Completed
                         </span>
@@ -144,17 +152,41 @@ export function DayDetailPanel({
                       <p className={`font-semibold ${homeTeamId === playerTeamId ? 'text-vct-red' : 'text-vct-light'}`}>
                         {homeTeam?.name || 'TBD'}
                       </p>
+                      {hasResult && match.result && (
+                        <p className="text-xl font-bold text-vct-light mt-1">
+                          {match.result.scoreTeamA}
+                        </p>
+                      )}
                     </div>
-                    <div className="px-3 text-vct-gray text-sm">vs</div>
+                    <div className="px-3 text-vct-gray text-sm">
+                      {hasResult && match.result 
+                        ? `${match.result.scoreTeamA}-${match.result.scoreTeamB}` 
+                        : 'vs'}
+                    </div>
                     <div className="text-center flex-1">
                       <p className={`font-semibold ${awayTeamId === playerTeamId ? 'text-vct-red' : 'text-vct-light'}`}>
                         {awayTeam?.name || 'TBD'}
                       </p>
+                      {hasResult && match.result && (
+                        <p className="text-xl font-bold text-vct-light mt-1">
+                          {match.result.scoreTeamB}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Simulate button - only if today and not processed */}
-                  {isToday && !event.processed && matchId && (
+                  {/* Show result for completed matches */}
+                  {hasResult && match && (
+                    <button
+                      onClick={() => onViewMatch(match)}
+                      className="w-full mt-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-600/30 rounded text-sm font-medium transition-colors"
+                    >
+                      View Result
+                    </button>
+                  )}
+
+                  {/* Simulate button - only if today and not processed and no result */}
+                  {isToday && !hasResult && matchId && (
                     <button
                       onClick={() => onSimulateMatch(matchId)}
                       disabled={isSimulating}
@@ -165,7 +197,7 @@ export function DayDetailPanel({
                   )}
 
                   {/* Message for future matches */}
-                  {!isToday && !isPast && !event.processed && (
+                  {!isToday && !isPast && !hasResult && (
                     <p className="mt-2 text-center text-sm text-vct-gray">
                       Advance time to this day to simulate
                     </p>

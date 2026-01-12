@@ -88,11 +88,11 @@ export function Schedule() {
   );
 
   // Handle viewing a match result
-  const handleViewMatch = (match: Match) => {
+  const handleViewMatch = useCallback((match: Match) => {
     if (match.status === 'completed') {
       setSelectedMatch(match);
     }
-  };
+  }, []);
 
   // Handle time advancement
   const handleTimeAdvanced = (result: TimeAdvanceResult) => {
@@ -300,8 +300,10 @@ export function Schedule() {
                 currentDate={calendar.currentDate}
                 events={allEvents}
                 teams={teams}
+                matches={matches}
                 playerTeamId={playerTeamId}
                 onSimulateMatch={handleSimulate}
+                onViewMatch={handleViewMatch}
                 onTrainingClick={handleTrainingClick}
                 onScrimClick={handleScrimClick}
                 isSimulating={isSimulating}
