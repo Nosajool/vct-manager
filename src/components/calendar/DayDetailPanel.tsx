@@ -1,6 +1,6 @@
 // DayDetailPanel - Shows details for a selected calendar day
 
-import type { CalendarEvent } from '../../types';
+import type { CalendarEvent, MatchEventData } from '../../types';
 import { timeProgression } from '../../engine/calendar';
 
 interface DayDetailPanelProps {
@@ -62,8 +62,13 @@ export function DayDetailPanel({
     return getDateString(e.date) === selectedDateStr;
   });
 
-  // Check if there's a match today (for disabling training)
-  const hasMatch = dayEvents.some((e) => e.type === 'match' && !e.processed);
+  // Check if there's a match for the player's team today (for disabling training/scrims)
+  const hasMatch = dayEvents.some((e) => {
+    if (e.type !== 'match' || e.processed) return false;
+    const data = e.data as MatchEventData;
+    // Only count it as "our" match if player's team is playing
+    return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+  });
 
   // Format the selected date
   const formattedDate = timeProgression.formatDate(selectedDate);

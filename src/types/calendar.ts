@@ -40,3 +40,29 @@ export interface GameCalendar {
   // Event queue (pre-scheduled)
   scheduledEvents: CalendarEvent[];
 }
+
+// Structured event data types (for type-safe access to event.data)
+export interface MatchEventData {
+  matchId: string;
+  homeTeamId: string;
+  awayTeamId: string;
+  homeTeamName?: string;
+  awayTeamName?: string;
+  tournamentId?: string;
+  isPlayerMatch?: boolean;
+}
+
+export interface TournamentEventData {
+  tournamentName: string;
+  phase: SeasonPhase;
+}
+
+export interface SalaryPaymentEventData {
+  month: number;
+  year: number;
+}
+
+export interface RestDayEventData {
+  week: number;
+  description?: string;
+}

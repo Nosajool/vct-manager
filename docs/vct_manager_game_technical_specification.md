@@ -1822,6 +1822,21 @@ When adding new features, verify:
 | Round Simulation | Currently simplified (no detailed round-by-round) | Low |
 | Coach System | Types defined but not implemented | Medium |
 | Mobile | Desktop-first, needs responsive improvements | Low |
+| CalendarEvent.data | Uses `unknown` type, should use structured event data types | Medium |
+
+### 8. Calendar Event Data Structure
+
+**Technical Debt Note**: The `CalendarEvent.data` field currently uses `unknown` type with inline object structures. This should be refactored to use structured types defined in `src/types/calendar.ts`:
+
+- `MatchEventData` - matchId, homeTeamId, awayTeamId, tournamentId, etc.
+- `TournamentEventData` - tournamentName, phase
+- `SalaryPaymentEventData` - month, year
+- `RestDayEventData` - week, description
+
+**Action Required**: 
+1. EventScheduler.ts should use these types when creating events
+2. Components should import and cast to these types instead of `Record<string, unknown>`
+3. This provides type safety and prevents runtime errors when accessing event data
 
 ### 8. Testing Strategy
 
@@ -1835,3 +1850,19 @@ When adding new features, verify:
 - Bulk operations should use `addPlayers()` / `addTeams()` instead of individual adds
 - Calendar events should be cleaned up after processing (`clearProcessedEvents()`)
 - Scrim history capped at 50 entries to prevent unbounded growth- Scrim history capped at 50 entries to prevent unbounded growth
+
+## Session End Checklist
+
+Before ending each AI coding session:
+
+```
+Please create a session summary:
+
+1. What we built today
+2. Files created/modified
+3. What's working
+4. Known issues
+5. Next steps
+
+Save to: docs/session-logs/[DATE]-[Feature].md
+```

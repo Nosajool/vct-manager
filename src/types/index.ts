@@ -42,6 +42,10 @@ export type {
   CalendarEvent,
   CalendarEventType,
   SeasonPhase,
+  MatchEventData,
+  TournamentEventData,
+  SalaryPaymentEventData,
+  RestDayEventData,
 } from './calendar';
 
 // Competition types
