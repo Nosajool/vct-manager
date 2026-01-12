@@ -6,7 +6,7 @@ import { timeProgression, eventScheduler } from '../engine/calendar';
 import { economyService } from './EconomyService';
 import { scrimService } from './ScrimService';
 import { matchService } from './MatchService';
-import type { CalendarEvent, MatchResult } from '../types';
+import type { CalendarEvent, MatchResult, MatchEventData } from '../types';
 
 /**
  * Result of advancing time
@@ -299,11 +299,7 @@ export class CalendarService {
    */
   simulateMatchEvent(event: CalendarEvent): MatchResult | null {
     const state = useGameStore.getState();
-    const data = event.data as {
-      matchId?: string;
-      homeTeamId?: string;
-      awayTeamId?: string;
-    };
+    const data = event.data as MatchEventData;
 
     if (!data.matchId) {
       console.warn('Match event has no matchId:', event.id);
@@ -437,3 +433,4 @@ export class CalendarService {
 
 // Export singleton instance
 export const calendarService = new CalendarService();
+

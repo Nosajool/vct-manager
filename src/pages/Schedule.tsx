@@ -12,7 +12,7 @@ import {
   DayDetailPanel,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
-import type { Match, CalendarEvent } from '../types';
+import type { Match, CalendarEvent, MatchEventData } from '../types';
 
 type ViewMode = 'calendar' | 'results';
 
@@ -55,10 +55,8 @@ export function Schedule() {
     return calendar.scheduledEvents
       .filter((event) => {
         if (event.type !== 'match') return false;
-        const data = event.data as Record<string, unknown>;
-        const homeTeamId = data?.homeTeamId as string;
-        const awayTeamId = data?.awayTeamId as string;
-        return homeTeamId === playerTeamId || awayTeamId === playerTeamId;
+        const data = event.data as MatchEventData;
+        return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
       })
       .sort((a, b) => b.date.localeCompare(a.date)); // Newest first for results
   }, [calendar.scheduledEvents, playerTeamId]);
@@ -323,14 +321,14 @@ export function Schedule() {
           {completedMatchEvents.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
               {completedMatchEvents.map((event) => {
-                const data = event.data as Record<string, unknown>;
-                const homeTeamId = data?.homeTeamId as string;
-                const awayTeamId = data?.awayTeamId as string;
+                const data = event.data as MatchEventData;
+                const homeTeamId = data.homeTeamId;
+                const awayTeamId = data.awayTeamId;
                 const homeTeam = teams[homeTeamId];
                 const awayTeam = teams[awayTeamId];
-                const matchId = data?.matchId as string;
+                const matchId = data.matchId;
                 const match = matchId ? matches[matchId] : null;
-                const isTournament = !!data?.tournamentId;
+                const isTournament = !!data.tournamentId;
 
                 return (
                   <div

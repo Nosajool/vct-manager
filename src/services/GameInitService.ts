@@ -7,7 +7,7 @@ import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { tournamentService } from './TournamentService';
-import type { Region } from '../types';
+import type { Region, MatchEventData } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 
 /**
@@ -98,11 +98,7 @@ export class GameInitService {
     // This ensures the Schedule page can find and simulate these matches
     const matchEvents = scheduleEvents.filter((e) => e.type === 'match');
     for (const event of matchEvents) {
-      const data = event.data as {
-        matchId: string;
-        homeTeamId: string;
-        awayTeamId: string;
-      };
+      const data = event.data as MatchEventData;
       if (data.matchId && data.homeTeamId && data.awayTeamId) {
         store.addMatch({
           id: data.matchId,

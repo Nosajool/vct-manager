@@ -1,7 +1,7 @@
 // EventScheduler - Pure engine class for generating calendar events
 // No React or store dependencies - pure functions only
 
-import type { CalendarEvent, CalendarEventType, Team, Match, SeasonPhase, MatchEventData } from '../../types';
+import type { CalendarEvent, CalendarEventType, Team, Match, SeasonPhase, MatchEventData, TournamentEventData, SalaryPaymentEventData, RestDayEventData } from '../../types';
 
 /**
  * Options for generating a season schedule

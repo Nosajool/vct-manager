@@ -66,3 +66,10 @@ export interface RestDayEventData {
   week: number;
   description?: string;
 }
+
+// Union type for all event data - used for type-safe casting
+export type CalendarEventData =
+  | MatchEventData
+  | TournamentEventData
+  | SalaryPaymentEventData
+  | RestDayEventData;

@@ -2,6 +2,7 @@
 
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
+import type { MatchEventData, TournamentEventData, SalaryPaymentEventData } from '../../types';
 
 interface CalendarViewProps {
   showFullSchedule?: boolean;
@@ -38,12 +39,11 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
 
   // Get event description
   const getEventDescription = (event: typeof upcomingEvents[0]): string => {
-    const data = event.data as Record<string, unknown>;
-
     switch (event.type) {
       case 'match': {
-        const homeTeamName = data?.homeTeamName as string || teams[data?.homeTeamId as string]?.name || 'TBD';
-        const awayTeamName = data?.awayTeamName as string || teams[data?.awayTeamId as string]?.name || 'TBD';
+        const data = event.data as MatchEventData;
+        const homeTeamName = data.homeTeamName || teams[data.homeTeamId]?.name || 'TBD';
+        const awayTeamName = data.awayTeamName || teams[data.awayTeamId]?.name || 'TBD';
         return `${homeTeamName} vs ${awayTeamName}`;
       }
       case 'salary_payment':
@@ -53,9 +53,10 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
       case 'rest_day':
         return 'Scheduled rest day';
       case 'tournament_start':
-        return `${data?.tournamentName || 'Tournament'} begins`;
-      case 'tournament_end':
-        return `${data?.tournamentName || 'Tournament'} ends`;
+      case 'tournament_end': {
+        const data = event.data as TournamentEventData;
+        return `${data.tournamentName || 'Tournament'} ${event.type === 'tournament_start' ? 'begins' : 'ends'}`;
+      }
       default:
         return event.type.replace(/_/g, ' ');
     }

@@ -1824,20 +1824,6 @@ When adding new features, verify:
 | Mobile | Desktop-first, needs responsive improvements | Low |
 | CalendarEvent.data | Uses `unknown` type, should use structured event data types | Medium |
 
-### 8. Calendar Event Data Structure
-
-**Technical Debt Note**: The `CalendarEvent.data` field currently uses `unknown` type with inline object structures. This should be refactored to use structured types defined in `src/types/calendar.ts`:
-
-- `MatchEventData` - matchId, homeTeamId, awayTeamId, tournamentId, etc.
-- `TournamentEventData` - tournamentName, phase
-- `SalaryPaymentEventData` - month, year
-- `RestDayEventData` - week, description
-
-**Action Required**: 
-1. EventScheduler.ts should use these types when creating events
-2. Components should import and cast to these types instead of `Record<string, unknown>`
-3. This provides type safety and prevents runtime errors when accessing event data
-
 ### 8. Testing Strategy
 
 - **Engine tests**: Pure function tests with Vitest
@@ -1865,4 +1851,5 @@ Please create a session summary:
 5. Next steps
 
 Save to: docs/session-logs/[DATE]-[Feature].md
-```
+```Save to: docs/session-logs/[DATE]-[Feature].md
+Please create a session summary:

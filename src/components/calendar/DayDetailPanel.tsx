@@ -1,6 +1,6 @@
 // DayDetailPanel - Shows details for a selected calendar day
 
-import type { CalendarEvent, MatchEventData } from '../../types';
+import type { CalendarEvent, MatchEventData, SalaryPaymentEventData, TournamentEventData, RestDayEventData } from '../../types';
 import { timeProgression } from '../../engine/calendar';
 
 interface DayDetailPanelProps {
@@ -105,16 +105,16 @@ export function DayDetailPanel({
         <div className="space-y-3">
           {dayEvents.map((event) => {
             const style = getEventStyle(event.type);
-            const data = event.data as Record<string, unknown>;
 
             // Render match event specially
             if (event.type === 'match') {
-              const homeTeamId = data?.homeTeamId as string;
-              const awayTeamId = data?.awayTeamId as string;
+              const data = event.data as MatchEventData;
+              const homeTeamId = data.homeTeamId;
+              const awayTeamId = data.awayTeamId;
               const homeTeam = teams[homeTeamId];
               const awayTeam = teams[awayTeamId];
-              const matchId = data?.matchId as string;
-              const isTournament = !!data?.tournamentId;
+              const matchId = data.matchId;
+              const isTournament = !!data.tournamentId;
 
               return (
                 <div

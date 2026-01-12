@@ -4,7 +4,7 @@ import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { scrimService } from '../../services';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
-import type { CalendarEvent } from '../../types';
+import type { CalendarEvent, MatchEventData } from '../../types';
 
 interface TodayActivitiesProps {
   onMatchClick?: (matchEvent: CalendarEvent) => void;
@@ -36,9 +36,9 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
 
   // Get match details
   const getMatchDetails = (event: CalendarEvent): { home: string; away: string } | null => {
-    const data = event.data as Record<string, unknown>;
-    const homeTeamName = data?.homeTeamName as string || teams[data?.homeTeamId as string]?.name;
-    const awayTeamName = data?.awayTeamName as string || teams[data?.awayTeamId as string]?.name;
+    const data = event.data as MatchEventData;
+    const homeTeamName = data.homeTeamName || teams[data.homeTeamId]?.name;
+    const awayTeamName = data.awayTeamName || teams[data.awayTeamId]?.name;
 
     if (!homeTeamName || !awayTeamName) return null;
     return { home: homeTeamName, away: awayTeamName };
