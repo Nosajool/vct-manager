@@ -13,21 +13,7 @@ import type {
 } from '../../types';
 import { MAPS, ALL_AGENTS } from '../../utils/constants';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
-
-// Stat weights for team strength calculation
-const STAT_WEIGHTS = {
-  mechanics: 0.30,
-  igl: 0.15,
-  mental: 0.15,
-  clutch: 0.10,
-  entry: 0.10,
-  support: 0.10,
-  lurking: 0.05,
-  vibes: 0.05,
-} as const;
-
-// Maximum chemistry bonus (20%)
-const MAX_CHEMISTRY_BONUS = 0.20;
+import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
 
 export class MatchSimulator {
   /**

@@ -43,6 +43,7 @@ src/
 │   ├── team/
 │   │   ├── TeamManager.ts       # Team generation
 │   │   ├── EconomyEngine.ts     # Financial calculations
+│   │   ├── ChemistryCalculator.ts # Chemistry calculations
 │   │   └── index.ts
 │   ├── calendar/
 │   │   ├── TimeProgression.ts   # Date helpers and event processing
@@ -1817,7 +1818,6 @@ When adding new features, verify:
 
 | Area | Issue | Priority |
 |------|-------|----------|
-| ChemistryCalculator | Should be extracted as standalone engine class | Low |
 | AI Teams | No smart decision-making yet (uses random/simple logic) | Medium |
 | Round Simulation | Currently simplified (no detailed round-by-round) | Low |
 | Coach System | Types defined but not implemented | Medium |
@@ -1834,4 +1834,4 @@ When adding new features, verify:
 - Store selectors should be stable (avoid creating new functions each render)
 - Bulk operations should use `addPlayers()` / `addTeams()` instead of individual adds
 - Calendar events should be cleaned up after processing (`clearProcessedEvents()`)
-- Scrim history capped at 50 entries to prevent unbounded growth
+- Scrim history capped at 50 entries to prevent unbounded growth- Scrim history capped at 50 entries to prevent unbounded growth

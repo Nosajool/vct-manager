@@ -18,3 +18,9 @@ export {
   type MonthlyFinanceResult,
   type PrizeDistribution,
 } from './EconomyEngine';
+
+export {
+  ChemistryCalculator,
+  chemistryCalculator,
+  type ChemistryUpdate,
+} from './ChemistryCalculator';
