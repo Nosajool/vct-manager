@@ -71,12 +71,11 @@ export class TrainingService {
     // Track the training session
     this.recordTrainingSession(playerId);
 
-    // Mark any training event as processed
-    const todaysActivities = state.getTodaysActivities();
-    const trainingEvent = todaysActivities.find((e) => e.type === 'training_available');
-    if (trainingEvent) {
-      state.markEventProcessed(trainingEvent.id);
-    }
+    // NOTE: We no longer mark the training event as processed because:
+    // - Each player has 2 training sessions per week (individual limit)
+    // - The event should remain visible until all players reach their limit
+    // - This is consistent with how Schedule tab allows training any day
+    // - Capacity checking is done per-player in the TrainingModal
 
     return { success: true, result };
   }

@@ -2,7 +2,7 @@
 
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
-import { scrimService } from '../../services';
+import { scrimService, trainingService } from '../../services';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
 import type { CalendarEvent, MatchEventData } from '../../types';
 
@@ -16,6 +16,7 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
   const getTodaysActivities = useGameStore((state) => state.getTodaysActivities);
   const teams = useGameStore((state) => state.teams);
   const calendar = useGameStore((state) => state.calendar);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
 
   const activities = getTodaysActivities();
 
@@ -31,8 +32,16 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
   const scrimStatus = scrimService.checkWeeklyLimit();
   const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - scrimStatus.scrimsUsed;
 
-  // Check if there's a match today (prevents training)
-  const hasMatchToday = !!matchActivity;
+  // Get team training summary for capacity indicator
+  const trainingSummary = trainingService.getTeamTrainingSummary();
+
+  // Check if there's a match for the player's team today (prevents training)
+  // Only restrict training if YOUR team is playing, not any match
+  const hasMatchToday = activities.some((a) => {
+    if (a.type !== 'match' || a.processed) return false;
+    const data = a.data as MatchEventData;
+    return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+  });
 
   // Get match details
   const getMatchDetails = (event: CalendarEvent): { home: string; away: string } | null => {
@@ -93,18 +102,31 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
         {!hasMatchToday && trainingActivity && (
           <button
             onClick={() => onTrainingClick?.()}
-            className="w-full p-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-lg transition-colors text-left"
+            disabled={trainingSummary.playersCanTrain === 0}
+            className={`w-full p-3 border rounded-lg transition-colors text-left ${
+              trainingSummary.playersCanTrain > 0
+                ? 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30'
+                : 'bg-vct-gray/5 border-vct-gray/10 opacity-60 cursor-not-allowed'
+            }`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-blue-400 font-medium">Team Training</span>
+                <span className={trainingSummary.playersCanTrain > 0 ? 'text-blue-400 font-medium' : 'text-vct-gray/60'}>
+                  Team Training
+                </span>
               </div>
-              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded font-medium">
-                Optional
+              <span className={`px-2 py-0.5 text-xs rounded font-medium ${
+                trainingSummary.playersCanTrain > 0
+                  ? 'bg-blue-500/20 text-blue-400'
+                  : 'bg-vct-gray/20 text-vct-gray'
+              }`}>
+                {trainingSummary.playersCanTrain}/{trainingSummary.totalPlayers} players can train
               </span>
             </div>
             <p className="text-xs text-vct-gray mt-1">
-              Train your players to improve their stats
+              {trainingSummary.playersCanTrain > 0
+                ? 'Train your players to improve their stats'
+                : 'All players have reached their weekly training limit'}
             </p>
           </button>
         )}

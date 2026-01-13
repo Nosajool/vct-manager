@@ -23,7 +23,6 @@ export function Schedule() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [viewDate, setViewDate] = useState<string | null>(null);
 
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -33,6 +32,9 @@ export function Schedule() {
   const tournaments = useGameStore((state) => state.tournaments);
   const calendar = useGameStore((state) => state.calendar);
   const setActiveView = useGameStore((state) => state.setActiveView);
+  
+  // Initialize selectedDate to current date
+  const [selectedDate, setSelectedDate] = useState<string>(calendar.currentDate);
 
   // Initialize viewDate to current date if not set
   const currentViewDate = viewDate || calendar.currentDate;
