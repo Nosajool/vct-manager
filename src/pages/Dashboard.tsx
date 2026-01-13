@@ -202,38 +202,6 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Phase 5 Complete Banner */}
-      <div className="bg-gradient-to-r from-green-500/10 to-vct-dark border border-green-500/30 rounded-lg p-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-            <span className="text-2xl text-green-400">5</span>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-vct-light">Phase 5: Economy System</h2>
-            <p className="text-vct-gray">
-              Financial management, sponsorships, loans, and prize distribution
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Phase Checklist */}
-      <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-vct-light mb-4">Phase 5 Checklist</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <ChecklistItem checked label="EconomyEngine core calculations" />
-          <ChecklistItem checked label="EconomyService orchestration" />
-          <ChecklistItem checked label="Monthly salary processing" />
-          <ChecklistItem checked label="Prize money distribution" />
-          <ChecklistItem checked label="Sponsorship system" />
-          <ChecklistItem checked label="Loan system" />
-          <ChecklistItem checked label="Finances page UI" />
-          <ChecklistItem checked label="Transaction history" />
-          <ChecklistItem checked label="Financial health tracking" />
-          <ChecklistItem checked label="Dashboard financial widgets" />
-        </div>
-      </div>
-
       {/* Training Modal */}
       <TrainingModal
         isOpen={trainingModalOpen}
@@ -267,17 +235,3 @@ function StatRow({
   );
 }
 
-// Checklist Item Component
-function ChecklistItem({ checked, label }: { checked: boolean; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className={`w-5 h-5 rounded flex items-center justify-center text-xs
-          ${checked ? 'bg-green-500/20 text-green-400' : 'bg-vct-gray/20 text-vct-gray'}`}
-      >
-        {checked ? '✓' : '○'}
-      </span>
-      <span className={checked ? 'text-vct-light' : 'text-vct-gray'}>{label}</span>
-    </div>
-  );
-}
