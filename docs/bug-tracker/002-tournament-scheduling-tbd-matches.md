@@ -133,5 +133,3 @@ This is different from BUG-001 (auto-simulation) - this is about match visibilit
 
 The ideal user experience:
 - Day 1: Round 1 matches with real team names
-- Day 2+: Round 2 matches become visible after Round 1 completes
-- Tournament feels like it progresses naturally over time
