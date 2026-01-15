@@ -320,9 +320,6 @@ export class ChemistryCalculator {
       }
     }
 
-    // Recalculate overall from pairs
-    const calculatedOverall = this.calculateOverallChemistry(newPairs);
-
     return {
       overall: newOverall,
       pairs: newPairs,

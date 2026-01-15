@@ -2,7 +2,7 @@
 
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
-import type { MatchEventData, TournamentEventData, SalaryPaymentEventData } from '../../types';
+import type { MatchEventData, TournamentEventData } from '../../types';
 
 interface CalendarViewProps {
   showFullSchedule?: boolean;

@@ -15,6 +15,7 @@ import { FREE_AGENTS_PER_REGION } from '../utils/constants';
  */
 export interface NewGameOptions {
   playerTeamId?: string;
+  playerTeamName?: string;
   playerRegion?: Region;
   difficulty?: 'easy' | 'normal' | 'hard';
 }
@@ -53,11 +54,22 @@ export class GameInitService {
     // Add all teams to store
     store.addTeams(teams);
 
-    // Set player's team (first team in their region by default)
-    const playerTeamId =
-      options.playerTeamId ||
-      teams.find((t) => t.region === playerRegion)?.id ||
-      teams[0].id;
+    // Set player's team (by ID, by name, or first team in region by default)
+    let playerTeamId = options.playerTeamId;
+
+    if (!playerTeamId && options.playerTeamName) {
+      // Find team by name within the selected region
+      const teamByName = teams.find(
+        (t) => t.name === options.playerTeamName && t.region === playerRegion
+      );
+      playerTeamId = teamByName?.id;
+    }
+
+    if (!playerTeamId) {
+      // Fallback to first team in region
+      playerTeamId = teams.find((t) => t.region === playerRegion)?.id || teams[0].id;
+    }
+
     store.setPlayerTeam(playerTeamId);
 
     // Apply difficulty settings to player's team

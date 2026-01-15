@@ -6,6 +6,7 @@ import { RosterList } from '../components/roster/RosterList';
 import { FreeAgentList } from '../components/roster/FreeAgentList';
 import { ContractNegotiationModal } from '../components/roster/ContractNegotiationModal';
 import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
+import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 
@@ -14,6 +15,7 @@ type RosterTab = 'myteam' | 'freeagents';
 export function Roster() {
   const [activeTab, setActiveTab] = useState<RosterTab>('myteam');
   const [isInitializing, setIsInitializing] = useState(false);
+  const [showSetupWizard, setShowSetupWizard] = useState(false);
 
   // Modal states
   const [signingPlayer, setSigningPlayer] = useState<Player | null>(null);
@@ -34,18 +36,25 @@ export function Roster() {
       )
     : [];
 
-  // Handle game initialization
-  const handleStartGame = async () => {
+  // Handle setup wizard completion
+  const handleSetupComplete = async (options: SetupOptions) => {
+    setShowSetupWizard(false);
     setIsInitializing(true);
     try {
       await gameInitService.initializeNewGame({
-        playerRegion: 'Americas',
-        difficulty: 'normal',
+        playerRegion: options.region,
+        playerTeamName: options.teamName,
+        difficulty: options.difficulty,
       });
     } catch (error) {
       console.error('Failed to initialize game:', error);
     }
     setIsInitializing(false);
+  };
+
+  // Handle setup wizard cancel
+  const handleSetupCancel = () => {
+    setShowSetupWizard(false);
   };
 
   // Open contract negotiation modal for signing
@@ -73,30 +82,39 @@ export function Roster() {
     setReleasingPlayer(null);
   };
 
-  // Not started yet - show start game UI
+  // Not started yet - show start game UI or setup wizard
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <div className="w-24 h-24 bg-vct-darker border border-vct-gray/30 rounded-lg flex items-center justify-center mb-6">
-          <span className="text-5xl">🎮</span>
+      <>
+        {showSetupWizard && (
+          <SetupWizard
+            onComplete={handleSetupComplete}
+            onCancel={handleSetupCancel}
+          />
+        )}
+
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-24 h-24 bg-vct-darker border border-vct-gray/30 rounded-lg flex items-center justify-center mb-6">
+            <span className="text-5xl">🎮</span>
+          </div>
+          <h2 className="text-2xl font-bold text-vct-light mb-2">
+            Start Your Career
+          </h2>
+          <p className="text-vct-gray mb-6 text-center max-w-md">
+            Choose your region and team to begin your VCT management journey.
+            Manage one of 48 teams across all VCT regions.
+          </p>
+          <button
+            onClick={() => setShowSetupWizard(true)}
+            disabled={isInitializing}
+            className="px-8 py-3 bg-vct-red text-white font-bold rounded-lg
+                       hover:bg-vct-red/80 disabled:opacity-50 disabled:cursor-not-allowed
+                       transition-colors"
+          >
+            {isInitializing ? 'Generating...' : 'Start New Game'}
+          </button>
         </div>
-        <h2 className="text-2xl font-bold text-vct-light mb-2">
-          Start Your Career
-        </h2>
-        <p className="text-vct-gray mb-6 text-center max-w-md">
-          Initialize the game to generate teams and players. This will create
-          40 teams with 400+ players across all VCT regions.
-        </p>
-        <button
-          onClick={handleStartGame}
-          disabled={isInitializing}
-          className="px-8 py-3 bg-vct-red text-white font-bold rounded-lg
-                     hover:bg-vct-red/80 disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-colors"
-        >
-          {isInitializing ? 'Generating...' : 'Start New Game'}
-        </button>
-      </div>
+      </>
     );
   }
 

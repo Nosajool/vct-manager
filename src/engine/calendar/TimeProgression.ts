@@ -1,7 +1,7 @@
 // TimeProgression - Pure engine class for time advancement logic
 // No React or store dependencies - pure functions only
 
-import type { CalendarEvent, CalendarEventType, MatchEventData, TournamentEventData, SalaryPaymentEventData, RestDayEventData } from '../../types';
+import type { CalendarEvent, CalendarEventType } from '../../types';
 
 /**
  * Available activity for a given day
