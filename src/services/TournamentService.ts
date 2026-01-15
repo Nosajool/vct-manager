@@ -116,6 +116,8 @@ export class TournamentService {
     const updatedTournament = state.tournaments[tournamentId];
     if (updatedTournament) {
       this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
+      // Schedule and create calendar events for newly-ready matches
+      this.scheduleNewlyReadyMatches(updatedTournament);
     }
 
     // Check if tournament is complete
@@ -490,13 +492,14 @@ export class TournamentService {
 
   /**
    * Schedule tournament matches on the calendar
+   * Only schedules matches that are 'ready' (have both teams known)
    */
   private scheduleTournamentMatches(tournament: Tournament): void {
     const startDate = new Date(tournament.startDate);
     let currentDate = new Date(startDate);
 
-    // Schedule matches across the tournament duration
-    const totalMatches = this.countTotalMatches(tournament.bracket);
+    // Count only ready matches for scheduling
+    const readyMatches = this.countReadyMatches(tournament.bracket);
     const daysAvailable = Math.max(
       1,
       Math.floor(
@@ -504,14 +507,15 @@ export class TournamentService {
           (1000 * 60 * 60 * 24)
       )
     );
-    const matchesPerDay = Math.ceil(totalMatches / daysAvailable);
+    const matchesPerDay = Math.max(1, Math.ceil(readyMatches / daysAvailable));
 
     let matchCount = 0;
 
-    // Process upper bracket
+    // Process upper bracket - only schedule ready matches
     for (const round of tournament.bracket.upper) {
       for (const match of round.matches) {
-        if (match.status === 'completed') continue;
+        // Only schedule ready matches with known teams
+        if (match.status !== 'ready') continue;
 
         match.scheduledDate = currentDate.toISOString();
         matchCount++;
@@ -522,11 +526,11 @@ export class TournamentService {
       }
     }
 
-    // Process lower bracket if exists
+    // Process lower bracket if exists - only schedule ready matches
     if (tournament.bracket.lower) {
       for (const round of tournament.bracket.lower) {
         for (const match of round.matches) {
-          if (match.status === 'completed') continue;
+          if (match.status !== 'ready') continue;
 
           match.scheduledDate = currentDate.toISOString();
           matchCount++;
@@ -538,8 +542,24 @@ export class TournamentService {
       }
     }
 
-    // Schedule grand final
-    if (tournament.bracket.grandfinal) {
+    // Process middle bracket if exists - only schedule ready matches
+    if (tournament.bracket.middle) {
+      for (const round of tournament.bracket.middle) {
+        for (const match of round.matches) {
+          if (match.status !== 'ready') continue;
+
+          match.scheduledDate = currentDate.toISOString();
+          matchCount++;
+
+          if (matchCount % matchesPerDay === 0) {
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+    }
+
+    // Schedule grand final only if ready
+    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
       tournament.bracket.grandfinal.scheduledDate = new Date(
         tournament.endDate
       ).toISOString();
@@ -547,7 +567,8 @@ export class TournamentService {
   }
 
   /**
-   * Add tournament events to calendar (tournament markers + all match events)
+   * Add tournament events to calendar (tournament markers + ready match events only)
+   * Only creates match events for matches that are 'ready' (have both teams known)
    */
   private addTournamentCalendarEvents(tournament: Tournament): void {
     const state = useGameStore.getState();
@@ -570,12 +591,15 @@ export class TournamentService {
       },
     ];
 
-    // Add calendar events for all bracket matches
+    // Add calendar events only for ready bracket matches
     const addMatchEvents = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
-        // Get team names (may be TBD for pending matches)
-        const teamA = bracketMatch.teamAId ? state.teams[bracketMatch.teamAId] : null;
-        const teamB = bracketMatch.teamBId ? state.teams[bracketMatch.teamBId] : null;
+        // Only create events for ready matches with known teams
+        if (bracketMatch.status !== 'ready') continue;
+        if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
+
+        const teamA = state.teams[bracketMatch.teamAId];
+        const teamB = state.teams[bracketMatch.teamBId];
 
         events.push({
           id: `event-match-${bracketMatch.matchId}`,
@@ -585,8 +609,8 @@ export class TournamentService {
             matchId: bracketMatch.matchId,
             homeTeamId: bracketMatch.teamAId,
             awayTeamId: bracketMatch.teamBId,
-            homeTeamName: teamA?.name || 'TBD',
-            awayTeamName: teamB?.name || 'TBD',
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
             tournamentId: tournament.id,
             tournamentName: tournament.name,
           },
@@ -613,22 +637,151 @@ export class TournamentService {
       }
     }
 
-    // Add grand final
-    if (tournament.bracket.grandfinal) {
+    // Add grand final only if ready
+    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
       const gf = tournament.bracket.grandfinal;
-      const teamA = gf.teamAId ? state.teams[gf.teamAId] : null;
-      const teamB = gf.teamBId ? state.teams[gf.teamBId] : null;
+      if (gf.teamAId && gf.teamBId) {
+        const teamA = state.teams[gf.teamAId];
+        const teamB = state.teams[gf.teamBId];
+
+        events.push({
+          id: `event-match-${gf.matchId}`,
+          type: 'match',
+          date: gf.scheduledDate || tournament.endDate,
+          data: {
+            matchId: gf.matchId,
+            homeTeamId: gf.teamAId,
+            awayTeamId: gf.teamBId,
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
+            tournamentId: tournament.id,
+            tournamentName: tournament.name,
+            isGrandFinal: true,
+          },
+          processed: false,
+          required: true,
+        });
+      }
+    }
+
+    state.addCalendarEvents(events);
+  }
+
+  /**
+   * Count ready matches in a bracket (matches with status 'ready')
+   */
+  private countReadyMatches(bracket: {
+    upper: { matches: BracketMatch[] }[];
+    lower?: { matches: BracketMatch[] }[];
+    middle?: { matches: BracketMatch[] }[];
+    grandfinal?: BracketMatch;
+  }): number {
+    let count = 0;
+
+    for (const round of bracket.upper) {
+      count += round.matches.filter(m => m.status === 'ready').length;
+    }
+
+    if (bracket.lower) {
+      for (const round of bracket.lower) {
+        count += round.matches.filter(m => m.status === 'ready').length;
+      }
+    }
+
+    if (bracket.middle) {
+      for (const round of bracket.middle) {
+        count += round.matches.filter(m => m.status === 'ready').length;
+      }
+    }
+
+    if (bracket.grandfinal && bracket.grandfinal.status === 'ready') {
+      count += 1;
+    }
+
+    return count;
+  }
+
+  /**
+   * Schedule and create calendar events for newly-ready matches after a bracket match is completed
+   * This is called after advanceTournament() updates the bracket
+   */
+  private scheduleNewlyReadyMatches(tournament: Tournament): void {
+    const state = useGameStore.getState();
+    const currentDate = state.calendar.currentDate;
+    const events: CalendarEvent[] = [];
+
+    // Helper to process matches in a round
+    const processMatches = (matches: BracketMatch[]) => {
+      for (const bracketMatch of matches) {
+        // Only process ready matches that don't have a scheduled date yet
+        if (bracketMatch.status !== 'ready') continue;
+        if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
+        if (bracketMatch.scheduledDate) continue; // Already scheduled
+
+        // Schedule for the next day after current date
+        const nextDay = new Date(currentDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        bracketMatch.scheduledDate = nextDay.toISOString();
+
+        // Get team names
+        const teamA = state.teams[bracketMatch.teamAId];
+        const teamB = state.teams[bracketMatch.teamBId];
+
+        // Create calendar event
+        events.push({
+          id: `event-match-${bracketMatch.matchId}`,
+          type: 'match',
+          date: bracketMatch.scheduledDate,
+          data: {
+            matchId: bracketMatch.matchId,
+            homeTeamId: bracketMatch.teamAId,
+            awayTeamId: bracketMatch.teamBId,
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
+            tournamentId: tournament.id,
+            tournamentName: tournament.name,
+          },
+          processed: false,
+          required: true,
+        });
+      }
+    };
+
+    // Process all bracket rounds
+    for (const round of tournament.bracket.upper) {
+      processMatches(round.matches);
+    }
+
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        processMatches(round.matches);
+      }
+    }
+
+    if (tournament.bracket.middle) {
+      for (const round of tournament.bracket.middle) {
+        processMatches(round.matches);
+      }
+    }
+
+    // Handle grand final
+    const gf = tournament.bracket.grandfinal;
+    if (gf && gf.status === 'ready' && gf.teamAId && gf.teamBId && !gf.scheduledDate) {
+      gf.scheduledDate = new Date(tournament.endDate).toISOString();
+
+      const teamA = state.teams[gf.teamAId];
+      const teamB = state.teams[gf.teamBId];
 
       events.push({
         id: `event-match-${gf.matchId}`,
         type: 'match',
-        date: gf.scheduledDate || tournament.endDate,
+        date: gf.scheduledDate,
         data: {
           matchId: gf.matchId,
           homeTeamId: gf.teamAId,
           awayTeamId: gf.teamBId,
-          homeTeamName: teamA?.name || 'TBD',
-          awayTeamName: teamB?.name || 'TBD',
+          homeTeamName: teamA?.name || 'Unknown',
+          awayTeamName: teamB?.name || 'Unknown',
           tournamentId: tournament.id,
           tournamentName: tournament.name,
           isGrandFinal: true,
@@ -638,41 +791,11 @@ export class TournamentService {
       });
     }
 
-    state.addCalendarEvents(events);
-  }
-
-  /**
-   * Count total matches in a bracket
-   */
-  private countTotalMatches(bracket: {
-    upper: { matches: unknown[] }[];
-    lower?: { matches: unknown[] }[];
-    middle?: { matches: unknown[] }[];
-    grandfinal?: unknown;
-  }): number {
-    let count = 0;
-
-    for (const round of bracket.upper) {
-      count += round.matches.length;
+    // Update tournament bracket with new scheduled dates
+    if (events.length > 0) {
+      state.updateBracket(tournament.id, tournament.bracket);
+      state.addCalendarEvents(events);
     }
-
-    if (bracket.lower) {
-      for (const round of bracket.lower) {
-        count += round.matches.length;
-      }
-    }
-
-    if (bracket.middle) {
-      for (const round of bracket.middle) {
-        count += round.matches.length;
-      }
-    }
-
-    if (bracket.grandfinal) {
-      count += 1;
-    }
-
-    return count;
   }
 
   /**

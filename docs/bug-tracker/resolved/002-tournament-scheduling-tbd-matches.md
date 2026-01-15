@@ -1,8 +1,10 @@
 # BUG-002: Tournament scheduling shows TBD vs. TBD matches on first day
 
 **Priority:** High
-**Status:** Open
+**Status:** Resolved
 **Component:** TournamentService / ScheduleGenerator
+**Resolution Date:** 2026-01-15
+**Session Log:** [2026-01-15-bugfix-tournament-scheduling-tbd-matches.md](../session-logs/2026-01-15-bugfix-tournament-scheduling-tbd-matches.md)
 
 ---
 

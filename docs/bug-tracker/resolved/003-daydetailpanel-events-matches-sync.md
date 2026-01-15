@@ -41,5 +41,11 @@ The issue stems from the architectural decision to create calendar events immedi
 ## Priority
 Medium - Affects user experience when viewing tournament schedules but doesn't break core functionality.
 
+## Status
+**Resolved** - 2026-01-15
+
+## Resolution
+Fixed as part of the tournament scheduling overhaul. Calendar events are now only created for "ready" matches that have corresponding Match entities. See [session log](../session-logs/2026-01-15-bugfix-tournament-scheduling-tbd-matches.md) for details.
+
 ## Notes
 This issue was identified during architecture review when examining the tournament bracket system integration with the calendar system.

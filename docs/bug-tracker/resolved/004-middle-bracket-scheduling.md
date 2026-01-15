@@ -39,6 +39,12 @@ The ScheduleGenerator creates all tournament events upfront without considering 
 ## Priority
 Medium - Creates unrealistic tournament scheduling but doesn't break core functionality.
 
+## Status
+**Resolved** - 2026-01-15
+
+## Resolution
+Fixed as part of the tournament scheduling overhaul. Middle bracket matches are now scheduled dynamically when their prerequisite matches complete, rather than upfront at tournament creation. See [session log](../session-logs/2026-01-15-bugfix-tournament-scheduling-tbd-matches.md) for details.
+
 ## Notes
 This issue was identified when reviewing the tournament JSON data showing middle bracket matches scheduled for the same day as upper bracket matches, which is logically impossible in a proper bracket tournament format.
 
