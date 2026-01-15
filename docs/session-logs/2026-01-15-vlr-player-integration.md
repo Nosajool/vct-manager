@@ -151,6 +151,41 @@ gameInitService.initializeNewGame({ useVlrData: false });
 
 ---
 
+---
+
+## Additional Features Added
+
+### All Teams View (Roster Page)
+
+Added ability to view all teams' rosters, not just the player's team:
+
+- **New tab**: "All Teams" in the Roster page
+- **Features**:
+  - Filter by region
+  - Expandable team cards showing full roster
+  - Team overall rating display
+  - Click players to view details
+
+**Files created:**
+- `src/components/roster/AllTeamsView.tsx`
+
+**Files modified:**
+- `src/pages/Roster.tsx` - Added third tab
+- `src/components/roster/index.ts` - Export new component
+
+### VLR-Based Free Agents
+
+Free agents now come from real VLR data (T2/T3 team players) instead of procedural generation:
+
+- Players from unmatched VLR orgs (not in VCT_TEAMS) become free agents
+- Top 25 players per region by rating
+- Real names and performance-based stats
+
+**Files modified:**
+- `src/services/GameInitService.ts` - `generateWithVlrData()` now returns `vlrFreeAgents`
+
+---
+
 ## Related Files
 
 - Spec: `docs/feature-backlog/vlr-player-integration.md`

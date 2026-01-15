@@ -44,28 +44,30 @@ export class GameInitService {
 
     let teams: ReturnType<typeof teamManager.generateAllTeams>['teams'];
     let players: Player[];
+    let freeAgents: Player[];
 
     if (useVlrData && VLR_SNAPSHOT_META.totalPlayers > 0) {
-      // Use VLR data for roster players
+      // Use VLR data for roster players and free agents
       console.log(`Using VLR data (${VLR_SNAPSHOT_META.totalPlayers} players from ${VLR_SNAPSHOT_META.fetchedAt})`);
       const result = this.generateWithVlrData();
       teams = result.teams;
       players = result.players;
-      console.log(`VLR integration: ${result.vlrPlayersUsed} real players, ${result.generatedPlayers} generated to fill gaps`);
+      freeAgents = result.vlrFreeAgents;
+      console.log(`VLR integration: ${result.vlrPlayersUsed} roster players, ${result.vlrFreeAgents.length} free agents, ${result.generatedPlayers} generated to fill gaps`);
     } else {
       // Fallback to full procedural generation
       console.log('Generating teams and players procedurally...');
       const generated = teamManager.generateAllTeams({ generatePlayers: true });
       teams = generated.teams;
       players = generated.players;
-    }
 
-    // Generate free agents for each region (always procedural)
-    console.log('Generating free agents...');
-    const regions: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
-    const freeAgents = regions.flatMap((region) =>
-      playerGenerator.generateFreeAgents(FREE_AGENTS_PER_REGION, region)
-    );
+      // Generate free agents procedurally
+      console.log('Generating free agents...');
+      const regions: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
+      freeAgents = regions.flatMap((region) =>
+        playerGenerator.generateFreeAgents(FREE_AGENTS_PER_REGION, region)
+      );
+    }
 
     // Combine all players
     const allPlayers = [...players, ...freeAgents];
@@ -186,10 +188,12 @@ export class GameInitService {
   /**
    * Generate teams with VLR player data
    * Falls back to procedural generation for unfilled roster slots
+   * Also returns unmatched VLR players to be used as free agents
    */
   private generateWithVlrData(): {
     teams: ReturnType<typeof teamManager.generateAllTeams>['teams'];
     players: Player[];
+    vlrFreeAgents: Player[];
     vlrPlayersUsed: number;
     generatedPlayers: number;
   } {
@@ -284,7 +288,32 @@ export class GameInitService {
       allPlayers.push(...rosterPlayers);
     }
 
-    return { teams, players: allPlayers, vlrPlayersUsed, generatedPlayers };
+    // Create free agents from unmatched VLR players (T2/T3 teams)
+    const vlrFreeAgents: Player[] = [];
+    const unmatchedPlayers = vlrData.players
+      .filter((p) => p.teamName === null)
+      .sort((a, b) => b.vlrRating - a.vlrRating); // Best players first
+
+    // Take top players from each region as free agents
+    const freeAgentsPerRegion = 25; // Limit per region to keep pool manageable
+    const regionCounts: Record<Region, number> = {
+      Americas: 0,
+      EMEA: 0,
+      Pacific: 0,
+      China: 0,
+    };
+
+    for (const vlrPlayer of unmatchedPlayers) {
+      if (regionCounts[vlrPlayer.region] >= freeAgentsPerRegion) continue;
+
+      const player = createPlayerFromVlr(vlrPlayer, null); // null teamId = free agent
+      vlrFreeAgents.push(player);
+      regionCounts[vlrPlayer.region]++;
+    }
+
+    console.log(`VLR free agents: ${vlrFreeAgents.length} from unmatched orgs`);
+
+    return { teams, players: allPlayers, vlrFreeAgents, vlrPlayersUsed, generatedPlayers };
   }
 
   /**

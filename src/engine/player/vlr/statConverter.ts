@@ -29,12 +29,25 @@ function parseVlrStat(value: string | undefined): number {
   return value.includes('%') ? num / 100 : num;
 }
 
-/** Normalize a value to 0-100 scale based on observed ranges */
+/**
+ * Normalize a VLR stat to game stat range.
+ *
+ * VLR players are all professionals, so they should map to the upper
+ * portion of the game's 0-100 scale:
+ * - Min VLR stat → 55 (lowest tier pro)
+ * - Median VLR stat → 70 (average pro)
+ * - Max VLR stat → 95 (elite pro)
+ */
 function normalize(value: number, range: { min: number; max: number }): number {
   const clamped = Math.max(range.min, Math.min(range.max, value));
-  const normalized = ((clamped - range.min) / (range.max - range.min)) * 100;
-  // Game uses ~40-99 range for realistic stat distribution
-  return Math.round(Math.max(40, Math.min(99, normalized)));
+  const normalized01 = (clamped - range.min) / (range.max - range.min); // 0 to 1
+
+  // Map to pro range: 55-95
+  const PRO_MIN = 55;
+  const PRO_MAX = 95;
+  const result = PRO_MIN + normalized01 * (PRO_MAX - PRO_MIN);
+
+  return Math.round(result);
 }
 
 /** Weighted combination of normalized stats */

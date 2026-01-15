@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useGameStore } from '../store';
 import { RosterList } from '../components/roster/RosterList';
+import { AllTeamsView } from '../components/roster/AllTeamsView';
 import { FreeAgentList } from '../components/roster/FreeAgentList';
 import { ContractNegotiationModal } from '../components/roster/ContractNegotiationModal';
 import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
@@ -10,7 +11,7 @@ import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 
-type RosterTab = 'myteam' | 'freeagents';
+type RosterTab = 'myteam' | 'allteams' | 'freeagents';
 
 export function Roster() {
   const [activeTab, setActiveTab] = useState<RosterTab>('myteam');
@@ -154,6 +155,16 @@ export function Roster() {
           My Team
         </button>
         <button
+          onClick={() => setActiveTab('allteams')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'allteams'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          All Teams
+        </button>
+        <button
           onClick={() => setActiveTab('freeagents')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
             activeTab === 'freeagents'
@@ -172,6 +183,8 @@ export function Roster() {
           players={teamPlayers}
           onReleasePlayer={handleReleasePlayer}
         />
+      ) : activeTab === 'allteams' ? (
+        <AllTeamsView />
       ) : activeTab === 'freeagents' ? (
         <FreeAgentList players={allPlayers} onSignPlayer={handleSignPlayer} />
       ) : (
