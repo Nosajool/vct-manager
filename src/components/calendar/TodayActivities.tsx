@@ -20,8 +20,14 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
 
   const activities = getTodaysActivities();
 
-  // Separate activities by type
-  const matchActivity = activities.find((a) => a.type === 'match');
+  // Find match activity for PLAYER'S TEAM only (not all matches today)
+  const matchActivity = activities.find((a) => {
+    if (a.type !== 'match') return false;
+    const data = a.data as MatchEventData;
+    return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+  });
+
+  // Separate other activities by type
   const trainingActivity = activities.find((a) => a.type === 'training_available');
   const scrimActivity = activities.find((a) => a.type === 'scrim_available');
   const otherActivities = activities.filter(

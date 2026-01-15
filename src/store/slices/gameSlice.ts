@@ -2,7 +2,7 @@
 // Handles calendar, season progression, and game metadata
 
 import type { StateCreator } from 'zustand';
-import type { GameCalendar, SeasonPhase, CalendarEvent, CalendarEventType } from '../../types';
+import type { GameCalendar, SeasonPhase, CalendarEvent, CalendarEventType, MatchEventData } from '../../types';
 
 export interface GameSlice {
   // Game initialization
@@ -240,16 +240,24 @@ export const createGameSlice: StateCreator<
   },
 
   getNextMatchEvent: () => {
-    const { calendar } = get();
+    const state = get();
+    const { calendar } = state;
     const currentDate = new Date(calendar.currentDate);
+    // Access playerTeamId from combined state (TeamSlice)
+    const playerTeamId = (state as unknown as { playerTeamId: string | null }).playerTeamId;
 
     return calendar.scheduledEvents
-      .filter(
-        (event) =>
-          !event.processed &&
-          event.type === 'match' &&
-          new Date(event.date) >= currentDate
-      )
+      .filter((event) => {
+        if (event.processed || event.type !== 'match') return false;
+        if (new Date(event.date) < currentDate) return false;
+
+        // Only return matches for the player's team
+        if (playerTeamId) {
+          const data = event.data as MatchEventData;
+          return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+        }
+        return true;
+      })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
   },
 

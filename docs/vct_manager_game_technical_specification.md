@@ -1061,7 +1061,8 @@ jobs:
 | **Store Structure** | Flat slices (not nested entities) | Simpler composition, direct access |
 | **Date Storage** | ISO strings, not Date objects | Clean serialization, timezone consistency |
 | **Time System** | Hybrid (events + rules) | Scheduled events for matches, rules for training/recovery |
-| **Time Advancement** | Auto-simulate matches | Less clicking, matches auto-run when time passes |
+| **Time Advancement** | Simulate-then-advance | Simulates TODAY's events before advancing; allows match-day prep |
+| **Match Display** | Player team only | UI only shows player's team matches; reduces noise |
 | **Training** | Instant with weekly limits (2/player) | Simple UX, prevents spam, strategic planning |
 | **Match Sim** | Probabilistic team strength | Weighted stats, chemistry/form modifiers |
 | **Bracket System** | Immutable updates | Generate once, update immutably, easy to render |
@@ -1779,6 +1780,8 @@ function parseAsLocalDate(dateStr: string): Date {
 - Tournament matches: Created when bracket matches become "ready"
 - Calendar events link via `data.matchId`
 
+**Important**: Calendar events and Match entities are only created for "ready" bracket matches (matches where both teams are known). Pending matches do not appear on the calendar until their prerequisite matches complete.
+
 ### 4. VCT Season Structure
 
 Implemented authentic VCT calendar with distinct phases:
@@ -1824,7 +1827,33 @@ When a match is simulated, the system must ensure all related state is updated c
 
 This ensures consistency regardless of which entry point triggers the match simulation (Schedule page, Tournament page, or auto-simulation).
 
-### 8. Known Technical Debt
+### 8. Tournament Scheduling (Dynamic)
+
+Tournament matches are scheduled dynamically, not all at once:
+
+**Tournament Creation Flow:**
+1. Bracket structure created with all matches (most start as `status: 'pending'`)
+2. Round 1 matches have `status: 'ready'` (teams known from seeding)
+3. Only ready matches get: scheduled dates, calendar events, Match entities
+
+**Match Completion Flow:**
+1. Match simulated → result recorded
+2. `advanceTournament()` updates bracket (propagates winner/loser to next matches)
+3. `createMatchEntitiesForReadyBracketMatches()` creates Match entities for newly-ready matches
+4. `scheduleNewlyReadyMatches()` assigns dates and creates calendar events for newly-ready matches
+
+**Key Methods in TournamentService:**
+- `scheduleTournamentMatches()` - Only schedules `status === 'ready'` matches
+- `addTournamentCalendarEvents()` - Only creates events for ready matches with known teams
+- `scheduleNewlyReadyMatches()` - Dynamically schedules newly-ready matches after bracket advances
+- `countReadyMatches()` - Helper to count ready matches for scheduling calculations
+
+This approach:
+- Prevents "TBD vs TBD" matches from appearing on the calendar
+- Ensures calendar events always have corresponding Match entities
+- Matches real VCT tournament flow (next day's matches announced after current round)
+
+### 9. Known Technical Debt
 
 | Area | Issue | Priority |
 |------|-------|----------|
@@ -1834,18 +1863,70 @@ This ensures consistency regardless of which entry point triggers the match simu
 | Mobile | Desktop-first, needs responsive improvements | Low |
 | CalendarEvent.data | Uses `unknown` type, should use structured event data types | Medium |
 
-### 9. Testing Strategy
+### 10. Testing Strategy
 
 - **Engine tests**: Pure function tests with Vitest
 - **Manual testing**: Start new game to test full flow (existing saves may have stale data)
 - **Timezone testing**: Test in different timezones for date display bugs
 
-### 10. Performance Considerations
+### 11. Performance Considerations
 
 - Store selectors should be stable (avoid creating new functions each render)
 - Bulk operations should use `addPlayers()` / `addTeams()` instead of individual adds
 - Calendar events should be cleaned up after processing (`clearProcessedEvents()`)
 - Scrim history capped at 50 entries to prevent unbounded growth
+
+### 12. Game Loop & Time Advancement
+
+The game follows a **"Review → Prepare → Commit"** daily loop:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  START OF DAY X                                         │
+│  ├── View today's activities (match? training? scrim?)  │
+│  ├── Make roster changes                                │
+│  ├── Train players (if no match)                        │
+│  ├── Schedule scrims (if no match)                      │
+│  └── Click "Advance Day"                                │
+│        ├── Simulates TODAY's events (Day X)             │
+│        └── Moves to START OF DAY X+1                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Key principle**: Matches are simulated BEFORE advancing, not after landing on a new day. This allows match-day preparation.
+
+**Time Control Behavior:**
+
+| Action | What Happens |
+|--------|--------------|
+| `advanceDay()` | Simulate TODAY's events → Advance to tomorrow |
+| `advanceWeek()` | Simulate 7 days (today + 6) → Advance to day 8 |
+| `advanceToNextMatch()` | Simulate days BEFORE match → Land at START of match day (no sim) |
+
+**Player Team Filtering:**
+
+All match-related UI only shows the player's team's matches:
+- `getNextMatchEvent()` returns player's team's next match only
+- `TodayActivities` shows "MATCH DAY" only when player's team plays
+- `TimeControls` shows "Play Match" button only for player's matches
+
+This is implemented by checking `MatchEventData.homeTeamId` or `awayTeamId` against `playerTeamId`.
+
+### 13. Cross-Slice State Access Pattern
+
+When a store slice needs data from another slice (e.g., `gameSlice` needs `playerTeamId` from `teamSlice`), use type assertion since `get()` returns the full combined state at runtime:
+
+```typescript
+// In gameSlice.ts
+getNextMatchEvent: () => {
+  const state = get();
+  // Access playerTeamId from TeamSlice via type assertion
+  const playerTeamId = (state as unknown as { playerTeamId: string | null }).playerTeamId;
+  // ... filter logic
+}
+```
+
+This pattern is safe because Zustand combines all slices into one store.
 
 ## Session End Checklist
 

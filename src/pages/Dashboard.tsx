@@ -48,10 +48,12 @@ export function Dashboard() {
     setTimeout(() => setLastAdvanceResult(null), 3000);
   };
 
-  // Handle match reached
-  const handleMatchReached = (matchEvent: CalendarEvent) => {
-    console.log('Match reached:', matchEvent);
-    // Match will be shown in TodayActivities
+  // Handle match simulated - notify user of results
+  const handleMatchSimulated = (result: TimeAdvanceResult) => {
+    if (result.simulatedMatches.length > 0) {
+      console.log('Matches simulated:', result.simulatedMatches.length);
+      // Could show a notification or update UI here
+    }
   };
 
   // Handle match simulation from TodayActivities
@@ -166,7 +168,7 @@ export function Dashboard() {
           {/* Time Controls */}
           <TimeControls
             onTimeAdvanced={handleTimeAdvanced}
-            onMatchReached={handleMatchReached}
+            onMatchSimulated={handleMatchSimulated}
           />
 
           {/* Quick Stats */}

@@ -28,63 +28,56 @@ export interface TimeAdvanceResult {
 export class CalendarService {
   /**
    * Advance time by one day
-   * - Processes required events automatically (salary payments)
-   * - Returns events that need attention (matches, training options)
+   *
+   * Game loop flow:
+   * 1. User starts at beginning of Day X
+   * 2. User does activities (training, roster changes, etc.)
+   * 3. User clicks "Advance Day"
+   * 4. TODAY's matches (Day X) are simulated
+   * 5. User is now at beginning of Day X+1
    */
   advanceDay(): TimeAdvanceResult {
     const state = useGameStore.getState();
     const currentDate = state.calendar.currentDate;
     const newDate = timeProgression.addDays(currentDate, 1);
 
-    // Get events that occurred on the new date
-    const eventsOnNewDate = timeProgression.getEventsBetween(
-      newDate,
-      newDate,
+    // Get events for TODAY (current date) - these are what we simulate before advancing
+    const eventsToday = timeProgression.getEventsBetween(
+      currentDate,
+      currentDate,
       state.calendar.scheduledEvents
     );
 
-    const unprocessedEvents = eventsOnNewDate.filter((e) => !e.processed);
+    const unprocessedEvents = eventsToday.filter((e) => !e.processed);
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
-    const needsAttention: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
 
-    // Process each event based on type
+    // Process each event for TODAY
     for (const event of unprocessedEvents) {
       if (event.type === 'salary_payment') {
         // Auto-process salary payments
         this.processSalaryPayment(event);
         processedEvents.push(event);
       } else if (event.type === 'match') {
-        // Auto-simulate matches
+        // Simulate today's matches before advancing
         const result = this.simulateMatchEvent(event);
         if (result) {
           simulatedMatches.push(result);
           processedEvents.push(event);
-        } else {
-          // If simulation failed, mark as needing attention
-          needsAttention.push(event);
         }
-      } else if (
-        event.type === 'training_available' ||
-        event.type === 'scrim_available' ||
-        event.type === 'rest_day'
-      ) {
-        // Optional events - player can choose to act or skip
-        needsAttention.push(event);
+      } else if (timeProgression.isRequiredEventType(event.type)) {
+        // Auto-mark as processed (informational)
+        state.markEventProcessed(event.id);
+        processedEvents.push(event);
       } else {
-        // Other required events (tournament markers, etc.)
-        if (timeProgression.isRequiredEventType(event.type)) {
-          // Auto-mark as processed (informational)
-          state.markEventProcessed(event.id);
-          processedEvents.push(event);
-        } else {
-          skippedEvents.push(event);
-        }
+        // Skip optional events that weren't taken (training, scrims, etc.)
+        state.markEventProcessed(event.id);
+        skippedEvents.push(event);
       }
     }
 
-    // Advance the date
+    // Now advance the date to tomorrow
     state.advanceDay();
 
     // Check if auto-save should trigger
@@ -103,7 +96,7 @@ export class CalendarService {
       newDate,
       processedEvents,
       skippedEvents,
-      needsAttention,
+      needsAttention: [], // Nothing needs attention - we're now at start of new day
       simulatedMatches,
       autoSaveTriggered,
     };
@@ -111,24 +104,26 @@ export class CalendarService {
 
   /**
    * Advance time by one week
-   * - Auto-processes all required events
-   * - Skips optional events (training days not taken)
+   *
+   * Simulates all events from today through 6 days from now (7 days total),
+   * then advances to day 8. Skips optional events that weren't taken.
    */
   advanceWeek(): TimeAdvanceResult {
     const state = useGameStore.getState();
     const currentDate = state.calendar.currentDate;
-    const endDate = timeProgression.addDays(currentDate, 7);
+    // We process 7 days (today + 6 more), then land on day 8
+    const lastDayToProcess = timeProgression.addDays(currentDate, 6);
+    const newDate = timeProgression.addDays(currentDate, 7);
 
-    // Get all events in the week
+    // Get all events from today through the 7th day (inclusive)
     const eventsInWeek = timeProgression.getUnprocessedEventsBetween(
       currentDate,
-      endDate,
+      lastDayToProcess,
       state.calendar.scheduledEvents
     );
 
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
-    const needsAttention: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
 
     // Process events (including auto-simulating matches)
@@ -142,8 +137,6 @@ export class CalendarService {
         if (result) {
           simulatedMatches.push(result);
           processedEvents.push(event);
-        } else {
-          needsAttention.push(event);
         }
       } else if (timeProgression.isRequiredEventType(event.type)) {
         state.markEventProcessed(event.id);
@@ -163,30 +156,33 @@ export class CalendarService {
 
     // Check auto-save
     const autoSaveTriggered = timeProgression.shouldAutoSave(
-      endDate,
+      newDate,
       state.lastSaveDate
     );
 
     if (autoSaveTriggered) {
-      state.setLastSaveDate(endDate);
+      state.setLastSaveDate(newDate);
     }
 
     return {
       success: true,
       daysAdvanced: 7,
-      newDate: endDate,
+      newDate,
       processedEvents,
       skippedEvents,
-      needsAttention,
+      needsAttention: [], // Nothing needs attention - we're at start of new day
       simulatedMatches,
       autoSaveTriggered,
     };
   }
 
   /**
-   * Advance to the next match date
-   * - Processes all events between now and the match
-   * - Stops at the match day (match needs player attention)
+   * Advance to the next match date (morning of match day)
+   *
+   * This allows the player to prepare on match day before simulating.
+   * - If match is TODAY: do nothing (already at match day)
+   * - If match is in FUTURE: simulate everything up to (but NOT including) match day,
+   *   then land at the START of match day
    */
   advanceToNextMatch(): TimeAdvanceResult {
     const state = useGameStore.getState();
@@ -207,10 +203,28 @@ export class CalendarService {
       };
     }
 
-    // Get all events between now and the match (inclusive)
+    const daysUntilMatch = timeProgression.getDaysDifference(currentDate, nextMatch.date);
+
+    // If match is today, we're already at match day - nothing to do
+    if (daysUntilMatch === 0) {
+      return {
+        success: true,
+        daysAdvanced: 0,
+        newDate: currentDate,
+        processedEvents: [],
+        skippedEvents: [],
+        needsAttention: [nextMatch], // Match needs attention today
+        simulatedMatches: [],
+        autoSaveTriggered: false,
+      };
+    }
+
+    // Get events from today through the day BEFORE match day
+    // We want to land at the START of match day, not simulate it
+    const dayBeforeMatch = timeProgression.addDays(nextMatch.date, -1);
     const eventsToProcess = timeProgression.getUnprocessedEventsBetween(
       currentDate,
-      nextMatch.date,
+      dayBeforeMatch,
       state.calendar.scheduledEvents
     );
 
@@ -218,13 +232,13 @@ export class CalendarService {
     const skippedEvents: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
 
-    // Process events (including the target match)
+    // Process all events up to (but not including) match day
     for (const event of eventsToProcess) {
       if (event.type === 'salary_payment') {
         this.processSalaryPayment(event);
         processedEvents.push(event);
       } else if (event.type === 'match') {
-        // Auto-simulate ALL matches including the target
+        // Simulate matches that occur BEFORE our target match day
         const result = this.simulateMatchEvent(event);
         if (result) {
           simulatedMatches.push(result);
@@ -240,8 +254,7 @@ export class CalendarService {
       }
     }
 
-    // Advance to match date
-    const daysAdvanced = timeProgression.getDaysDifference(currentDate, nextMatch.date);
+    // Advance to match day morning
     state.advanceToDate(nextMatch.date);
 
     // Check auto-save
@@ -256,11 +269,11 @@ export class CalendarService {
 
     return {
       success: true,
-      daysAdvanced,
+      daysAdvanced: daysUntilMatch,
       newDate: nextMatch.date,
       processedEvents,
       skippedEvents,
-      needsAttention: [],
+      needsAttention: [nextMatch], // Match is ready to be played today
       simulatedMatches,
       autoSaveTriggered,
     };

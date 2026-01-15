@@ -12,7 +12,7 @@ import {
   DayDetailPanel,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
-import type { Match, CalendarEvent, MatchEventData } from '../types';
+import type { Match, MatchEventData } from '../types';
 
 type ViewMode = 'calendar' | 'results';
 
@@ -105,11 +105,12 @@ export function Schedule() {
     setTimeout(() => setLastAdvanceResult(null), 3000);
   };
 
-  // Handle match reached via time controls
-  const handleMatchReached = (matchEvent: CalendarEvent) => {
-    // Select the match date when reached
-    setSelectedDate(matchEvent.date);
-    setViewDate(matchEvent.date);
+  // Handle match simulated via time controls
+  const handleMatchSimulated = (result: TimeAdvanceResult) => {
+    if (result.simulatedMatches.length > 0) {
+      console.log('Matches simulated:', result.simulatedMatches.length);
+      // The view date is already updated by handleTimeAdvanced
+    }
   };
 
   // Handle date selection from calendar
@@ -248,7 +249,7 @@ export function Schedule() {
           <TimeControls
             compact
             onTimeAdvanced={handleTimeAdvanced}
-            onMatchReached={handleMatchReached}
+            onMatchSimulated={handleMatchSimulated}
           />
         </div>
       </div>
