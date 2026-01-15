@@ -97,3 +97,16 @@ export type {
 } from './scrim';
 
 export { SCRIM_CONSTANTS } from './scrim';
+
+// VLR types
+export type {
+  VlrRegion,
+  VlrPlayerStats,
+  VlrTeamRanking,
+  VlrStatsApiResponse,
+  VlrRankingsApiResponse,
+  VlrCacheData,
+  VlrCacheEntry,
+} from './vlr';
+
+export { VLR_TO_GAME_REGION } from './vlr';

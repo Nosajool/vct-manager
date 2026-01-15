@@ -7,8 +7,10 @@ import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { tournamentService } from './TournamentService';
-import type { Region, MatchEventData } from '../types';
+import type { Player, Region, MatchEventData } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
+import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META } from '../data/vlrSnapshot';
+import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 
 /**
  * Options for initializing a new game
@@ -18,6 +20,8 @@ export interface NewGameOptions {
   playerTeamName?: string;
   playerRegion?: Region;
   difficulty?: 'easy' | 'normal' | 'hard';
+  /** Use real VLR player data instead of procedural generation */
+  useVlrData?: boolean;
 }
 
 /**
@@ -29,16 +33,34 @@ export class GameInitService {
    */
   async initializeNewGame(options: NewGameOptions = {}): Promise<void> {
     const store = useGameStore.getState();
-    const { playerRegion = 'Americas', difficulty = 'normal' } = options;
+    const {
+      playerRegion = 'Americas',
+      difficulty = 'normal',
+      useVlrData = true, // Default to using VLR data
+    } = options;
 
     // Reset player generator for fresh names
     playerGenerator.resetUsedNames();
 
-    // Generate all teams and their players
-    console.log('Generating teams and players...');
-    const { teams, players } = teamManager.generateAllTeams({ generatePlayers: true });
+    let teams: ReturnType<typeof teamManager.generateAllTeams>['teams'];
+    let players: Player[];
 
-    // Generate free agents for each region
+    if (useVlrData && VLR_SNAPSHOT_META.totalPlayers > 0) {
+      // Use VLR data for roster players
+      console.log(`Using VLR data (${VLR_SNAPSHOT_META.totalPlayers} players from ${VLR_SNAPSHOT_META.fetchedAt})`);
+      const result = this.generateWithVlrData();
+      teams = result.teams;
+      players = result.players;
+      console.log(`VLR integration: ${result.vlrPlayersUsed} real players, ${result.generatedPlayers} generated to fill gaps`);
+    } else {
+      // Fallback to full procedural generation
+      console.log('Generating teams and players procedurally...');
+      const generated = teamManager.generateAllTeams({ generatePlayers: true });
+      teams = generated.teams;
+      players = generated.players;
+    }
+
+    // Generate free agents for each region (always procedural)
     console.log('Generating free agents...');
     const regions: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
     const freeAgents = regions.flatMap((region) =>
@@ -159,6 +181,110 @@ export class GameInitService {
     console.log(
       `Game initialized: ${allPlayers.length} players, ${teams.length} teams`
     );
+  }
+
+  /**
+   * Generate teams with VLR player data
+   * Falls back to procedural generation for unfilled roster slots
+   */
+  private generateWithVlrData(): {
+    teams: ReturnType<typeof teamManager.generateAllTeams>['teams'];
+    players: Player[];
+    vlrPlayersUsed: number;
+    generatedPlayers: number;
+  } {
+    // Generate team shells without players
+    const { teams } = teamManager.generateAllTeams({ generatePlayers: false });
+
+    // Process VLR snapshot
+    const vlrData = processVlrSnapshot(VLR_PLAYER_STATS);
+    console.log(`VLR snapshot: ${vlrData.stats.totalPlayers} total, ${vlrData.stats.matchedPlayers} matched to teams`);
+
+    if (vlrData.unmatchedOrgs.length > 0) {
+      console.log(`Unmatched VLR orgs: ${vlrData.unmatchedOrgs.slice(0, 10).join(', ')}${vlrData.unmatchedOrgs.length > 10 ? '...' : ''}`);
+    }
+
+    // Group VLR players by team name and sort by rating
+    const playersByTeam = new Map<string, typeof vlrData.players>();
+    for (const vlrPlayer of vlrData.players) {
+      if (!vlrPlayer.teamName) continue;
+      const existing = playersByTeam.get(vlrPlayer.teamName) || [];
+      existing.push(vlrPlayer);
+      playersByTeam.set(vlrPlayer.teamName, existing);
+    }
+
+    // Sort each team's players by VLR rating (best first)
+    for (const [teamName, teamPlayers] of playersByTeam) {
+      teamPlayers.sort((a, b) => b.vlrRating - a.vlrRating);
+      playersByTeam.set(teamName, teamPlayers);
+    }
+
+    const allPlayers: Player[] = [];
+    let vlrPlayersUsed = 0;
+    let generatedPlayers = 0;
+
+    // Populate each team's roster
+    for (const team of teams) {
+      const vlrPlayers = playersByTeam.get(team.name) || [];
+      const rosterPlayers: Player[] = [];
+
+      // Take top 5 VLR players for this team (or fewer if not available)
+      for (let i = 0; i < Math.min(5, vlrPlayers.length); i++) {
+        const vlrPlayer = vlrPlayers[i];
+        const player = createPlayerFromVlr(vlrPlayer, team.id);
+        rosterPlayers.push(player);
+        vlrPlayersUsed++;
+      }
+
+      // Fill remaining slots with procedurally generated players
+      const slotsToFill = 5 - rosterPlayers.length;
+      if (slotsToFill > 0) {
+        const tier =
+          team.organizationValue >= 4000000
+            ? 'top'
+            : team.organizationValue >= 3000000
+            ? 'mid'
+            : 'low';
+
+        for (let i = 0; i < slotsToFill; i++) {
+          const generated = playerGenerator.generatePlayer({
+            region: team.region,
+            teamId: team.id,
+            minOverall: tier === 'top' ? 70 : tier === 'mid' ? 60 : 50,
+            maxOverall: tier === 'top' ? 95 : tier === 'mid' ? 85 : 75,
+          });
+          rosterPlayers.push(generated);
+          generatedPlayers++;
+        }
+      }
+
+      // Generate 2 reserve players (always procedural)
+      for (let i = 0; i < 2; i++) {
+        const reserve = playerGenerator.generatePlayer({
+          region: team.region,
+          teamId: team.id,
+          minOverall: 50,
+          maxOverall: 70,
+        });
+        rosterPlayers.push(reserve);
+        generatedPlayers++;
+      }
+
+      // Update team with player IDs
+      team.playerIds = rosterPlayers.slice(0, 5).map((p) => p.id);
+      team.reservePlayerIds = rosterPlayers.slice(5).map((p) => p.id);
+
+      // Update team finances based on roster salaries
+      const totalSalaries = rosterPlayers.reduce(
+        (sum, p) => sum + (p.contract?.salary || 0),
+        0
+      );
+      team.finances.monthlyExpenses.playerSalaries = Math.round(totalSalaries / 12);
+
+      allPlayers.push(...rosterPlayers);
+    }
+
+    return { teams, players: allPlayers, vlrPlayersUsed, generatedPlayers };
   }
 
   /**
