@@ -1,4 +1,7 @@
 // TodayActivities Component - Shows available activities for the current day
+//
+// Note: Match simulation is handled by the global TimeBar.
+// This component just displays what's available today.
 
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
@@ -7,12 +10,11 @@ import { SCRIM_CONSTANTS } from '../../types/scrim';
 import type { CalendarEvent, MatchEventData } from '../../types';
 
 interface TodayActivitiesProps {
-  onMatchClick?: (matchEvent: CalendarEvent) => void;
   onTrainingClick?: () => void;
   onScrimClick?: () => void;
 }
 
-export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }: TodayActivitiesProps) {
+export function TodayActivities({ onTrainingClick, onScrimClick }: TodayActivitiesProps) {
   const getTodaysActivities = useGameStore((state) => state.getTodaysActivities);
   const teams = useGameStore((state) => state.teams);
   const calendar = useGameStore((state) => state.calendar);
@@ -75,12 +77,9 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
       <h3 className="text-sm font-semibold text-vct-gray mb-3">Today's Activities</h3>
 
       <div className="space-y-2">
-        {/* Match Activity (Priority) */}
+        {/* Match Activity (Priority) - Display only, use TimeBar to play */}
         {matchActivity && (
-          <button
-            onClick={() => onMatchClick?.(matchActivity)}
-            className="w-full p-3 bg-vct-red/10 hover:bg-vct-red/20 border border-vct-red/30 rounded-lg transition-colors text-left"
-          >
+          <div className="w-full p-3 bg-vct-red/10 border border-vct-red/30 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-vct-red font-bold text-lg">MATCH DAY</span>
@@ -99,9 +98,9 @@ export function TodayActivities({ onMatchClick, onTrainingClick, onScrimClick }:
               );
             })()}
             <p className="text-xs text-vct-gray mt-1">
-              Click to simulate the match
+              Use the time controls above to play the match
             </p>
-          </button>
+          </div>
         )}
 
         {/* Training Activity */}

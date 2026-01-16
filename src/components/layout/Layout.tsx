@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { Header } from './Header';
 import { Navigation } from './Navigation';
+import { TimeBar } from './TimeBar';
 import { SaveLoadModal } from '../shared/SaveLoadModal';
 
 interface LayoutProps {
@@ -31,6 +32,7 @@ export function Layout({ children }: LayoutProps) {
     <div className="min-h-screen bg-vct-dark flex flex-col">
       <Header onSaveClick={handleSaveClick} onLoadClick={handleLoadClick} />
       <Navigation />
+      <TimeBar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
         {children}

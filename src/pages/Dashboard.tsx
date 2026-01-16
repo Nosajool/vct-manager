@@ -1,24 +1,21 @@
-// Dashboard Page - Main game interface with calendar and time controls
+// Dashboard Page - Main game interface with calendar and activities
+//
+// Note: Time controls are now in the global TimeBar (Layout component).
+// All match simulation goes through the TimeBar.
 
 import { useState, useMemo } from 'react';
 import { useGameStore } from '../store';
-import { matchService, economyService, type TimeAdvanceResult } from '../services';
+import { economyService } from '../services';
 import {
   CalendarView,
-  TimeControls,
   TodayActivities,
   TrainingModal,
-  SimulationResultsModal,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
-import type { CalendarEvent } from '../types';
 
 export function Dashboard() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
-  const [simulationResultsOpen, setSimulationResultsOpen] = useState(false);
-  const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
-  const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
 
   const players = useGameStore((state) => state.players);
   const teams = useGameStore((state) => state.teams);
@@ -42,51 +39,6 @@ export function Dashboard() {
       return null;
     }
   }, [playerTeamId, playerTeam?.finances]);
-
-  // Handle time advancement
-  const handleTimeAdvanced = (result: TimeAdvanceResult) => {
-    setLastAdvanceResult(result);
-
-    // Auto-dismiss notification after 3 seconds
-    setTimeout(() => setLastAdvanceResult(null), 3000);
-  };
-
-  // Handle match simulated - show results modal
-  const handleMatchSimulated = (result: TimeAdvanceResult) => {
-    if (result.simulatedMatches.length > 0) {
-      setSimulationResult(result);
-      setSimulationResultsOpen(true);
-    }
-  };
-
-  // Handle match simulation from TodayActivities (clicking MATCH DAY)
-  const handleMatchClick = (matchEvent: CalendarEvent) => {
-    const data = matchEvent.data as Record<string, unknown>;
-    const matchId = data?.matchId as string;
-
-    if (matchId) {
-      // Simulate the match
-      const matchResult = matchService.simulateMatch(matchId);
-      if (matchResult) {
-        // Mark the calendar event as processed
-        useGameStore.getState().markEventProcessed(matchEvent.id);
-
-        // Show the simulation results modal with this match
-        const result: TimeAdvanceResult = {
-          success: true,
-          daysAdvanced: 0,
-          newDate: calendar.currentDate,
-          processedEvents: [matchEvent],
-          skippedEvents: [],
-          needsAttention: [],
-          simulatedMatches: [matchResult],
-          autoSaveTriggered: false,
-        };
-        setSimulationResult(result);
-        setSimulationResultsOpen(true);
-      }
-    }
-  };
 
   // Handle training click
   const handleTrainingClick = () => {
@@ -112,29 +64,6 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Time Advancement Notification */}
-      {lastAdvanceResult && (
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center justify-between animate-fade-in">
-          <div className="flex items-center gap-3">
-            <span className="text-blue-400">Time Advanced</span>
-            <span className="text-vct-gray">
-              +{lastAdvanceResult.daysAdvanced} day{lastAdvanceResult.daysAdvanced !== 1 ? 's' : ''}
-            </span>
-            {lastAdvanceResult.processedEvents.length > 0 && (
-              <span className="text-vct-gray/60 text-sm">
-                | {lastAdvanceResult.processedEvents.length} event{lastAdvanceResult.processedEvents.length !== 1 ? 's' : ''} processed
-              </span>
-            )}
-          </div>
-          <button
-            onClick={() => setLastAdvanceResult(null)}
-            className="text-vct-gray hover:text-vct-light"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
       {/* Team Header */}
       {playerTeam && (
         <div className="bg-gradient-to-r from-vct-red/20 to-vct-dark border border-vct-red/30 rounded-lg p-6">
@@ -171,7 +100,6 @@ export function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           {/* Today's Activities */}
           <TodayActivities
-            onMatchClick={handleMatchClick}
             onTrainingClick={handleTrainingClick}
             onScrimClick={handleScrimClick}
           />
@@ -180,14 +108,8 @@ export function Dashboard() {
           <CalendarView showFullSchedule maxEvents={5} />
         </div>
 
-        {/* Right Column - Time Controls & Stats */}
+        {/* Right Column - Stats */}
         <div className="space-y-6">
-          {/* Time Controls */}
-          <TimeControls
-            onTimeAdvanced={handleTimeAdvanced}
-            onMatchSimulated={handleMatchSimulated}
-          />
-
           {/* Quick Stats */}
           <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
             <h3 className="text-sm font-semibold text-vct-gray mb-3">Quick Stats</h3>
@@ -231,16 +153,6 @@ export function Dashboard() {
       <ScrimModal
         isOpen={scrimModalOpen}
         onClose={() => setScrimModalOpen(false)}
-      />
-
-      {/* Simulation Results Modal */}
-      <SimulationResultsModal
-        isOpen={simulationResultsOpen}
-        onClose={() => {
-          setSimulationResultsOpen(false);
-          setSimulationResult(null);
-        }}
-        result={simulationResult}
       />
     </div>
   );

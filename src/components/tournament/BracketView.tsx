@@ -1,14 +1,16 @@
 // BracketView Component - Visual bracket display
+//
+// Note: Match simulation is handled by the global TimeBar.
+// This component is view-only.
 
 import type { BracketStructure, BracketRound } from '../../types';
 import { BracketMatch } from './BracketMatch';
 
 interface BracketViewProps {
   bracket: BracketStructure;
-  onSimulateMatch?: (matchId: string) => void;
 }
 
-export function BracketView({ bracket, onSimulateMatch }: BracketViewProps) {
+export function BracketView({ bracket }: BracketViewProps) {
   const hasMiddleBracket = bracket.middle && bracket.middle.length > 0;
   const hasLowerBracket = bracket.lower && bracket.lower.length > 0;
   const hasGrandFinal = !!bracket.grandfinal;
@@ -26,12 +28,7 @@ export function BracketView({ bracket, onSimulateMatch }: BracketViewProps) {
       </div>
       <div className="flex flex-col gap-4 justify-around flex-1">
         {round.matches.map((match) => (
-          <BracketMatch
-            key={match.matchId}
-            match={match}
-            compact
-            onSimulate={onSimulateMatch}
-          />
+          <BracketMatch key={match.matchId} match={match} compact />
         ))}
       </div>
     </div>
@@ -139,10 +136,7 @@ export function BracketView({ bracket, onSimulateMatch }: BracketViewProps) {
         <div>
           <h3 className="text-sm font-medium text-white mb-3">Grand Final</h3>
           <div className="flex justify-center">
-            <BracketMatch
-              match={bracket.grandfinal}
-              onSimulate={onSimulateMatch}
-            />
+            <BracketMatch match={bracket.grandfinal} />
           </div>
         </div>
       )}
@@ -153,13 +147,11 @@ export function BracketView({ bracket, onSimulateMatch }: BracketViewProps) {
 // Compact list view for smaller spaces
 interface BracketListViewProps {
   bracket: BracketStructure;
-  onSimulateMatch?: (matchId: string) => void;
   showCompleted?: boolean;
 }
 
 export function BracketListView({
   bracket,
-  onSimulateMatch,
   showCompleted = true,
 }: BracketListViewProps) {
   // Collect all matches
@@ -185,11 +177,7 @@ export function BracketListView({
           </h4>
           <div className="space-y-2">
             {readyMatches.map((match) => (
-              <BracketMatch
-                key={match.matchId}
-                match={match}
-                onSimulate={onSimulateMatch}
-              />
+              <BracketMatch key={match.matchId} match={match} />
             ))}
           </div>
         </div>

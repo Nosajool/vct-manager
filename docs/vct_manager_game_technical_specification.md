@@ -2290,6 +2290,70 @@ import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
 
 This prevents value drift and ensures consistent calculations across the codebase.
 
+### 19. Unified Simulation System (IMPLEMENTED)
+
+**Status**: Implemented - unified time/simulation system via global TimeBar.
+
+**Problem Identified**: The codebase has 5 distinct simulation entry points with inconsistent behavior:
+
+| System | Location | Time Advances? | Modal Shown | Event Marked? |
+|--------|----------|----------------|-------------|---------------|
+| Dashboard TimeControls | `TimeControls.tsx` | Yes | SimulationResultsModal | Auto |
+| Schedule TimeControls | `Schedule.tsx` (compact) | Yes | None (silent) | Auto |
+| Dashboard Match Click | `Dashboard.tsx` | No | SimulationResultsModal | Manual |
+| Tournament Simulation | `Tournament.tsx` | No | Banner notification | No |
+| Schedule DayDetailPanel | `DayDetailPanel.tsx` | No | MatchResult detail | No |
+
+**Core Issues**:
+1. No clear "turn" structure - users can simulate from multiple places
+2. "Simulate without time" creates paradoxes (match done but still on match day)
+3. Tournament matches exist outside calendar time system
+4. Different modals/feedback per context breaks user expectations
+
+**Planned Solution: Global TimeBar**
+
+Single persistent time control bar visible on ALL pages:
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  📅 January 15, 2026  |  Stage 1  |  MATCH TODAY: vs Sentinels     │
+│  [Advance Day]  [Advance Week]  [Jump to Match]                    │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+**Design Principle**: "Time is King" - every match simulation advances time. No "simulate without advancing" option.
+
+**Game Loop**:
+```
+START OF DAY → View calendar, do activities → Click TimeBar button →
+Process events + simulate matches → Show SimulationResultsModal → NEXT DAY
+```
+
+**What Gets Removed**:
+- `TimeControls` component from Dashboard/Schedule (replaced by global bar)
+- "MATCH DAY" click handler from TodayActivities
+- "Simulate Match" button from DayDetailPanel
+- "Simulate Match/Round/All" from Tournament page (becomes view-only)
+- Tournament-specific simulation methods
+
+**Files to Create**:
+- `src/components/layout/TimeBar.tsx` - Global time control bar
+
+**Files to Modify**:
+- `src/App.tsx` - Add TimeBar to layout
+- `src/services/CalendarService.ts` - Consolidate all simulation logic
+- `src/pages/Dashboard.tsx` - Remove TimeControls, simplify
+- `src/pages/Schedule.tsx` - Remove TimeControls
+- `src/pages/Tournament.tsx` - Remove simulation buttons
+- `src/components/calendar/TodayActivities.tsx` - Remove match click handler
+- `src/components/calendar/DayDetailPanel.tsx` - Remove simulate button
+
+**Tournament Integration**:
+Tournament matches will work identically to league matches:
+1. Scheduled on calendar for specific date
+2. When date arrives, appears in "Today's Activities"
+3. User advances day via TimeBar → match simulates
+4. Bracket auto-updates via existing `advanceTournament()` flow
+
 ## Session End Checklist
 
 Before ending each AI coding session:

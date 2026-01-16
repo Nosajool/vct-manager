@@ -1,4 +1,7 @@
 // DayDetailPanel - Shows details for a selected calendar day
+//
+// Note: Match simulation is handled by the global TimeBar.
+// This component just displays day details and allows viewing results.
 
 import type { CalendarEvent, MatchEventData, Match } from '../../types';
 import { timeProgression } from '../../engine/calendar';
@@ -10,11 +13,9 @@ interface DayDetailPanelProps {
   teams: Record<string, { id: string; name: string }>;
   matches: Record<string, Match>;
   playerTeamId: string | null;
-  onSimulateMatch: (matchId: string) => void;
   onViewMatch: (match: Match) => void;
   onTrainingClick: () => void;
   onScrimClick: () => void;
-  isSimulating: boolean;
 }
 
 // Get event styling based on type
@@ -51,11 +52,9 @@ export function DayDetailPanel({
   teams,
   matches,
   playerTeamId,
-  onSimulateMatch,
   onViewMatch,
   onTrainingClick,
   onScrimClick,
-  isSimulating,
 }: DayDetailPanelProps) {
   // Compare dates by their YYYY-MM-DD string to avoid timezone issues
   const selectedDateStr = getDateString(selectedDate);
@@ -185,21 +184,17 @@ export function DayDetailPanel({
                     </button>
                   )}
 
-                  {/* Simulate button - only if today and not processed and no result */}
+                  {/* Message for today's matches - use TimeBar to play */}
                   {isToday && !hasResult && matchId && (
-                    <button
-                      onClick={() => onSimulateMatch(matchId)}
-                      disabled={isSimulating}
-                      className="w-full mt-2 px-4 py-2 bg-vct-red hover:bg-vct-red/80 disabled:opacity-50 text-white rounded text-sm font-medium transition-colors"
-                    >
-                      {isSimulating ? 'Simulating...' : 'Simulate Match'}
-                    </button>
+                    <p className="mt-2 text-center text-sm text-vct-gray">
+                      Use the time controls to play this match
+                    </p>
                   )}
 
                   {/* Message for future matches */}
                   {!isToday && !isPast && !hasResult && (
                     <p className="mt-2 text-center text-sm text-vct-gray">
-                      Advance time to this day to simulate
+                      Advance time to this day to play
                     </p>
                   )}
                 </div>

@@ -1,4 +1,7 @@
 // BracketMatch Component - Individual match display in bracket
+//
+// Note: Match simulation is handled by the global TimeBar.
+// This component is view-only.
 
 import type { BracketMatch as BracketMatchType } from '../../types';
 import { useGameStore } from '../../store';
@@ -7,14 +10,12 @@ interface BracketMatchProps {
   match: BracketMatchType;
   compact?: boolean;
   showScore?: boolean;
-  onSimulate?: (matchId: string) => void;
 }
 
 export function BracketMatch({
   match,
   compact = false,
   showScore = true,
-  onSimulate,
 }: BracketMatchProps) {
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
@@ -148,16 +149,6 @@ export function BracketMatch({
           score={match.result?.scoreTeamB}
         />
       </div>
-
-      {/* Simulate Button */}
-      {match.status === 'ready' && onSimulate && (
-        <button
-          onClick={() => onSimulate(match.matchId)}
-          className="w-full mt-3 px-3 py-1.5 bg-vct-red text-white text-sm rounded hover:bg-vct-red/80 transition-colors"
-        >
-          Simulate
-        </button>
-      )}
     </div>
   );
 }

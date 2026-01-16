@@ -1,8 +1,10 @@
 // Tournament Page - Tournament bracket and standings view
+//
+// Note: Match simulation is handled by the global TimeBar.
+// This page is view-only for browsing tournaments and brackets.
 
 import { useState } from 'react';
 import { useGameStore } from '../store';
-import { tournamentService } from '../services';
 import { seasonManager } from '../engine/competition';
 import {
   BracketView,
@@ -10,17 +12,13 @@ import {
   TournamentCard,
   TournamentCardMini,
   StandingsTable,
-  TournamentControls,
 } from '../components/tournament';
-import type { MatchResult } from '../types';
 
 type ViewMode = 'bracket' | 'list' | 'standings';
 
 export function TournamentPage() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('bracket');
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [lastResult, setLastResult] = useState<MatchResult | null>(null);
 
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
@@ -39,68 +37,6 @@ export function TournamentPage() {
   const tournamentStandings = currentTournament
     ? standings[currentTournament.id] || []
     : [];
-
-  // Handlers
-  const handleSimulateMatch = async () => {
-    if (!currentTournament) return;
-
-    setIsSimulating(true);
-    try {
-      const result = tournamentService.simulateNextMatch(currentTournament.id);
-      if (result) {
-        setLastResult(result);
-        setTimeout(() => setLastResult(null), 3000);
-      }
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  const handleSimulateRound = async () => {
-    if (!currentTournament) return;
-
-    setIsSimulating(true);
-    try {
-      const results = tournamentService.simulateTournamentRound(currentTournament.id);
-      if (results.length > 0) {
-        setLastResult(results[results.length - 1]);
-        setTimeout(() => setLastResult(null), 3000);
-      }
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  const handleSimulateTournament = async () => {
-    if (!currentTournament) return;
-
-    setIsSimulating(true);
-    try {
-      const { results } = tournamentService.simulateTournament(
-        currentTournament.id
-      );
-      if (results.length > 0) {
-        setLastResult(results[results.length - 1]);
-      }
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  const handleSimulateBracketMatch = (_matchId: string) => {
-    if (!currentTournament) return;
-
-    setIsSimulating(true);
-    try {
-      const result = tournamentService.simulateNextMatch(currentTournament.id);
-      if (result) {
-        setLastResult(result);
-        setTimeout(() => setLastResult(null), 3000);
-      }
-    } finally {
-      setIsSimulating(false);
-    }
-  };
 
   // No tournaments yet
   if (allTournaments.length === 0) {
@@ -147,16 +83,6 @@ export function TournamentPage() {
           </div>
         )}
       </div>
-
-      {/* Result Notification */}
-      {lastResult && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-          <p className="text-green-400">
-            Match completed: {lastResult.winnerId} wins{' '}
-            {lastResult.scoreTeamA}-{lastResult.scoreTeamB}
-          </p>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Tournament List Sidebar */}
@@ -223,31 +149,23 @@ export function TournamentPage() {
               {/* Tournament Info Card */}
               <TournamentCard tournament={currentTournament} showDetails />
 
-              {/* Controls */}
+              {/* Info about simulation */}
               {currentTournament.status === 'in_progress' && (
-                <TournamentControls
-                  tournament={currentTournament}
-                  onSimulateMatch={handleSimulateMatch}
-                  onSimulateRound={handleSimulateRound}
-                  onSimulateTournament={handleSimulateTournament}
-                  isSimulating={isSimulating}
-                />
+                <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-3">
+                  <p className="text-sm text-vct-gray text-center">
+                    Tournament matches play automatically when you advance time using the controls above
+                  </p>
+                </div>
               )}
 
               {/* Content based on view mode */}
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
                 {viewMode === 'bracket' && (
-                  <BracketView
-                    bracket={currentTournament.bracket}
-                    onSimulateMatch={handleSimulateBracketMatch}
-                  />
+                  <BracketView bracket={currentTournament.bracket} />
                 )}
 
                 {viewMode === 'list' && (
-                  <BracketListView
-                    bracket={currentTournament.bracket}
-                    onSimulateMatch={handleSimulateBracketMatch}
-                  />
+                  <BracketListView bracket={currentTournament.bracket} />
                 )}
 
                 {viewMode === 'standings' && (

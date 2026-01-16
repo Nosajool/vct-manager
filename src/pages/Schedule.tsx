@@ -1,12 +1,13 @@
 // Schedule Page - Visual calendar view for matches and events
+//
+// Note: Time controls are now in the global TimeBar (Layout component).
+// All match simulation goes through the TimeBar.
 
 import { useState, useCallback, useMemo } from 'react';
 import { useGameStore } from '../store';
-import { matchService, type TimeAdvanceResult } from '../services';
 import { MatchResult } from '../components/match/MatchResult';
 import { TournamentCardMini } from '../components/tournament';
 import {
-  TimeControls,
   TrainingModal,
   MonthCalendar,
   DayDetailPanel,
@@ -19,10 +20,8 @@ type ViewMode = 'calendar' | 'results';
 export function Schedule() {
   const [viewMode, setViewMode] = useState<ViewMode>('calendar');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
-  const [isSimulating, setIsSimulating] = useState(false);
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
-  const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
   const [viewDate, setViewDate] = useState<string | null>(null);
 
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -69,49 +68,12 @@ export function Schedule() {
     [matchEvents]
   );
 
-  // Handle match simulation
-  const handleSimulate = useCallback(
-    (matchId: string) => {
-      setIsSimulating(true);
-
-      setTimeout(() => {
-        const result = matchService.simulateMatch(matchId);
-        setIsSimulating(false);
-
-        if (result) {
-          const match = matches[matchId];
-          if (match) {
-            setSelectedMatch({ ...match, status: 'completed' });
-          }
-        }
-      }, 500);
-    },
-    [matches]
-  );
-
   // Handle viewing a match result
   const handleViewMatch = useCallback((match: Match) => {
     if (match.status === 'completed') {
       setSelectedMatch(match);
     }
   }, []);
-
-  // Handle time advancement
-  const handleTimeAdvanced = (result: TimeAdvanceResult) => {
-    setLastAdvanceResult(result);
-    // Always update selected date and view date to the new current date
-    setSelectedDate(result.newDate);
-    setViewDate(result.newDate);
-    setTimeout(() => setLastAdvanceResult(null), 3000);
-  };
-
-  // Handle match simulated via time controls
-  const handleMatchSimulated = (result: TimeAdvanceResult) => {
-    if (result.simulatedMatches.length > 0) {
-      console.log('Matches simulated:', result.simulatedMatches.length);
-      // The view date is already updated by handleTimeAdvanced
-    }
-  };
 
   // Handle date selection from calendar
   const handleDateSelect = (date: string) => {
@@ -153,29 +115,6 @@ export function Schedule() {
 
   return (
     <div className="space-y-6">
-      {/* Time Advancement Notification */}
-      {lastAdvanceResult && (
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center justify-between animate-fade-in">
-          <div className="flex items-center gap-3">
-            <span className="text-blue-400">Time Advanced</span>
-            <span className="text-vct-gray">
-              +{lastAdvanceResult.daysAdvanced} day{lastAdvanceResult.daysAdvanced !== 1 ? 's' : ''}
-            </span>
-            {lastAdvanceResult.processedEvents.length > 0 && (
-              <span className="text-vct-gray/60 text-sm">
-                | {lastAdvanceResult.processedEvents.length} event{lastAdvanceResult.processedEvents.length !== 1 ? 's' : ''} processed
-              </span>
-            )}
-          </div>
-          <button
-            onClick={() => setLastAdvanceResult(null)}
-            className="text-vct-gray hover:text-vct-light"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -220,7 +159,7 @@ export function Schedule() {
       </div>
 
       {/* View Mode Toggle */}
-      <div className="flex items-center justify-between border-b border-vct-gray/20">
+      <div className="flex items-center border-b border-vct-gray/20">
         <div className="flex gap-2">
           <button
             onClick={() => setViewMode('calendar')}
@@ -242,15 +181,6 @@ export function Schedule() {
           >
             Results ({completedMatchEvents.length})
           </button>
-        </div>
-
-        {/* Time Controls - inline */}
-        <div className="pb-2">
-          <TimeControls
-            compact
-            onTimeAdvanced={handleTimeAdvanced}
-            onMatchSimulated={handleMatchSimulated}
-          />
         </div>
       </div>
 
@@ -305,11 +235,9 @@ export function Schedule() {
                 teams={teams}
                 matches={matches}
                 playerTeamId={playerTeamId}
-                onSimulateMatch={handleSimulate}
                 onViewMatch={handleViewMatch}
                 onTrainingClick={handleTrainingClick}
                 onScrimClick={handleScrimClick}
-                isSimulating={isSimulating}
               />
             ) : (
               <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
