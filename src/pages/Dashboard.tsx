@@ -8,6 +8,7 @@ import {
   TimeControls,
   TodayActivities,
   TrainingModal,
+  SimulationResultsModal,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
 import type { CalendarEvent } from '../types';
@@ -15,6 +16,8 @@ import type { CalendarEvent } from '../types';
 export function Dashboard() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
+  const [simulationResultsOpen, setSimulationResultsOpen] = useState(false);
+  const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [lastAdvanceResult, setLastAdvanceResult] = useState<TimeAdvanceResult | null>(null);
 
   const players = useGameStore((state) => state.players);
@@ -48,25 +51,39 @@ export function Dashboard() {
     setTimeout(() => setLastAdvanceResult(null), 3000);
   };
 
-  // Handle match simulated - notify user of results
+  // Handle match simulated - show results modal
   const handleMatchSimulated = (result: TimeAdvanceResult) => {
     if (result.simulatedMatches.length > 0) {
-      console.log('Matches simulated:', result.simulatedMatches.length);
-      // Could show a notification or update UI here
+      setSimulationResult(result);
+      setSimulationResultsOpen(true);
     }
   };
 
-  // Handle match simulation from TodayActivities
+  // Handle match simulation from TodayActivities (clicking MATCH DAY)
   const handleMatchClick = (matchEvent: CalendarEvent) => {
     const data = matchEvent.data as Record<string, unknown>;
     const matchId = data?.matchId as string;
 
     if (matchId) {
-      // Create a match in the store if needed and simulate
-      const result = matchService.simulateMatch(matchId);
-      if (result) {
+      // Simulate the match
+      const matchResult = matchService.simulateMatch(matchId);
+      if (matchResult) {
         // Mark the calendar event as processed
         useGameStore.getState().markEventProcessed(matchEvent.id);
+
+        // Show the simulation results modal with this match
+        const result: TimeAdvanceResult = {
+          success: true,
+          daysAdvanced: 0,
+          newDate: calendar.currentDate,
+          processedEvents: [matchEvent],
+          skippedEvents: [],
+          needsAttention: [],
+          simulatedMatches: [matchResult],
+          autoSaveTriggered: false,
+        };
+        setSimulationResult(result);
+        setSimulationResultsOpen(true);
       }
     }
   };
@@ -214,6 +231,16 @@ export function Dashboard() {
       <ScrimModal
         isOpen={scrimModalOpen}
         onClose={() => setScrimModalOpen(false)}
+      />
+
+      {/* Simulation Results Modal */}
+      <SimulationResultsModal
+        isOpen={simulationResultsOpen}
+        onClose={() => {
+          setSimulationResultsOpen(false);
+          setSimulationResult(null);
+        }}
+        result={simulationResult}
       />
     </div>
   );
