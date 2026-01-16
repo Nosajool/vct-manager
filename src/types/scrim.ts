@@ -150,6 +150,11 @@ export interface ScrimResult {
 
   // Time cost
   duration: number; // hours
+
+  // Snapshot of values before scrim (for "old → new" display)
+  chemistryBefore: number;
+  relationshipBefore: number;
+  mapStatsBefore: Record<string, MapStrengthAttributes>;  // mapName -> attributes snapshot
 }
 
 // ============================================

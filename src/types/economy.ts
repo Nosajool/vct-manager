@@ -50,6 +50,11 @@ export interface TrainingResult {
 
   // Factors that affected effectiveness
   factors: TrainingFactors;
+
+  // Snapshot of stats before training (for "old → new" display)
+  // Added by TrainingService after engine returns result
+  statsBefore?: Record<string, number>;  // Full PlayerStats snapshot
+  moraleBefore?: number;
 }
 
 // Players can only train a limited amount before fatigue impacts performance

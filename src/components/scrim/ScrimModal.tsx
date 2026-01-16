@@ -215,9 +215,9 @@ export function ScrimModal({ isOpen, onClose, onScrimComplete }: ScrimModalProps
                 <div className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20">
                   <h4 className="text-sm font-medium text-vct-gray mb-2">Chemistry</h4>
                   <span className={`text-lg font-bold ${
-                    scrimResult.chemistryChange > 0 ? 'text-green-400' : 'text-red-400'
+                    scrimResult.chemistryChange > 0 ? 'text-green-400' : scrimResult.chemistryChange < 0 ? 'text-red-400' : 'text-vct-gray'
                   }`}>
-                    {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange.toFixed(1)}
+                    {scrimResult.chemistryBefore.toFixed(1)} → {(scrimResult.chemistryBefore + scrimResult.chemistryChange).toFixed(1)}
                   </span>
                 </div>
 
@@ -225,9 +225,9 @@ export function ScrimModal({ isOpen, onClose, onScrimComplete }: ScrimModalProps
                 <div className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20">
                   <h4 className="text-sm font-medium text-vct-gray mb-2">Relationship</h4>
                   <span className={`text-lg font-bold ${
-                    scrimResult.relationshipChange > 0 ? 'text-green-400' : 'text-red-400'
+                    scrimResult.relationshipChange > 0 ? 'text-green-400' : scrimResult.relationshipChange < 0 ? 'text-red-400' : 'text-vct-gray'
                   }`}>
-                    {scrimResult.relationshipChange > 0 ? '+' : ''}{scrimResult.relationshipChange}
+                    {scrimResult.relationshipBefore} → {scrimResult.relationshipBefore + scrimResult.relationshipChange}
                   </span>
                 </div>
               </div>
@@ -236,18 +236,27 @@ export function ScrimModal({ isOpen, onClose, onScrimComplete }: ScrimModalProps
               {Object.keys(scrimResult.mapImprovements).length > 0 && (
                 <div className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20 mb-4">
                   <h4 className="text-sm font-medium text-vct-gray mb-2">Map Improvements</h4>
-                  {Object.entries(scrimResult.mapImprovements).map(([mapName, improvements]) => (
-                    <div key={mapName} className="mb-2">
-                      <span className="text-vct-light font-medium">{mapName}</span>
-                      <div className="grid grid-cols-3 gap-1 mt-1 text-xs">
-                        {Object.entries(improvements).map(([attr, value]) => (
-                          <span key={attr} className="text-green-400">
-                            {attr}: +{(value as number).toFixed(1)}
-                          </span>
-                        ))}
+                  {Object.entries(scrimResult.mapImprovements).map(([mapName, improvements]) => {
+                    const beforeStats = scrimResult.mapStatsBefore[mapName];
+                    return (
+                      <div key={mapName} className="mb-2">
+                        <span className="text-vct-light font-medium">{mapName}</span>
+                        <div className="grid grid-cols-2 gap-1 mt-1 text-xs">
+                          {Object.entries(improvements).map(([attr, changeValue]) => {
+                            const change = changeValue as number;
+                            const before = beforeStats?.[attr as keyof typeof beforeStats] ?? 0;
+                            const after = before + change;
+                            const hasChange = change !== 0;
+                            return (
+                              <span key={attr} className={hasChange ? 'text-green-400' : 'text-vct-gray'}>
+                                {attr}: {before.toFixed(1)} → {after.toFixed(1)}
+                              </span>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 

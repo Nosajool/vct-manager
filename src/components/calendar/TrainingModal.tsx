@@ -148,21 +148,41 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        {Object.entries(result.statImprovements).map(([stat, improvement]) => (
-                          <div key={stat} className="flex items-center justify-between">
-                            <span className="text-vct-gray capitalize">{stat}</span>
-                            <span className="text-green-400 font-medium">+{improvement}</span>
-                          </div>
-                        ))}
+                        {result.statsBefore ? (
+                          Object.entries(result.statsBefore).map(([stat, beforeValue]) => {
+                            const improvement = result.statImprovements[stat] || 0;
+                            const afterValue = beforeValue + improvement;
+                            const hasChange = improvement !== 0;
+                            return (
+                              <div key={stat} className="flex items-center justify-between">
+                                <span className="text-vct-gray capitalize">{stat}</span>
+                                <span className={hasChange ? 'text-green-400 font-medium' : 'text-vct-gray'}>
+                                  {beforeValue} → {afterValue}
+                                </span>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          Object.entries(result.statImprovements).map(([stat, improvement]) => (
+                            <div key={stat} className="flex items-center justify-between">
+                              <span className="text-vct-gray capitalize">{stat}</span>
+                              <span className="text-green-400 font-medium">+{improvement}</span>
+                            </div>
+                          ))
+                        )}
                       </div>
-                      {result.moraleChange !== 0 && (
-                        <div className="mt-2 text-sm">
-                          <span className="text-vct-gray">Morale: </span>
+                      <div className="mt-2 text-sm">
+                        <span className="text-vct-gray">Morale: </span>
+                        {result.moraleBefore !== undefined ? (
+                          <span className={result.moraleChange > 0 ? 'text-green-400' : result.moraleChange < 0 ? 'text-red-400' : 'text-vct-gray'}>
+                            {result.moraleBefore} → {result.moraleBefore + result.moraleChange}
+                          </span>
+                        ) : (
                           <span className={result.moraleChange > 0 ? 'text-green-400' : 'text-red-400'}>
                             {result.moraleChange > 0 ? '+' : ''}{result.moraleChange}
                           </span>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   );
                 })}

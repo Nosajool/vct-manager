@@ -88,6 +88,17 @@ export class ScrimService {
     const mapPool = playerTeam.mapPool || scrimEngine.createDefaultMapPool();
     const mapsToPlay = scrimEngine.selectScrimMaps(options, mapPool);
 
+    // Capture "before" snapshot for display
+    const chemistryBefore = playerTeam.chemistry.overall;
+    const relationshipBefore = relationship.relationshipScore;
+    const mapStatsBefore: Record<string, typeof mapPool.maps[string]['attributes']> = {};
+    for (const mapName of mapsToPlay) {
+      const mapStrength = mapPool.maps[mapName];
+      if (mapStrength) {
+        mapStatsBefore[mapName] = { ...mapStrength.attributes };
+      }
+    }
+
     // Simulate each map
     const maps = mapsToPlay.map((mapName) =>
       scrimEngine.simulateScrimMap(
@@ -151,6 +162,10 @@ export class ScrimService {
       relationshipEvent,
       efficiencyMultiplier: efficiency,
       duration: options.format === 'single_map' ? 1 : options.format === 'best_of_3' ? 3 : 5,
+      // "Before" snapshots for "old → new" display
+      chemistryBefore,
+      relationshipBefore,
+      mapStatsBefore,
     };
 
     // Apply results to store

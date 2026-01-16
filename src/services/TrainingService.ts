@@ -56,8 +56,16 @@ export class TrainingService {
     // Get coach bonus (future: lookup actual coach)
     const coachBonus = this.getCoachBonus(player.teamId);
 
+    // Capture "before" snapshot for display
+    const statsBefore = { ...player.stats };
+    const moraleBefore = player.morale;
+
     // Run the training through the engine
     const result = playerDevelopment.trainPlayer(player, focus, intensity, coachBonus);
+
+    // Add "before" values to result for "old → new" display
+    result.statsBefore = statsBefore;
+    result.moraleBefore = moraleBefore;
 
     // Apply the training result to the player
     const updatedPlayer = playerDevelopment.updatePlayerAfterTraining(player, result);
