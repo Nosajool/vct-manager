@@ -28,6 +28,7 @@ src/
 ├── engine/              # Pure game logic (no React dependencies)
 │   ├── match/
 │   │   ├── MatchSimulator.ts    # Probabilistic match simulation
+│   │   ├── constants.ts         # Shared constants (STAT_WEIGHTS, MAX_CHEMISTRY_BONUS)
 │   │   └── index.ts
 │   ├── competition/
 │   │   ├── BracketManager.ts    # Bracket generation and advancement
@@ -39,6 +40,12 @@ src/
 │   │   ├── PlayerGenerator.ts   # Procedural player generation
 │   │   ├── PlayerDevelopment.ts # Training and stat improvement
 │   │   ├── ContractNegotiator.ts # Contract negotiation logic
+│   │   ├── vlr/                 # VLR.gg integration module
+│   │   │   ├── orgMapping.ts        # VLR org codes → game team names
+│   │   │   ├── statConverter.ts     # VLR stats → game PlayerStats
+│   │   │   ├── vlrTeamIds.ts        # VLR team page IDs for scraping
+│   │   │   ├── VlrDataProcessor.ts  # Raw VLR → Player entities
+│   │   │   └── index.ts
 │   │   └── index.ts
 │   ├── team/
 │   │   ├── TeamManager.ts       # Team generation
@@ -70,7 +77,7 @@ src/
 │       └── index.ts
 │
 ├── services/            # Orchestration layer (store + engine)
-│   ├── GameInitService.ts      # Game initialization
+│   ├── GameInitService.ts      # Game initialization (with VLR integration)
 │   ├── MatchService.ts         # Match simulation orchestration
 │   ├── TournamentService.ts    # Tournament lifecycle
 │   ├── ContractService.ts      # Player signing/release
@@ -85,6 +92,9 @@ src/
 │   ├── database.ts      # Dexie database class
 │   └── index.ts
 │
+├── data/                # Static data snapshots
+│   └── vlrSnapshot.ts   # VLR player stats & team rosters (cached)
+│
 ├── types/               # TypeScript type definitions
 │   ├── player.ts        # Player, PlayerStats, Coach
 │   ├── team.ts          # Team, TeamFinances, Transaction, Loan
@@ -93,12 +103,13 @@ src/
 │   ├── calendar.ts      # GameCalendar, CalendarEvent, SeasonPhase
 │   ├── economy.ts       # TrainingSession, TrainingResult, Difficulty
 │   ├── scrim.ts         # MapPoolStrength, ScrimRelationship, TierTeam
+│   ├── vlr.ts           # VLR API response types
 │   └── index.ts
 │
 ├── components/          # React UI components
 │   ├── layout/          # Header, Navigation, Layout
-│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal
-│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TimeControls, TrainingModal
+│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal, AllTeamsView
+│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TimeControls, TrainingModal, SimulationResultsModal
 │   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable
 │   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable
 │   ├── scrim/           # ScrimModal, MapPoolView, RelationshipView
@@ -106,7 +117,7 @@ src/
 │
 ├── pages/               # Top-level route components
 │   ├── Dashboard.tsx    # Main hub with calendar and activities
-│   ├── Roster.tsx       # Roster and free agent management
+│   ├── Roster.tsx       # Roster and free agent management (My Team, Free Agents, All Teams tabs)
 │   ├── Schedule.tsx     # Match schedule and results
 │   ├── Tournament.tsx   # Tournament brackets and simulation
 │   ├── Finances.tsx     # Financial management
@@ -116,6 +127,9 @@ src/
 │   └── constants.ts     # Names, nationalities, team templates
 │
 └── App.tsx              # Main app with view routing
+
+scripts/
+└── fetch-vlr-data.ts    # CLI script to fetch/scrape VLR data
 ```
 
 ---
@@ -562,6 +576,52 @@ export const SCRIM_CONSTANTS = {
 };
 ```
 
+### VLR Integration System
+```typescript
+// VLR API response types
+export interface VlrPlayer {
+  player: string;      // IGN
+  org: string;         // Team abbreviation
+  agents: string;      // Most-played agents
+  rounds_played: number;
+  rating: string;      // e.g., "1.15"
+  acs: string;         // Average Combat Score
+  kd: string;          // K/D ratio
+  kast: string;        // Kill/Assist/Survive/Trade %
+  adr: string;         // Average Damage per Round
+  kpr: string;         // Kills per Round
+  apr: string;         // Assists per Round
+  fkpr: string;        // First Kills per Round
+  fdpr: string;        // First Deaths per Round
+  hs: string;          // Headshot %
+  cl: string;          // Clutch %
+}
+
+export interface VlrTeamRoster {
+  teamName: string;
+  vlrTeamId: number;
+  players: string[];   // IGNs of starting 5
+  scrapedAt: string;   // ISO date
+}
+
+export type VlrRosterData = Record<string, VlrTeamRoster>;
+
+// Processed VLR data types (intermediate format)
+export interface ProcessedVlrPlayer {
+  name: string;
+  teamName: string | null;  // Resolved game team name
+  region: Region;
+  vlrRating: number;
+  vlrStats: VlrPlayer;
+}
+
+export interface ProcessedVlrData {
+  matchedPlayers: Map<string, ProcessedVlrPlayer[]>;  // teamName → players
+  unmatchedPlayers: ProcessedVlrPlayer[];             // Free agents
+  totalProcessed: number;
+}
+```
+
 ---
 
 ## State Management
@@ -791,37 +851,89 @@ class ChemistryCalculator {
 
 ## Services Layer
 
-Services orchestrate engine logic and store updates:
+Services orchestrate engine logic and store updates. Each service follows a consistent pattern:
 
 ```typescript
-class MatchService {
-  simulateMatch(matchId: string): void {
+// Service Pattern
+export class ServiceName {
+  methodName(params): ResultType {
     const state = useGameStore.getState();
-    const match = state.entities.matches[matchId];
-    
+
+    // 1. Read from store
+    const entity = state.entities[id];
+
+    // 2. Call engine(s)
+    const result = engine.operation(entity, params);
+
+    // 3. Update store
+    state.updateEntity(id, result);
+
+    // 4. Return result
+    return result;
+  }
+}
+export const serviceName = new ServiceName();
+```
+
+### Service Result Types
+
+```typescript
+// Time advancement result (used by CalendarService)
+interface TimeAdvanceResult {
+  success: boolean;
+  daysAdvanced: number;
+  newDate: string;
+  processedEvents: CalendarEvent[];
+  skippedEvents: CalendarEvent[];
+  needsAttention: CalendarEvent[];
+  simulatedMatches: MatchResult[];
+  autoSaveTriggered: boolean;
+}
+
+// Contract signing result
+interface SigningResult {
+  success: boolean;
+  playerId?: string;
+  message: string;
+  newBalance?: number;
+}
+```
+
+### MatchService Example
+```typescript
+class MatchService {
+  simulateMatch(matchId: string): MatchResult | null {
+    const state = useGameStore.getState();
+    const match = state.matches[matchId];
+
     // Get teams and players
-    const teamA = state.entities.teams[match.teamAId];
-    const teamB = state.entities.teams[match.teamBId];
-    
+    const teamA = state.teams[match.teamAId];
+    const teamB = state.teams[match.teamBId];
+
     // Simulate via engine
-    const simulator = new MatchSimulator();
-    const result = simulator.simulate(teamA, teamB, state.entities.players);
-    
+    const result = matchSimulator.simulate(teamA, teamB, state.players);
+
     // Update store
     state.updateMatch(matchId, { status: 'completed', result });
     state.addMatchResult(result);
-    
+
     // Side effects
     this.updateStandings(result);
     this.updatePlayerStats(result);
-    this.updateChemistry(result);
     this.awardPrizeMoney(result);
+
+    // Cross-service integration: advance tournament bracket if applicable
+    if (match.tournamentId) {
+      tournamentService.advanceTournament(match.tournamentId, matchId, result);
+    }
+
+    return result;
   }
-  
+
   private updateStandings(result: MatchResult): void {
     // Update win/loss records
   }
-  
+
   private updatePlayerStats(result: MatchResult): void {
     // Update career stats, form, etc.
   }
@@ -1038,9 +1150,38 @@ jobs:
 - [x] "Today" badge and simulate button visibility fixes
 - [x] Timezone bug fixes (local date parsing)
 
+### Phase 8: VLR Integration ✓ (Complete)
+- [x] VLR type definitions (`src/types/vlr.ts`)
+- [x] VLR engine module (`src/engine/player/vlr/`)
+- [x] Org name mapping (VLR codes → game team names)
+- [x] Stat conversion algorithm (VLR metrics → 9 game stats)
+- [x] VlrDataProcessor for raw data transformation
+- [x] CLI fetch script (`scripts/fetch-vlr-data.ts`)
+- [x] Team roster scraping from VLR.gg
+- [x] Static snapshot approach (`src/data/vlrSnapshot.ts`)
+- [x] GameInitService VLR integration (`useVlrData` option)
+- [x] VLR-based free agents from unmatched orgs
+- [x] `forceName` option in PlayerGenerator
+
+### Phase 9: UI Enhancements ✓ (Complete)
+- [x] SimulationResultsModal for time advancement
+- [x] Match results grouped by player team, tournaments, regions
+- [x] AllTeamsView component (browse all 48 teams)
+- [x] Region filtering in All Teams view
+- [x] Training capacity indicator ("X/Y players can train")
+- [x] Before/after stats display ("old → new" format)
+- [x] Player team filtering (only show player's matches in Today's Activities)
+- [x] ChemistryCalculator as standalone engine class
+
+### Phase 10: Tournament Scheduling Improvements ✓ (Complete)
+- [x] Dynamic tournament scheduling (only schedule "ready" matches)
+- [x] `scheduleNewlyReadyMatches()` after bracket advancement
+- [x] Calendar events only for matches with known teams
+- [x] Fixed "TBD vs TBD" matches appearing on schedule
+- [x] Proper Match entity creation for ready bracket matches
+
 ### Future Phases (Not Started)
-- [ ] Chemistry system as standalone engine class
-- [ ] Coach system
+- [ ] Coach system (types defined but not implemented)
 - [ ] AI team improvements (smarter decisions)
 - [ ] Transfer market (team-to-team trades)
 - [ ] Round-by-round detailed simulation
@@ -1069,7 +1210,7 @@ jobs:
 | **Triple Elim** | 3 winners (no grand final) | Matches VCT Kickoff format exactly |
 | **AI** | Simple random (not smart yet) | Start simple, improve over time via interface |
 | **Save System** | 3 manual + auto-save (slot 0) | Auto-save every 7 in-game days |
-| **Chemistry** | Team-level only (not pairwise yet) | Simpler to implement, affects match sim |
+| **Chemistry** | Standalone engine class | ChemistryCalculator with shared constants |
 | **Economy** | Full system + loans | Teams can go into debt, must manage carefully |
 | **Scrim System** | Tier-based partners (T1/T2/T3) | Map practice, relationships, competitive depth |
 | **Map Pool** | 6 attributes + decay | Meaningful scrim choices, affects match sim |
@@ -1077,6 +1218,13 @@ jobs:
 | **League Scheduling** | Stage 1/2 only (not during tournaments) | Matches VCT competitive calendar |
 | **Error Handling** | Graceful degradation | Show errors, preserve state, allow recovery |
 | **Loading States** | Context-dependent | Instant for single match, progress for bulk |
+| **VLR Data** | Static snapshot (not runtime fetch) | No API dependency, faster startup, works offline |
+| **VLR Rosters** | Web scraping + API stats | API provides stats, scraping provides current rosters |
+| **VLR Stat Conversion** | Percentile normalization | Maps VLR metrics to 9 game stats with pro-level floor |
+| **Tournament Scheduling** | Dynamic (ready matches only) | Prevents "TBD vs TBD", matches real VCT flow |
+| **Cross-Service Integration** | MatchService → TournamentService | Tournament brackets update regardless of entry point |
+| **Before/After Stats** | Capture "before" in services | Compute "after" in UI; avoids data redundancy |
+| **Simulation Results** | Modal with grouped matches | Player team first, then tournaments, then regions |
 | **Browser Support** | Modern only | Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ |
 | **Undo/Redo** | Not implemented | Add later if users request it |
 | **Mobile** | Desktop-first | Basic responsive, needs improvement |
@@ -1725,19 +1873,37 @@ function TournamentControls({ tournamentId }: Props) {
 
 ## Data Seeding Strategy
 
-### VLR Data Integration (Phase 2)
+### VLR Data Integration ✓ (Complete)
 
-Ready to begin Phase 0 with Claude Code:
+The game uses real VCT player data from VLR.gg via a static snapshot approach:
 
-1. **Project initialization**: `npm create vite@latest vct-manager -- --template react-ts`
-2. **Install dependencies**: Zustand, Dexie, Tailwind, etc.
-3. **Create directory structure**
-4. **Define core types** in `src/types/`
-5. **Implement first store slice** (players or teams)
-6. **Build basic UI** to validate architecture
-7. **Implement save/load**
+**Refresh Process:**
+```bash
+# Run when rosters change (roster moves, new season, etc.)
+npm run fetch-vlr
 
-Once foundation is solid, we can iterate quickly through the remaining phases!
+# This runs scripts/fetch-vlr-data.ts which:
+# 1. Fetches player stats from vlrggapi (6000+ players)
+# 2. Scrapes current rosters from vlr.gg (48 teams × 5 players)
+# 3. Writes to src/data/vlrSnapshot.ts
+```
+
+**Data Statistics:**
+- Total players in snapshot: ~6,800
+- Matched to VCT teams: ~240 (48 teams × 5 players)
+- Unmatched → Free agent pool: Top 25 per region by rating
+
+**Fallback Behavior:**
+- If VLR data unavailable: Falls back to procedural generation
+- If player not in VLR stats but on roster: Generated with `forceName`
+- If roster incomplete: Filled with generated players
+
+**Team Roster Sources:**
+| Data | Source | Method |
+|------|--------|--------|
+| Player stats | vlrggapi.vercel.app | REST API |
+| Team rosters | vlr.gg/team/{id} | Web scraping |
+| Team name mapping | orgMapping.ts | Manual mapping |
 
 ---
 
@@ -1861,7 +2027,8 @@ This approach:
 | Round Simulation | Currently simplified (no detailed round-by-round) | Low |
 | Coach System | Types defined but not implemented | Medium |
 | Mobile | Desktop-first, needs responsive improvements | Low |
-| CalendarEvent.data | Uses `unknown` type, should use structured event data types | Medium |
+| VLR Bundle Size | Snapshot adds ~2.5MB to bundle (consider lazy loading) | Low |
+| Automated Tests | No test files exist in project yet | Medium |
 
 ### 10. Testing Strategy
 
@@ -1927,6 +2094,201 @@ getNextMatchEvent: () => {
 ```
 
 This pattern is safe because Zustand combines all slices into one store.
+
+### 14. VLR Integration Pattern
+
+VLR data is integrated via a **static snapshot** approach:
+
+**Data Flow:**
+```
+scripts/fetch-vlr-data.ts (CLI)
+  ├── Phase 1: Fetch player stats from vlrggapi
+  │     GET /stats?region=na,eu,br,ap,kr,cn
+  │     → 6000+ players with ratings/stats
+  │
+  └── Phase 2: Scrape team rosters from vlr.gg
+        GET /team/{id}/{slug} for each of 48 teams
+        Extract player names from /player/{id}/{ign} links
+        → 48 teams × 5 players
+
+                    ↓
+
+src/data/vlrSnapshot.ts
+  ├── VLR_PLAYER_STATS: VlrPlayer[]
+  └── VLR_TEAM_ROSTERS: VlrRosterData
+
+                    ↓
+
+GameInitService.generateWithVlrData()
+  ├── Look up roster from VLR_TEAM_ROSTERS[teamName]
+  ├── For each player in roster:
+  │     - Find VLR stats by name match (case-insensitive)
+  │     - If found: create player from VLR stats via VlrDataProcessor
+  │     - If not found: generate player with forceName
+  └── Fill remaining slots with generated players
+```
+
+**Why static snapshot:**
+- No runtime API dependency (faster startup, works offline)
+- Bundle includes data - no network latency
+- Can curate/validate data before committing
+- Simple cache invalidation (just re-run `npm run fetch-vlr`)
+
+**VLR Stat Conversion Algorithm:**
+
+| Game Stat | VLR Sources | Rationale |
+|-----------|-------------|-----------|
+| `mechanics` | ACS, HS%, K/D | Raw fragging ability |
+| `igl` | KAST, rating | Team-oriented leadership |
+| `mental` | K/D, clutch%, rating | Composure |
+| `clutch` | Clutch% (weighted heavily) | 1vX performance |
+| `vibes` | KAST, rating, K/D | Team morale |
+| `lurking` | Inverse FKPR | Solo play (low entry rate) |
+| `entry` | FKPR, ACS | First contact aggression |
+| `support` | APR, KAST | Utility and assists |
+| `stamina` | Rating consistency | Long-term performance |
+
+Stats are normalized to 55-95 range (all VLR players are professionals).
+
+### 15. Before/After Stats Pattern
+
+For training and scrim results, we display "old → new" stat changes:
+
+**Pattern:** Capture "before" snapshot in services, compute "after" in UI.
+
+```typescript
+// In TrainingService.ts
+trainPlayer(playerId: string, focus: TrainingFocus): TrainingResult {
+  const player = state.players[playerId];
+
+  // 1. Capture "before" snapshot
+  const statsBefore = { ...player.stats };
+  const moraleBefore = player.morale;
+
+  // 2. Call engine (which returns changes, not new values)
+  const result = playerDevelopment.train(player, focus);
+
+  // 3. Apply changes to store
+  state.updatePlayer(playerId, {
+    stats: applyChanges(player.stats, result.statImprovements),
+    morale: player.morale + result.moraleChange
+  });
+
+  // 4. Return result with "before" values attached
+  return {
+    ...result,
+    statsBefore,
+    moraleBefore
+  };
+}
+
+// In TrainingModal.tsx (UI)
+{Object.entries(result.statImprovements).map(([stat, change]) => {
+  const before = result.statsBefore?.[stat] ?? 0;
+  const after = before + change;
+  return (
+    <div className={change > 0 ? 'text-green-400' : 'text-gray-400'}>
+      {stat}: {before} → {after}
+    </div>
+  );
+})}
+```
+
+**Why this approach:**
+- Avoids storing redundant data (newStats = oldStats + changes)
+- Engine stays pure (returns change amounts only)
+- Service layer adds context for UI
+- Backward compatible (before fields are optional)
+
+### 16. Simulation Results Modal Pattern
+
+When time advances and matches are simulated, results are displayed in a grouped modal:
+
+```typescript
+// Data structure for grouping
+interface GroupedMatches {
+  playerTeamMatches: MatchWithDetails[];     // Top section (highlighted)
+  tournamentGroups: Map<string, {
+    name: string;
+    matches: MatchWithDetails[];
+  }>;
+  regionGroups: Map<string, MatchWithDetails[]>;
+}
+
+// Grouping logic
+function groupMatches(results: MatchResult[], playerTeamId: string): GroupedMatches {
+  for (const match of results) {
+    if (match.teamAId === playerTeamId || match.teamBId === playerTeamId) {
+      grouped.playerTeamMatches.push(match);
+    } else if (match.tournamentId) {
+      // Add to tournament group
+    } else {
+      // Add to region group (by teamA's region)
+    }
+  }
+}
+```
+
+**UI Hierarchy:**
+1. **Your Matches** (green/red highlighting based on win/loss)
+2. **Tournament Matches** (grouped by tournament name, purple theme)
+3. **League Matches** (grouped by region, blue theme)
+
+**Integration points:**
+- `CalendarService.advanceDay/Week()` returns `TimeAdvanceResult.simulatedMatches`
+- `Dashboard.tsx` shows modal when `simulatedMatches.length > 0`
+- Clicking match card opens detailed result view
+
+### 17. Training Capacity Pattern
+
+Training remains available until all players reach weekly limits:
+
+```typescript
+// In TrainingService.ts
+getTrainingSummary(): { playersCanTrain: number; totalPlayers: number } {
+  const players = getPlayerTeamRoster();
+  const playersCanTrain = players.filter(p =>
+    getWeeklyTrainingCount(p.id) < MAX_WEEKLY_TRAINING
+  ).length;
+  return { playersCanTrain, totalPlayers: players.length };
+}
+
+// Do NOT mark training event as processed after single session
+// (Unlike matches which are one-time events)
+```
+
+**UI Pattern:**
+```tsx
+<button disabled={trainingSummary.playersCanTrain === 0}>
+  Train ({trainingSummary.playersCanTrain}/{trainingSummary.totalPlayers} can train)
+</button>
+```
+
+### 18. Shared Constants Pattern
+
+Constants used by multiple engine classes are extracted to shared files:
+
+```typescript
+// src/engine/match/constants.ts
+export const STAT_WEIGHTS = {
+  mechanics: 0.25,
+  igl: 0.15,
+  mental: 0.15,
+  clutch: 0.10,
+  vibes: 0.05,
+  lurking: 0.05,
+  entry: 0.10,
+  support: 0.10,
+  stamina: 0.05
+};
+
+export const MAX_CHEMISTRY_BONUS = 0.20; // 20%
+
+// Used by MatchSimulator and ChemistryCalculator
+import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
+```
+
+This prevents value drift and ensures consistent calculations across the codebase.
 
 ## Session End Checklist
 
