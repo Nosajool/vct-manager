@@ -93,3 +93,14 @@ export interface VlrCacheEntry {
   timestamp: number;
   data: VlrCacheData;
 }
+
+/** Team roster scraped from VLR team page */
+export interface VlrTeamRoster {
+  teamName: string;
+  vlrTeamId: number;
+  players: string[]; // IGNs of the starting 5 players
+  scrapedAt: string; // ISO timestamp
+}
+
+/** All team rosters keyed by team name */
+export type VlrRosterData = Record<string, VlrTeamRoster>;

@@ -23,6 +23,8 @@ export interface PlayerGeneratorOptions {
   minOverall?: number;
   maxOverall?: number;
   teamId?: string | null;
+  /** Force a specific IGN (used for roster players without stats) */
+  forceName?: string;
 }
 
 /**
@@ -309,15 +311,24 @@ export class PlayerGenerator {
       minOverall = 50,
       maxOverall = 90,
       teamId = null,
+      forceName,
     } = options;
 
     const age = this.generateAge(minAge, maxAge);
     const targetOverall = this.randomBetween(minOverall, maxOverall);
     const stats = this.generateStats(targetOverall, age);
     const overall = this.calculateOverall(stats);
-    // Generate real name (for future use) and IGN
-    this.generateRealName(region); // Reserved for future player profile feature
-    const ign = this.generateIGN();
+
+    // Use forced name if provided, otherwise generate one
+    let ign: string;
+    if (forceName) {
+      ign = forceName;
+      this.usedNames.add(forceName.toLowerCase());
+    } else {
+      // Generate real name (for future use) and IGN
+      this.generateRealName(region); // Reserved for future player profile feature
+      ign = this.generateIGN();
+    }
 
     return {
       id: this.generateId(),

@@ -9,7 +9,7 @@ import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { tournamentService } from './TournamentService';
 import type { Player, Region, MatchEventData } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
-import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META } from '../data/vlrSnapshot';
+import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 
 /**
@@ -187,8 +187,9 @@ export class GameInitService {
 
   /**
    * Generate teams with VLR player data
-   * Falls back to procedural generation for unfilled roster slots
-   * Also returns unmatched VLR players to be used as free agents
+   * Uses scraped roster data to determine which players belong on each team.
+   * Falls back to procedural generation for unfilled roster slots.
+   * Also returns unmatched VLR players to be used as free agents.
    */
   private generateWithVlrData(): {
     teams: ReturnType<typeof teamManager.generateAllTeams>['teams'];
@@ -203,41 +204,65 @@ export class GameInitService {
     // Process VLR snapshot
     const vlrData = processVlrSnapshot(VLR_PLAYER_STATS);
     console.log(`VLR snapshot: ${vlrData.stats.totalPlayers} total, ${vlrData.stats.matchedPlayers} matched to teams`);
+    console.log(`VLR rosters: ${Object.keys(VLR_TEAM_ROSTERS).length} teams with scraped rosters`);
 
     if (vlrData.unmatchedOrgs.length > 0) {
       console.log(`Unmatched VLR orgs: ${vlrData.unmatchedOrgs.slice(0, 10).join(', ')}${vlrData.unmatchedOrgs.length > 10 ? '...' : ''}`);
     }
 
-    // Group VLR players by team name and sort by rating
-    const playersByTeam = new Map<string, typeof vlrData.players>();
+    // Create a lookup map for VLR player stats by name (case-insensitive)
+    const vlrPlayersByName = new Map<string, typeof vlrData.players[0]>();
     for (const vlrPlayer of vlrData.players) {
-      if (!vlrPlayer.teamName) continue;
-      const existing = playersByTeam.get(vlrPlayer.teamName) || [];
-      existing.push(vlrPlayer);
-      playersByTeam.set(vlrPlayer.teamName, existing);
-    }
-
-    // Sort each team's players by VLR rating (best first)
-    for (const [teamName, teamPlayers] of playersByTeam) {
-      teamPlayers.sort((a, b) => b.vlrRating - a.vlrRating);
-      playersByTeam.set(teamName, teamPlayers);
+      vlrPlayersByName.set(vlrPlayer.name.toLowerCase(), vlrPlayer);
     }
 
     const allPlayers: Player[] = [];
+    const usedPlayerNames = new Set<string>(); // Track which players have been assigned
     let vlrPlayersUsed = 0;
     let generatedPlayers = 0;
 
     // Populate each team's roster
     for (const team of teams) {
-      const vlrPlayers = playersByTeam.get(team.name) || [];
       const rosterPlayers: Player[] = [];
+      const teamRoster = VLR_TEAM_ROSTERS[team.name];
 
-      // Take top 5 VLR players for this team (or fewer if not available)
-      for (let i = 0; i < Math.min(5, vlrPlayers.length); i++) {
-        const vlrPlayer = vlrPlayers[i];
-        const player = createPlayerFromVlr(vlrPlayer, team.id);
-        rosterPlayers.push(player);
-        vlrPlayersUsed++;
+      if (teamRoster && teamRoster.players.length > 0) {
+        // Use the scraped roster to determine which players belong on this team
+        for (const playerName of teamRoster.players) {
+          const lowerName = playerName.toLowerCase();
+
+          // Find the VLR player stats for this roster player
+          const vlrPlayer = vlrPlayersByName.get(lowerName);
+
+          if (vlrPlayer && !usedPlayerNames.has(lowerName)) {
+            // Found player stats - create the player
+            const player = createPlayerFromVlr(vlrPlayer, team.id);
+            rosterPlayers.push(player);
+            usedPlayerNames.add(lowerName);
+            vlrPlayersUsed++;
+          } else if (!usedPlayerNames.has(lowerName)) {
+            // No stats found for this roster player - generate with their name
+            // This handles new players who don't have stats yet
+            const tier =
+              team.organizationValue >= 4000000
+                ? 'top'
+                : team.organizationValue >= 3000000
+                ? 'mid'
+                : 'low';
+
+            const generated = playerGenerator.generatePlayer({
+              region: team.region,
+              teamId: team.id,
+              minOverall: tier === 'top' ? 70 : tier === 'mid' ? 60 : 50,
+              maxOverall: tier === 'top' ? 95 : tier === 'mid' ? 85 : 75,
+              forceName: playerName, // Use the actual roster player name
+            });
+            rosterPlayers.push(generated);
+            usedPlayerNames.add(lowerName);
+            generatedPlayers++;
+            console.log(`  Generated player ${playerName} for ${team.name} (no VLR stats found)`);
+          }
+        }
       }
 
       // Fill remaining slots with procedurally generated players
@@ -288,10 +313,10 @@ export class GameInitService {
       allPlayers.push(...rosterPlayers);
     }
 
-    // Create free agents from unmatched VLR players (T2/T3 teams)
+    // Create free agents from VLR players not on any roster
     const vlrFreeAgents: Player[] = [];
     const unmatchedPlayers = vlrData.players
-      .filter((p) => p.teamName === null)
+      .filter((p) => !usedPlayerNames.has(p.name.toLowerCase()))
       .sort((a, b) => b.vlrRating - a.vlrRating); // Best players first
 
     // Take top players from each region as free agents
@@ -311,7 +336,7 @@ export class GameInitService {
       regionCounts[vlrPlayer.region]++;
     }
 
-    console.log(`VLR free agents: ${vlrFreeAgents.length} from unmatched orgs`);
+    console.log(`VLR free agents: ${vlrFreeAgents.length} (players not on current rosters)`);
 
     return { teams, players: allPlayers, vlrFreeAgents, vlrPlayersUsed, generatedPlayers };
   }
