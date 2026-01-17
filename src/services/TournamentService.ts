@@ -11,6 +11,7 @@ import type {
   CompetitionType,
   TournamentRegion,
   BracketMatch,
+  BracketStructure,
   MatchResult,
   CalendarEvent,
   Match,
@@ -114,7 +115,9 @@ export class TournamentService {
 
     // Schedule newly-ready matches FIRST (sets scheduledDate on bracket matches)
     // Then create Match entities (uses those dates)
-    const updatedTournament = state.tournaments[tournamentId];
+    // IMPORTANT: Must get fresh state after updateBracket() - the original `state` snapshot is stale!
+    const freshState = useGameStore.getState();
+    const updatedTournament = freshState.tournaments[tournamentId];
     if (updatedTournament) {
       // Order matters! Schedule first, then create entities
       this.scheduleNewlyReadyMatches(updatedTournament);
@@ -711,7 +714,11 @@ export class TournamentService {
     const currentDate = state.calendar.currentDate;
     const events: CalendarEvent[] = [];
 
-    // Helper to process matches in a round
+    // Deep clone bracket to avoid mutating store state directly
+    // This is critical for Zustand immutability - we must not mutate objects in the store
+    const bracket: BracketStructure = JSON.parse(JSON.stringify(tournament.bracket));
+
+    // Helper to process matches in a round (now mutates cloned bracket)
     const processMatches = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
         // Only process ready matches that don't have a scheduled date yet
@@ -748,25 +755,25 @@ export class TournamentService {
       }
     };
 
-    // Process all bracket rounds
-    for (const round of tournament.bracket.upper) {
+    // Process all bracket rounds (using cloned bracket)
+    for (const round of bracket.upper) {
       processMatches(round.matches);
     }
 
-    if (tournament.bracket.lower) {
-      for (const round of tournament.bracket.lower) {
+    if (bracket.lower) {
+      for (const round of bracket.lower) {
         processMatches(round.matches);
       }
     }
 
-    if (tournament.bracket.middle) {
-      for (const round of tournament.bracket.middle) {
+    if (bracket.middle) {
+      for (const round of bracket.middle) {
         processMatches(round.matches);
       }
     }
 
-    // Handle grand final
-    const gf = tournament.bracket.grandfinal;
+    // Handle grand final (using cloned bracket)
+    const gf = bracket.grandfinal;
     if (gf && gf.status === 'ready' && gf.teamAId && gf.teamBId && !gf.scheduledDate) {
       gf.scheduledDate = new Date(tournament.endDate).toISOString();
 
@@ -792,9 +799,9 @@ export class TournamentService {
       });
     }
 
-    // Update tournament bracket with new scheduled dates
+    // Save cloned+mutated bracket and add events to calendar
     if (events.length > 0) {
-      state.updateBracket(tournament.id, tournament.bracket);
+      state.updateBracket(tournament.id, bracket);
       state.addCalendarEvents(events);
     }
   }

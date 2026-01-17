@@ -2393,6 +2393,52 @@ Tournament matches will work identically to league matches:
 3. User advances day via TimeBar → match simulates
 4. Bracket auto-updates via existing `advanceTournament()` flow
 
+### 20. Zustand State Freshness After Store Updates
+
+**Problem**: When calling `useGameStore.getState()` and then performing store updates, the captured state snapshot becomes stale. Subsequent reads from that snapshot return OLD data.
+
+**Anti-Pattern (WRONG)**:
+```typescript
+const state = useGameStore.getState();
+
+// Update store
+state.updateSomething(id, newValue);
+
+// BUG: This reads from stale snapshot, not the updated store!
+const updated = state.entities[id];  // Returns OLD value
+```
+
+**Correct Pattern**:
+```typescript
+const state = useGameStore.getState();
+
+// Update store
+state.updateSomething(id, newValue);
+
+// Get fresh state after update
+const freshState = useGameStore.getState();
+const updated = freshState.entities[id];  // Returns NEW value
+```
+
+**Rule**: After any store update action, if you need to read the updated data:
+1. Call `useGameStore.getState()` again to get fresh state
+2. Never rely on the captured `state` variable after modifications
+3. Alternatively, have the update action return the new value directly
+
+**Bracket Mutation Warning**: When modifying bracket match properties (like `scheduledDate`), never mutate objects that are stored in the Zustand store. Always deep clone first:
+
+```typescript
+// WRONG - mutates store state directly
+tournamentFromStore.bracket.upper[0].matches[0].scheduledDate = newDate;
+
+// CORRECT - clone first, then mutate clone
+const clonedBracket = JSON.parse(JSON.stringify(tournament.bracket));
+clonedBracket.upper[0].matches[0].scheduledDate = newDate;
+state.updateBracket(tournamentId, clonedBracket);
+```
+
+This ensures React detects changes properly and prevents inconsistent state.
+
 ## Session End Checklist
 
 Before ending each AI coding session:
