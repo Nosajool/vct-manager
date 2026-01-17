@@ -40,7 +40,7 @@ export function Layout({ children }: LayoutProps) {
 
       <footer className="bg-vct-darker border-t border-vct-gray/20 py-3">
         <div className="max-w-7xl mx-auto px-4 text-center text-vct-gray text-xs">
-          VCT Manager - Phase 0 Foundation Complete
+          VCT Manager - Fan-made game, not affiliated with Riot Games. Not for profit.
         </div>
       </footer>
 
