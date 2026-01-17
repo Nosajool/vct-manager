@@ -40,24 +40,28 @@ export interface TournamentSchedule {
   events: CalendarEvent[];
 }
 
-// Phase duration in days
+// Phase duration in days (matches VCT 2026 actual structure)
 const PHASE_DURATIONS: Record<SeasonPhase, number> = {
   offseason: 120, // Sept-Dec
-  kickoff: 14,
-  stage1: 56, // 8 weeks
-  masters1: 7,
-  stage2: 56, // 8 weeks
-  masters2: 7,
-  champions: 14,
+  kickoff: 28, // 4 weeks
+  masters1: 14, // 2 weeks (Masters Santiago)
+  stage1: 35, // 5 weeks round-robin
+  stage1_playoffs: 14, // 2 weeks
+  masters2: 14, // 2 weeks (Masters London)
+  stage2: 35, // 5 weeks round-robin
+  stage2_playoffs: 14, // 2 weeks
+  champions: 21, // 3 weeks
 };
 
-// Phase start months (0-indexed)
+// Phase start months (0-indexed) - approximate for VCT 2026
 const PHASE_START_MONTHS: Record<SeasonPhase, number> = {
   kickoff: 0, // January
-  stage1: 1, // February
-  masters1: 3, // April
-  stage2: 4, // May
-  masters2: 6, // July
+  masters1: 1, // February (Masters Santiago)
+  stage1: 2, // March
+  stage1_playoffs: 3, // April
+  masters2: 4, // May (Masters London)
+  stage2: 5, // June
+  stage2_playoffs: 6, // July
   champions: 7, // August
   offseason: 8, // September
 };
@@ -80,13 +84,15 @@ export class ScheduleGenerator {
     const events: CalendarEvent[] = [];
     const phases: SeasonPhaseSchedule[] = [];
 
-    // Generate each phase
+    // Generate each phase (matches VCT 2026 actual order)
     const phaseOrder: SeasonPhase[] = [
       'kickoff',
+      'masters1', // Masters Santiago after Kickoff
       'stage1',
-      'masters1',
+      'stage1_playoffs',
+      'masters2', // Masters London after Stage 1 Playoffs
       'stage2',
-      'masters2',
+      'stage2_playoffs',
       'champions',
       'offseason',
     ];
@@ -348,8 +354,10 @@ export class ScheduleGenerator {
     const mapping: Partial<Record<SeasonPhase, CompetitionType>> = {
       kickoff: 'kickoff',
       stage1: 'stage1',
+      stage1_playoffs: 'stage1', // Playoffs use same competition type
       masters1: 'masters',
       stage2: 'stage2',
+      stage2_playoffs: 'stage2', // Playoffs use same competition type
       masters2: 'masters',
       champions: 'champions',
     };
@@ -363,10 +371,12 @@ export class ScheduleGenerator {
     const names: Record<SeasonPhase, string> = {
       kickoff: `VCT ${region} Kickoff`,
       stage1: `VCT ${region} Stage 1`,
-      masters1: 'VCT Masters Bangkok',
+      stage1_playoffs: `VCT ${region} Stage 1 Playoffs`,
+      masters1: 'VCT Masters Santiago',
       stage2: `VCT ${region} Stage 2`,
-      masters2: 'VCT Masters Shanghai',
-      champions: 'VCT Champions',
+      stage2_playoffs: `VCT ${region} Stage 2 Playoffs`,
+      masters2: 'VCT Masters London',
+      champions: 'VCT Champions Shanghai',
       offseason: 'Offseason',
     };
     return names[phase];
@@ -379,9 +389,11 @@ export class ScheduleGenerator {
     const names: Record<SeasonPhase, string> = {
       kickoff: 'Kickoff',
       stage1: 'Stage 1',
-      masters1: 'Masters 1',
+      stage1_playoffs: 'Stage 1 Playoffs',
+      masters1: 'Masters Santiago',
       stage2: 'Stage 2',
-      masters2: 'Masters 2',
+      stage2_playoffs: 'Stage 2 Playoffs',
+      masters2: 'Masters London',
       champions: 'Champions',
       offseason: 'Offseason',
     };

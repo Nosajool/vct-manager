@@ -38,15 +38,36 @@ interface SeasonStructure {
  * EventScheduler - Generates all calendar events for the game
  */
 export class EventScheduler {
-  // VCT Season structure (simplified for Phase 3)
+  // VCT 2026 Season structure (matches actual format from valorantesports.com)
+  // Order: Kickoff → Masters Santiago → Stage 1 → Stage 1 Playoffs → Masters London →
+  //        Stage 2 → Stage 2 Playoffs → Champions Shanghai
   private static readonly SEASON_STRUCTURE: SeasonStructure[] = [
+    // Phase 1: Kickoff (Jan 15 - ~Feb 10) - ~4 weeks, Triple Elim, 12 teams
     { phase: 'kickoff', startOffset: 0, duration: 28, description: 'VCT Kickoff' },
-    { phase: 'stage1', startOffset: 35, duration: 56, description: 'Stage 1' },
-    { phase: 'masters1', startOffset: 98, duration: 14, description: 'Masters 1' },
-    { phase: 'stage2', startOffset: 119, duration: 56, description: 'Stage 2' },
-    { phase: 'masters2', startOffset: 182, duration: 14, description: 'Masters 2' },
-    { phase: 'champions', startOffset: 245, duration: 21, description: 'Champions' },
-    { phase: 'offseason', startOffset: 273, duration: 92, description: 'Offseason' },
+
+    // Phase 2: Masters Santiago (~Feb 15 - Mar 1) - ~2 weeks, International event
+    { phase: 'masters1', startOffset: 35, duration: 14, description: 'Masters Santiago' },
+
+    // Phase 3: Stage 1 League (~Mar 10 - Apr 14) - 5 weeks round-robin, 2 groups of 6
+    { phase: 'stage1', startOffset: 56, duration: 35, description: 'Stage 1' },
+
+    // Phase 4: Stage 1 Playoffs (~Apr 21 - May 5) - 2 weeks, top 8 teams
+    { phase: 'stage1_playoffs', startOffset: 98, duration: 14, description: 'Stage 1 Playoffs' },
+
+    // Phase 5: Masters London (~May 12 - May 26) - 2 weeks, International event
+    { phase: 'masters2', startOffset: 119, duration: 14, description: 'Masters London' },
+
+    // Phase 6: Stage 2 League (~Jun 2 - Jul 7) - 5 weeks round-robin
+    { phase: 'stage2', startOffset: 140, duration: 35, description: 'Stage 2' },
+
+    // Phase 7: Stage 2 Playoffs (~Jul 14 - Jul 28) - 2 weeks
+    { phase: 'stage2_playoffs', startOffset: 182, duration: 14, description: 'Stage 2 Playoffs' },
+
+    // Phase 8: Champions Shanghai (~Aug 18 - Sep 8) - 3 weeks, International event
+    { phase: 'champions', startOffset: 217, duration: 21, description: 'Champions Shanghai' },
+
+    // Offseason (~Sep 15 onwards)
+    { phase: 'offseason', startOffset: 245, duration: 120, description: 'Offseason' },
   ];
 
   /**
@@ -139,7 +160,8 @@ export class EventScheduler {
 
   /**
    * Generate match schedule only during league phases (Stage 1 and Stage 2)
-   * Avoids tournament phases (Kickoff, Masters 1, Masters 2, Champions) and offseason
+   * Uses round-robin format: 12 teams split into 2 groups of 6
+   * Each team plays every other team in their group once per stage (5 matches)
    */
   generateLeagueMatchSchedule(options: {
     seasonStartDate: string;
@@ -148,37 +170,59 @@ export class EventScheduler {
     playerTeamId: string;
     opponents: Team[];
   }): CalendarEvent[] {
-    const { seasonStartDate, leaguePhases, matchesPerWeek, playerTeamId, opponents } = options;
+    const { seasonStartDate, leaguePhases, playerTeamId, opponents } = options;
 
     if (opponents.length === 0 || leaguePhases.length === 0) {
       return [];
     }
 
     const events: CalendarEvent[] = [];
-    const daysBetweenMatches = Math.floor(7 / matchesPerWeek);
 
-    // Shuffle opponents for variety
-    const shuffledOpponents = this.shuffleArray([...opponents]);
-    let opponentIndex = 0;
+    // VCT round-robin: 12 teams split into 2 groups of 6
+    // Player's team is in a group with 5 other teams
+    // Sort opponents by organization value to create balanced groups
+    const sortedOpponents = [...opponents].sort((a, b) => b.organizationValue - a.organizationValue);
 
-    // Schedule matches within each league phase
+    // Snake draft into groups: 1st, 4th, 5th, 8th, 9th, etc. to one group
+    // This ensures balanced groups based on team strength
+    const groupA: Team[] = [];
+    const groupB: Team[] = [];
+    sortedOpponents.forEach((team, index) => {
+      // Snake pattern: 0,3,4,7,8,11 go to A; 1,2,5,6,9,10 go to B
+      const row = Math.floor(index / 2);
+      const col = index % 2;
+      if ((row % 2 === 0 && col === 0) || (row % 2 === 1 && col === 1)) {
+        groupA.push(team);
+      } else {
+        groupB.push(team);
+      }
+    });
+
+    // Determine player's group - place player in group A (with top seeded opponents)
+    // This assumes player is a top team; in future could be based on seeding
+    const playerGroup = groupA.slice(0, 5); // 5 opponents in player's group
+
+    // Schedule matches within each league phase (Stage 1 and Stage 2)
     for (const phase of leaguePhases) {
       const phaseStartDate = this.addDays(seasonStartDate, phase.startOffset);
-      const phaseEndDate = this.addDays(seasonStartDate, phase.startOffset + phase.duration);
-      let currentDate = phaseStartDate;
 
-      while (new Date(currentDate) < new Date(phaseEndDate)) {
-        // Get opponent (cycle through if more matches than opponents)
-        const opponent = shuffledOpponents[opponentIndex % shuffledOpponents.length];
+      // Round-robin: play each opponent once per stage (5 matches over 5 weeks)
+      // Shuffle opponent order for variety between stages
+      const phaseOpponents = this.shuffleArray([...playerGroup]);
+
+      phaseOpponents.forEach((opponent, matchIndex) => {
+        // Schedule one match per week, spread across the stage
+        const matchDay = matchIndex * 7; // One match per week
+        const matchDate = this.addDays(phaseStartDate, matchDay);
 
         // Alternate home/away
-        const isHome = opponentIndex % 2 === 0;
+        const isHome = matchIndex % 2 === 0;
         const homeTeamId = isHome ? playerTeamId : opponent.id;
         const awayTeamId = isHome ? opponent.id : playerTeamId;
 
         events.push({
           id: this.generateId('match'),
-          date: currentDate,
+          date: matchDate,
           type: 'match',
           required: true,
           processed: false,
@@ -192,10 +236,7 @@ export class EventScheduler {
             phase: phase.phase,
           },
         });
-
-        opponentIndex++;
-        currentDate = this.addDays(currentDate, daysBetweenMatches);
-      }
+      });
     }
 
     return events;
@@ -455,8 +496,13 @@ export class EventScheduler {
     startDate: string = '2026-01-01T00:00:00.000Z',
     seasonYear: number = 2026
   ): CalendarEvent[] {
-    // Get opponents (all teams except player's team)
-    const opponents = allTeams.filter((team) => team.id !== playerTeamId);
+    // Get player's team to filter by region
+    const playerTeam = allTeams.find((team) => team.id === playerTeamId);
+
+    // Get opponents (teams in the same region, excluding player's team)
+    const opponents = allTeams.filter(
+      (team) => team.id !== playerTeamId && team.region === playerTeam?.region
+    );
 
     return this.generateSeasonSchedule(playerTeamId, opponents, {
       startDate,

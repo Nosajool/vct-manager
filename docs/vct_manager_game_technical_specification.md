@@ -497,8 +497,8 @@ export interface GameCalendar {
   scheduledEvents: CalendarEvent[];
 }
 
-export type SeasonPhase = 'offseason' | 'kickoff' | 'stage1' | 'stage2' |
-                          'masters1' | 'masters2' | 'champions';
+export type SeasonPhase = 'offseason' | 'kickoff' | 'stage1' | 'stage1_playoffs' |
+                          'stage2' | 'stage2_playoffs' | 'masters1' | 'masters2' | 'champions';
 
 export interface CalendarEvent {
   id: string;
@@ -1216,6 +1216,8 @@ jobs:
 | **Map Pool** | 6 attributes + decay | Meaningful scrim choices, affects match sim |
 | **Player Negotiations** | Preference-based | Players evaluate salary, team quality, region |
 | **League Scheduling** | Stage 1/2 only (not during tournaments) | Matches VCT competitive calendar |
+| **League Format** | Round-robin in groups (5 matches/stage) | 12 teams → 2 groups of 6, play each group opponent once |
+| **League Opponents** | Same region only | Filter opponents by player's team region |
 | **Error Handling** | Graceful degradation | Show errors, preserve state, allow recovery |
 | **Loading States** | Context-dependent | Instant for single match, progress for bulk |
 | **VLR Data** | Static snapshot (not runtime fetch) | No API dependency, faster startup, works offline |
@@ -1948,23 +1950,51 @@ function parseAsLocalDate(dateStr: string): Date {
 
 **Important**: Calendar events and Match entities are only created for "ready" bracket matches (matches where both teams are known). Pending matches do not appear on the calendar until their prerequisite matches complete.
 
-### 4. VCT Season Structure
+### 4. VCT 2026 Season Structure
 
-Implemented authentic VCT calendar with distinct phases:
+Implemented authentic VCT 2026 calendar with distinct phases (matches actual format from valorantesports.com):
 
-| Phase | Days | Type |
-|-------|------|------|
-| Kickoff | 0-28 | Tournament (Triple Elim) |
-| Stage 1 | 35-91 | League |
-| Masters 1 | 98-112 | Tournament |
-| Stage 2 | 119-175 | League |
-| Masters 2 | 182-196 | Tournament |
-| Champions | 245-266 | Tournament |
-| Offseason | 273+ | No matches |
+| Phase | Days | Duration | Type | Description |
+|-------|------|----------|------|-------------|
+| Kickoff | 0-28 | 28 days | Tournament | Triple Elim, 12 teams, top 3 qualify |
+| Masters Santiago | 35-49 | 14 days | International | First international event |
+| Stage 1 | 56-91 | 35 days | League | Round-robin in 2 groups of 6 |
+| Stage 1 Playoffs | 98-112 | 14 days | Tournament | Top 8 teams from league |
+| Masters London | 119-133 | 14 days | International | Second international event |
+| Stage 2 | 140-175 | 35 days | League | Round-robin in groups |
+| Stage 2 Playoffs | 182-196 | 14 days | Tournament | Playoff tournament |
+| Champions Shanghai | 217-238 | 21 days | International | World Championship |
+| Offseason | 245+ | 120 days | Rest | No matches |
 
-League matches are only scheduled during Stage 1 and Stage 2 phases.
+**Key differences from previous structure:**
+- Masters comes AFTER Kickoff (not after Stage 1)
+- Stage 1/2 Playoffs added as separate phases
+- Round-robin format: 12 regional teams split into 2 groups of 6
+- Each team plays 5 matches per stage (one against each group opponent)
+- League matches only scheduled during Stage 1 and Stage 2 phases
 
-### 5. Triple Elimination (VCT Kickoff)
+### 5. Round-Robin League Format
+
+Stage 1 and Stage 2 use round-robin format within groups:
+
+**Group Assignment (Snake Draft):**
+```
+12 regional teams sorted by org value → snake drafted into 2 groups
+
+Sorted: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 (by strength)
+Group A: 1, 4, 5, 8, 9, 12 (snake picks: 0,3,4,7,8,11)
+Group B: 2, 3, 6, 7, 10, 11 (snake picks: 1,2,5,6,9,10)
+```
+
+**Match Scheduling:**
+- Player's team placed in Group A with top-seeded opponents
+- Each team plays every other group opponent once (5 matches per stage)
+- 1 match per week over 5 weeks
+- Alternating home/away
+
+**Code Location:** `EventScheduler.generateLeagueMatchSchedule()`
+
+### 6. Triple Elimination (VCT Kickoff)
 
 The Kickoff format has **3 winners** (Alpha, Beta, Omega) instead of a single champion:
 - Upper (Alpha) bracket: 0 losses
@@ -2005,8 +2035,17 @@ Tournament matches are scheduled dynamically, not all at once:
 **Match Completion Flow:**
 1. Match simulated → result recorded
 2. `advanceTournament()` updates bracket (propagates winner/loser to next matches)
-3. `createMatchEntitiesForReadyBracketMatches()` creates Match entities for newly-ready matches
-4. `scheduleNewlyReadyMatches()` assigns dates and creates calendar events for newly-ready matches
+3. `scheduleNewlyReadyMatches()` assigns dates to newly-ready bracket matches (**MUST run first**)
+4. `createMatchEntitiesForReadyBracketMatches()` creates Match entities using those dates (**MUST run second**)
+
+**Critical: Order of Operations**
+
+The order of steps 3 and 4 is critical. `createMatchEntitiesForReadyBracketMatches()` uses `bracketMatch.scheduledDate` when creating Match entities:
+```typescript
+scheduledDate: bracketMatch.scheduledDate || tournament.startDate
+```
+
+If `scheduleNewlyReadyMatches()` hasn't run yet, `bracketMatch.scheduledDate` is undefined, and Match entities get the wrong date (tournament start date instead of the actual scheduled date). This causes a date mismatch between Match entities and calendar events, breaking bracket progression.
 
 **Key Methods in TournamentService:**
 - `scheduleTournamentMatches()` - Only schedules `status === 'ready'` matches

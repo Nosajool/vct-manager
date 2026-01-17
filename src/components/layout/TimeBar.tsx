@@ -94,9 +94,18 @@ export function TimeBar() {
   const formattedDate = timeProgression.formatDate(calendar.currentDate);
 
   // Format phase for display
-  const phaseDisplay = calendar.currentPhase
-    .replace(/([0-9]+)/g, ' $1')
-    .replace(/^./, (c) => c.toUpperCase());
+  const phaseDisplayMap: Record<string, string> = {
+    offseason: 'Offseason',
+    kickoff: 'Kickoff',
+    stage1: 'Stage 1',
+    stage1_playoffs: 'Stage 1 Playoffs',
+    stage2: 'Stage 2',
+    stage2_playoffs: 'Stage 2 Playoffs',
+    masters1: 'Masters Santiago',
+    masters2: 'Masters London',
+    champions: 'Champions',
+  };
+  const phaseDisplay = phaseDisplayMap[calendar.currentPhase] || calendar.currentPhase;
 
   return (
     <>

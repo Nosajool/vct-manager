@@ -5,7 +5,9 @@ export type SeasonPhase =
   | 'offseason'
   | 'kickoff'
   | 'stage1'
+  | 'stage1_playoffs'
   | 'stage2'
+  | 'stage2_playoffs'
   | 'masters1'
   | 'masters2'
   | 'champions';

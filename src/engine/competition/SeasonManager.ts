@@ -6,14 +6,16 @@ import type { SeasonPhase, MatchResult } from '../../types';
 import type { StandingsEntry } from '../../store/slices/competitionSlice';
 import type { SeasonPhaseSchedule } from './ScheduleGenerator';
 
-// Phase order for progression
+// Phase order for progression (matches actual VCT 2026 structure)
 const PHASE_ORDER: SeasonPhase[] = [
   'offseason',
   'kickoff',
+  'masters1', // Masters Santiago - after Kickoff
   'stage1',
-  'masters1',
+  'stage1_playoffs',
+  'masters2', // Masters London - after Stage 1 Playoffs
   'stage2',
-  'masters2',
+  'stage2_playoffs',
   'champions',
 ];
 
@@ -207,9 +209,11 @@ export class SeasonManager {
       offseason: 'Offseason',
       kickoff: 'Kickoff',
       stage1: 'Stage 1',
-      masters1: 'Masters 1',
+      stage1_playoffs: 'Stage 1 Playoffs',
       stage2: 'Stage 2',
-      masters2: 'Masters 2',
+      stage2_playoffs: 'Stage 2 Playoffs',
+      masters1: 'Masters Santiago',
+      masters2: 'Masters London',
       champions: 'Champions',
     };
     return names[phase];
@@ -222,11 +226,13 @@ export class SeasonManager {
     const descriptions: Record<SeasonPhase, string> = {
       offseason: 'Rest period between seasons. Teams can make roster changes.',
       kickoff: 'Season opener tournament. Triple elimination format.',
-      stage1: 'First league split. Round robin matches determine standings.',
-      masters1: 'First international tournament. Top teams from each region.',
+      stage1: 'First league split. Round robin matches in groups.',
+      stage1_playoffs: 'Stage 1 playoff tournament. Top 8 teams compete.',
       stage2: 'Second league split. Round robin matches for final standings.',
-      masters2: 'Second international tournament. Top teams compete.',
-      champions: 'World Championship. The biggest event of the year.',
+      stage2_playoffs: 'Stage 2 playoff tournament. Determines Champions qualifiers.',
+      masters1: 'First international tournament in Santiago. Top teams from Kickoff.',
+      masters2: 'Second international tournament in London. Top playoff teams.',
+      champions: 'World Championship in Shanghai. The biggest event of the year.',
     };
     return descriptions[phase];
   }

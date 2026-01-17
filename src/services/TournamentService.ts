@@ -112,12 +112,13 @@ export class TournamentService {
     // Update tournament bracket in store
     state.updateBracket(tournamentId, newBracket);
 
-    // Create Match entities for any newly-ready bracket matches
+    // Schedule newly-ready matches FIRST (sets scheduledDate on bracket matches)
+    // Then create Match entities (uses those dates)
     const updatedTournament = state.tournaments[tournamentId];
     if (updatedTournament) {
-      this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
-      // Schedule and create calendar events for newly-ready matches
+      // Order matters! Schedule first, then create entities
       this.scheduleNewlyReadyMatches(updatedTournament);
+      this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
     }
 
     // Check if tournament is complete
