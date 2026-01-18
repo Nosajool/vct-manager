@@ -6,7 +6,12 @@ import { bracketManager, tournamentEngine } from '../engine/competition';
 import { tournamentService } from './TournamentService';
 import type { Region, Tournament, Team } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
-import { AMERICAS_KICKOFF_SEEDING } from '../utils/constants';
+import {
+  AMERICAS_KICKOFF_SEEDING,
+  EMEA_KICKOFF_SEEDING,
+  PACIFIC_KICKOFF_SEEDING,
+  CHINA_KICKOFF_SEEDING,
+} from '../utils/constants';
 
 // All VCT regions
 const ALL_REGIONS: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
@@ -27,20 +32,8 @@ export class RegionalSimulationService {
       // Get teams from this region
       const allRegionTeams = Object.values(state.teams).filter((t) => t.region === region);
 
-      // Sort teams according to region-specific seeding
-      // For Americas: Use actual VCT 2026 seeding order
-      // For other regions: Sort by strength
-      let regionTeams: Team[];
-      if (region === 'Americas') {
-        regionTeams = this.sortTeamsByAmericasKickoffSeeding(allRegionTeams).slice(0, 12);
-      } else {
-        regionTeams = allRegionTeams
-          .sort(
-            (a, b) =>
-              b.organizationValue + b.fanbase * 10000 - (a.organizationValue + a.fanbase * 10000)
-          )
-          .slice(0, 12);
-      }
+      // Sort teams according to official VCT 2026 Kickoff seeding for each region
+      const regionTeams = this.sortTeamsByKickoffSeeding(allRegionTeams, region).slice(0, 12);
 
       if (regionTeams.length < 12) {
         console.warn(
@@ -180,11 +173,12 @@ export class RegionalSimulationService {
   }
 
   /**
-   * Sort Americas teams according to official VCT 2026 Kickoff seeding
+   * Sort teams according to official VCT 2026 Kickoff seeding for each region
    */
-  private sortTeamsByAmericasKickoffSeeding(teams: Team[]): Team[] {
+  private sortTeamsByKickoffSeeding(teams: Team[], region: Region): Team[] {
+    const seedingArray = this.getKickoffSeeding(region);
     const seedingMap = new Map<string, number>();
-    AMERICAS_KICKOFF_SEEDING.forEach((teamName, index) => {
+    seedingArray.forEach((teamName, index) => {
       seedingMap.set(teamName.toLowerCase(), index);
     });
 
@@ -193,6 +187,24 @@ export class RegionalSimulationService {
       const seedB = seedingMap.get(b.name.toLowerCase()) ?? 999;
       return seedA - seedB;
     });
+  }
+
+  /**
+   * Get the official Kickoff seeding array for a region
+   */
+  private getKickoffSeeding(region: Region): string[] {
+    switch (region) {
+      case 'Americas':
+        return AMERICAS_KICKOFF_SEEDING;
+      case 'EMEA':
+        return EMEA_KICKOFF_SEEDING;
+      case 'Pacific':
+        return PACIFIC_KICKOFF_SEEDING;
+      case 'China':
+        return CHINA_KICKOFF_SEEDING;
+      default:
+        return AMERICAS_KICKOFF_SEEDING;
+    }
   }
 }
 

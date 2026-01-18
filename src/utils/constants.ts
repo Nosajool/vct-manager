@@ -146,44 +146,44 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
   EMEA: [
     { name: 'Fnatic', orgValue: 4500000, fanbase: 92 },
     { name: 'Team Liquid', orgValue: 4200000, fanbase: 88 },
-    { name: 'Team Vitality', orgValue: 3800000, fanbase: 80 },
-    { name: 'Karmine Corp', orgValue: 3500000, fanbase: 85 },
+    { name: 'GIANTX', orgValue: 3500000, fanbase: 75 },
     { name: 'Team Heretics', orgValue: 3200000, fanbase: 75 },
     { name: 'NAVI', orgValue: 3800000, fanbase: 82 },
+    { name: 'Karmine Corp', orgValue: 3500000, fanbase: 85 },
     { name: 'FUT Esports', orgValue: 2800000, fanbase: 70 },
-    { name: 'BBL Esports', orgValue: 2600000, fanbase: 68 },
-    { name: 'Giants Gaming', orgValue: 2500000, fanbase: 65 },
-    { name: 'KOI', orgValue: 3000000, fanbase: 78 },
     { name: 'Gentle Mates', orgValue: 2400000, fanbase: 60 },
-    { name: 'Apeks', orgValue: 2300000, fanbase: 55 },
+    { name: 'PCIFIC Esports', orgValue: 2300000, fanbase: 55 },
+    { name: 'BBL Esports', orgValue: 2600000, fanbase: 68 },
+    { name: 'ULF Esports', orgValue: 2300000, fanbase: 55 },
+    { name: 'Team Vitality', orgValue: 3800000, fanbase: 80 },
   ],
   Pacific: [
-    { name: 'Paper Rex', orgValue: 3500000, fanbase: 88 },
-    { name: 'DRX', orgValue: 4000000, fanbase: 90 },
     { name: 'T1', orgValue: 4500000, fanbase: 92 },
-    { name: 'Gen.G', orgValue: 4200000, fanbase: 85 },
-    { name: 'ZETA DIVISION', orgValue: 3200000, fanbase: 82 },
-    { name: 'DetonatioN Gaming', orgValue: 2800000, fanbase: 70 },
-    { name: 'Global Esports', orgValue: 2500000, fanbase: 65 },
-    { name: 'Team Secret', orgValue: 3000000, fanbase: 72 },
-    { name: 'Talon Esports', orgValue: 2600000, fanbase: 68 },
+    { name: 'DRX', orgValue: 4000000, fanbase: 90 },
+    { name: 'Paper Rex', orgValue: 3500000, fanbase: 88 },
     { name: 'Rex Regum Qeon', orgValue: 2400000, fanbase: 62 },
-    { name: 'BLEED Esports', orgValue: 2300000, fanbase: 58 },
     { name: 'Nongshim RedForce', orgValue: 2800000, fanbase: 65 },
+    { name: 'Team Secret', orgValue: 3000000, fanbase: 72 },
+    { name: 'ZETA DIVISION', orgValue: 3200000, fanbase: 82 },
+    { name: 'FULL SENSE', orgValue: 2600000, fanbase: 68 },
+    { name: 'VARREL', orgValue: 2300000, fanbase: 58 },
+    { name: 'Global Esports', orgValue: 2500000, fanbase: 65 },
+    { name: 'DetonatioN FocusMe', orgValue: 2800000, fanbase: 70 },
+    { name: 'Gen.G', orgValue: 4200000, fanbase: 85 },
   ],
   China: [
     { name: 'EDward Gaming', orgValue: 4500000, fanbase: 90 },
     { name: 'Bilibili Gaming', orgValue: 4000000, fanbase: 85 },
-    { name: 'FunPlus Phoenix', orgValue: 4200000, fanbase: 88 },
-    { name: 'JD Gaming', orgValue: 3800000, fanbase: 82 },
-    { name: 'Nova Esports', orgValue: 3200000, fanbase: 75 },
-    { name: 'All Gamers', orgValue: 2800000, fanbase: 68 },
+    { name: 'Xi Lai Gaming', orgValue: 3200000, fanbase: 72 },
     { name: 'Dragon Ranger Gaming', orgValue: 2600000, fanbase: 65 },
-    { name: 'Wolves Esports', orgValue: 2500000, fanbase: 62 },
-    { name: 'Titan Esports Club', orgValue: 2400000, fanbase: 60 },
-    { name: 'TYLOO', orgValue: 3000000, fanbase: 72 },
     { name: 'Trace Esports', orgValue: 2300000, fanbase: 58 },
-    { name: 'Attacking Soul Esports', orgValue: 2200000, fanbase: 55 },
+    { name: 'Wolves Esports', orgValue: 2500000, fanbase: 62 },
+    { name: 'FunPlus Phoenix', orgValue: 4200000, fanbase: 88 },
+    { name: 'TYLOO', orgValue: 3000000, fanbase: 72 },
+    { name: 'All Gamers', orgValue: 2800000, fanbase: 68 },
+    { name: 'Nova Esports', orgValue: 3200000, fanbase: 75 },
+    { name: 'JD Gaming', orgValue: 3800000, fanbase: 82 },
+    { name: 'Titan Esports Club', orgValue: 2400000, fanbase: 60 },
   ],
 };
 
@@ -280,6 +280,78 @@ export const AMERICAS_KICKOFF_SEEDING: string[] = [
   'FURIA',         // Seed 10 - Pool 2 (plays seed 9)
   '100 Thieves',   // Seed 11 - Pool 2 (plays seed 12)
   'Leviatán',      // Seed 12 - Pool 2 (plays seed 11)
+];
+
+/**
+ * VCT EMEA Kickoff 2026 Seeding
+ * Based on actual VCT 2026 format:
+ * - Pool 1 (seeds 1-4): Champions 2025 qualifiers (Fnatic, Liquid, GIANTX, Heretics), receive bye to UB R2
+ * - Pool 2 (seeds 5-12): Play in UB R1
+ *
+ * UB R1 matchups: 5v6 (NAVI vs KC), 7v8 (FUT vs Gentle Mates), 9v10 (PCIFIC vs BBL), 11v12 (ULF vs Vitality)
+ * UB R2 matchups: 1 vs winner(5v6), 2 vs winner(7v8), 3 vs winner(9v10), 4 vs winner(11v12)
+ */
+export const EMEA_KICKOFF_SEEDING: string[] = [
+  'Fnatic',        // Seed 1 - Champions 2025 qualifier (bye)
+  'Team Liquid',   // Seed 2 - Champions 2025 qualifier (bye)
+  'GIANTX',        // Seed 3 - Champions 2025 qualifier (bye)
+  'Team Heretics', // Seed 4 - Champions 2025 qualifier (bye)
+  'NAVI',          // Seed 5 - Pool 2 (plays seed 6)
+  'Karmine Corp',  // Seed 6 - Pool 2 (plays seed 5)
+  'FUT Esports',   // Seed 7 - Pool 2 (plays seed 8)
+  'Gentle Mates',  // Seed 8 - Pool 2 (plays seed 7)
+  'PCIFIC Esports', // Seed 9 - Pool 2 (plays seed 10) - Ascension 2025
+  'BBL Esports',   // Seed 10 - Pool 2 (plays seed 9)
+  'ULF Esports',   // Seed 11 - Pool 2 (plays seed 12) - Ascension 2025
+  'Team Vitality', // Seed 12 - Pool 2 (plays seed 11)
+];
+
+/**
+ * VCT Pacific Kickoff 2026 Seeding
+ * Based on actual VCT 2026 format:
+ * - Pool 1 (seeds 1-4): Champions 2025 qualifiers (T1, DRX, PRX, RRQ), receive bye to UB R2
+ * - Pool 2 (seeds 5-12): Play in UB R1 (placed via random draw)
+ *
+ * UB R1 matchups: 5v6 (NS vs Secret), 7v8 (ZETA vs FULL SENSE), 9v10 (VARREL vs Global), 11v12 (DFM vs Gen.G)
+ * UB R2 matchups: 1 vs winner(5v6), 2 vs winner(7v8), 3 vs winner(9v10), 4 vs winner(11v12)
+ */
+export const PACIFIC_KICKOFF_SEEDING: string[] = [
+  'T1',              // Seed 1 - Champions 2025 qualifier (bye)
+  'DRX',             // Seed 2 - Champions 2025 qualifier (bye)
+  'Paper Rex',       // Seed 3 - Champions 2025 qualifier (bye)
+  'Rex Regum Qeon',  // Seed 4 - Champions 2025 qualifier (bye)
+  'Nongshim RedForce', // Seed 5 - Pool 2 (plays seed 6) - Ascension 2025
+  'Team Secret',     // Seed 6 - Pool 2 (plays seed 5)
+  'ZETA DIVISION',   // Seed 7 - Pool 2 (plays seed 8)
+  'FULL SENSE',      // Seed 8 - Pool 2 (plays seed 7) - replaced Talon for 2026
+  'VARREL',          // Seed 9 - Pool 2 (plays seed 10) - Ascension 2025
+  'Global Esports',  // Seed 10 - Pool 2 (plays seed 9)
+  'DetonatioN FocusMe', // Seed 11 - Pool 2 (plays seed 12)
+  'Gen.G',           // Seed 12 - Pool 2 (plays seed 11)
+];
+
+/**
+ * VCT China Kickoff 2026 Seeding
+ * Based on actual VCT 2026 format:
+ * - Pool 1 (seeds 1-4): Champions 2025 qualifiers (EDG, BLG, XLG, DRG), receive bye to UB R2
+ * - Pool 2 (seeds 5-12): Play in UB R1
+ *
+ * UB R1 matchups: 5v6 (Trace vs Wolves), 7v8 (FPX vs TYLOO), 9v10 (AG vs Nova), 11v12 (JDG vs Titan)
+ * UB R2 matchups: 1 vs winner(5v6), 2 vs winner(7v8), 3 vs winner(9v10), 4 vs winner(11v12)
+ */
+export const CHINA_KICKOFF_SEEDING: string[] = [
+  'EDward Gaming',     // Seed 1 - Champions 2025 qualifier (bye)
+  'Bilibili Gaming',   // Seed 2 - Champions 2025 qualifier (bye)
+  'Xi Lai Gaming',     // Seed 3 - Champions 2025 qualifier (bye) - XLG
+  'Dragon Ranger Gaming', // Seed 4 - Champions 2025 qualifier (bye) - Ascension 2025
+  'Trace Esports',     // Seed 5 - Pool 2 (plays seed 6)
+  'Wolves Esports',    // Seed 6 - Pool 2 (plays seed 5)
+  'FunPlus Phoenix',   // Seed 7 - Pool 2 (plays seed 8)
+  'TYLOO',             // Seed 8 - Pool 2 (plays seed 7)
+  'All Gamers',        // Seed 9 - Pool 2 (plays seed 10)
+  'Nova Esports',      // Seed 10 - Pool 2 (plays seed 9)
+  'JD Gaming',         // Seed 11 - Pool 2 (plays seed 12)
+  'Titan Esports Club', // Seed 12 - Pool 2 (plays seed 11)
 ];
 
 /**
