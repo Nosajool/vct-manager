@@ -4,8 +4,9 @@
 import { useGameStore } from '../store';
 import { bracketManager, tournamentEngine } from '../engine/competition';
 import { tournamentService } from './TournamentService';
-import type { Region, Tournament } from '../types';
+import type { Region, Tournament, Team } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
+import { AMERICAS_KICKOFF_SEEDING } from '../utils/constants';
 
 // All VCT regions
 const ALL_REGIONS: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
@@ -23,14 +24,23 @@ export class RegionalSimulationService {
       // Get fresh state each iteration (state changes after each tournament)
       const state = useGameStore.getState();
 
-      // Get teams from this region (sorted by strength)
-      const regionTeams = Object.values(state.teams)
-        .filter((t) => t.region === region)
-        .sort(
-          (a, b) =>
-            b.organizationValue + b.fanbase * 10000 - (a.organizationValue + a.fanbase * 10000)
-        )
-        .slice(0, 12);
+      // Get teams from this region
+      const allRegionTeams = Object.values(state.teams).filter((t) => t.region === region);
+
+      // Sort teams according to region-specific seeding
+      // For Americas: Use actual VCT 2026 seeding order
+      // For other regions: Sort by strength
+      let regionTeams: Team[];
+      if (region === 'Americas') {
+        regionTeams = this.sortTeamsByAmericasKickoffSeeding(allRegionTeams).slice(0, 12);
+      } else {
+        regionTeams = allRegionTeams
+          .sort(
+            (a, b) =>
+              b.organizationValue + b.fanbase * 10000 - (a.organizationValue + a.fanbase * 10000)
+          )
+          .slice(0, 12);
+      }
 
       if (regionTeams.length < 12) {
         console.warn(
@@ -167,6 +177,22 @@ export class RegionalSimulationService {
     const date = new Date(currentDate);
     date.setDate(date.getDate() + 7);
     return date;
+  }
+
+  /**
+   * Sort Americas teams according to official VCT 2026 Kickoff seeding
+   */
+  private sortTeamsByAmericasKickoffSeeding(teams: Team[]): Team[] {
+    const seedingMap = new Map<string, number>();
+    AMERICAS_KICKOFF_SEEDING.forEach((teamName, index) => {
+      seedingMap.set(teamName.toLowerCase(), index);
+    });
+
+    return [...teams].sort((a, b) => {
+      const seedA = seedingMap.get(a.name.toLowerCase()) ?? 999;
+      const seedB = seedingMap.get(b.name.toLowerCase()) ?? 999;
+      return seedA - seedB;
+    });
   }
 }
 

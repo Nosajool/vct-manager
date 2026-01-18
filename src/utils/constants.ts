@@ -141,7 +141,7 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
     { name: 'Leviatán', orgValue: 2800000, fanbase: 68 },
     { name: 'KRÜ Esports', orgValue: 2500000, fanbase: 65 },
     { name: 'G2 Esports', orgValue: 4000000, fanbase: 82 },
-    { name: '2GAME Esports', orgValue: 2200000, fanbase: 58 },
+    { name: 'ENVY', orgValue: 2800000, fanbase: 65 },
   ],
   EMEA: [
     { name: 'Fnatic', orgValue: 4500000, fanbase: 92 },
@@ -257,6 +257,30 @@ export const ROSTER_SIZE = {
  * Number of teams per region
  */
 export const TEAMS_PER_REGION = 12;
+
+/**
+ * VCT Americas Kickoff 2026 Seeding
+ * Based on actual VCT 2026 format:
+ * - Pool 1 (seeds 1-4): Champions 2025 qualifiers, receive bye to UB R2
+ * - Pool 2 (seeds 5-12): Play in UB R1
+ *
+ * UB R1 matchups: 5v6, 7v8, 9v10, 11v12
+ * UB R2 matchups: 1 vs winner(5v6), 2 vs winner(7v8), 3 vs winner(9v10), 4 vs winner(11v12)
+ */
+export const AMERICAS_KICKOFF_SEEDING: string[] = [
+  'NRG',           // Seed 1 - Champions 2025 qualifier (bye)
+  'MIBR',          // Seed 2 - Champions 2025 qualifier (bye)
+  'Sentinels',     // Seed 3 - Champions 2025 qualifier (bye)
+  'G2 Esports',    // Seed 4 - Champions 2025 qualifier (bye)
+  'LOUD',          // Seed 5 - Pool 2 (plays seed 6)
+  'Cloud9',        // Seed 6 - Pool 2 (plays seed 5)
+  'ENVY',          // Seed 7 - Pool 2 (plays seed 8)
+  'Evil Geniuses', // Seed 8 - Pool 2 (plays seed 7)
+  'KRÜ Esports',   // Seed 9 - Pool 2 (plays seed 10)
+  'FURIA',         // Seed 10 - Pool 2 (plays seed 9)
+  '100 Thieves',   // Seed 11 - Pool 2 (plays seed 12)
+  'Leviatán',      // Seed 12 - Pool 2 (plays seed 11)
+];
 
 /**
  * Number of free agents per region

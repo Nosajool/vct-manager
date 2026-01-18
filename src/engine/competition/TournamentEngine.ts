@@ -119,7 +119,7 @@ export class TournamentEngine {
     endDate.setDate(endDate.getDate() + durationDays);
 
     // Generate bracket based on format (with special seeding for Kickoff)
-    let bracket = this.generateBracket(format, teamIds, type);
+    let bracket = this.generateBracket(format, teamIds, type, region);
 
     // Make bracket match IDs unique by prefixing with tournament ID
     // This prevents collisions when multiple tournaments are simulated
@@ -306,12 +306,14 @@ export class TournamentEngine {
   private generateBracket(
     format: TournamentFormat,
     teamIds: string[],
-    type?: CompetitionType
+    type?: CompetitionType,
+    region?: TournamentRegion
   ): BracketStructure {
     // For Kickoff triple elim, use special seeding:
-    // Top 4 get byes (seeds 1-4), bottom 8 are randomly drawn (seeds 5-12)
+    // Americas uses actual VCT 2026 seeding
+    // Other regions: Top 4 get byes (seeds 1-4), bottom 8 are randomly drawn (seeds 5-12)
     if (format === 'triple_elim' && type === 'kickoff') {
-      const seeding = this.generateKickoffSeeding(teamIds.length);
+      const seeding = this.generateKickoffSeeding(teamIds, region);
       return bracketManager.generateTripleElimination(teamIds, seeding);
     }
 
@@ -331,14 +333,20 @@ export class TournamentEngine {
 
   /**
    * Generate Kickoff tournament seeding
-   * Top 4 teams (Champions qualifiers) get byes to Round 2
-   * Remaining teams are randomly drawn for Round 1
+   * For Americas: Uses actual VCT 2026 seeding order
+   * For other regions: Top 4 teams get byes, remaining are randomly drawn
    */
-  generateKickoffSeeding(numTeams: number): number[] {
-    // Teams are assumed to be sorted by previous season performance
-    // First 4 teams (indices 0-3) = Champions qualifiers = get byes (seeds 1-4)
-    // Remaining teams (indices 4-11) = randomly drawn for R1 (seeds 5-12+)
+  generateKickoffSeeding(teamIds: string[], region?: TournamentRegion): number[] {
+    const numTeams = teamIds.length;
 
+    // For Americas, use the actual VCT 2026 seeding
+    if (region === 'Americas') {
+      return this.generateAmericasKickoffSeeding(teamIds);
+    }
+
+    // For other regions, use default seeding logic:
+    // First 4 teams = Champions qualifiers = get byes (seeds 1-4)
+    // Remaining teams = randomly drawn for R1 (seeds 5-12+)
     const seeding: number[] = [];
     const numByeTeams = Math.min(4, numTeams);
     const numDrawnTeams = numTeams - numByeTeams;
@@ -363,6 +371,18 @@ export class TournamentEngine {
     seeding.push(...remainingSeeds);
 
     return seeding;
+  }
+
+  /**
+   * Generate Americas Kickoff seeding based on actual VCT 2026 format
+   * Teams are expected to be pre-sorted by the service layer according to
+   * official seeding order (NRG, MIBR, Sentinels, G2, LOUD, Cloud9, etc.)
+   * So we just return sequential seeds 1, 2, 3, 4, ...
+   */
+  private generateAmericasKickoffSeeding(teamIds: string[]): number[] {
+    // Teams are already sorted in official seeding order by the service layer
+    // Return sequential seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    return teamIds.map((_, index) => index + 1);
   }
 
   /**

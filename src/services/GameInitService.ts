@@ -8,7 +8,7 @@ import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { tournamentService } from './TournamentService';
 import type { Player, Region, MatchEventData } from '../types';
-import { FREE_AGENTS_PER_REGION } from '../utils/constants';
+import { FREE_AGENTS_PER_REGION, AMERICAS_KICKOFF_SEEDING } from '../utils/constants';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 
@@ -151,13 +151,20 @@ export class GameInitService {
     console.log('Generating Kickoff tournament...');
     const regionTeams = teams.filter((t) => t.region === playerRegion);
 
-    // Sort teams by strength (orgValue + fanbase) - top 4 will get byes as "Champions qualifiers"
-    // In subsequent seasons, this would be based on previous season performance
-    const sortedRegionTeams = [...regionTeams].sort((a, b) => {
-      const strengthA = a.organizationValue + a.fanbase * 10000;
-      const strengthB = b.organizationValue + b.fanbase * 10000;
-      return strengthB - strengthA; // Descending order (strongest first)
-    });
+    // Sort teams according to official seeding
+    // For Americas: Use actual VCT 2026 seeding order
+    // For other regions: Sort by strength (orgValue + fanbase)
+    let sortedRegionTeams: typeof regionTeams;
+    if (playerRegion === 'Americas') {
+      sortedRegionTeams = this.sortTeamsByAmericasKickoffSeeding(regionTeams);
+    } else {
+      // Other regions: sort by strength - top 4 will get byes as "Champions qualifiers"
+      sortedRegionTeams = [...regionTeams].sort((a, b) => {
+        const strengthA = a.organizationValue + a.fanbase * 10000;
+        const strengthB = b.organizationValue + b.fanbase * 10000;
+        return strengthB - strengthA; // Descending order (strongest first)
+      });
+    }
     const regionTeamIds = sortedRegionTeams.map((t) => t.id);
 
     // For Kickoff: 12 teams, top 4 get byes, bottom 8 play R1 via random draw
@@ -422,6 +429,27 @@ export class GameInitService {
       playersByRegion,
       teamsByRegion,
     };
+  }
+
+  /**
+   * Sort Americas teams according to official VCT 2026 Kickoff seeding
+   * Based on actual seeding from vlr.gg/liquipedia:
+   * - Seeds 1-4 (bye teams): NRG, MIBR, Sentinels, G2 Esports
+   * - Seeds 5-12 (play in R1): LOUD, Cloud9, ENVY, Evil Geniuses, KRÜ Esports, FURIA, 100 Thieves, Leviatán
+   */
+  private sortTeamsByAmericasKickoffSeeding<T extends { name: string }>(teams: T[]): T[] {
+    // Create a map of team name (lowercase) to their seed position
+    const seedingMap = new Map<string, number>();
+    AMERICAS_KICKOFF_SEEDING.forEach((teamName, index) => {
+      seedingMap.set(teamName.toLowerCase(), index);
+    });
+
+    // Sort teams by their seeding position
+    return [...teams].sort((a, b) => {
+      const seedA = seedingMap.get(a.name.toLowerCase()) ?? 999;
+      const seedB = seedingMap.get(b.name.toLowerCase()) ?? 999;
+      return seedA - seedB;
+    });
   }
 }
 
