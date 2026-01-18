@@ -9,6 +9,7 @@ import type {
   TournamentRegion,
   PrizePool,
   BracketStructure,
+  BracketRound,
   Team,
 } from '../../types';
 import type { StandingsEntry } from '../../store/slices/competitionSlice';
@@ -118,7 +119,11 @@ export class TournamentEngine {
     endDate.setDate(endDate.getDate() + durationDays);
 
     // Generate bracket based on format (with special seeding for Kickoff)
-    const bracket = this.generateBracket(format, teamIds, type);
+    let bracket = this.generateBracket(format, teamIds, type);
+
+    // Make bracket match IDs unique by prefixing with tournament ID
+    // This prevents collisions when multiple tournaments are simulated
+    bracket = this.prefixBracketMatchIds(bracket, id);
 
     const tournament: Tournament = {
       id,
@@ -223,6 +228,76 @@ export class TournamentEngine {
       round_robin: 'Round Robin',
     };
     return names[format];
+  }
+
+  /**
+   * Prefix all match IDs in a bracket with the tournament ID
+   * This ensures match IDs are globally unique across tournaments
+   */
+  private prefixBracketMatchIds(bracket: BracketStructure, tournamentId: string): BracketStructure {
+    // Create a short prefix from tournament ID (last 8 chars should be unique enough)
+    const prefix = tournamentId.slice(-12);
+
+    // Helper to update a match ID
+    const prefixId = (id: string) => `${prefix}-${id}`;
+
+    // Helper to update destination match IDs
+    const updateDestination = (dest: { type: string; matchId?: string }) => {
+      if (dest.type === 'match' && dest.matchId) {
+        return { ...dest, matchId: prefixId(dest.matchId) };
+      }
+      return dest;
+    };
+
+    // Helper to update source match IDs
+    const updateSource = (source: { type: string; matchId?: string }) => {
+      if ((source.type === 'winner' || source.type === 'loser') && source.matchId) {
+        return { ...source, matchId: prefixId(source.matchId) };
+      }
+      return source;
+    };
+
+    // Helper to process a round's matches
+    const processRound = (round: BracketRound): BracketRound => ({
+      ...round,
+      roundId: prefixId(round.roundId),
+      matches: round.matches.map((match) => ({
+        ...match,
+        matchId: prefixId(match.matchId),
+        roundId: prefixId(match.roundId),
+        teamASource: updateSource(match.teamASource) as typeof match.teamASource,
+        teamBSource: updateSource(match.teamBSource) as typeof match.teamBSource,
+        winnerDestination: updateDestination(match.winnerDestination) as typeof match.winnerDestination,
+        loserDestination: updateDestination(match.loserDestination) as typeof match.loserDestination,
+      })),
+    });
+
+    // Process all brackets
+    const newBracket: BracketStructure = {
+      upper: bracket.upper.map(processRound),
+    };
+
+    if (bracket.middle) {
+      newBracket.middle = bracket.middle.map(processRound);
+    }
+
+    if (bracket.lower) {
+      newBracket.lower = bracket.lower.map(processRound);
+    }
+
+    if (bracket.grandfinal) {
+      newBracket.grandfinal = {
+        ...bracket.grandfinal,
+        matchId: prefixId(bracket.grandfinal.matchId),
+        roundId: prefixId(bracket.grandfinal.roundId),
+        teamASource: updateSource(bracket.grandfinal.teamASource) as typeof bracket.grandfinal.teamASource,
+        teamBSource: updateSource(bracket.grandfinal.teamBSource) as typeof bracket.grandfinal.teamBSource,
+        winnerDestination: updateDestination(bracket.grandfinal.winnerDestination) as typeof bracket.grandfinal.winnerDestination,
+        loserDestination: updateDestination(bracket.grandfinal.loserDestination) as typeof bracket.grandfinal.loserDestination,
+      };
+    }
+
+    return newBracket;
   }
 
   /**

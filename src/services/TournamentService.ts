@@ -16,7 +16,7 @@ import type {
   CalendarEvent,
   Match,
 } from '../types';
-import type { StandingsEntry } from '../store/slices/competitionSlice';
+import type { StandingsEntry, QualificationRecord } from '../store/slices/competitionSlice';
 
 export class TournamentService {
   /**
@@ -131,6 +131,11 @@ export class TournamentService {
       if (champion) {
         state.setTournamentChampion(tournamentId, champion);
         this.distributePrizes(tournamentId);
+
+        // Handle Kickoff completion - extract qualifiers and trigger modal
+        if (tournament.type === 'kickoff') {
+          this.handleKickoffCompletion(tournamentId);
+        }
       }
     }
 
@@ -323,6 +328,66 @@ export class TournamentService {
         `Awarded $${dist.amount.toLocaleString()} to ${team?.name || dist.teamId} (${dist.placement}${this.getPlacementSuffix(dist.placement)} place)`
       );
     }
+  }
+
+  /**
+   * Handle Kickoff tournament completion - extract qualifiers and trigger modal
+   * Follows pattern: getState() -> engine calls -> state updates
+   *
+   * IMPORTANT: Only triggers modal for the player's region tournament.
+   * Other regions are simulated in bulk via RegionalSimulationService.
+   */
+  handleKickoffCompletion(tournamentId: string): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      console.error(`Tournament not found for Kickoff completion: ${tournamentId}`);
+      return;
+    }
+
+    // Only trigger modal for player's region tournament
+    // Other regions are simulated in bulk and shouldn't show individual modals
+    const playerTeam = state.playerTeamId ? state.teams[state.playerTeamId] : null;
+    const isPlayerRegion = playerTeam && tournament.region === playerTeam.region;
+
+    if (!isPlayerRegion) {
+      // Not player's region - still save qualification but don't trigger modal
+      // (This will be handled by RegionalSimulationService)
+      return;
+    }
+
+    // Call engine (pure function, no side effects)
+    const qualifiers = bracketManager.getQualifiers(tournament.bracket);
+
+    // Validate all qualifiers exist
+    if (!qualifiers.alpha || !qualifiers.beta || !qualifiers.omega) {
+      console.error('Kickoff completion: Not all qualifiers found', qualifiers);
+      return;
+    }
+
+    // Build qualification record (normalized data)
+    const record: QualificationRecord = {
+      tournamentId,
+      tournamentType: 'kickoff',
+      region: tournament.region as 'Americas' | 'EMEA' | 'Pacific' | 'China',
+      qualifiedTeams: [
+        { teamId: qualifiers.alpha, teamName: state.teams[qualifiers.alpha]?.name || 'Unknown', bracket: 'alpha' },
+        { teamId: qualifiers.beta, teamName: state.teams[qualifiers.beta]?.name || 'Unknown', bracket: 'beta' },
+        { teamId: qualifiers.omega, teamName: state.teams[qualifiers.omega]?.name || 'Unknown', bracket: 'omega' },
+      ],
+    };
+
+    // Update store with qualification record
+    state.addQualification(record);
+
+    // Trigger modal via UISlice's existing system (only for player's region)
+    state.openModal('qualification', {
+      phase: 'kickoff',
+      playerRegion: tournament.region,
+      playerRegionQualifiers: record,
+      allRegionsQualifiers: null,  // Filled later when user clicks "See All"
+    });
   }
 
   /**

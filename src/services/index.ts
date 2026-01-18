@@ -23,3 +23,7 @@ export {
   type FinancialSummary,
 } from './EconomyService';
 export { ScrimService, scrimService } from './ScrimService';
+export {
+  RegionalSimulationService,
+  regionalSimulationService,
+} from './RegionalSimulationService';

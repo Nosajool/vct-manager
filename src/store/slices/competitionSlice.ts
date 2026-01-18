@@ -1,8 +1,8 @@
 // Competition Slice - Zustand store slice for tournament and competition management
-// Handles tournaments, brackets, and standings
+// Handles tournaments, brackets, standings, and qualifications
 
 import type { StateCreator } from 'zustand';
-import type { Tournament, BracketStructure } from '../../types';
+import type { Tournament, BracketStructure, CompetitionType, Region } from '../../types';
 
 // Standings entry for league-style phases
 export interface StandingsEntry {
@@ -14,12 +14,27 @@ export interface StandingsEntry {
   placement?: number;
 }
 
+// Qualification record for tracking teams that qualified from a tournament
+export interface QualificationRecord {
+  tournamentId: string;
+  tournamentType: CompetitionType;
+  region: Region | 'International';
+  qualifiedTeams: Array<{
+    teamId: string;
+    teamName: string;
+    bracket: 'alpha' | 'beta' | 'omega';  // Undefeated, 1 loss, 2 losses
+  }>;
+}
+
 export interface CompetitionSlice {
   // Normalized tournament entities
   tournaments: Record<string, Tournament>;
 
   // Standings by tournament ID
   standings: Record<string, StandingsEntry[]>;
+
+  // Qualifications keyed by tournament ID
+  qualifications: Record<string, QualificationRecord>;
 
   // Actions
   addTournament: (tournament: Tournament) => void;
@@ -28,6 +43,7 @@ export interface CompetitionSlice {
   updateBracket: (tournamentId: string, bracket: BracketStructure) => void;
   updateStandings: (tournamentId: string, standings: StandingsEntry[]) => void;
   setTournamentChampion: (tournamentId: string, championId: string) => void;
+  addQualification: (record: QualificationRecord) => void;
 
   // Selectors
   getTournament: (id: string) => Tournament | undefined;
@@ -39,6 +55,7 @@ export interface CompetitionSlice {
   getTournamentStandings: (tournamentId: string) => StandingsEntry[];
   getTeamTournaments: (teamId: string) => Tournament[];
   getAllTournaments: () => Tournament[];
+  getQualificationsForType: (type: CompetitionType) => QualificationRecord[];
 }
 
 export const createCompetitionSlice: StateCreator<
@@ -50,6 +67,7 @@ export const createCompetitionSlice: StateCreator<
   // Initial state
   tournaments: {},
   standings: {},
+  qualifications: {},
 
   // Actions
   addTournament: (tournament) =>
@@ -115,6 +133,11 @@ export const createCompetitionSlice: StateCreator<
       };
     }),
 
+  addQualification: (record) =>
+    set((state) => ({
+      qualifications: { ...state.qualifications, [record.tournamentId]: record },
+    })),
+
   // Selectors
   getTournament: (id) => get().tournaments[id],
 
@@ -161,4 +184,7 @@ export const createCompetitionSlice: StateCreator<
     ),
 
   getAllTournaments: () => Object.values(get().tournaments),
+
+  getQualificationsForType: (type) =>
+    Object.values(get().qualifications).filter((q) => q.tournamentType === type),
 });

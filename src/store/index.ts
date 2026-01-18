@@ -39,7 +39,7 @@ export type { TeamSlice } from './slices/teamSlice';
 export type { GameSlice } from './slices/gameSlice';
 export type { UISlice, ActiveView, BulkSimulationProgress } from './slices/uiSlice';
 export type { MatchSlice } from './slices/matchSlice';
-export type { CompetitionSlice, StandingsEntry } from './slices/competitionSlice';
+export type { CompetitionSlice, StandingsEntry, QualificationRecord } from './slices/competitionSlice';
 export type { ScrimSlice } from './slices/scrimSlice';
 
 // ============================================

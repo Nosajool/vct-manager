@@ -16,6 +16,7 @@ import { calendarService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
+import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import type { MatchEventData } from '../../types';
 
 export function TimeBar() {
@@ -29,6 +30,12 @@ export function TimeBar() {
   const getTodaysActivities = useGameStore((state) => state.getTodaysActivities);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+
+  // Modal state from UISlice
+  const isModalOpen = useGameStore((state) => state.isModalOpen);
+  const modalType = useGameStore((state) => state.modalType);
+  const modalData = useGameStore((state) => state.modalData);
+  const closeModal = useGameStore((state) => state.closeModal);
 
   // Don't show if game hasn't started
   if (!gameStarted) {
@@ -186,6 +193,14 @@ export function TimeBar() {
         onClose={handleCloseModal}
         result={simulationResult}
       />
+
+      {/* Qualification Modal - triggered by TournamentService after Kickoff completion */}
+      {isModalOpen && modalType === 'qualification' && (
+        <QualificationModal
+          data={modalData as QualificationModalData}
+          onClose={closeModal}
+        />
+      )}
     </>
   );
 }
