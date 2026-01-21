@@ -4,3 +4,4 @@ export { BracketMatch } from './BracketMatch';
 export { BracketView } from './BracketView';
 export { TournamentCard, TournamentCardMini } from './TournamentCard';
 export { StandingsTable } from './StandingsTable';
+export { SwissStageView } from './SwissStageView';

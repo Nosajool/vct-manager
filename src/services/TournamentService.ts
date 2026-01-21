@@ -15,7 +15,9 @@ import type {
   MatchResult,
   CalendarEvent,
   Match,
+  MultiStageTournament,
 } from '../types';
+import { isMultiStageTournament } from '../types';
 import type { StandingsEntry, QualificationRecord } from '../store/slices/competitionSlice';
 
 export class TournamentService {
@@ -87,6 +89,7 @@ export class TournamentService {
 
   /**
    * Advance the tournament by completing a match
+   * Handles both bracket matches and Swiss stage matches
    */
   advanceTournament(
     tournamentId: string,
@@ -101,7 +104,19 @@ export class TournamentService {
       return false;
     }
 
-    // Update bracket
+    // Check if this is a Swiss stage match
+    if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss') {
+      // Check if match ID is a Swiss match
+      const isSwissMatch = tournament.swissStage.rounds.some(
+        round => round.matches.some(m => m.matchId === bracketMatchId)
+      );
+
+      if (isSwissMatch) {
+        return this.advanceSwissMatch(tournamentId, bracketMatchId, result);
+      }
+    }
+
+    // Standard bracket match handling
     const newBracket = bracketManager.completeMatch(
       tournament.bracket,
       bracketMatchId,
@@ -489,6 +504,360 @@ export class TournamentService {
     const tournament = this.getTournament(tournamentId);
     if (!tournament) return [];
     return bracketManager.getReadyMatches(tournament.bracket);
+  }
+
+  // ============================================
+  // Swiss Stage Methods
+  // ============================================
+
+  /**
+   * Advance a Swiss match and update the stage
+   * Handles qualification/elimination and round progression
+   */
+  advanceSwissMatch(
+    tournamentId: string,
+    matchId: string,
+    result: MatchResult
+  ): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      console.error(`Tournament not found: ${tournamentId}`);
+      return false;
+    }
+
+    if (!isMultiStageTournament(tournament)) {
+      console.error(`Tournament is not a multi-stage tournament: ${tournamentId}`);
+      return false;
+    }
+
+    if (tournament.currentStage !== 'swiss') {
+      console.error(`Tournament is not in Swiss stage: ${tournamentId}`);
+      return false;
+    }
+
+    // Complete the Swiss match (pure engine call)
+    const updatedSwissStage = bracketManager.completeSwissMatch(
+      tournament.swissStage,
+      matchId,
+      result
+    );
+
+    // Update store with new Swiss stage
+    state.updateSwissStage(tournamentId, updatedSwissStage);
+
+    // Check if round is complete and need to generate next round
+    if (bracketManager.isSwissRoundComplete(updatedSwissStage)) {
+      // Check if Swiss stage is complete
+      if (bracketManager.isSwissStageComplete(updatedSwissStage)) {
+        // Transition to playoffs
+        this.transitionToPlayoffs(tournamentId);
+      } else if (updatedSwissStage.currentRound < updatedSwissStage.totalRounds) {
+        // Generate next Swiss round
+        this.generateNextSwissRound(tournamentId);
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Generate the next Swiss round for a tournament
+   */
+  generateNextSwissRound(tournamentId: string): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament || !isMultiStageTournament(tournament)) {
+      console.error(`Invalid tournament for Swiss round generation: ${tournamentId}`);
+      return false;
+    }
+
+    // Generate next round (pure engine call)
+    const updatedSwissStage = bracketManager.generateNextSwissRound(
+      tournament.swissStage,
+      tournamentId
+    );
+
+    // Update store
+    state.updateSwissStage(tournamentId, updatedSwissStage);
+
+    // Create Match entities for the new round's matches
+    const freshState = useGameStore.getState();
+    const freshTournament = freshState.tournaments[tournamentId] as MultiStageTournament;
+    if (freshTournament) {
+      this.createMatchEntitiesForSwissRound(freshTournament, updatedSwissStage.currentRound);
+    }
+
+    return true;
+  }
+
+  /**
+   * Transition a Masters tournament from Swiss to Playoffs
+   * Called when Swiss stage is complete (4 teams qualified, 4 eliminated)
+   */
+  transitionToPlayoffs(tournamentId: string): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament || !isMultiStageTournament(tournament)) {
+      console.error(`Invalid tournament for playoff transition: ${tournamentId}`);
+      return false;
+    }
+
+    // Get Swiss qualifiers
+    const swissQualifiers = bracketManager.getSwissQualifiedTeams(tournament.swissStage);
+
+    if (swissQualifiers.length !== 4) {
+      console.error(`Expected 4 Swiss qualifiers, got ${swissQualifiers.length}`);
+      return false;
+    }
+
+    // Generate playoff bracket (pure engine call)
+    const playoffBracket = tournamentEngine.generateMastersPlayoffBracket(
+      swissQualifiers,
+      tournament.playoffOnlyTeamIds,
+      tournamentId
+    );
+
+    // Update tournament with playoff bracket and stage
+    state.updateTournament(tournamentId, {
+      bracket: playoffBracket,
+    });
+    state.setTournamentCurrentStage(tournamentId, 'playoff');
+
+    // Get fresh state after updates
+    const freshState = useGameStore.getState();
+    const updatedTournament = freshState.tournaments[tournamentId];
+
+    if (updatedTournament) {
+      // Schedule playoff matches
+      this.scheduleTournamentMatches(updatedTournament);
+      // Create Match entities for ready matches
+      this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
+      // Add calendar events for playoff matches
+      this.addTournamentCalendarEvents(updatedTournament);
+    }
+
+    console.log(`Masters tournament ${tournamentId} transitioned to playoffs`);
+    return true;
+  }
+
+  /**
+   * Simulate entire Swiss stage to completion
+   * Returns the 4 qualified teams
+   */
+  simulateSwissStage(tournamentId: string): string[] {
+    const state = useGameStore.getState();
+    const initialTournament = state.tournaments[tournamentId];
+
+    if (!initialTournament || !isMultiStageTournament(initialTournament)) {
+      console.error(`Invalid tournament for Swiss simulation: ${tournamentId}`);
+      return [];
+    }
+
+    // Ensure tournament is in progress
+    if (initialTournament.status === 'upcoming') {
+      this.startTournament(tournamentId);
+    }
+
+    // Simulate until Swiss is complete
+    let safetyCounter = 0;
+    const maxIterations = 50;
+
+    while (safetyCounter < maxIterations) {
+      // Get fresh state
+      const freshState = useGameStore.getState();
+      const tournament = freshState.tournaments[tournamentId];
+
+      if (!tournament || !isMultiStageTournament(tournament)) {
+        break;
+      }
+
+      const swissStage = tournament.swissStage;
+
+      // Check if Swiss stage is complete
+      if (
+        tournament.currentStage === 'playoff' ||
+        bracketManager.isSwissStageComplete(swissStage)
+      ) {
+        break;
+      }
+
+      // Get next ready Swiss match
+      const currentRound = swissStage.rounds.find(
+        r => r.roundNumber === swissStage.currentRound
+      );
+
+      if (!currentRound) {
+        // No current round - need to generate next
+        if (swissStage.currentRound < swissStage.totalRounds) {
+          this.generateNextSwissRound(tournamentId);
+        }
+        safetyCounter++;
+        continue;
+      }
+
+      const nextMatch = currentRound.matches.find(m => m.status === 'ready');
+
+      if (!nextMatch) {
+        // No ready matches in current round
+        if (currentRound.completed) {
+          // Round complete - check if need to generate next round
+          if (
+            swissStage.currentRound < swissStage.totalRounds &&
+            !bracketManager.isSwissStageComplete(swissStage)
+          ) {
+            this.generateNextSwissRound(tournamentId);
+          }
+        }
+        safetyCounter++;
+        continue;
+      }
+
+      // Simulate the match
+      const result = this.simulateSwissMatch(tournamentId, nextMatch.matchId);
+      if (!result) {
+        safetyCounter++;
+        continue;
+      }
+
+      safetyCounter++;
+    }
+
+    // Return qualified teams
+    const finalState = useGameStore.getState();
+    const finalTournament = finalState.tournaments[tournamentId];
+    if (finalTournament && isMultiStageTournament(finalTournament)) {
+      return bracketManager.getSwissQualifiedTeams(finalTournament.swissStage);
+    }
+
+    return [];
+  }
+
+  /**
+   * Simulate a single Swiss match
+   */
+  private simulateSwissMatch(tournamentId: string, matchId: string): MatchResult | null {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament || !isMultiStageTournament(tournament)) {
+      return null;
+    }
+
+    // Find the match in Swiss rounds
+    let swissMatch: BracketMatch | undefined;
+    for (const round of tournament.swissStage.rounds) {
+      swissMatch = round.matches.find(m => m.matchId === matchId);
+      if (swissMatch) break;
+    }
+
+    if (!swissMatch || !swissMatch.teamAId || !swissMatch.teamBId) {
+      console.error(`Swiss match not found or missing teams: ${matchId}`);
+      return null;
+    }
+
+    // Get or create Match entity
+    let match = state.matches[matchId];
+    if (!match) {
+      match = matchService.createMatch(
+        swissMatch.teamAId,
+        swissMatch.teamBId,
+        swissMatch.scheduledDate || new Date().toISOString(),
+        tournamentId
+      );
+      // Override the match ID to use the Swiss match ID
+      state.addMatch({ ...match, id: matchId });
+      match = state.matches[matchId];
+    }
+
+    // Simulate the match
+    const result = matchService.simulateMatch(matchId);
+
+    if (result) {
+      // Advance the Swiss stage
+      this.advanceSwissMatch(tournamentId, matchId, result);
+    }
+
+    return result;
+  }
+
+  /**
+   * Create Match entities and calendar events for a Swiss round
+   */
+  private createMatchEntitiesForSwissRound(
+    tournament: MultiStageTournament,
+    roundNumber: number
+  ): void {
+    const state = useGameStore.getState();
+    const round = tournament.swissStage.rounds.find(r => r.roundNumber === roundNumber);
+
+    if (!round) return;
+
+    const events: CalendarEvent[] = [];
+    const currentDate = state.calendar.currentDate;
+
+    for (const swissMatch of round.matches) {
+      if (swissMatch.status === 'ready' && swissMatch.teamAId && swissMatch.teamBId) {
+        // Set scheduled date if not set (next day after current date)
+        if (!swissMatch.scheduledDate) {
+          const nextDay = new Date(currentDate);
+          nextDay.setDate(nextDay.getDate() + 1);
+          swissMatch.scheduledDate = nextDay.toISOString();
+        }
+
+        // Create Match entity if it doesn't exist
+        if (!state.matches[swissMatch.matchId]) {
+          const match: Match = {
+            id: swissMatch.matchId,
+            teamAId: swissMatch.teamAId,
+            teamBId: swissMatch.teamBId,
+            scheduledDate: swissMatch.scheduledDate,
+            status: 'scheduled',
+            tournamentId: tournament.id,
+          };
+
+          state.addMatch(match);
+        }
+
+        // Create calendar event if it doesn't exist
+        const eventId = `event-match-${swissMatch.matchId}`;
+        const existingEvent = state.calendar.scheduledEvents.find(e => e.id === eventId);
+        if (!existingEvent) {
+          const teamA = state.teams[swissMatch.teamAId];
+          const teamB = state.teams[swissMatch.teamBId];
+
+          events.push({
+            id: eventId,
+            type: 'match',
+            date: swissMatch.scheduledDate,
+            data: {
+              matchId: swissMatch.matchId,
+              homeTeamId: swissMatch.teamAId,
+              awayTeamId: swissMatch.teamBId,
+              homeTeamName: teamA?.name || 'Unknown',
+              awayTeamName: teamB?.name || 'Unknown',
+              tournamentId: tournament.id,
+              tournamentName: tournament.name,
+              isSwissMatch: true,
+              swissRound: roundNumber,
+            },
+            processed: false,
+            required: true,
+          });
+        }
+      }
+    }
+
+    // Add calendar events
+    if (events.length > 0) {
+      state.addCalendarEvents(events);
+    }
+
+    // Update the Swiss stage with scheduled dates
+    state.updateSwissStage(tournament.id, tournament.swissStage);
   }
 
   // ============================================

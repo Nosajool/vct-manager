@@ -5,7 +5,7 @@ import type { Region } from './player';
 import type { MatchResult } from './match';
 
 export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
-export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
+export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed';
 export type TournamentRegion = Region | 'International';
 
@@ -99,4 +99,55 @@ export interface Tournament {
   // Status
   status: TournamentStatus;
   championId?: string;
+}
+
+// ============================================
+// Swiss Stage Types (for Masters tournaments)
+// ============================================
+
+export type SwissTeamStatus = 'active' | 'qualified' | 'eliminated';
+
+// Swiss team record for standings
+export interface SwissTeamRecord {
+  teamId: string;
+  wins: number;
+  losses: number;
+  roundDiff: number;        // Maps won - maps lost (tiebreaker)
+  opponentIds: string[];    // Track for no-repeat matchups
+  status: SwissTeamStatus;
+  seed?: number;            // Initial seeding for pairing
+}
+
+// Swiss round structure
+export interface SwissRound {
+  roundNumber: number;
+  matches: BracketMatch[];
+  completed: boolean;
+}
+
+// Swiss stage structure
+export interface SwissStage {
+  rounds: SwissRound[];
+  standings: SwissTeamRecord[];
+  qualifiedTeamIds: string[];
+  eliminatedTeamIds: string[];
+  currentRound: number;
+  totalRounds: number;          // 3 for Masters
+  winsToQualify: number;        // 2 for Masters
+  lossesToEliminate: number;    // 2 for Masters
+}
+
+// Multi-stage tournament (Swiss → Playoffs)
+export interface MultiStageTournament extends Tournament {
+  format: 'swiss_to_playoff';
+  swissStage: SwissStage;
+  playoffBracket?: BracketStructure;
+  currentStage: 'swiss' | 'playoff';
+  swissTeamIds: string[];       // 8 teams in Swiss (2nd+3rd from each region)
+  playoffOnlyTeamIds: string[]; // 4 Kickoff winners (join at playoffs)
+}
+
+// Type guard for MultiStageTournament
+export function isMultiStageTournament(tournament: Tournament): tournament is MultiStageTournament {
+  return tournament.format === 'swiss_to_playoff';
 }

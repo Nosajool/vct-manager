@@ -326,7 +326,7 @@ export interface PlayerFatigue {
 ### Competition System
 ```typescript
 export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
-export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
+export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
 
 export interface Tournament {
   id: string;
@@ -334,14 +334,14 @@ export interface Tournament {
   type: CompetitionType;
   format: TournamentFormat;
   region: 'Americas' | 'EMEA' | 'Pacific' | 'China' | 'International';
-  
+
   // Participating teams
   teamIds: string[];
-  
+
   // Schedule
   startDate: Date;
   endDate: Date;
-  
+
   // Prize pool
   prizePool: {
     first: number;
@@ -349,13 +349,43 @@ export interface Tournament {
     third: number;
     // ... other placements
   };
-  
+
   // Bracket structure
   bracket: BracketStructure;
-  
+
   // Status
   status: 'upcoming' | 'in_progress' | 'completed';
   championId?: string;
+}
+
+// Swiss-to-Playoff tournament (for Masters events)
+export interface MultiStageTournament extends Tournament {
+  format: 'swiss_to_playoff';
+  swissStage: SwissStage;
+  playoffBracket?: BracketStructure;
+  currentStage: 'swiss' | 'playoff';
+  swissTeamIds: string[];       // 8 teams in Swiss (2nd+3rd from each region)
+  playoffOnlyTeamIds: string[]; // 4 Kickoff winners (join at playoffs)
+}
+
+export interface SwissStage {
+  rounds: SwissRound[];
+  standings: SwissTeamRecord[];
+  qualifiedTeamIds: string[];
+  eliminatedTeamIds: string[];
+  currentRound: number;
+  totalRounds: number;          // 3 for Masters
+  winsToQualify: number;        // 2 for Masters
+  lossesToEliminate: number;    // 2 for Masters
+}
+
+export interface SwissTeamRecord {
+  teamId: string;
+  wins: number;
+  losses: number;
+  roundDiff: number;        // Maps won - maps lost (tiebreaker)
+  opponentIds: string[];    // Track for no-repeat matchups
+  status: 'active' | 'qualified' | 'eliminated';
 }
 
 export interface BracketStructure {
@@ -1956,11 +1986,11 @@ Implemented authentic VCT 2026 calendar with distinct phases (matches actual for
 
 | Phase | Days | Duration | Type | Description |
 |-------|------|----------|------|-------------|
-| Kickoff | 0-28 | 28 days | Tournament | Triple Elim, 12 teams, top 3 qualify |
-| Masters Santiago | 35-49 | 14 days | International | First international event |
+| Kickoff | 0-28 | 28 days | Tournament | Triple Elim, 12 teams, top 3 qualify per region |
+| Masters Santiago | 35-53 | 18 days | International | Swiss Stage (8 teams) + Playoffs (8 teams) |
 | Stage 1 | 56-91 | 35 days | League | Round-robin in 2 groups of 6 |
 | Stage 1 Playoffs | 98-112 | 14 days | Tournament | Top 8 teams from league |
-| Masters London | 119-133 | 14 days | International | Second international event |
+| Masters London | 119-137 | 18 days | International | Swiss Stage + Playoffs |
 | Stage 2 | 140-175 | 35 days | League | Round-robin in groups |
 | Stage 2 Playoffs | 182-196 | 14 days | Tournament | Playoff tournament |
 | Champions Shanghai | 217-238 | 21 days | International | World Championship |
@@ -1968,10 +1998,34 @@ Implemented authentic VCT 2026 calendar with distinct phases (matches actual for
 
 **Key differences from previous structure:**
 - Masters comes AFTER Kickoff (not after Stage 1)
+- Masters uses Swiss-to-Playoff format (see below)
 - Stage 1/2 Playoffs added as separate phases
 - Round-robin format: 12 regional teams split into 2 groups of 6
 - Each team plays 5 matches per stage (one against each group opponent)
 - League matches only scheduled during Stage 1 and Stage 2 phases
+
+### 7. Swiss-to-Playoff (Masters Format)
+
+Masters tournaments use a two-stage format:
+
+**Swiss Stage (Days 1-4):**
+- 8 teams participate (2nd + 3rd place from each regional Kickoff)
+- 3 rounds of Swiss format
+- Win 2 matches → Qualify for Playoffs
+- Lose 2 matches → Eliminated
+- Cross-regional pairings in Round 1
+- Later rounds pair by record (e.g., 1-0 vs 1-0), avoiding rematches
+
+**Playoffs (Days 6-18):**
+- 8 teams: 4 Swiss qualifiers + 4 Kickoff winners (alpha bracket winners)
+- Double elimination bracket
+- Kickoff winners seeded 1-4, Swiss qualifiers seeded 5-8
+
+**Code Locations:**
+- Swiss stage: `BracketManager.initializeSwissStage()`, `generateNextSwissRound()`, `completeSwissMatch()`
+- Tournament creation: `TournamentEngine.createMastersSantiago()`
+- Service orchestration: `TournamentService.advanceSwissMatch()`, `transitionToPlayoffs()`
+- UI: `SwissStageView` component
 
 ### 5. Round-Robin League Format
 
@@ -2032,9 +2086,18 @@ Tournament matches are scheduled dynamically, not all at once:
 2. Round 1 matches have `status: 'ready'` (teams known from seeding)
 3. Only ready matches get: scheduled dates, calendar events, Match entities
 
+**Swiss-to-Playoff Tournament Flow:**
+1. Swiss stage initialized with Round 1 matches (cross-regional pairings)
+2. Swiss matches processed via `advanceSwissMatch()` which handles qualification/elimination
+3. After each round completes, next round generated via `generateNextSwissRound()`
+4. When Swiss complete (4 qualified, 4 eliminated), `transitionToPlayoffs()` creates bracket
+5. Playoff bracket populated with Swiss qualifiers (seeds 5-8) + Kickoff winners (seeds 1-4)
+
 **Match Completion Flow:**
 1. Match simulated → result recorded
-2. `advanceTournament()` updates bracket (propagates winner/loser to next matches)
+2. `advanceTournament()` detects Swiss vs bracket match:
+   - Swiss match: calls `advanceSwissMatch()` to update standings/status
+   - Bracket match: calls `bracketManager.completeMatch()` to propagate winner/loser
 3. `scheduleNewlyReadyMatches()` assigns dates to newly-ready bracket matches (**MUST run first**)
 4. `createMatchEntitiesForReadyBracketMatches()` creates Match entities using those dates (**MUST run second**)
 

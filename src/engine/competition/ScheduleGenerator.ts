@@ -11,12 +11,14 @@ import type {
 } from '../../types';
 import { tournamentEngine } from './TournamentEngine';
 
-// VCT Season Timeline (simplified)
+// VCT Season Timeline (VCT 2026)
 // January: Kickoff (2 weeks, triple elim)
-// February-March: Stage 1 (8 weeks, round robin)
-// April: Masters 1 (1 week, double elim)
-// May-June: Stage 2 (8 weeks, round robin)
-// July: Masters 2 (1 week, double elim)
+// February: Masters Santiago (Swiss Stage + Playoffs)
+//   - Days 1-4: Swiss Stage (3 rounds, 8 teams)
+//   - Days 6-15: Playoffs (double elim, 8 teams)
+// March-April: Stage 1 (8 weeks, round robin)
+// May: Masters London (Swiss + Playoffs)
+// June-July: Stage 2 (8 weeks, round robin)
 // August: Champions (2 weeks, double elim)
 // September-December: Offseason
 

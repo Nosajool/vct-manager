@@ -9,6 +9,9 @@ import type {
   TeamSource,
   Destination,
   MatchResult,
+  SwissStage,
+  SwissRound,
+  SwissTeamRecord,
 } from '../../types';
 
 /**
@@ -927,6 +930,432 @@ export class BracketManager {
     if (bracket.grandfinal) processMatch(bracket.grandfinal);
 
     return placements;
+  }
+
+  // ============================================
+  // Swiss Stage Methods
+  // ============================================
+
+  /**
+   * Initialize a Swiss stage with teams and configuration
+   * Creates initial standings and Round 1 matches with cross-regional pairings
+   *
+   * @param teamIds - Array of team IDs (8 teams for Masters Swiss)
+   * @param teamRegions - Map of teamId -> region for cross-regional pairing
+   * @param config - Swiss stage configuration
+   */
+  initializeSwissStage(
+    teamIds: string[],
+    teamRegions: Map<string, string>,
+    config: {
+      totalRounds: number;      // 3 for Masters
+      winsToQualify: number;    // 2 for Masters
+      lossesToEliminate: number; // 2 for Masters
+      tournamentId: string;
+    }
+  ): SwissStage {
+    // Initialize standings for all teams
+    const standings: SwissTeamRecord[] = teamIds.map((teamId, index) => ({
+      teamId,
+      wins: 0,
+      losses: 0,
+      roundDiff: 0,
+      opponentIds: [],
+      status: 'active' as const,
+      seed: index + 1,
+    }));
+
+    // Generate Round 1 pairings (cross-regional)
+    const round1Matches = this.generateSwissRound1Pairings(
+      teamIds,
+      teamRegions,
+      config.tournamentId
+    );
+
+    const round1: SwissRound = {
+      roundNumber: 1,
+      matches: round1Matches,
+      completed: false,
+    };
+
+    return {
+      rounds: [round1],
+      standings,
+      qualifiedTeamIds: [],
+      eliminatedTeamIds: [],
+      currentRound: 1,
+      totalRounds: config.totalRounds,
+      winsToQualify: config.winsToQualify,
+      lossesToEliminate: config.lossesToEliminate,
+    };
+  }
+
+  /**
+   * Generate Round 1 Swiss pairings with cross-regional matchups
+   * Pairs 2nd place finishers vs 3rd place finishers from different regions
+   *
+   * For 8 teams (2 per region): Pair teams from different regions
+   * Example: Americas-2nd vs EMEA-3rd, EMEA-2nd vs Pacific-3rd, etc.
+   */
+  generateSwissRound1Pairings(
+    teamIds: string[],
+    teamRegions: Map<string, string>,
+    tournamentId: string
+  ): BracketMatch[] {
+    const matches: BracketMatch[] = [];
+    const usedTeams = new Set<string>();
+
+    // Group teams by region
+    const teamsByRegion = new Map<string, string[]>();
+    for (const teamId of teamIds) {
+      const region = teamRegions.get(teamId) || 'Unknown';
+      if (!teamsByRegion.has(region)) {
+        teamsByRegion.set(region, []);
+      }
+      teamsByRegion.get(region)!.push(teamId);
+    }
+
+    // Create cross-regional pairings
+    // For each region's teams, try to pair with teams from different regions
+    let matchIndex = 0;
+
+    for (let i = 0; i < teamIds.length; i++) {
+      const teamA = teamIds[i];
+      if (usedTeams.has(teamA)) continue;
+
+      const teamARegion = teamRegions.get(teamA);
+
+      // Find opponent from different region
+      for (let j = i + 1; j < teamIds.length; j++) {
+        const teamB = teamIds[j];
+        if (usedTeams.has(teamB)) continue;
+
+        const teamBRegion = teamRegions.get(teamB);
+
+        // Prefer cross-regional matchup
+        if (teamARegion !== teamBRegion) {
+          usedTeams.add(teamA);
+          usedTeams.add(teamB);
+
+          const match: BracketMatch = {
+            matchId: `${tournamentId}-swiss-r1-m${++matchIndex}`,
+            roundId: `${tournamentId}-swiss-r1`,
+            teamASource: { type: 'seed', seed: i + 1 },
+            teamBSource: { type: 'seed', seed: j + 1 },
+            teamAId: teamA,
+            teamBId: teamB,
+            status: 'ready',
+            winnerDestination: { type: 'placement', place: 0 }, // Determined by Swiss standings
+            loserDestination: { type: 'placement', place: 0 },
+          };
+
+          matches.push(match);
+          break;
+        }
+      }
+    }
+
+    // Handle any remaining teams that couldn't get cross-regional matchups
+    const remainingTeams = teamIds.filter(t => !usedTeams.has(t));
+    for (let i = 0; i < remainingTeams.length; i += 2) {
+      if (i + 1 < remainingTeams.length) {
+        const match: BracketMatch = {
+          matchId: `${tournamentId}-swiss-r1-m${++matchIndex}`,
+          roundId: `${tournamentId}-swiss-r1`,
+          teamASource: { type: 'seed', seed: teamIds.indexOf(remainingTeams[i]) + 1 },
+          teamBSource: { type: 'seed', seed: teamIds.indexOf(remainingTeams[i + 1]) + 1 },
+          teamAId: remainingTeams[i],
+          teamBId: remainingTeams[i + 1],
+          status: 'ready',
+          winnerDestination: { type: 'placement', place: 0 },
+          loserDestination: { type: 'placement', place: 0 },
+        };
+        matches.push(match);
+      }
+    }
+
+    return matches;
+  }
+
+  /**
+   * Generate the next Swiss round based on current standings
+   * Pairs teams by win-loss record, avoiding rematches
+   *
+   * Pairing algorithm:
+   * 1. Group active teams by record (e.g., 1-0, 0-1, 1-1)
+   * 2. Within each group, pair by seed (highest vs lowest)
+   * 3. Avoid repeat matchups
+   * 4. If uneven groups, pull from adjacent group
+   */
+  generateNextSwissRound(
+    stage: SwissStage,
+    tournamentId: string
+  ): SwissStage {
+    const nextRoundNumber = stage.currentRound + 1;
+    if (nextRoundNumber > stage.totalRounds) {
+      return stage; // No more rounds
+    }
+
+    // Get active teams (not qualified or eliminated)
+    const activeTeams = stage.standings.filter(t => t.status === 'active');
+
+    if (activeTeams.length < 2) {
+      return stage; // Not enough teams for matches
+    }
+
+    // Group teams by record
+    const teamsByRecord = new Map<string, SwissTeamRecord[]>();
+    for (const team of activeTeams) {
+      const record = `${team.wins}-${team.losses}`;
+      if (!teamsByRecord.has(record)) {
+        teamsByRecord.set(record, []);
+      }
+      teamsByRecord.get(record)!.push(team);
+    }
+
+    // Sort records by wins descending, losses ascending
+    const sortedRecords = Array.from(teamsByRecord.keys()).sort((a, b) => {
+      const [winsA, lossesA] = a.split('-').map(Number);
+      const [winsB, lossesB] = b.split('-').map(Number);
+      if (winsB !== winsA) return winsB - winsA;
+      return lossesA - lossesB;
+    });
+
+    const matches: BracketMatch[] = [];
+    const pairedTeams = new Set<string>();
+    let matchIndex = 0;
+
+    // Process each record group
+    for (const record of sortedRecords) {
+      const teamsInGroup = teamsByRecord.get(record)!
+        .filter(t => !pairedTeams.has(t.teamId))
+        .sort((a, b) => (a.seed || 999) - (b.seed || 999)); // Sort by seed
+
+      // Try to pair within group
+      const unpaired: SwissTeamRecord[] = [];
+
+      for (let i = 0; i < teamsInGroup.length; i++) {
+        const teamA = teamsInGroup[i];
+        if (pairedTeams.has(teamA.teamId)) continue;
+
+        let paired = false;
+        // Try to find opponent (prefer lower seed from same group)
+        for (let j = teamsInGroup.length - 1; j > i; j--) {
+          const teamB = teamsInGroup[j];
+          if (pairedTeams.has(teamB.teamId)) continue;
+
+          // Check for rematch
+          if (teamA.opponentIds.includes(teamB.teamId)) continue;
+
+          // Create match
+          pairedTeams.add(teamA.teamId);
+          pairedTeams.add(teamB.teamId);
+
+          matches.push({
+            matchId: `${tournamentId}-swiss-r${nextRoundNumber}-m${++matchIndex}`,
+            roundId: `${tournamentId}-swiss-r${nextRoundNumber}`,
+            teamASource: { type: 'seed', seed: teamA.seed || 1 },
+            teamBSource: { type: 'seed', seed: teamB.seed || 2 },
+            teamAId: teamA.teamId,
+            teamBId: teamB.teamId,
+            status: 'ready',
+            winnerDestination: { type: 'placement', place: 0 },
+            loserDestination: { type: 'placement', place: 0 },
+          });
+
+          paired = true;
+          break;
+        }
+
+        if (!paired) {
+          unpaired.push(teamA);
+        }
+      }
+
+      // Add unpaired teams back to be handled in cross-group pairing
+      for (const team of unpaired) {
+        if (!pairedTeams.has(team.teamId)) {
+          // Will be handled in next iteration or final cleanup
+        }
+      }
+    }
+
+    // Handle any remaining unpaired teams (cross-group pairing)
+    const remainingTeams = activeTeams
+      .filter(t => !pairedTeams.has(t.teamId))
+      .sort((a, b) => (a.seed || 999) - (b.seed || 999));
+
+    for (let i = 0; i < remainingTeams.length; i += 2) {
+      if (i + 1 >= remainingTeams.length) break;
+
+      const teamA = remainingTeams[i];
+      let teamB = remainingTeams[i + 1];
+
+      // Check for rematch and try to find alternative
+      if (teamA.opponentIds.includes(teamB.teamId)) {
+        for (let j = i + 2; j < remainingTeams.length; j++) {
+          if (!teamA.opponentIds.includes(remainingTeams[j].teamId)) {
+            teamB = remainingTeams[j];
+            remainingTeams.splice(j, 1);
+            remainingTeams.splice(i + 1, 0, teamB);
+            break;
+          }
+        }
+      }
+
+      pairedTeams.add(teamA.teamId);
+      pairedTeams.add(teamB.teamId);
+
+      matches.push({
+        matchId: `${tournamentId}-swiss-r${nextRoundNumber}-m${++matchIndex}`,
+        roundId: `${tournamentId}-swiss-r${nextRoundNumber}`,
+        teamASource: { type: 'seed', seed: teamA.seed || 1 },
+        teamBSource: { type: 'seed', seed: teamB.seed || 2 },
+        teamAId: teamA.teamId,
+        teamBId: teamB.teamId,
+        status: 'ready',
+        winnerDestination: { type: 'placement', place: 0 },
+        loserDestination: { type: 'placement', place: 0 },
+      });
+    }
+
+    const newRound: SwissRound = {
+      roundNumber: nextRoundNumber,
+      matches,
+      completed: false,
+    };
+
+    return {
+      ...stage,
+      rounds: [...stage.rounds, newRound],
+      currentRound: nextRoundNumber,
+    };
+  }
+
+  /**
+   * Complete a Swiss match and update standings
+   * Checks for qualification (winsToQualify) or elimination (lossesToEliminate)
+   */
+  completeSwissMatch(
+    stage: SwissStage,
+    matchId: string,
+    result: MatchResult
+  ): SwissStage {
+    // Deep clone to avoid mutations
+    const newStage: SwissStage = JSON.parse(JSON.stringify(stage));
+
+    // Find and update the match
+    let matchFound = false;
+    for (const round of newStage.rounds) {
+      for (const match of round.matches) {
+        if (match.matchId === matchId) {
+          match.winnerId = result.winnerId;
+          match.loserId = result.loserId;
+          match.result = result;
+          match.status = 'completed';
+          matchFound = true;
+          break;
+        }
+      }
+      if (matchFound) break;
+    }
+
+    if (!matchFound) {
+      console.error(`Swiss match not found: ${matchId}`);
+      return stage;
+    }
+
+    // Update standings
+    const winnerRecord = newStage.standings.find(s => s.teamId === result.winnerId);
+    const loserRecord = newStage.standings.find(s => s.teamId === result.loserId);
+
+    if (winnerRecord) {
+      winnerRecord.wins++;
+      winnerRecord.roundDiff += (result.scoreTeamA > result.scoreTeamB)
+        ? (result.scoreTeamA - result.scoreTeamB)
+        : (result.scoreTeamB - result.scoreTeamA);
+      winnerRecord.opponentIds.push(result.loserId);
+
+      // Check qualification
+      if (winnerRecord.wins >= newStage.winsToQualify) {
+        winnerRecord.status = 'qualified';
+        newStage.qualifiedTeamIds.push(winnerRecord.teamId);
+      }
+    }
+
+    if (loserRecord) {
+      loserRecord.losses++;
+      loserRecord.roundDiff -= (result.scoreTeamA > result.scoreTeamB)
+        ? (result.scoreTeamA - result.scoreTeamB)
+        : (result.scoreTeamB - result.scoreTeamA);
+      loserRecord.opponentIds.push(result.winnerId);
+
+      // Check elimination
+      if (loserRecord.losses >= newStage.lossesToEliminate) {
+        loserRecord.status = 'eliminated';
+        newStage.eliminatedTeamIds.push(loserRecord.teamId);
+      }
+    }
+
+    // Check if current round is complete
+    const currentRound = newStage.rounds.find(r => r.roundNumber === newStage.currentRound);
+    if (currentRound) {
+      const allMatchesComplete = currentRound.matches.every(m => m.status === 'completed');
+      if (allMatchesComplete) {
+        currentRound.completed = true;
+      }
+    }
+
+    return newStage;
+  }
+
+  /**
+   * Check if the Swiss stage is complete
+   * Complete when all teams are either qualified or eliminated
+   */
+  isSwissStageComplete(stage: SwissStage): boolean {
+    const activeTeams = stage.standings.filter(t => t.status === 'active');
+    return activeTeams.length === 0;
+  }
+
+  /**
+   * Check if the current Swiss round is complete
+   */
+  isSwissRoundComplete(stage: SwissStage): boolean {
+    const currentRound = stage.rounds.find(r => r.roundNumber === stage.currentRound);
+    if (!currentRound) return true;
+    return currentRound.completed;
+  }
+
+  /**
+   * Get sorted Swiss standings
+   * Sorted by: wins (desc), losses (asc), roundDiff (desc), seed (asc)
+   */
+  getSwissStandings(stage: SwissStage): SwissTeamRecord[] {
+    return [...stage.standings].sort((a, b) => {
+      // First by wins (descending)
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      // Then by losses (ascending)
+      if (a.losses !== b.losses) return a.losses - b.losses;
+      // Then by round diff (descending)
+      if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+      // Finally by seed (ascending)
+      return (a.seed || 999) - (b.seed || 999);
+    });
+  }
+
+  /**
+   * Get qualified teams from Swiss stage (teams that won winsToQualify matches)
+   */
+  getSwissQualifiedTeams(stage: SwissStage): string[] {
+    return stage.qualifiedTeamIds;
+  }
+
+  /**
+   * Get eliminated teams from Swiss stage (teams that lost lossesToEliminate matches)
+   */
+  getSwissEliminatedTeams(stage: SwissStage): string[] {
+    return stage.eliminatedTeamIds;
   }
 
   // ============================================

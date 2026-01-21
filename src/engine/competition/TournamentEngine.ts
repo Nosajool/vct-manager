@@ -11,6 +11,8 @@ import type {
   BracketStructure,
   BracketRound,
   Team,
+  MultiStageTournament,
+  SwissStage,
 } from '../../types';
 import type { StandingsEntry } from '../../store/slices/competitionSlice';
 import { bracketManager } from './BracketManager';
@@ -88,6 +90,7 @@ const TOURNAMENT_DURATION: Record<TournamentFormat, number> = {
   double_elim: 7,
   triple_elim: 14,
   round_robin: 35, // ~5 weeks for league play
+  swiss_to_playoff: 18, // 4 days Swiss + 10 days Playoffs + 4 days buffer
 };
 
 /**
@@ -140,6 +143,104 @@ export class TournamentEngine {
     };
 
     return tournament;
+  }
+
+  /**
+   * Create Masters Santiago tournament with Swiss + Playoffs format
+   *
+   * @param swissTeamIds - 8 teams for Swiss stage (beta+omega qualifiers from each region)
+   * @param playoffOnlyTeamIds - 4 teams that join at playoffs (alpha qualifiers from each region)
+   * @param teamRegions - Map of teamId -> region for cross-regional Swiss pairings
+   * @param startDate - Tournament start date
+   * @param prizePool - Optional prize pool amount (default: $1,000,000)
+   */
+  createMastersSantiago(
+    swissTeamIds: string[],
+    playoffOnlyTeamIds: string[],
+    teamRegions: Map<string, string>,
+    startDate: Date,
+    prizePool?: number
+  ): MultiStageTournament {
+    const id = `tournament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    // Validate inputs
+    if (swissTeamIds.length !== 8) {
+      console.warn(`Masters Santiago Swiss requires 8 teams, got ${swissTeamIds.length}`);
+    }
+    if (playoffOnlyTeamIds.length !== 4) {
+      console.warn(`Masters Santiago Playoffs requires 4 direct seeds, got ${playoffOnlyTeamIds.length}`);
+    }
+
+    // Calculate prize pool
+    const prizePoolAmount = prizePool || DEFAULT_PRIZE_POOLS['masters'];
+    const prizePoolDistribution = this.calculatePrizePool('masters', prizePoolAmount);
+
+    // Calculate end date
+    const durationDays = TOURNAMENT_DURATION['swiss_to_playoff'];
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + durationDays);
+
+    // Initialize Swiss stage
+    const swissStage: SwissStage = bracketManager.initializeSwissStage(
+      swissTeamIds,
+      teamRegions,
+      {
+        totalRounds: 3,
+        winsToQualify: 2,
+        lossesToEliminate: 2,
+        tournamentId: id,
+      }
+    );
+
+    // All teams (Swiss + playoff only)
+    const allTeamIds = [...swissTeamIds, ...playoffOnlyTeamIds];
+
+    // Create empty placeholder bracket (will be populated when Swiss completes)
+    const emptyBracket: BracketStructure = { upper: [] };
+
+    const tournament: MultiStageTournament = {
+      id,
+      name: 'VCT Masters Santiago 2026',
+      type: 'masters',
+      format: 'swiss_to_playoff',
+      region: 'International',
+      teamIds: allTeamIds,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      prizePool: prizePoolDistribution,
+      bracket: emptyBracket, // Placeholder until playoffs
+      status: 'upcoming',
+      // Multi-stage tournament specific fields
+      swissStage,
+      currentStage: 'swiss',
+      swissTeamIds,
+      playoffOnlyTeamIds,
+    };
+
+    return tournament;
+  }
+
+  /**
+   * Generate playoff bracket for Masters after Swiss stage completes
+   * Takes 4 Swiss qualifiers + 4 Kickoff winners = 8 teams for double elimination
+   *
+   * Seeding:
+   * 1-4: Kickoff winners (alpha bracket winners from each region)
+   * 5-8: Swiss qualifiers (in order of qualification)
+   */
+  generateMastersPlayoffBracket(
+    swissQualifiers: string[],
+    playoffOnlyTeamIds: string[],
+    tournamentId: string
+  ): BracketStructure {
+    // Combine teams: Kickoff winners (seeds 1-4) + Swiss qualifiers (seeds 5-8)
+    const seededTeamIds = [...playoffOnlyTeamIds, ...swissQualifiers];
+
+    // Generate double elimination bracket
+    const bracket = bracketManager.generateDoubleElimination(seededTeamIds);
+
+    // Prefix match IDs with tournament ID for uniqueness
+    return this.prefixBracketMatchIds(bracket, tournamentId);
   }
 
   /**
@@ -226,6 +327,7 @@ export class TournamentEngine {
       double_elim: 'Double Elimination',
       triple_elim: 'Triple Elimination',
       round_robin: 'Round Robin',
+      swiss_to_playoff: 'Swiss to Playoffs',
     };
     return names[format];
   }

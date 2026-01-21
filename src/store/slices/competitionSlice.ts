@@ -2,7 +2,8 @@
 // Handles tournaments, brackets, standings, and qualifications
 
 import type { StateCreator } from 'zustand';
-import type { Tournament, BracketStructure, CompetitionType, Region } from '../../types';
+import type { Tournament, BracketStructure, CompetitionType, Region, SwissStage, SwissTeamRecord } from '../../types';
+import { isMultiStageTournament } from '../../types';
 
 // Standings entry for league-style phases
 export interface StandingsEntry {
@@ -45,6 +46,10 @@ export interface CompetitionSlice {
   setTournamentChampion: (tournamentId: string, championId: string) => void;
   addQualification: (record: QualificationRecord) => void;
 
+  // Swiss stage actions
+  updateSwissStage: (tournamentId: string, swissStage: SwissStage) => void;
+  setTournamentCurrentStage: (tournamentId: string, stage: 'swiss' | 'playoff') => void;
+
   // Selectors
   getTournament: (id: string) => Tournament | undefined;
   getTournamentsByRegion: (region: string) => Tournament[];
@@ -56,6 +61,10 @@ export interface CompetitionSlice {
   getTeamTournaments: (teamId: string) => Tournament[];
   getAllTournaments: () => Tournament[];
   getQualificationsForType: (type: CompetitionType) => QualificationRecord[];
+
+  // Swiss stage selectors
+  getSwissStandings: (tournamentId: string) => SwissTeamRecord[];
+  getCurrentTournamentStage: (tournamentId: string) => 'swiss' | 'playoff' | null;
 }
 
 export const createCompetitionSlice: StateCreator<
@@ -138,6 +147,33 @@ export const createCompetitionSlice: StateCreator<
       qualifications: { ...state.qualifications, [record.tournamentId]: record },
     })),
 
+  // Swiss stage actions
+  updateSwissStage: (tournamentId, swissStage) =>
+    set((state) => {
+      const existing = state.tournaments[tournamentId];
+      if (!existing || !isMultiStageTournament(existing)) return state;
+
+      return {
+        tournaments: {
+          ...state.tournaments,
+          [tournamentId]: { ...existing, swissStage },
+        },
+      };
+    }),
+
+  setTournamentCurrentStage: (tournamentId, stage) =>
+    set((state) => {
+      const existing = state.tournaments[tournamentId];
+      if (!existing || !isMultiStageTournament(existing)) return state;
+
+      return {
+        tournaments: {
+          ...state.tournaments,
+          [tournamentId]: { ...existing, currentStage: stage },
+        },
+      };
+    }),
+
   // Selectors
   getTournament: (id) => get().tournaments[id],
 
@@ -187,4 +223,28 @@ export const createCompetitionSlice: StateCreator<
 
   getQualificationsForType: (type) =>
     Object.values(get().qualifications).filter((q) => q.tournamentType === type),
+
+  // Swiss stage selectors
+  getSwissStandings: (tournamentId) => {
+    const tournament = get().tournaments[tournamentId];
+    if (!tournament || !isMultiStageTournament(tournament)) return [];
+
+    // Return sorted standings
+    return [...tournament.swissStage.standings].sort((a, b) => {
+      // First by wins (descending)
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      // Then by losses (ascending)
+      if (a.losses !== b.losses) return a.losses - b.losses;
+      // Then by round diff (descending)
+      if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+      // Finally by seed (ascending)
+      return (a.seed || 999) - (b.seed || 999);
+    });
+  },
+
+  getCurrentTournamentStage: (tournamentId) => {
+    const tournament = get().tournaments[tournamentId];
+    if (!tournament || !isMultiStageTournament(tournament)) return null;
+    return tournament.currentStage;
+  },
 });

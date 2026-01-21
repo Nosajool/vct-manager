@@ -11,9 +11,11 @@ import {
   TournamentCard,
   TournamentCardMini,
   StandingsTable,
+  SwissStageView,
 } from '../components/tournament';
+import { isMultiStageTournament } from '../types';
 
-type ViewMode = 'bracket' | 'standings';
+type ViewMode = 'bracket' | 'standings' | 'swiss';
 
 export function TournamentPage() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
@@ -36,6 +38,27 @@ export function TournamentPage() {
   const tournamentStandings = currentTournament
     ? standings[currentTournament.id] || []
     : [];
+
+  // Check if current tournament is a Swiss-to-playoff tournament
+  const isSwissTournament = currentTournament && isMultiStageTournament(currentTournament);
+  const isInSwissStage = isSwissTournament && currentTournament.currentStage === 'swiss';
+
+  // Determine available view modes based on tournament type
+  const getAvailableViewModes = (): ViewMode[] => {
+    if (isInSwissStage) {
+      return ['swiss', 'standings'];
+    }
+    return ['bracket', 'standings'];
+  };
+
+  // Reset view mode when tournament changes
+  const effectiveViewMode = (() => {
+    const available = getAvailableViewModes();
+    if (!available.includes(viewMode)) {
+      return available[0];
+    }
+    return viewMode;
+  })();
 
   // No tournaments yet
   if (allTournaments.length === 0) {
@@ -66,17 +89,17 @@ export function TournamentPage() {
         {/* View Mode Toggle */}
         {currentTournament && (
           <div className="flex bg-vct-dark rounded-lg p-1">
-            {(['bracket', 'standings'] as ViewMode[]).map((mode) => (
+            {getAvailableViewModes().map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
                 className={`px-3 py-1.5 text-sm rounded ${
-                  viewMode === mode
+                  effectiveViewMode === mode
                     ? 'bg-vct-red text-white'
                     : 'text-vct-gray hover:text-white'
                 }`}
               >
-                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                {mode === 'swiss' ? 'Swiss Stage' : mode.charAt(0).toUpperCase() + mode.slice(1)}
               </button>
             ))}
           </div>
@@ -159,11 +182,15 @@ export function TournamentPage() {
 
               {/* Content based on view mode */}
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-                {viewMode === 'bracket' && (
+                {effectiveViewMode === 'swiss' && isSwissTournament && (
+                  <SwissStageView swissStage={currentTournament.swissStage} />
+                )}
+
+                {effectiveViewMode === 'bracket' && (
                   <BracketView bracket={currentTournament.bracket} />
                 )}
 
-                {viewMode === 'standings' && (
+                {effectiveViewMode === 'standings' && (
                   <StandingsTable
                     standings={tournamentStandings}
                     highlightTop={

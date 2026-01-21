@@ -63,7 +63,15 @@ export type {
   TeamSource,
   Destination,
   PrizePool,
+  // Swiss stage types
+  SwissTeamStatus,
+  SwissTeamRecord,
+  SwissRound,
+  SwissStage,
+  MultiStageTournament,
 } from './competition';
+
+export { isMultiStageTournament } from './competition';
 
 // Economy types
 export type {
