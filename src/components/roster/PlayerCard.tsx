@@ -9,6 +9,12 @@ interface PlayerCardProps {
   selected?: boolean;
   showContract?: boolean;
   compact?: boolean;
+  // Roster management props
+  rosterPosition?: 'active' | 'reserve';
+  isPlayerTeam?: boolean;
+  canPromote?: boolean;
+  onMoveToActive?: (playerId: string) => void;
+  onMoveToReserve?: (playerId: string) => void;
 }
 
 export function PlayerCard({
@@ -17,6 +23,11 @@ export function PlayerCard({
   selected = false,
   showContract = false,
   compact = false,
+  rosterPosition,
+  isPlayerTeam = false,
+  canPromote = false,
+  onMoveToActive,
+  onMoveToReserve,
 }: PlayerCardProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
 
@@ -76,11 +87,27 @@ export function PlayerCard({
     );
   }
 
+  // Handle quick action button clicks without triggering card onClick
+  const handleMoveToActiveClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onMoveToActive) onMoveToActive(player.id);
+  };
+
+  const handleMoveToReserveClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onMoveToReserve) onMoveToReserve(player.id);
+  };
+
+  // Determine if we should show roster actions
+  const showRosterActions = isPlayerTeam && rosterPosition;
+  const canMoveToActive = rosterPosition === 'reserve' && canPromote && onMoveToActive;
+  const canMoveToReserve = rosterPosition === 'active' && onMoveToReserve;
+
   return (
     <div
       onClick={onClick}
       className={`
-        p-4 rounded-lg border transition-all cursor-pointer
+        group p-4 rounded-lg border transition-all cursor-pointer relative overflow-hidden
         ${
           selected
             ? 'bg-vct-red/10 border-vct-red/50 shadow-lg'
@@ -88,6 +115,57 @@ export function PlayerCard({
         }
       `}
     >
+      {/* Roster Position Badge */}
+      {showRosterActions && (
+        <div className="absolute top-0 left-0">
+          <div
+            className={`
+              text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-br
+              ${rosterPosition === 'active'
+                ? 'bg-emerald-500/20 text-emerald-400'
+                : 'bg-amber-500/20 text-amber-400'
+              }
+            `}
+          >
+            {rosterPosition}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Action Button - appears on hover */}
+      {showRosterActions && (canMoveToActive || canMoveToReserve) && (
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {canMoveToActive && (
+            <button
+              onClick={handleMoveToActiveClick}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md
+                         bg-emerald-600/90 hover:bg-emerald-500 text-white
+                         shadow-lg backdrop-blur-sm transition-all hover:scale-105"
+              title="Promote to Active Roster"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              Promote
+            </button>
+          )}
+          {canMoveToReserve && (
+            <button
+              onClick={handleMoveToReserveClick}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md
+                         bg-amber-600/90 hover:bg-amber-500 text-white
+                         shadow-lg backdrop-blur-sm transition-all hover:scale-105"
+              title="Move to Reserve"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+              Bench
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="flex items-start gap-4">
         {/* Overall Rating */}
         <div

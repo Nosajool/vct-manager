@@ -9,6 +9,11 @@ interface PlayerDetailModalProps {
   onSign?: () => void;
   onRelease?: () => void;
   isOnPlayerTeam?: boolean;
+  // Roster management props
+  rosterPosition?: 'active' | 'reserve';
+  canPromote?: boolean;
+  onMoveToActive?: () => void;
+  onMoveToReserve?: () => void;
 }
 
 export function PlayerDetailModal({
@@ -17,6 +22,10 @@ export function PlayerDetailModal({
   onSign,
   onRelease,
   isOnPlayerTeam = false,
+  rosterPosition,
+  canPromote = false,
+  onMoveToActive,
+  onMoveToReserve,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
 
@@ -68,7 +77,22 @@ export function PlayerDetailModal({
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-vct-light">{player.name}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-vct-light">{player.name}</h2>
+                {isOnPlayerTeam && rosterPosition && (
+                  <span
+                    className={`
+                      text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded
+                      ${rosterPosition === 'active'
+                        ? 'bg-emerald-500/20 text-emerald-400'
+                        : 'bg-amber-500/20 text-amber-400'
+                      }
+                    `}
+                  >
+                    {rosterPosition}
+                  </span>
+                )}
+              </div>
               <p className="text-vct-gray">
                 {player.age} years • {player.nationality}
               </p>
@@ -234,32 +258,74 @@ export function PlayerDetailModal({
         </div>
 
         {/* Actions */}
-        <div className="p-6 border-t border-vct-gray/20 flex justify-end gap-3">
-          {!player.teamId && onSign && (
+        <div className="p-6 border-t border-vct-gray/20 flex items-center justify-between">
+          {/* Left side - Roster Actions */}
+          <div className="flex items-center gap-2">
+            {isOnPlayerTeam && rosterPosition && (onMoveToActive || onMoveToReserve) && (
+              <>
+                {rosterPosition === 'reserve' && onMoveToActive && (
+                  <button
+                    onClick={onMoveToActive}
+                    disabled={!canPromote}
+                    className={`
+                      flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                      ${canPromote
+                        ? 'bg-emerald-600 text-white hover:bg-emerald-500 hover:scale-[1.02]'
+                        : 'bg-vct-gray/20 text-vct-gray cursor-not-allowed'
+                      }
+                    `}
+                    title={canPromote ? 'Promote to active roster' : 'Active roster is full (5/5)'}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    Promote to Active
+                  </button>
+                )}
+                {rosterPosition === 'active' && onMoveToReserve && (
+                  <button
+                    onClick={onMoveToReserve}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
+                               bg-amber-600 text-white hover:bg-amber-500 hover:scale-[1.02] transition-all"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    Move to Reserve
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Right side - Primary Actions */}
+          <div className="flex items-center gap-3">
+            {!player.teamId && onSign && (
+              <button
+                onClick={onSign}
+                className="px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg
+                           hover:bg-green-500 hover:scale-[1.02] transition-all"
+              >
+                Sign Player
+              </button>
+            )}
+            {isOnPlayerTeam && onRelease && (
+              <button
+                onClick={onRelease}
+                className="px-5 py-2 bg-red-600/80 text-white text-sm font-medium rounded-lg
+                           hover:bg-red-500 transition-colors"
+              >
+                Release
+              </button>
+            )}
             <button
-              onClick={onSign}
-              className="px-6 py-2 bg-green-600 text-white font-medium rounded
-                         hover:bg-green-500 transition-colors"
+              onClick={onClose}
+              className="px-5 py-2 bg-vct-dark border border-vct-gray/30 text-vct-light text-sm
+                         font-medium rounded-lg hover:bg-vct-gray/20 transition-colors"
             >
-              Sign Player
+              Close
             </button>
-          )}
-          {isOnPlayerTeam && onRelease && (
-            <button
-              onClick={onRelease}
-              className="px-6 py-2 bg-red-600 text-white font-medium rounded
-                         hover:bg-red-500 transition-colors"
-            >
-              Release Player
-            </button>
-          )}
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-vct-dark border border-vct-gray/30 text-vct-light
-                       font-medium rounded hover:bg-vct-gray/20 transition-colors"
-          >
-            Close
-          </button>
+          </div>
         </div>
       </div>
     </div>

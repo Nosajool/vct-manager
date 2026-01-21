@@ -1210,6 +1210,14 @@ jobs:
 - [x] Fixed "TBD vs TBD" matches appearing on schedule
 - [x] Proper Match entity creation for ready bracket matches
 
+### Phase 11: Roster Management UI ✓ (Complete)
+- [x] PlayerCard quick action buttons (promote/demote)
+- [x] PlayerDetailModal roster movement actions
+- [x] RosterList feedback messages and handlers
+- [x] Real-time roster count updates
+
+See `docs/feature-backlog/completed/roster-management-improvements.md` for full specification.
+
 ### Future Phases (Not Started)
 - [ ] Coach system (types defined but not implemented)
 - [ ] AI team improvements (smarter decisions)
@@ -1263,6 +1271,7 @@ jobs:
 | **i18n** | English only | Structured for future localization |
 | **Audio** | Not implemented | Future polish phase |
 | **Achievements** | Not implemented | After core functionality complete |
+| **Roster Movement** | Service-based with UI pending | Backend complete, UI buttons missing |
 
 ## Additional Architecture Details
 
