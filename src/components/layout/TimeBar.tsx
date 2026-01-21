@@ -26,7 +26,6 @@ export function TimeBar() {
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
-  const getNextMatchEvent = useGameStore((state) => state.getNextMatchEvent);
   const getTodaysActivities = useGameStore((state) => state.getTodaysActivities);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
@@ -41,11 +40,6 @@ export function TimeBar() {
   if (!gameStarted) {
     return null;
   }
-
-  const nextMatch = getNextMatchEvent();
-  const daysUntilMatch = nextMatch
-    ? timeProgression.getDaysDifference(calendar.currentDate, nextMatch.date)
-    : null;
 
   // Check if there's a match for PLAYER'S TEAM today
   const todaysActivities = getTodaysActivities();
@@ -81,15 +75,6 @@ export function TimeBar() {
 
   const handleAdvanceDay = () => {
     handleTimeAdvance(() => calendarService.advanceDay());
-  };
-
-  const handleAdvanceWeek = () => {
-    handleTimeAdvance(() => calendarService.advanceWeek());
-  };
-
-  const handleAdvanceToMatch = () => {
-    if (!nextMatch || daysUntilMatch === 0) return;
-    handleTimeAdvance(() => calendarService.advanceToNextMatch());
   };
 
   const handleCloseModal = () => {
@@ -157,26 +142,6 @@ export function TimeBar() {
               >
                 {hasMatchToday ? 'Play Match' : 'Advance Day'}
               </button>
-
-              {/* Advance Week */}
-              <button
-                onClick={handleAdvanceWeek}
-                disabled={isAdvancing}
-                className="px-4 py-1.5 text-sm font-medium bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded transition-colors disabled:opacity-50"
-              >
-                Advance Week
-              </button>
-
-              {/* Jump to Match - only show if match is in the future */}
-              {nextMatch && daysUntilMatch !== null && daysUntilMatch > 0 && (
-                <button
-                  onClick={handleAdvanceToMatch}
-                  disabled={isAdvancing}
-                  className="px-4 py-1.5 text-sm font-medium bg-vct-red/20 hover:bg-vct-red/30 text-vct-red rounded transition-colors disabled:opacity-50"
-                >
-                  Jump to Match ({daysUntilMatch}d)
-                </button>
-              )}
 
               {/* Loading indicator */}
               {isAdvancing && (

@@ -23,7 +23,6 @@ export interface GameSlice {
   setCurrentDate: (date: string) => void;
   advanceDate: (days: number) => void;
   advanceDay: () => void;
-  advanceWeek: () => void;
   advanceToDate: (date: string) => void;
   setCurrentPhase: (phase: SeasonPhase) => void;
   setCurrentSeason: (season: number) => void;
@@ -115,14 +114,6 @@ export const createGameSlice: StateCreator<
       calendar: {
         ...state.calendar,
         currentDate: addDaysToDate(state.calendar.currentDate, 1),
-      },
-    })),
-
-  advanceWeek: () =>
-    set((state) => ({
-      calendar: {
-        ...state.calendar,
-        currentDate: addDaysToDate(state.calendar.currentDate, 7),
       },
     })),
 

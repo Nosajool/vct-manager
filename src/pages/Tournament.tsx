@@ -8,13 +8,12 @@ import { useGameStore } from '../store';
 import { seasonManager } from '../engine/competition';
 import {
   BracketView,
-  BracketListView,
   TournamentCard,
   TournamentCardMini,
   StandingsTable,
 } from '../components/tournament';
 
-type ViewMode = 'bracket' | 'list' | 'standings';
+type ViewMode = 'bracket' | 'standings';
 
 export function TournamentPage() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
@@ -67,7 +66,7 @@ export function TournamentPage() {
         {/* View Mode Toggle */}
         {currentTournament && (
           <div className="flex bg-vct-dark rounded-lg p-1">
-            {(['bracket', 'list', 'standings'] as ViewMode[]).map((mode) => (
+            {(['bracket', 'standings'] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
@@ -162,10 +161,6 @@ export function TournamentPage() {
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
                 {viewMode === 'bracket' && (
                   <BracketView bracket={currentTournament.bracket} />
-                )}
-
-                {viewMode === 'list' && (
-                  <BracketListView bracket={currentTournament.bracket} />
                 )}
 
                 {viewMode === 'standings' && (

@@ -1102,7 +1102,7 @@ jobs:
 - [x] GameSlice (calendar, phase, events)
 - [x] TimeProgression engine
 - [x] EventScheduler (VCT season structure)
-- [x] Time controls (Advance Day/Week/Jump to Match)
+- [x] Time controls (Advance Day only; Advance Week and Jump to Match removed due to bugs)
 - [x] Auto-simulation of matches on time advancement
 - [x] PlayerDevelopment engine (training system)
 - [x] TrainingService and TrainingModal
@@ -2106,8 +2106,8 @@ The game follows a **"Review → Prepare → Commit"** daily loop:
 | Action | What Happens |
 |--------|--------------|
 | `advanceDay()` | Simulate TODAY's events → Advance to tomorrow |
-| `advanceWeek()` | Simulate 7 days (today + 6) → Advance to day 8 |
-| `advanceToNextMatch()` | Simulate days BEFORE match → Land at START of match day (no sim) |
+
+Note: `advanceWeek()` and `advanceToNextMatch()` were removed due to bugs. Only `advanceDay()` is currently available.
 
 **Player Team Filtering:**
 
@@ -2355,9 +2355,11 @@ Single persistent time control bar visible on ALL pages:
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │  📅 January 15, 2026  |  Stage 1  |  MATCH TODAY: vs Sentinels     │
-│  [Advance Day]  [Advance Week]  [Jump to Match]                    │
+│  [Advance Day / Play Match]                                        │
 └────────────────────────────────────────────────────────────────────┘
 ```
+
+Note: "Advance Week" and "Jump to Match" features were removed due to bugs. May be re-added in a future update.
 
 **Design Principle**: "Time is King" - every match simulation advances time. No "simulate without advancing" option.
 
