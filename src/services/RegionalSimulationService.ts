@@ -1,9 +1,11 @@
 // RegionalSimulationService - Simulates tournaments for other regions
 // Follows service pattern: getState() -> engine calls -> store updates
+// Delegates to TournamentTransitionService for tournament creation
 
 import { useGameStore } from '../store';
 import { bracketManager, tournamentEngine } from '../engine/competition';
 import { tournamentService } from './TournamentService';
+import { tournamentTransitionService } from './TournamentTransitionService';
 import type { Region, Tournament, Team, MultiStageTournament, Match, CalendarEvent, MatchResult } from '../types';
 import { isMultiStageTournament } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
@@ -114,94 +116,22 @@ export class RegionalSimulationService {
    * Create Masters tournament with all qualified teams from all regions
    * Called after all 4 regional Kickoffs are complete
    *
-   * Uses Swiss-to-Playoff format:
-   * - Swiss Stage: 8 teams (beta+omega qualifiers from each region)
-   * - Playoffs: 8 teams (4 Swiss qualifiers + 4 Kickoff winners)
+   * Delegates to TournamentTransitionService for generic transition logic
    *
-   * Idempotent: If Masters already exists, returns existing tournament
+   * @deprecated Use tournamentTransitionService.executeTransition('kickoff_to_masters1') instead
    */
   createMastersTournament(): Tournament | null {
-    const state = useGameStore.getState();
+    console.log('RegionalSimulationService.createMastersTournament() - delegating to TournamentTransitionService');
 
-    // Check if Masters tournament already exists (idempotency)
-    const existingMasters = Object.values(state.tournaments).find(
-      (t) => t.name === 'VCT Masters Santiago 2026'
-    );
+    const result = tournamentTransitionService.executeTransition('kickoff_to_masters1');
 
-    if (existingMasters) {
-      console.log('Masters Santiago already exists, returning existing tournament');
-      // Ensure phase is set correctly
-      if (state.calendar.currentPhase !== 'masters1') {
-        state.setCurrentPhase('masters1');
-      }
-      return existingMasters;
-    }
-
-    // Get all Kickoff qualifications
-    const qualifications = Object.values(state.qualifications).filter(
-      (q) => q.tournamentType === 'kickoff'
-    );
-
-    if (qualifications.length !== 4) {
-      console.error(
-        `Expected 4 regional qualifications for Masters, got ${qualifications.length}`
-      );
+    if (!result.success) {
+      console.error('Failed to create Masters tournament:', result.error);
       return null;
     }
 
-    // Separate qualified teams by bracket
-    const kickoffWinners: string[] = [];  // alpha bracket = 1st place (join at playoffs)
-    const swissParticipants: string[] = []; // beta+omega = 2nd+3rd place (play Swiss)
-
-    // Build team regions map for Swiss cross-regional pairings
-    const teamRegions = new Map<string, string>();
-
-    for (const qual of qualifications) {
-      for (const team of qual.qualifiedTeams) {
-        teamRegions.set(team.teamId, qual.region);
-
-        if (team.bracket === 'alpha') {
-          kickoffWinners.push(team.teamId);
-        } else {
-          // beta or omega
-          swissParticipants.push(team.teamId);
-        }
-      }
-    }
-
-    // Validate counts
-    if (kickoffWinners.length !== 4) {
-      console.error(`Expected 4 Kickoff winners (alpha), got ${kickoffWinners.length}`);
-    }
-    if (swissParticipants.length !== 8) {
-      console.error(`Expected 8 Swiss participants (beta+omega), got ${swissParticipants.length}`);
-    }
-
-    // Calculate Masters start date (7 days after current date)
-    const mastersDate = this.calculateMastersStartDate(state.calendar.currentDate);
-
-    // Create Masters with Swiss-to-Playoff format
-    const masters = tournamentEngine.createMastersSantiago(
-      swissParticipants,    // 8 teams for Swiss
-      kickoffWinners,       // 4 teams join at playoffs
-      teamRegions,
-      mastersDate,
-      1000000
-    );
-
-    // Add to store
-    state.addTournament(masters);
-
-    // Create Match entities for Swiss Round 1
-    this.createSwissRound1MatchEntities(masters);
-
-    // Add tournament start event to calendar
-    this.addMastersCalendarEvents(masters);
-
-    // Update phase
-    state.setCurrentPhase('masters1');
-
-    return masters;
+    const state = useGameStore.getState();
+    return state.tournaments[result.tournamentId!] || null;
   }
 
   /**
@@ -242,86 +172,6 @@ export class RegionalSimulationService {
     return { results: allResults, champion };
   }
 
-  /**
-   * Create Match entities for Swiss Round 1
-   */
-  private createSwissRound1MatchEntities(tournament: MultiStageTournament): void {
-    const state = useGameStore.getState();
-    const round1 = tournament.swissStage.rounds[0];
-
-    if (!round1) return;
-
-    for (const match of round1.matches) {
-      if (match.teamAId && match.teamBId) {
-        const matchEntity: Match = {
-          id: match.matchId,
-          teamAId: match.teamAId,
-          teamBId: match.teamBId,
-          scheduledDate: match.scheduledDate || tournament.startDate,
-          status: 'scheduled',
-          tournamentId: tournament.id,
-        };
-
-        state.addMatch(matchEntity);
-      }
-    }
-  }
-
-  /**
-   * Add Masters tournament calendar events
-   */
-  private addMastersCalendarEvents(tournament: MultiStageTournament): void {
-    const state = useGameStore.getState();
-    const events: CalendarEvent[] = [
-      {
-        id: `event-${tournament.id}-start`,
-        type: 'tournament_start',
-        date: tournament.startDate,
-        data: { tournamentId: tournament.id, tournamentName: tournament.name },
-        processed: false,
-        required: false,
-      },
-      {
-        id: `event-${tournament.id}-end`,
-        type: 'tournament_end',
-        date: tournament.endDate,
-        data: { tournamentId: tournament.id, tournamentName: tournament.name },
-        processed: false,
-        required: false,
-      },
-    ];
-
-    // Add Swiss Round 1 match events
-    const round1 = tournament.swissStage.rounds[0];
-    if (round1) {
-      for (const match of round1.matches) {
-        if (match.teamAId && match.teamBId) {
-          const teamA = state.teams[match.teamAId];
-          const teamB = state.teams[match.teamBId];
-
-          events.push({
-            id: `event-match-${match.matchId}`,
-            type: 'match',
-            date: match.scheduledDate || tournament.startDate,
-            data: {
-              matchId: match.matchId,
-              homeTeamId: match.teamAId,
-              awayTeamId: match.teamBId,
-              homeTeamName: teamA?.name || 'Unknown',
-              awayTeamName: teamB?.name || 'Unknown',
-              tournamentId: tournament.id,
-              tournamentName: tournament.name,
-              isSwissMatch: true,
-            },
-            processed: false,
-            required: true,
-          });
-        }
-      }
-    }
-
-    state.addCalendarEvents(events);
-  }
 
   /**
    * Get all qualifications for a given competition type
@@ -331,14 +181,6 @@ export class RegionalSimulationService {
     return Object.values(state.qualifications).filter((q) => q.tournamentType === type);
   }
 
-  /**
-   * Calculate Masters start date (7 days after current date)
-   */
-  private calculateMastersStartDate(currentDate: string): Date {
-    const date = new Date(currentDate);
-    date.setDate(date.getDate() + 7);
-    return date;
-  }
 
   /**
    * Sort teams according to official VCT 2026 Kickoff seeding for each region

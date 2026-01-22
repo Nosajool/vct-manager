@@ -159,7 +159,8 @@ export class TournamentEngine {
     playoffOnlyTeamIds: string[],
     teamRegions: Map<string, string>,
     startDate: Date,
-    prizePool?: number
+    prizePool?: number,
+    name?: string
   ): MultiStageTournament {
     const id = `tournament-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -200,7 +201,7 @@ export class TournamentEngine {
 
     const tournament: MultiStageTournament = {
       id,
-      name: 'VCT Masters Santiago 2026',
+      name: name || 'VCT Masters Santiago 2026',
       type: 'masters',
       format: 'swiss_to_playoff',
       region: 'International',

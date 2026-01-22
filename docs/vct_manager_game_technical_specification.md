@@ -77,14 +77,16 @@ src/
 │       └── index.ts
 │
 ├── services/            # Orchestration layer (store + engine)
-│   ├── GameInitService.ts      # Game initialization (with VLR integration)
-│   ├── MatchService.ts         # Match simulation orchestration
-│   ├── TournamentService.ts    # Tournament lifecycle
-│   ├── ContractService.ts      # Player signing/release
-│   ├── TrainingService.ts      # Training orchestration
-│   ├── CalendarService.ts      # Time progression orchestration
-│   ├── EconomyService.ts       # Financial operations
-│   ├── ScrimService.ts         # Scrim orchestration
+│   ├── GameInitService.ts              # Game initialization (with VLR integration)
+│   ├── MatchService.ts                 # Match simulation orchestration
+│   ├── TournamentService.ts            # Tournament lifecycle
+│   ├── TournamentTransitionService.ts  # Generic phase transition logic
+│   ├── RegionalSimulationService.ts    # Regional tournament simulation
+│   ├── ContractService.ts              # Player signing/release
+│   ├── TrainingService.ts              # Training orchestration
+│   ├── CalendarService.ts              # Time progression orchestration
+│   ├── EconomyService.ts               # Financial operations
+│   ├── ScrimService.ts                 # Scrim orchestration
 │   └── index.ts
 │
 ├── db/                  # IndexedDB configuration
@@ -104,6 +106,7 @@ src/
 │   ├── economy.ts       # TrainingSession, TrainingResult, Difficulty
 │   ├── scrim.ts         # MapPoolStrength, ScrimRelationship, TierTeam
 │   ├── vlr.ts           # VLR API response types
+│   ├── tournament-transition.ts # Tournament transition configuration types
 │   └── index.ts
 │
 ├── components/          # React UI components
@@ -124,7 +127,8 @@ src/
 │   └── index.ts
 │
 ├── utils/
-│   └── constants.ts     # Names, nationalities, team templates
+│   ├── constants.ts              # Names, nationalities, team templates
+│   └── tournament-transitions.ts # Tournament transition configurations
 │
 └── App.tsx              # Main app with view routing
 
@@ -652,6 +656,93 @@ export interface ProcessedVlrData {
 }
 ```
 
+### Tournament Transition System
+```typescript
+/**
+ * Type of transition between phases
+ */
+export type TransitionType = 'regional_to_playoff' | 'playoff_to_international';
+
+/**
+ * Source of qualification data
+ */
+export type QualificationSource =
+  | 'kickoff'
+  | 'stage1'
+  | 'stage1_playoffs'
+  | 'stage2'
+  | 'stage2_playoffs';
+
+/**
+ * Configuration for a tournament transition
+ * Defines how to create the next tournament when a phase completes
+ */
+export interface TournamentTransitionConfig {
+  // Phase identification
+  id: string; // Unique ID (e.g., 'kickoff_to_masters1')
+  fromPhase: SeasonPhase; // Phase that just completed
+  toPhase: SeasonPhase; // Phase to transition to
+
+  // Transition metadata
+  type: TransitionType;
+  qualificationSource: QualificationSource;
+
+  // Tournament creation
+  tournamentName: string;
+  format: TournamentFormat;
+  region: TournamentRegion;
+  prizePool: number;
+
+  // Qualification rules
+  qualificationRules: QualificationRules;
+
+  // Timing
+  daysUntilStart: number;
+  durationDays: number;
+}
+
+/**
+ * Rules for determining which teams qualify
+ */
+export interface QualificationRules {
+  // For regional_to_playoff
+  teamsPerRegion?: number; // Top N teams from standings
+
+  // For playoff_to_international
+  teamsFromKickoff?: {
+    alpha: number; // Kickoff winners (1st place)
+    beta: number;  // 2nd place
+    omega: number; // 3rd place
+  };
+  teamsFromPlayoffs?: {
+    winners: number;    // Playoff champions
+    runnersUp: number;  // 2nd place
+    thirdPlace: number; // 3rd place
+  };
+
+  // Swiss-to-Playoff configuration
+  swissStageTeams?: number;    // Teams in Swiss stage
+  directPlayoffTeams?: number; // Teams that skip Swiss
+}
+
+/**
+ * Result of executing a tournament transition
+ */
+export interface TransitionResult {
+  success: boolean;
+  tournamentId?: string;
+  tournamentName?: string;
+  newPhase?: SeasonPhase;
+  error?: string;
+  qualifiedTeams?: Array<{
+    teamId: string;
+    teamName: string;
+    region: string;
+    seed: number;
+  }>;
+}
+```
+
 ---
 
 ## State Management
@@ -970,6 +1061,97 @@ class MatchService {
 }
 ```
 
+### TournamentTransitionService Example
+```typescript
+class TournamentTransitionService {
+  /**
+   * Execute a tournament transition based on configuration
+   * Main entry point for all phase transitions
+   */
+  executeTransition(configId: string, playerRegion?: Region): TransitionResult {
+    const config = TOURNAMENT_TRANSITIONS[configId];
+    if (!config) {
+      return { success: false, error: `No config found for: ${configId}` };
+    }
+
+    // Check if tournament already exists (idempotency)
+    const tournamentName = this.resolveTournamentName(config, playerRegion);
+    const existing = this.findExistingTournament(tournamentName);
+
+    if (existing) {
+      return { success: true, tournamentId: existing.id, ... };
+    }
+
+    // Execute transition based on type
+    if (config.type === 'regional_to_playoff') {
+      return this.executeRegionalPlayoffTransition(config, playerRegion!);
+    } else {
+      return this.executeInternationalTransition(config, playerRegion);
+    }
+  }
+
+  /**
+   * Regional transition: League → Regional Playoffs
+   * Example: Stage 1 → Stage 1 Playoffs (per region)
+   */
+  private executeRegionalPlayoffTransition(
+    config: TournamentTransitionConfig,
+    region: Region
+  ): TransitionResult {
+    // 1. Get top N teams from league standings
+    const qualifiedTeams = this.getTopTeamsFromStandings(region, config);
+
+    // 2. Create regional playoff tournament
+    const tournament = tournamentEngine.createTournament(...);
+
+    // 3. Add to store and schedule matches
+    state.addTournament(tournament);
+    tournamentService.scheduleTournamentMatches(tournament.id);
+
+    // 4. Transition phase
+    state.setCurrentPhase(config.toPhase);
+
+    return { success: true, tournamentId: tournament.id, ... };
+  }
+
+  /**
+   * International transition: Regional Playoffs → International Tournament
+   * Example: Kickoff → Masters, Stage 1 Playoffs → Masters
+   */
+  private executeInternationalTransition(
+    config: TournamentTransitionConfig,
+    playerRegion?: Region
+  ): TransitionResult {
+    // 1. Get qualifications from all 4 regions
+    const qualifications = this.getQualifications(config.qualificationSource);
+
+    // 2. Extract qualified teams based on rules
+    const { swissParticipants, directPlayoffTeams, teamRegions } =
+      this.extractQualifiedTeams(config, qualifications);
+
+    // 3. Create international tournament with Swiss-to-Playoff format
+    const tournament = tournamentEngine.createMastersSantiago(
+      swissParticipants,
+      directPlayoffTeams,
+      teamRegions,
+      startDate,
+      config.prizePool,
+      config.tournamentName
+    );
+
+    // 4. Add to store, create matches, add events
+    state.addTournament(tournament);
+    this.createSwissRound1MatchEntities(tournament);
+    this.addInternationalTournamentCalendarEvents(tournament);
+
+    // 5. Transition phase
+    state.setCurrentPhase(config.toPhase);
+
+    return { success: true, tournamentId: tournament.id, ... };
+  }
+}
+```
+
 ---
 
 ## Persistence Strategy
@@ -1218,6 +1400,24 @@ jobs:
 
 See `docs/feature-backlog/completed/roster-management-improvements.md` for full specification.
 
+### Phase 12: Generic Tournament Transition System ✓ (Complete)
+- [x] Tournament transition type definitions (`src/types/tournament-transition.ts`)
+- [x] Configuration constants for all 5 VCT transitions (`src/utils/tournament-transitions.ts`)
+- [x] TournamentTransitionService with generic `executeTransition()` method
+- [x] Support for regional (league → playoffs) transitions
+- [x] Support for international (playoffs → Masters/Champions) transitions
+- [x] Idempotent transition execution (safe to call multiple times)
+- [x] QualificationModal refactored to work for all transitions via `transitionConfigId`
+- [x] RegionalSimulationService delegates to TournamentTransitionService
+- [x] TournamentEngine `createMastersSantiago()` accepts optional name parameter
+
+**Architecture Benefits:**
+- Single source of truth for all transition rules
+- No code duplication for different phase transitions
+- Easy to add new tournaments (just add configuration, no new service code)
+- Type-safe configuration with full TypeScript support
+- Fully scalable for future VCT seasons
+
 ### Future Phases (Not Started)
 - [ ] Coach system (types defined but not implemented)
 - [ ] AI team improvements (smarter decisions)
@@ -1271,7 +1471,8 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 | **i18n** | English only | Structured for future localization |
 | **Audio** | Not implemented | Future polish phase |
 | **Achievements** | Not implemented | After core functionality complete |
-| **Roster Movement** | Service-based with UI pending | Backend complete, UI buttons missing |
+| **Roster Movement** | Service-based with UI complete | Full active/reserve roster management |
+| **Tournament Transitions** | Generic configuration system | All transitions use TournamentTransitionService |
 
 ## Additional Architecture Details
 
@@ -2548,6 +2749,104 @@ Modal closes, game state has all 12 qualifications
 **Why This Matters**: The Masters tournament creation (`createMastersTournament()`) requires all 4 regional qualifications to exist. If the user closed the modal without triggering simulation, Masters would fail to create properly.
 
 **Critical Update (2026-01-22)**: All modal exit paths (Continue button, Escape key, backdrop click) now call `createMastersTournament()` after simulating other regions. This ensures the phase transitions to 'masters1' and the Masters tournament appears in the calendar regardless of how the user closes the modal. The `createMastersTournament()` function is now idempotent to prevent duplicate tournament creation.
+
+### 22. Generic Tournament Transition System (IMPLEMENTED)
+
+**Status**: Implemented - All tournament phase transitions use a generic configuration-based system.
+
+**Architecture Pattern**:
+```
+Tournament Transition Configuration (tournament-transitions.ts)
+    ↓
+TournamentTransitionService.executeTransition(configId)
+    ↓
+Regional Transition OR International Transition
+    ↓
+Tournament Created + Phase Updated + Calendar Events Added
+```
+
+**Configuration-Driven Design**:
+
+All 5 VCT 2026 tournament transitions are defined in `TOURNAMENT_TRANSITIONS`:
+
+1. **Kickoff → Masters Santiago** (`kickoff_to_masters1`)
+   - Type: `playoff_to_international`
+   - Qualification: Alpha (winners), Beta (2nd), Omega (3rd) from each region
+   - Format: Swiss-to-Playoff (8 Swiss + 4 direct)
+
+2. **Stage 1 → Stage 1 Playoffs** (`stage1_to_stage1_playoffs`)
+   - Type: `regional_to_playoff`
+   - Qualification: Top 8 teams from Stage 1 league standings
+   - Format: Double elimination
+
+3. **Stage 1 Playoffs → Masters London** (`stage1_playoffs_to_masters2`)
+   - Type: `playoff_to_international`
+   - Qualification: Winners, runners-up, third place from each regional playoff
+   - Format: Swiss-to-Playoff (8 Swiss + 4 direct)
+
+4. **Stage 2 → Stage 2 Playoffs** (`stage2_to_stage2_playoffs`)
+   - Type: `regional_to_playoff`
+   - Qualification: Top 8 teams from Stage 2 league standings
+   - Format: Double elimination
+
+5. **Stage 2 Playoffs → Champions Shanghai** (`stage2_playoffs_to_champions`)
+   - Type: `playoff_to_international`
+   - Qualification: Winners, runners-up, top 2 third-place teams
+   - Format: Swiss-to-Playoff (12 Swiss + 4 direct)
+
+**Key Service Methods**:
+
+```typescript
+// Main entry point - handles all transitions
+tournamentTransitionService.executeTransition(configId, playerRegion?)
+
+// Regional transitions
+executeRegionalPlayoffTransition(config, region)
+  → Get top N teams from standings
+  → Create regional playoff tournament
+  → Schedule matches and add events
+
+// International transitions
+executeInternationalTransition(config, playerRegion?)
+  → Get qualifications from all 4 regions
+  → Extract qualified teams (Swiss vs direct playoff)
+  → Create international tournament
+  → Schedule Swiss Round 1
+```
+
+**Idempotency**:
+- Checks if tournament already exists before creating
+- Safe to call multiple times without duplicates
+- Updates phase if tournament exists but phase is wrong
+
+**Integration Points**:
+- `QualificationModal` calls `executeTransition()` with `transitionConfigId` prop
+- `RegionalSimulationService.createMastersTournament()` delegates to transition service
+- All tournament creation flows use the same generic service
+
+**Benefits**:
+1. **Single Source of Truth**: All transition rules in one configuration file
+2. **No Code Duplication**: Same service handles all 5 transitions
+3. **Easy to Extend**: New tournaments only need configuration, not new code
+4. **Type Safety**: TypeScript enforces correct configuration structure
+5. **Maintainability**: Changes to transition logic apply to all tournaments
+
+**Example - Adding a New Tournament**:
+```typescript
+// Just add to tournament-transitions.ts:
+masters_bangkok_2027: {
+  id: 'stage2_playoffs_to_masters_bangkok',
+  fromPhase: 'stage2_playoffs',
+  toPhase: 'masters_bangkok',
+  type: 'playoff_to_international',
+  tournamentName: 'VCT Masters Bangkok 2027',
+  // ... qualification rules
+}
+
+// Then call:
+tournamentTransitionService.executeTransition('stage2_playoffs_to_masters_bangkok');
+// No new service code needed!
+```
 
 ## Session End Checklist
 

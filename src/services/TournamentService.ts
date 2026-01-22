@@ -402,6 +402,7 @@ export class TournamentService {
       playerRegion: tournament.region,
       playerRegionQualifiers: record,
       allRegionsQualifiers: null,  // Filled later when user clicks "See All"
+      transitionConfigId: 'kickoff_to_masters1', // Transition to Masters Santiago
     });
   }
 

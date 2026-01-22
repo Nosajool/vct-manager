@@ -1,19 +1,22 @@
-// QualificationModal - Multi-step modal showing qualification results
+// QualificationModal - Generic multi-step modal showing qualification results
+// Works for all tournament transitions: Kickoff → Masters, Stage Playoffs → Masters/Champions
 //
 // Step 1: Shows player's region qualifiers
-// Step 2: Shows all regions after simulating other Kickoffs (when user clicks "See All")
+// Step 2: Shows all regions after simulating other tournaments (when user clicks "See All")
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store';
 import { regionalSimulationService } from '../../services/RegionalSimulationService';
+import { tournamentTransitionService } from '../../services/TournamentTransitionService';
 import type { QualificationRecord } from '../../store/slices/competitionSlice';
 import type { Region, TournamentRegion } from '../../types';
 
 export interface QualificationModalData {
-  phase: 'kickoff' | 'stage1' | 'stage2';
+  phase: 'kickoff' | 'stage1' | 'stage2' | 'stage1_playoffs' | 'stage2_playoffs';
   playerRegion: TournamentRegion;
   playerRegionQualifiers: QualificationRecord;
   allRegionsQualifiers: QualificationRecord[] | null;
+  transitionConfigId: string; // ID from TOURNAMENT_TRANSITIONS (e.g., 'kickoff_to_masters1')
 }
 
 interface QualificationModalProps {
@@ -88,23 +91,27 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
     }
   };
 
-  // Handle closing the modal - always simulate other regions and create Masters first
+  // Handle closing the modal - always simulate other regions and execute transition
   const handleClose = useCallback(() => {
     // Ensure other regions are simulated before closing
     ensureOtherRegionsSimulatedSync();
 
-    // Create Masters tournament now that all 4 regions are complete
-    const masters = regionalSimulationService.createMastersTournament();
-    if (masters) {
-      console.log('Masters Santiago created successfully:', masters.name);
+    // Execute tournament transition using generic service
+    const result = tournamentTransitionService.executeTransition(
+      data.transitionConfigId,
+      data.playerRegion as Region
+    );
+
+    if (result.success) {
+      console.log(`Transition successful: ${result.tournamentName}`);
     } else {
-      console.error('Failed to create Masters tournament');
+      console.error('Failed to execute transition:', result.error);
     }
 
     onClose();
-  }, [ensureOtherRegionsSimulatedSync, onClose]);
+  }, [ensureOtherRegionsSimulatedSync, onClose, data.transitionConfigId, data.playerRegion]);
 
-  // Handle Continue button - simulate other regions and create Masters before closing
+  // Handle Continue button - simulate other regions and execute transition before closing
   const handleContinue = async () => {
     setIsSimulating(true);
 
@@ -112,12 +119,16 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
       // Ensure other regions are simulated before closing
       await ensureOtherRegionsSimulated();
 
-      // Create Masters tournament now that all 4 regions are complete
-      const masters = regionalSimulationService.createMastersTournament();
-      if (masters) {
-        console.log('Masters Santiago created successfully:', masters.name);
+      // Execute tournament transition using generic service
+      const result = tournamentTransitionService.executeTransition(
+        data.transitionConfigId,
+        data.playerRegion as Region
+      );
+
+      if (result.success) {
+        console.log(`Transition successful: ${result.tournamentName}`);
       } else {
-        console.error('Failed to create Masters tournament');
+        console.error('Failed to execute transition:', result.error);
       }
 
       onClose();
@@ -150,12 +161,18 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
     }
   };
 
-  // Handle creating Masters tournament and viewing it
-  const handleViewMasters = () => {
-    const masters = regionalSimulationService.createMastersTournament();
-    if (masters) {
+  // Handle creating next tournament and viewing it
+  const handleViewNextTournament = () => {
+    const result = tournamentTransitionService.executeTransition(
+      data.transitionConfigId,
+      data.playerRegion as Region
+    );
+
+    if (result.success) {
       closeModal();
       setActiveView('tournament');
+    } else {
+      console.error('Failed to execute transition:', result.error);
     }
   };
 
@@ -178,12 +195,12 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
         <div className="p-4 border-b border-vct-gray/20">
           <h2 className="text-xl font-bold text-vct-light">
             {step === 'player'
-              ? `VCT ${data.playerRegion} Kickoff 2026 - Complete!`
-              : 'Masters Santiago - 12 Qualified Teams'}
+              ? `VCT ${data.playerRegion} ${data.phase === 'kickoff' ? 'Kickoff' : 'Playoffs'} 2026 - Complete!`
+              : `Qualified Teams - All Regions`}
           </h2>
           <p className="text-sm text-vct-gray mt-1">
             {step === 'player'
-              ? 'Masters Santiago Qualifiers'
+              ? 'Tournament Qualifiers'
               : 'Teams from all 4 regions'}
           </p>
         </div>
@@ -233,10 +250,10 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
                 Back
               </button>
               <button
-                onClick={handleViewMasters}
+                onClick={handleViewNextTournament}
                 className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
               >
-                View Masters Bracket
+                View Tournament Bracket
               </button>
             </>
           )}

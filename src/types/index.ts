@@ -118,3 +118,12 @@ export type {
 } from './vlr';
 
 export { VLR_TO_GAME_REGION } from './vlr';
+
+// Tournament transition types
+export type {
+  TransitionType,
+  QualificationSource,
+  TournamentTransitionConfig,
+  QualificationRules,
+  TransitionResult,
+} from './tournament-transition';
