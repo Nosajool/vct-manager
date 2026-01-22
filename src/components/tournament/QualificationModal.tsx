@@ -3,7 +3,7 @@
 // Step 1: Shows player's region qualifiers
 // Step 2: Shows all regions after simulating other Kickoffs (when user clicks "See All")
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store';
 import { regionalSimulationService } from '../../services/RegionalSimulationService';
 import type { QualificationRecord } from '../../store/slices/competitionSlice';
@@ -35,11 +35,43 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
     data.allRegionsQualifiers
   );
 
+  // Track if simulation has been triggered to avoid double-calling
+  const simulationTriggeredRef = useRef(false);
+
   const closeModal = useGameStore((state) => state.closeModal);
   const setActiveView = useGameStore((state) => state.setActiveView);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
 
-  // Handle simulating other regions
+  // Simulate other regions if not already done (synchronous version for closing)
+  const ensureOtherRegionsSimulatedSync = useCallback((): void => {
+    if (simulationTriggeredRef.current || allQualifications !== null) {
+      // Already simulated or in progress
+      return;
+    }
+
+    simulationTriggeredRef.current = true;
+
+    // Simulate other regions' Kickoff tournaments
+    const results = regionalSimulationService.simulateOtherKickoffs(
+      data.playerRegion as Region
+    );
+
+    // Add player's region qualifiers to the list
+    const allQuals = [data.playerRegionQualifiers, ...results];
+    setAllQualifications(allQuals);
+  }, [allQualifications, data.playerRegion, data.playerRegionQualifiers]);
+
+  // Simulate other regions if not already done
+  const ensureOtherRegionsSimulated = async (): Promise<void> => {
+    if (simulationTriggeredRef.current || allQualifications !== null) {
+      // Already simulated
+      return;
+    }
+
+    ensureOtherRegionsSimulatedSync();
+  };
+
+  // Handle simulating other regions and showing them
   const handleSeeAllQualifiers = async () => {
     setIsSimulating(true);
 
@@ -47,19 +79,74 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
-      // Simulate other regions' Kickoff tournaments
-      const results = regionalSimulationService.simulateOtherKickoffs(
-        data.playerRegion as Region
-      );
-
-      // Add player's region qualifiers to the list
-      const allQuals = [data.playerRegionQualifiers, ...results];
-      setAllQualifications(allQuals);
+      await ensureOtherRegionsSimulated();
       setStep('all');
     } catch (error) {
       console.error('Failed to simulate other regions:', error);
     } finally {
       setIsSimulating(false);
+    }
+  };
+
+  // Handle closing the modal - always simulate other regions and create Masters first
+  const handleClose = useCallback(() => {
+    // Ensure other regions are simulated before closing
+    ensureOtherRegionsSimulatedSync();
+
+    // Create Masters tournament now that all 4 regions are complete
+    const masters = regionalSimulationService.createMastersTournament();
+    if (masters) {
+      console.log('Masters Santiago created successfully:', masters.name);
+    } else {
+      console.error('Failed to create Masters tournament');
+    }
+
+    onClose();
+  }, [ensureOtherRegionsSimulatedSync, onClose]);
+
+  // Handle Continue button - simulate other regions and create Masters before closing
+  const handleContinue = async () => {
+    setIsSimulating(true);
+
+    try {
+      // Ensure other regions are simulated before closing
+      await ensureOtherRegionsSimulated();
+
+      // Create Masters tournament now that all 4 regions are complete
+      const masters = regionalSimulationService.createMastersTournament();
+      if (masters) {
+        console.log('Masters Santiago created successfully:', masters.name);
+      } else {
+        console.error('Failed to create Masters tournament');
+      }
+
+      onClose();
+    } catch (error) {
+      console.error('Failed to simulate other regions:', error);
+      // Still close the modal even if simulation fails
+      onClose();
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
+  // Handle escape key to close modal (with simulation)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isSimulating) {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleClose, isSimulating]);
+
+  // Handle backdrop click to close modal (with simulation)
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only close if clicking directly on backdrop, not on modal content
+    if (e.target === e.currentTarget && !isSimulating) {
+      handleClose();
     }
   };
 
@@ -82,7 +169,10 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
   )?.bracket;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-vct-darker rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-vct-gray/20">
@@ -127,10 +217,11 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
                 {isSimulating ? 'Simulating...' : 'See All Qualifiers'}
               </button>
               <button
-                onClick={onClose}
-                className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
+                onClick={handleContinue}
+                disabled={isSimulating}
+                className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
               >
-                Continue
+                {isSimulating ? 'Simulating...' : 'Continue'}
               </button>
             </>
           ) : (

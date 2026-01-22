@@ -117,9 +117,25 @@ export class RegionalSimulationService {
    * Uses Swiss-to-Playoff format:
    * - Swiss Stage: 8 teams (beta+omega qualifiers from each region)
    * - Playoffs: 8 teams (4 Swiss qualifiers + 4 Kickoff winners)
+   *
+   * Idempotent: If Masters already exists, returns existing tournament
    */
   createMastersTournament(): Tournament | null {
     const state = useGameStore.getState();
+
+    // Check if Masters tournament already exists (idempotency)
+    const existingMasters = Object.values(state.tournaments).find(
+      (t) => t.name === 'VCT Masters Santiago 2026'
+    );
+
+    if (existingMasters) {
+      console.log('Masters Santiago already exists, returning existing tournament');
+      // Ensure phase is set correctly
+      if (state.calendar.currentPhase !== 'masters1') {
+        state.setCurrentPhase('masters1');
+      }
+      return existingMasters;
+    }
 
     // Get all Kickoff qualifications
     const qualifications = Object.values(state.qualifications).filter(

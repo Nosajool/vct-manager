@@ -2513,6 +2513,42 @@ state.updateBracket(tournamentId, clonedBracket);
 
 This ensures React detects changes properly and prevents inconsistent state.
 
+### 21. Regional Tournament Simulation on Kickoff Completion
+
+When the player's regional Kickoff tournament completes, the `QualificationModal` appears showing the 3 qualified teams. The other 3 regional Kickoffs must also be simulated to populate Masters tournament with all 12 qualified teams.
+
+**Critical Requirement**: Other regions MUST be simulated regardless of how the user interacts with the modal.
+
+**Implementation (`QualificationModal.tsx`)**:
+- Uses `simulationTriggeredRef` to track if simulation has been triggered (prevents double-calling)
+- `ensureOtherRegionsSimulatedSync()` - Synchronous function that calls `regionalSimulationService.simulateOtherKickoffs()`
+- All close paths trigger simulation:
+  - "Continue" button → `handleContinue()` → simulates then closes
+  - "See All Qualifiers" button → simulates and shows all regions
+  - Escape key → `handleClose()` → simulates then closes
+  - Backdrop click → `handleClose()` → simulates then closes
+
+**Flow**:
+```
+Player's Kickoff completes
+    ↓
+QualificationModal opens (shows player region only)
+    ↓
+User closes modal (any method)
+    ↓
+ensureOtherRegionsSimulatedSync() called
+    ↓
+RegionalSimulationService.simulateOtherKickoffs() runs
+    ↓
+3 other regional Kickoffs simulated and qualifications saved
+    ↓
+Modal closes, game state has all 12 qualifications
+```
+
+**Why This Matters**: The Masters tournament creation (`createMastersTournament()`) requires all 4 regional qualifications to exist. If the user closed the modal without triggering simulation, Masters would fail to create properly.
+
+**Critical Update (2026-01-22)**: All modal exit paths (Continue button, Escape key, backdrop click) now call `createMastersTournament()` after simulating other regions. This ensures the phase transitions to 'masters1' and the Masters tournament appears in the calendar regardless of how the user closes the modal. The `createMastersTournament()` function is now idempotent to prevent duplicate tournament creation.
+
 ## Session End Checklist
 
 Before ending each AI coding session:
