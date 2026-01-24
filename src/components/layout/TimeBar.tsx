@@ -17,6 +17,7 @@ import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
+import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import type { MatchEventData } from '../../types';
 
 export function TimeBar() {
@@ -163,6 +164,14 @@ export function TimeBar() {
       {isModalOpen && modalType === 'qualification' && (
         <QualificationModal
           data={modalData as QualificationModalData}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Masters Completion Modal - triggered by TournamentService after Masters/Champions completion */}
+      {isModalOpen && modalType === 'masters_completion' && (
+        <MastersCompletionModal
+          data={modalData as MastersCompletionModalData}
           onClose={closeModal}
         />
       )}

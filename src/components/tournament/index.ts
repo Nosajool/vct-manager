@@ -5,3 +5,5 @@ export { BracketView } from './BracketView';
 export { TournamentCard, TournamentCardMini } from './TournamentCard';
 export { StandingsTable } from './StandingsTable';
 export { SwissStageView } from './SwissStageView';
+export { MastersCompletionModal } from './MastersCompletionModal';
+export type { MastersCompletionModalData } from './MastersCompletionModal';

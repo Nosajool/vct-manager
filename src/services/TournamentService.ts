@@ -154,6 +154,11 @@ export class TournamentService {
         if (tournament.type === 'kickoff') {
           this.handleKickoffCompletion(tournamentId);
         }
+
+        // Handle Masters/Champions completion - show results modal
+        if (tournament.type === 'masters' || tournament.type === 'champions') {
+          this.handleMastersCompletion(tournamentId);
+        }
       }
     }
 
@@ -407,6 +412,106 @@ export class TournamentService {
       allRegionsQualifiers: null,  // Filled later when user clicks "See All"
       transitionConfigId: 'kickoff_to_masters1', // Transition to Masters Santiago
     });
+  }
+
+  /**
+   * Handle Masters/Champions tournament completion - show results modal
+   * Follows pattern: getState() -> engine calls -> state updates
+   *
+   * Shows the final tournament results including:
+   * - Swiss Stage standings (for swiss_to_playoff format)
+   * - Playoff bracket results
+   * - Final placements and prize money
+   */
+  handleMastersCompletion(tournamentId: string): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      console.error(`Tournament not found for Masters completion: ${tournamentId}`);
+      return;
+    }
+
+    // Get final placements from bracket
+    const placementsMap = bracketManager.getFinalPlacements(tournament.bracket);
+
+    // Build final placements array with team names and prize amounts
+    const finalPlacements: Array<{
+      teamId: string;
+      teamName: string;
+      placement: number;
+      prize: number;
+    }> = [];
+
+    // Get prize pool
+    const prizePool = tournament.prizePool;
+
+    // Map placement to prize amounts
+    const prizeMap: Record<number, number> = {
+      1: prizePool.first,
+      2: prizePool.second,
+      3: prizePool.third,
+      4: prizePool.fourth || 0,
+      5: prizePool.fifthSixth || 0,
+      6: prizePool.fifthSixth || 0,
+      7: prizePool.seventhEighth || 0,
+      8: prizePool.seventhEighth || 0,
+    };
+
+    for (const [placement, teamId] of Object.entries(placementsMap)) {
+      if (teamId) {
+        const placementNum = parseInt(placement);
+        finalPlacements.push({
+          teamId,
+          teamName: state.teams[teamId]?.name || 'Unknown',
+          placement: placementNum,
+          prize: prizeMap[placementNum] || 0,
+        });
+      }
+    }
+
+    // Sort by placement
+    finalPlacements.sort((a, b) => a.placement - b.placement);
+
+    // Get Swiss stage standings if this is a swiss_to_playoff tournament
+    let swissStandings: SwissTeamRecord[] = [];
+    if (isMultiStageTournament(tournament)) {
+      swissStandings = tournament.swissStage.standings;
+    }
+
+    // Get champion info
+    const championId = tournament.championId || placementsMap[1] || '';
+    const championName = state.teams[championId]?.name || 'Unknown';
+
+    // Check player team placement
+    const playerTeamId = state.playerTeamId;
+    let playerTeamPlacement: { placement: number; prize: number; qualifiedFromSwiss: boolean } | undefined;
+
+    if (playerTeamId) {
+      const playerResult = finalPlacements.find((p) => p.teamId === playerTeamId);
+      if (playerResult) {
+        // Check if player's team was in Swiss stage
+        const wasInSwiss = swissStandings.some((s) => s.teamId === playerTeamId);
+        playerTeamPlacement = {
+          placement: playerResult.placement,
+          prize: playerResult.prize,
+          qualifiedFromSwiss: wasInSwiss,
+        };
+      }
+    }
+
+    // Trigger modal via UISlice
+    state.openModal('masters_completion', {
+      tournamentId,
+      tournamentName: tournament.name,
+      championId,
+      championName,
+      finalPlacements,
+      swissStandings,
+      playerTeamPlacement,
+    });
+
+    console.log(`Masters tournament ${tournament.name} completed. Champion: ${championName}`);
   }
 
   /**

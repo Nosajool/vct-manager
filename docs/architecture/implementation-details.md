@@ -2086,6 +2086,59 @@ function groupMatches(results: MatchResult[], playerTeamId: string): GroupedMatc
 - `Dashboard.tsx` shows modal when `simulatedMatches.length > 0`
 - Clicking match card opens detailed result view
 
+### 16.5. Tournament Completion Modal Pattern
+
+When a Masters or Champions tournament completes, a completion modal displays full results:
+
+**Trigger Flow**:
+```
+TournamentService.advanceTournament()
+    ↓ (bracket status === 'completed')
+setTournamentChampion() + distributePrizes()
+    ↓ (tournament.type === 'masters' || 'champions')
+handleMastersCompletion(tournamentId)
+    ↓
+openModal('masters_completion', data)
+    ↓
+TimeBar renders MastersCompletionModal
+```
+
+**Modal Data Structure**:
+```typescript
+interface MastersCompletionModalData {
+  tournamentId: string;
+  tournamentName: string;
+  championId: string;
+  championName: string;
+  finalPlacements: Array<{
+    teamId: string;
+    teamName: string;
+    placement: number;
+    prize: number;
+  }>;
+  swissStandings: SwissTeamRecord[];  // Empty for non-Swiss tournaments
+  playerTeamPlacement?: {
+    placement: number;
+    prize: number;
+    qualifiedFromSwiss: boolean;
+  };
+}
+```
+
+**Modal Features**:
+- Three tabs: Summary, Swiss Stage, Playoff Results
+- Player team highlighting throughout
+- Prize money display for all placements
+- Champion trophy display
+- "View Full Bracket" button to navigate to Tournament page
+
+**Files**:
+- `src/components/tournament/MastersCompletionModal.tsx` - Modal component
+- `src/services/TournamentService.ts` - `handleMastersCompletion()` method
+- `src/components/layout/TimeBar.tsx` - Modal rendering
+
+This pattern mirrors the QualificationModal for Kickoff completion, using the same UISlice modal system.
+
 ### 17. Training Capacity Pattern
 
 Training remains available until all players reach weekly limits:
