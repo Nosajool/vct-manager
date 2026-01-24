@@ -6,7 +6,7 @@ import { useGameStore } from '../store';
 import { bracketManager, tournamentEngine } from '../engine/competition';
 import { tournamentService } from './TournamentService';
 import { tournamentTransitionService } from './TournamentTransitionService';
-import type { Region, Tournament, Team, MultiStageTournament, Match, CalendarEvent, MatchResult } from '../types';
+import type { Region, Tournament, Team, MatchResult } from '../types';
 import { isMultiStageTournament } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
 import {

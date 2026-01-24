@@ -147,6 +147,11 @@ export class BracketManager {
    * Upper bracket losers drop to lower bracket
    * Lower bracket losers are eliminated
    * Grand final between upper winner and lower winner
+   *
+   * For 8 teams:
+   * Upper: R1 (4 matches) → R2 (2 matches) → R3/Final (1 match)
+   * Lower: R1 (2 matches, UR1 losers) → R2 (2 matches, UR2 losers vs LR1 winners) →
+   *        R3 (1 match, LR2 winners) → R4 (1 match, Upper Final loser vs LR3 winner)
    */
   generateDoubleElimination(
     teamIds: string[],
@@ -202,12 +207,25 @@ export class BracketManager {
         }
 
         // Loser destination (lower bracket)
-        // Lower bracket round calculation is complex - losers drop to specific lower rounds
-        const lowerRoundIdx = this.getLowerRoundForUpperLoser(round, numUpperRounds);
-        const loserDestination: Destination = {
-          type: 'match',
-          matchId: `lower-r${lowerRoundIdx + 1}-m${matchIdx + 1}`,
-        };
+        // For 8-team double elim:
+        // - UR1 (4 matches) losers → LR1 (2 matches) at 2:1 ratio
+        // - UR2 (2 matches) losers → LR2 (combined with LR1 winners)
+        // - Upper Final loser → LR4 (combined with LR3 winner)
+        let loserDestination: Destination;
+        if (round === 1) {
+          // UR1 losers → LR1 (2:1 mapping)
+          const lowerMatchIdx = Math.floor(matchIdx / 2) + 1;
+          loserDestination = { type: 'match', matchId: `lower-r1-m${lowerMatchIdx}` };
+        } else if (round === numUpperRounds) {
+          // Upper Final loser → last lower round (LR4 for 8 teams)
+          const numLowerRounds = 2 * (numUpperRounds - 1);
+          loserDestination = { type: 'match', matchId: `lower-r${numLowerRounds}-m1` };
+        } else {
+          // Middle upper rounds losers → corresponding combined lower round
+          // UR2 losers → LR2 (at position matching their index)
+          const lowerRound = round; // UR2 → LR2, UR3 → LR3, etc.
+          loserDestination = { type: 'match', matchId: `lower-r${lowerRound}-m${matchIdx + 1}` };
+        }
 
         const match: BracketMatch = {
           matchId,
@@ -238,77 +256,148 @@ export class BracketManager {
       });
     }
 
-    // Lower bracket
-    // Lower bracket has 2 * (numUpperRounds - 1) rounds
-    // Odd rounds: dropdowns from upper play lower winners
-    // Even rounds: lower bracket internal matches
+    // Lower bracket structure for standard double elimination:
+    // For 8 teams (3 upper rounds):
+    // - LR1: 2 matches (4 losers from UR1 paired up)
+    // - LR2: 2 matches (2 losers from UR2 vs 2 winners from LR1) - combined round
+    // - LR3: 1 match (2 winners from LR2 face each other) - internal round
+    // - LR4: 1 match (Upper Final loser vs LR3 winner) - combined round
     const numLowerRounds = 2 * (numUpperRounds - 1);
 
     for (let lowerRound = 1; lowerRound <= numLowerRounds; lowerRound++) {
       const roundId = `lower-r${lowerRound}`;
-      const isDropdownRound = lowerRound % 2 === 1;
-
-      // Calculate number of matches in this lower round
-      let numMatches: number;
-      if (lowerRound === 1) {
-        numMatches = bracketSize / 4; // Half of first upper round losers
-      } else {
-        numMatches = Math.ceil(bracketSize / Math.pow(2, Math.floor((lowerRound + 1) / 2) + 1));
-      }
-
       const matches: BracketMatch[] = [];
 
-      for (let matchIdx = 0; matchIdx < numMatches; matchIdx++) {
-        const matchId = `lower-r${lowerRound}-m${matchIdx + 1}`;
+      // Calculate number of matches and structure for each lower round
+      if (lowerRound === 1) {
+        // LR1: Pure dropout round - UR1 losers paired up
+        // 4 UR1 losers → 2 LR1 matches
+        const numMatches = bracketSize / 4;
 
-        let teamASource: TeamSource;
-        let teamBSource: TeamSource;
+        for (let matchIdx = 0; matchIdx < numMatches; matchIdx++) {
+          const matchId = `lower-r1-m${matchIdx + 1}`;
 
-        if (lowerRound === 1) {
-          // First lower round: losers from upper round 1
-          teamASource = {
+          // Pair adjacent UR1 losers
+          const teamASource: TeamSource = {
             type: 'loser',
             matchId: `match-${matchIdx * 2 + 1}`,
           };
-          teamBSource = {
+          const teamBSource: TeamSource = {
             type: 'loser',
             matchId: `match-${matchIdx * 2 + 2}`,
           };
-        } else if (isDropdownRound) {
-          // Dropdown round: upper bracket loser vs lower bracket winner
-          const upperRound = Math.floor(lowerRound / 2) + 1;
-          teamASource = {
+
+          // Winner goes to LR2
+          const winnerDestination: Destination = {
+            type: 'match',
+            matchId: `lower-r2-m${matchIdx + 1}`,
+          };
+
+          matches.push({
+            matchId,
+            roundId,
+            teamASource,
+            teamBSource,
+            status: 'pending',
+            winnerDestination,
+            loserDestination: { type: 'eliminated' },
+          });
+        }
+      } else if (lowerRound % 2 === 0 && lowerRound < numLowerRounds) {
+        // Even rounds (LR2, LR4 for larger brackets): Combined rounds
+        // Upper bracket losers vs lower bracket winners from previous round
+        // LR2: UR2 losers vs LR1 winners
+        const prevLowerMatchCount = lower[lowerRound - 2].matches.length;
+        const numMatches = prevLowerMatchCount;
+
+        for (let matchIdx = 0; matchIdx < numMatches; matchIdx++) {
+          const matchId = `lower-r${lowerRound}-m${matchIdx + 1}`;
+
+          // TeamA: Upper bracket loser (from round = lowerRound)
+          const upperRound = lowerRound; // LR2 gets losers from UR2
+          const teamASource: TeamSource = {
             type: 'loser',
             matchId: `match-${this.getMatchNumber(upperRound, matchIdx, bracketSize)}`,
           };
-          teamBSource = {
+
+          // TeamB: Winner from previous lower round
+          const teamBSource: TeamSource = {
             type: 'winner',
             matchId: `lower-r${lowerRound - 1}-m${matchIdx + 1}`,
           };
-        } else {
-          // Internal lower bracket round
-          teamASource = {
+
+          // Winner goes to next lower round (LR3 for 8 teams)
+          const winnerDestination: Destination = {
+            type: 'match',
+            matchId: `lower-r${lowerRound + 1}-m${Math.floor(matchIdx / 2) + 1}`,
+          };
+
+          matches.push({
+            matchId,
+            roundId,
+            teamASource,
+            teamBSource,
+            status: 'pending',
+            winnerDestination,
+            loserDestination: { type: 'eliminated' },
+          });
+        }
+      } else if (lowerRound % 2 === 1 && lowerRound > 1 && lowerRound < numLowerRounds) {
+        // Odd rounds after LR1 (LR3 for 8 teams): Internal rounds
+        // Winners from previous lower round face each other
+        const prevLowerMatchCount = lower[lowerRound - 2].matches.length;
+        const numMatches = Math.ceil(prevLowerMatchCount / 2);
+
+        for (let matchIdx = 0; matchIdx < numMatches; matchIdx++) {
+          const matchId = `lower-r${lowerRound}-m${matchIdx + 1}`;
+
+          // Both teams from previous lower round winners
+          const teamASource: TeamSource = {
             type: 'winner',
             matchId: `lower-r${lowerRound - 1}-m${matchIdx * 2 + 1}`,
           };
-          teamBSource = {
+          const teamBSource: TeamSource = {
             type: 'winner',
             matchId: `lower-r${lowerRound - 1}-m${matchIdx * 2 + 2}`,
           };
-        }
 
-        // Destination
-        let winnerDestination: Destination;
-        let loserDestination: Destination = { type: 'eliminated' };
-
-        if (lowerRound === numLowerRounds) {
-          winnerDestination = { type: 'match', matchId: 'grandfinal' };
-        } else {
-          winnerDestination = {
+          // Winner goes to next lower round (LR4 for 8 teams)
+          const winnerDestination: Destination = {
             type: 'match',
-            matchId: `lower-r${lowerRound + 1}-m${isDropdownRound ? matchIdx + 1 : Math.floor(matchIdx / 2) + 1}`,
+            matchId: `lower-r${lowerRound + 1}-m${matchIdx + 1}`,
           };
+
+          matches.push({
+            matchId,
+            roundId,
+            teamASource,
+            teamBSource,
+            status: 'pending',
+            winnerDestination,
+            loserDestination: { type: 'eliminated' },
+          });
         }
+      } else if (lowerRound === numLowerRounds) {
+        // Final lower round (LR4 for 8 teams): Upper Final loser vs LR3 winner
+        const matchId = `lower-r${lowerRound}-m1`;
+
+        // TeamA: Upper Final loser
+        const teamASource: TeamSource = {
+          type: 'loser',
+          matchId: `match-${matchCounter}`, // Upper Final is last match in upper
+        };
+
+        // TeamB: Winner from previous lower round (LR3)
+        const teamBSource: TeamSource = {
+          type: 'winner',
+          matchId: `lower-r${lowerRound - 1}-m1`,
+        };
+
+        // Winner goes to Grand Final
+        const winnerDestination: Destination = {
+          type: 'match',
+          matchId: 'grandfinal',
+        };
 
         matches.push({
           matchId,
@@ -317,7 +406,7 @@ export class BracketManager {
           teamBSource,
           status: 'pending',
           winnerDestination,
-          loserDestination,
+          loserDestination: { type: 'eliminated' },
         });
       }
 
@@ -719,8 +808,16 @@ export class BracketManager {
     loserId: string,
     result: MatchResult
   ): BracketStructure {
+    console.log(`Completing bracket match ${matchId}, winner: ${winnerId}, loser: ${loserId}`);
+
     // Find and update the match
     let newBracket = this.updateMatchResult(bracket, matchId, winnerId, loserId, result);
+
+    const completedMatch = this.findMatch(newBracket, matchId);
+    if (completedMatch) {
+      console.log(`  Winner destination:`, completedMatch.winnerDestination);
+      console.log(`  Loser destination:`, completedMatch.loserDestination);
+    }
 
     // Propagate winner to next match
     newBracket = this.propagateWinner(newBracket, matchId, winnerId);
@@ -730,6 +827,10 @@ export class BracketManager {
 
     // Update match statuses
     newBracket = this.updateMatchStatuses(newBracket);
+
+    // Log ready matches after update
+    const readyMatches = this.getReadyMatches(newBracket);
+    console.log(`  Ready matches after completion:`, readyMatches.map(m => m.matchId));
 
     return newBracket;
   }
@@ -1402,16 +1503,6 @@ export class BracketManager {
     return matchNum + position + 1;
   }
 
-  /**
-   * Get lower bracket round index for upper bracket loser
-   */
-  private getLowerRoundForUpperLoser(upperRound: number, _numUpperRounds: number): number {
-    // Upper R1 losers -> Lower R1
-    // Upper R2 losers -> Lower R3
-    // Upper R3 losers -> Lower R5
-    // etc.
-    return (upperRound - 1) * 2;
-  }
 
   /**
    * Process byes (auto-advance teams with bye opponents)
@@ -1576,7 +1667,12 @@ export class BracketManager {
     if (destination.type !== 'match') return;
 
     const destMatch = this.findMatch(bracket, destination.matchId);
-    if (!destMatch) return;
+    if (!destMatch) {
+      console.warn(`    Could not find destination match: ${destination.matchId}`);
+      return;
+    }
+
+    console.log(`    Propagating ${sourceType} (team ${teamId}) from ${sourceMatchId} to ${destination.matchId}`);
 
     // Check if this team should go to teamA slot
     const teamASource = destMatch.teamASource;
@@ -1586,6 +1682,7 @@ export class BracketManager {
       teamASource.matchId === sourceMatchId
     ) {
       destMatch.teamAId = teamId;
+      console.log(`      Assigned to teamA slot`);
       return;
     }
 
@@ -1597,6 +1694,7 @@ export class BracketManager {
       teamBSource.matchId === sourceMatchId
     ) {
       destMatch.teamBId = teamId;
+      console.log(`      Assigned to teamB slot`);
       return;
     }
 
@@ -1606,11 +1704,17 @@ export class BracketManager {
       !destMatch.teamAId
     ) {
       destMatch.teamAId = teamId;
+      console.log(`      Assigned to teamA slot (fallback)`);
     } else if (
       (teamBSource.type === 'winner' || teamBSource.type === 'loser') &&
       !destMatch.teamBId
     ) {
       destMatch.teamBId = teamId;
+      console.log(`      Assigned to teamB slot (fallback)`);
+    } else {
+      console.warn(`      Could not assign team - no matching slot found`);
+      console.warn(`      teamASource:`, teamASource, `teamAId:`, destMatch.teamAId);
+      console.warn(`      teamBSource:`, teamBSource, `teamBId:`, destMatch.teamBId);
     }
   }
 

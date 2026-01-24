@@ -3,9 +3,8 @@
 // Pattern: getState() -> engine calls -> store updates
 
 import { useGameStore } from '../store';
-import { bracketManager, tournamentEngine } from '../engine/competition';
+import { tournamentEngine } from '../engine/competition';
 import { regionalSimulationService } from './RegionalSimulationService';
-import { tournamentService } from './TournamentService';
 import type {
   TournamentTransitionConfig,
   TransitionResult,
@@ -14,8 +13,8 @@ import type {
   MultiStageTournament,
   Match,
   CalendarEvent,
+  BracketMatch,
 } from '../types';
-import { isMultiStageTournament } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
 import { TOURNAMENT_TRANSITIONS } from '../utils/tournament-transitions';
 
@@ -105,15 +104,15 @@ export class TournamentTransitionService {
       config.prizePool
     );
 
+    // Schedule ready matches before adding to store
+    this.scheduleTournamentMatches(tournament);
+
     // Add to store
     state.addTournament(tournament);
 
-    // Schedule ready matches
-    tournamentService.scheduleTournamentMatches(tournament.id);
-    tournamentService.addTournamentCalendarEvents(tournament.id);
-
-    // Create Match entities for ready bracket matches
-    tournamentService.createMatchEntitiesForReadyBracketMatches(tournament.id);
+    // Add calendar events and create Match entities for ready bracket matches
+    this.addTournamentCalendarEvents(tournament);
+    this.createMatchEntitiesForReadyBracketMatches(tournament);
 
     // Transition phase
     state.setCurrentPhase(config.toPhase);
@@ -141,7 +140,7 @@ export class TournamentTransitionService {
    */
   private executeInternationalTransition(
     config: TournamentTransitionConfig,
-    playerRegion?: Region
+    _playerRegion?: Region
   ): TransitionResult {
     const state = useGameStore.getState();
 
@@ -403,8 +402,224 @@ export class TournamentTransitionService {
    * Simulate other regions' tournaments (for international transitions)
    * This ensures all 4 regions have completed before creating international tournament
    */
-  simulateOtherRegions(playerRegion: Region, qualificationSource: string): QualificationRecord[] {
+  simulateOtherRegions(playerRegion: Region, _qualificationSource: string): QualificationRecord[] {
     return regionalSimulationService.simulateOtherKickoffs(playerRegion);
+  }
+
+  /**
+   * Schedule tournament matches (assigns dates to ready bracket matches)
+   */
+  private scheduleTournamentMatches(tournament: Tournament): void {
+    const startDate = new Date(tournament.startDate);
+    let currentDate = new Date(startDate);
+
+    const readyMatches = this.countReadyMatches(tournament.bracket);
+    const daysAvailable = Math.max(
+      1,
+      Math.floor(
+        (new Date(tournament.endDate).getTime() - startDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    );
+    const matchesPerDay = Math.max(1, Math.ceil(readyMatches / daysAvailable));
+
+    let matchCount = 0;
+
+    for (const round of tournament.bracket.upper) {
+      for (const match of round.matches) {
+        if (match.status !== 'ready') continue;
+        match.scheduledDate = currentDate.toISOString();
+        matchCount++;
+        if (matchCount % matchesPerDay === 0) {
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    }
+
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        for (const match of round.matches) {
+          if (match.status !== 'ready') continue;
+          match.scheduledDate = currentDate.toISOString();
+          matchCount++;
+          if (matchCount % matchesPerDay === 0) {
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+    }
+
+    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
+      tournament.bracket.grandfinal.scheduledDate = new Date(tournament.endDate).toISOString();
+    }
+  }
+
+  /**
+   * Add tournament calendar events for ready matches
+   */
+  private addTournamentCalendarEvents(tournament: Tournament): void {
+    const state = useGameStore.getState();
+    const events: CalendarEvent[] = [
+      {
+        id: `event-${tournament.id}-start`,
+        type: 'tournament_start',
+        date: tournament.startDate,
+        data: { tournamentId: tournament.id, tournamentName: tournament.name },
+        processed: false,
+        required: false,
+      },
+      {
+        id: `event-${tournament.id}-end`,
+        type: 'tournament_end',
+        date: tournament.endDate,
+        data: { tournamentId: tournament.id, tournamentName: tournament.name },
+        processed: false,
+        required: false,
+      },
+    ];
+
+    const addMatchEvents = (matches: BracketMatch[]) => {
+      for (const bracketMatch of matches) {
+        if (bracketMatch.status !== 'ready') continue;
+        if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
+
+        const teamA = state.teams[bracketMatch.teamAId];
+        const teamB = state.teams[bracketMatch.teamBId];
+
+        events.push({
+          id: `event-match-${bracketMatch.matchId}`,
+          type: 'match',
+          date: bracketMatch.scheduledDate || tournament.startDate,
+          data: {
+            matchId: bracketMatch.matchId,
+            homeTeamId: bracketMatch.teamAId,
+            awayTeamId: bracketMatch.teamBId,
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
+            tournamentId: tournament.id,
+            tournamentName: tournament.name,
+          },
+          processed: false,
+          required: true,
+        });
+      }
+    };
+
+    for (const round of tournament.bracket.upper) {
+      addMatchEvents(round.matches);
+    }
+
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        addMatchEvents(round.matches);
+      }
+    }
+
+    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
+      const gf = tournament.bracket.grandfinal;
+      if (gf.teamAId && gf.teamBId) {
+        const teamA = state.teams[gf.teamAId];
+        const teamB = state.teams[gf.teamBId];
+
+        events.push({
+          id: `event-match-${gf.matchId}`,
+          type: 'match',
+          date: gf.scheduledDate || tournament.endDate,
+          data: {
+            matchId: gf.matchId,
+            homeTeamId: gf.teamAId,
+            awayTeamId: gf.teamBId,
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
+            tournamentId: tournament.id,
+            tournamentName: tournament.name,
+            isGrandFinal: true,
+          },
+          processed: false,
+          required: true,
+        });
+      }
+    }
+
+    state.addCalendarEvents(events);
+  }
+
+  /**
+   * Create Match entities for ready bracket matches
+   */
+  private createMatchEntitiesForReadyBracketMatches(tournament: Tournament): void {
+    const state = useGameStore.getState();
+
+    const processMatches = (matches: BracketMatch[]) => {
+      for (const bracketMatch of matches) {
+        if (bracketMatch.status === 'ready' && bracketMatch.teamAId && bracketMatch.teamBId) {
+          if (state.matches[bracketMatch.matchId]) continue;
+
+          const match: Match = {
+            id: bracketMatch.matchId,
+            teamAId: bracketMatch.teamAId,
+            teamBId: bracketMatch.teamBId,
+            scheduledDate: bracketMatch.scheduledDate || tournament.startDate,
+            status: 'scheduled',
+            tournamentId: tournament.id,
+          };
+
+          state.addMatch(match);
+        }
+      }
+    };
+
+    for (const round of tournament.bracket.upper) {
+      processMatches(round.matches);
+    }
+
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        processMatches(round.matches);
+      }
+    }
+
+    const gf = tournament.bracket.grandfinal;
+    if (gf && gf.status === 'ready' && gf.teamAId && gf.teamBId) {
+      if (!state.matches[gf.matchId]) {
+        const match: Match = {
+          id: gf.matchId,
+          teamAId: gf.teamAId,
+          teamBId: gf.teamBId,
+          scheduledDate: gf.scheduledDate || tournament.endDate,
+          status: 'scheduled',
+          tournamentId: tournament.id,
+        };
+        state.addMatch(match);
+      }
+    }
+  }
+
+  /**
+   * Count ready matches in a bracket
+   */
+  private countReadyMatches(bracket: {
+    upper: { matches: BracketMatch[] }[];
+    lower?: { matches: BracketMatch[] }[];
+    grandfinal?: BracketMatch;
+  }): number {
+    let count = 0;
+
+    for (const round of bracket.upper) {
+      count += round.matches.filter(m => m.status === 'ready').length;
+    }
+
+    if (bracket.lower) {
+      for (const round of bracket.lower) {
+        count += round.matches.filter(m => m.status === 'ready').length;
+      }
+    }
+
+    if (bracket.grandfinal && bracket.grandfinal.status === 'ready') {
+      count += 1;
+    }
+
+    return count;
   }
 }
 

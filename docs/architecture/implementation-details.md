@@ -1,749 +1,4 @@
-# VCT Manager Game - Technical Specification
-
-## Project Overview
-Browser-based Valorant Champions Tour (VCT) management simulation game. Single-page React application with no backend - all state managed client-side with persistent storage.
-
----
-
-## Core Architecture
-
-### Technology Stack
-- **Framework**: React 18+ with TypeScript
-- **Build Tool**: Vite
-- **State Management**: Zustand
-- **Persistence**: IndexedDB via Dexie.js
-- **Styling**: Tailwind CSS + CSS Modules
-- **Testing**: Vitest + React Testing Library
-
-### Architectural Principles
-1. **Separation of Concerns**: Engine (logic) → Services (orchestration) → Store (state) → UI (presentation)
-2. **Immutable State**: All state updates return new objects
-3. **Normalized Data**: Entities stored by ID, relationships via ID references
-4. **Pure Functions**: Engine classes have no side effects
-5. **Single Source of Truth**: Zustand store is the only state container
-
-### Directory Structure
-```
-src/
-├── engine/              # Pure game logic (no React dependencies)
-│   ├── match/
-│   │   ├── MatchSimulator.ts    # Probabilistic match simulation
-│   │   ├── constants.ts         # Shared constants (STAT_WEIGHTS, MAX_CHEMISTRY_BONUS)
-│   │   └── index.ts
-│   ├── competition/
-│   │   ├── BracketManager.ts    # Bracket generation and advancement
-│   │   ├── TournamentEngine.ts  # Tournament creation and configuration
-│   │   ├── ScheduleGenerator.ts # VCT season schedule generation
-│   │   ├── SeasonManager.ts     # Season progression logic
-│   │   └── index.ts
-│   ├── player/
-│   │   ├── PlayerGenerator.ts   # Procedural player generation
-│   │   ├── PlayerDevelopment.ts # Training and stat improvement
-│   │   ├── ContractNegotiator.ts # Contract negotiation logic
-│   │   ├── vlr/                 # VLR.gg integration module
-│   │   │   ├── orgMapping.ts        # VLR org codes → game team names
-│   │   │   ├── statConverter.ts     # VLR stats → game PlayerStats
-│   │   │   ├── vlrTeamIds.ts        # VLR team page IDs for scraping
-│   │   │   ├── VlrDataProcessor.ts  # Raw VLR → Player entities
-│   │   │   └── index.ts
-│   │   └── index.ts
-│   ├── team/
-│   │   ├── TeamManager.ts       # Team generation
-│   │   ├── EconomyEngine.ts     # Financial calculations
-│   │   ├── ChemistryCalculator.ts # Chemistry calculations
-│   │   └── index.ts
-│   ├── calendar/
-│   │   ├── TimeProgression.ts   # Date helpers and event processing
-│   │   ├── EventScheduler.ts    # Season and event scheduling
-│   │   └── index.ts
-│   └── scrim/                   # Scrim system (Phase 6)
-│       ├── ScrimEngine.ts       # Scrim simulation and improvements
-│       ├── TierTeamGenerator.ts # T2/T3 team generation
-│       └── index.ts
-│
-├── store/               # Zustand state management
-│   ├── index.ts         # Root store with save/load API
-│   ├── slices/
-│   │   ├── gameSlice.ts        # Calendar, season, phase
-│   │   ├── teamSlice.ts        # Teams (normalized by ID)
-│   │   ├── playerSlice.ts      # Players (normalized by ID)
-│   │   ├── competitionSlice.ts # Tournaments and standings
-│   │   ├── matchSlice.ts       # Matches and results
-│   │   ├── scrimSlice.ts       # Tier teams and scrim history
-│   │   ├── uiSlice.ts          # UI state
-│   │   └── index.ts
-│   └── middleware/
-│       ├── persistence.ts      # Auto-save and SaveManager
-│       └── index.ts
-│
-├── services/            # Orchestration layer (store + engine)
-│   ├── GameInitService.ts              # Game initialization (with VLR integration)
-│   ├── MatchService.ts                 # Match simulation orchestration
-│   ├── TournamentService.ts            # Tournament lifecycle
-│   ├── TournamentTransitionService.ts  # Generic phase transition logic
-│   ├── RegionalSimulationService.ts    # Regional tournament simulation
-│   ├── ContractService.ts              # Player signing/release
-│   ├── TrainingService.ts              # Training orchestration
-│   ├── CalendarService.ts              # Time progression orchestration
-│   ├── EconomyService.ts               # Financial operations
-│   ├── ScrimService.ts                 # Scrim orchestration
-│   └── index.ts
-│
-├── db/                  # IndexedDB configuration
-│   ├── schema.ts        # Save slot types
-│   ├── database.ts      # Dexie database class
-│   └── index.ts
-│
-├── data/                # Static data snapshots
-│   └── vlrSnapshot.ts   # VLR player stats & team rosters (cached)
-│
-├── types/               # TypeScript type definitions
-│   ├── player.ts        # Player, PlayerStats, Coach
-│   ├── team.ts          # Team, TeamFinances, Transaction, Loan
-│   ├── match.ts         # Match, MatchResult, MapResult
-│   ├── competition.ts   # Tournament, BracketStructure, BracketMatch
-│   ├── calendar.ts      # GameCalendar, CalendarEvent, SeasonPhase
-│   ├── economy.ts       # TrainingSession, TrainingResult, Difficulty
-│   ├── scrim.ts         # MapPoolStrength, ScrimRelationship, TierTeam
-│   ├── vlr.ts           # VLR API response types
-│   ├── tournament-transition.ts # Tournament transition configuration types
-│   └── index.ts
-│
-├── components/          # React UI components
-│   ├── layout/          # Header, Navigation, Layout
-│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal, AllTeamsView
-│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TimeControls, TrainingModal, SimulationResultsModal
-│   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable
-│   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable
-│   ├── scrim/           # ScrimModal, MapPoolView, RelationshipView
-│   └── shared/          # SaveLoadModal
-│
-├── pages/               # Top-level route components
-│   ├── Dashboard.tsx    # Main hub with calendar and activities
-│   ├── Roster.tsx       # Roster and free agent management (My Team, Free Agents, All Teams tabs)
-│   ├── Schedule.tsx     # Match schedule and results
-│   ├── Tournament.tsx   # Tournament brackets and simulation
-│   ├── Finances.tsx     # Financial management
-│   └── index.ts
-│
-├── utils/
-│   ├── constants.ts              # Names, nationalities, team templates
-│   └── tournament-transitions.ts # Tournament transition configurations
-│
-└── App.tsx              # Main app with view routing
-
-scripts/
-└── fetch-vlr-data.ts    # CLI script to fetch/scrape VLR data
-```
-
----
-
-## Core Type Definitions
-
-### Player System
-```typescript
-export interface PlayerStats {
-  mechanics: number;      // 0-100: Aim and gunplay ability
-  igl: number;           // 0-100: In-game leadership and strategy
-  mental: number;        // 0-100: Composure when playing from behind
-  clutch: number;        // 0-100: Performance in 1vX situations
-  vibes: number;         // 0-100: Team morale contribution
-  lurking: number;       // 0-100: Solo play and flanking
-  entry: number;         // 0-100: First contact aggression
-  support: number;       // 0-100: Utility usage and teamplay
-  stamina: number;       // 0-100: Consistency across long matches
-}
-
-export interface Player {
-  id: string;
-  name: string;
-  age: number;
-  nationality: string;
-  region: 'Americas' | 'EMEA' | 'Pacific' | 'China';
-  
-  // Current team
-  teamId: string | null;
-  
-  // Stats and performance
-  stats: PlayerStats;
-  form: number;           // 0-100: Recent performance
-  morale: number;         // 0-100: Current morale
-  potential: number;      // 0-100: Growth ceiling
-  
-  // Contract details
-  contract: {
-    salary: number;
-    bonusPerWin: number;
-    yearsRemaining: number;
-    endDate: Date;
-  } | null;
-  
-  // Career stats
-  careerStats: {
-    matchesPlayed: number;
-    wins: number;
-    losses: number;
-    avgKills: number;
-    avgDeaths: number;
-    avgAssists: number;
-    tournamentsWon: number;
-  };
-  
-  // Preferences (for AI negotiations)
-  preferences: {
-    salaryImportance: number;      // 0-100
-    teamQualityImportance: number; // 0-100
-    regionLoyalty: number;         // 0-100
-    preferredTeammates: string[];  // Player IDs
-  };
-}
-
-export interface Coach {
-  id: string;
-  name: string;
-  type: 'Head Coach' | 'Assistant Coach' | 'Performance Coach';
-  statBoosts: Partial<PlayerStats>;
-  salary: number;
-  contract: {
-    yearsRemaining: number;
-    endDate: Date;
-  };
-}
-```
-
-### Team System
-```typescript
-export interface Team {
-  id: string;
-  name: string;
-  region: 'Americas' | 'EMEA' | 'Pacific' | 'China';
-  
-  // Roster
-  playerIds: string[];        // Active roster (5 players)
-  reservePlayerIds: string[]; // Reserve roster
-  coachIds: string[];
-  
-  // Organization strength
-  organizationValue: number;  // Starting wealth
-  fanbase: number;           // Affects sponsorships
-  
-  // Chemistry
-  chemistry: {
-    overall: number;
-    pairs: Record<string, Record<string, number>>; // playerId -> playerId -> score
-  };
-  
-  // Finances
-  finances: TeamFinances;
-  
-  // Performance
-  standings: {
-    wins: number;
-    losses: number;
-    roundDiff: number;
-    currentStreak: number;
-  };
-}
-
-export interface TeamFinances {
-  balance: number;
-  
-  // Recurring monthly income
-  monthlyRevenue: {
-    sponsorships: number;
-    merchandise: number;
-    prizeWinnings: number;
-    fanDonations: number;
-  };
-  
-  // Recurring monthly expenses
-  monthlyExpenses: {
-    playerSalaries: number;
-    coachSalaries: number;
-    facilities: number;
-    travel: number;
-  };
-  
-  // One-time transactions
-  pendingTransactions: Transaction[];
-  
-  // Debt management
-  loans: Loan[];
-}
-
-export interface Transaction {
-  id: string;
-  type: 'signing_bonus' | 'transfer_fee' | 'prize' | 'sponsorship_deal' | 'loan_payment';
-  amount: number;
-  date: Date;
-  description: string;
-}
-
-export interface Loan {
-  id: string;
-  principal: number;
-  interestRate: number;
-  monthlyPayment: number;
-  remainingMonths: number;
-}
-```
-
-### Training System
-```typescript
-export type TrainingFocus = 'mechanics' | 'igl' | 'mental' | 'clutch' | 
-                            'lurking' | 'entry' | 'support' | 'agents' | 'balanced';
-
-export interface TrainingSession {
-  playerId: string;
-  focus: TrainingFocus;
-  coachId?: string;       // Optional coach boost
-  intensity: 'light' | 'moderate' | 'intense';
-  date: Date;
-}
-
-export interface TrainingResult {
-  playerId: string;
-  focus: TrainingFocus;
-  statImprovements: Partial<PlayerStats>;
-  effectiveness: number;    // 0-100: How effective was training
-  moraleChange: number;
-  fatigueIncrease: number;
-  
-  // Factors that affected effectiveness
-  factors: {
-    coachBonus: number;
-    playerMorale: number;
-    playerAge: number;
-    playerPotential: number;
-  };
-}
-
-// Players can only train a limited amount before fatigue impacts performance
-export interface PlayerFatigue {
-  playerId: string;
-  currentFatigue: number;  // 0-100 (100 = exhausted)
-  weeklyTrainingSessions: number;
-  maxWeeklyTraining: number; // Based on stamina stat
-}
-```
-
-### Competition System
-```typescript
-export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
-export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
-
-export interface Tournament {
-  id: string;
-  name: string;
-  type: CompetitionType;
-  format: TournamentFormat;
-  region: 'Americas' | 'EMEA' | 'Pacific' | 'China' | 'International';
-
-  // Participating teams
-  teamIds: string[];
-
-  // Schedule
-  startDate: Date;
-  endDate: Date;
-
-  // Prize pool
-  prizePool: {
-    first: number;
-    second: number;
-    third: number;
-    // ... other placements
-  };
-
-  // Bracket structure
-  bracket: BracketStructure;
-
-  // Status
-  status: 'upcoming' | 'in_progress' | 'completed';
-  championId?: string;
-}
-
-// Swiss-to-Playoff tournament (for Masters events)
-export interface MultiStageTournament extends Tournament {
-  format: 'swiss_to_playoff';
-  swissStage: SwissStage;
-  playoffBracket?: BracketStructure;
-  currentStage: 'swiss' | 'playoff';
-  swissTeamIds: string[];       // 8 teams in Swiss (2nd+3rd from each region)
-  playoffOnlyTeamIds: string[]; // 4 Kickoff winners (join at playoffs)
-}
-
-export interface SwissStage {
-  rounds: SwissRound[];
-  standings: SwissTeamRecord[];
-  qualifiedTeamIds: string[];
-  eliminatedTeamIds: string[];
-  currentRound: number;
-  totalRounds: number;          // 3 for Masters
-  winsToQualify: number;        // 2 for Masters
-  lossesToEliminate: number;    // 2 for Masters
-}
-
-export interface SwissTeamRecord {
-  teamId: string;
-  wins: number;
-  losses: number;
-  roundDiff: number;        // Maps won - maps lost (tiebreaker)
-  opponentIds: string[];    // Track for no-repeat matchups
-  status: 'active' | 'qualified' | 'eliminated';
-}
-
-export interface BracketStructure {
-  upper: BracketRound[];
-  middle?: BracketRound[];  // Triple elimination
-  lower?: BracketRound[];   // Double/Triple elimination
-  grandfinal?: BracketMatch;
-}
-
-export interface BracketRound {
-  roundId: string;
-  roundNumber: number;
-  bracketType: 'upper' | 'middle' | 'lower';
-  matches: BracketMatch[];
-}
-
-export interface BracketMatch {
-  matchId: string;
-  roundId: string;
-  
-  // Team sources
-  teamASource: TeamSource;
-  teamBSource: TeamSource;
-  
-  // Resolved teams
-  teamAId?: string;
-  teamBId?: string;
-  
-  // Status
-  status: 'pending' | 'ready' | 'in_progress' | 'completed';
-  
-  // Result
-  winnerId?: string;
-  loserId?: string;
-  result?: MatchResult;
-  
-  // Destinations
-  winnerDestination: Destination;
-  loserDestination: Destination;
-  
-  // Scheduling
-  scheduledDate?: Date;
-}
-
-export type TeamSource = 
-  | { type: 'seed'; seed: number }
-  | { type: 'winner'; matchId: string }
-  | { type: 'loser'; matchId: string }
-  | { type: 'bye' };
-
-export type Destination = 
-  | { type: 'match'; matchId: string }
-  | { type: 'eliminated' }
-  | { type: 'champion' }
-  | { type: 'placement'; place: number };
-```
-
-### Match System
-```typescript
-export interface Match {
-  id: string;
-  tournamentId?: string;  // null for regular season
-  teamAId: string;
-  teamBId: string;
-  scheduledDate: Date;
-  status: 'scheduled' | 'in_progress' | 'completed';
-  
-  // Result
-  result?: MatchResult;
-}
-
-export interface MatchResult {
-  matchId: string;
-  winnerId: string;
-  loserId: string;
-  
-  // Map results
-  maps: MapResult[];
-  
-  // Overall score
-  scoreTeamA: number;  // Maps won
-  scoreTeamB: number;
-  
-  // Duration
-  duration: number;  // minutes
-}
-
-export interface MapResult {
-  map: string;
-  teamAScore: number;    // Rounds won
-  teamBScore: number;
-  winner: 'teamA' | 'teamB';
-  
-  // Player performances
-  teamAPerformances: PlayerMapPerformance[];
-  teamBPerformances: PlayerMapPerformance[];
-  
-  // Map stats
-  totalRounds: number;
-  overtime: boolean;
-  overtimeRounds?: number;
-  
-  // Future: Round-by-round details
-  rounds?: RoundInfo[];
-}
-
-export interface PlayerMapPerformance {
-  playerId: string;
-  playerName: string;
-  agent: string;
-  
-  // Core stats
-  kills: number;
-  deaths: number;
-  assists: number;
-  
-  // Advanced stats (Phase 1 - simplified)
-  acs: number;
-  kd: number;
-  
-  // Future phases
-  firstKills?: number;
-  clutchesWon?: number;
-  plants?: number;
-  defuses?: number;
-}
-```
-
-### Calendar System
-```typescript
-// Note: All dates are stored as ISO strings (YYYY-MM-DD) for serialization
-export interface GameCalendar {
-  currentDate: string;      // ISO date string
-  currentSeason: number;
-  currentPhase: SeasonPhase;
-  lastSaveDate: string;     // For auto-save tracking
-
-  // Event queue (pre-scheduled)
-  scheduledEvents: CalendarEvent[];
-}
-
-export type SeasonPhase = 'offseason' | 'kickoff' | 'stage1' | 'stage1_playoffs' |
-                          'stage2' | 'stage2_playoffs' | 'masters1' | 'masters2' | 'champions';
-
-export interface CalendarEvent {
-  id: string;
-  date: string;           // ISO date string
-  type: CalendarEventType;
-  data: any;              // Event-specific data
-  processed: boolean;
-}
-
-export type CalendarEventType =
-  | 'match'
-  | 'tournament_start'
-  | 'tournament_end'
-  | 'tournament_match'      // Individual tournament bracket matches
-  | 'transfer_window_open'
-  | 'transfer_window_close'
-  | 'salary_payment'
-  | 'sponsorship_renewal'
-  | 'training_available'    // Days when training is possible
-  | 'scrim_available'       // Days when scrims are possible
-  | 'season_end';
-```
-
-### Scrim System (Phase 6)
-```typescript
-export type TeamTier = 'T1' | 'T2' | 'T3';
-
-// T2/T3 teams for scrim partners
-export interface TierTeam {
-  id: string;
-  name: string;
-  tier: TeamTier;
-  region: Region;
-  playerIds: string[];
-  avgOverall: number;
-}
-
-// Relationship with scrim partner
-export interface ScrimRelationship {
-  teamId: string;
-  tier: TeamTier;
-  relationshipScore: number;  // 0-100
-  vodLeakRisk: number;        // 0-100
-  totalScrims: number;
-  lastScrimDate: string | null;
-}
-
-// Map strength attributes (6 dimensions)
-export interface MapStrengthAttributes {
-  executes: number;       // Site takes and set plays
-  retakes: number;        // Defensive recovery
-  utility: number;        // Smoke lineups, molly spots
-  communication: number;  // Callouts, coordination
-  mapControl: number;     // Mid control, lurks
-  antiStrat: number;      // Counter-strategies
-}
-
-export interface MapStrength {
-  mapName: string;
-  attributes: MapStrengthAttributes;
-  lastPracticed: string | null;
-}
-
-export interface MapPoolStrength {
-  maps: Record<string, MapStrength>;  // mapName -> strength
-}
-
-export const SCRIM_CONSTANTS = {
-  MAX_WEEKLY_SCRIMS: 4,
-  TIER_EFFICIENCY: { T1: 1.0, T2: 0.7, T3: 0.4 },
-  BASE_RELATIONSHIP: { SAME_REGION: 50, CROSS_REGION: 20 },
-  MAP_DECAY_RATE: 0.02,       // 2% per week
-  MAX_MAP_ATTRIBUTE: 85,
-  MAX_MAP_BONUS: 0.15,        // 15% bonus in matches
-};
-```
-
-### VLR Integration System
-```typescript
-// VLR API response types
-export interface VlrPlayer {
-  player: string;      // IGN
-  org: string;         // Team abbreviation
-  agents: string;      // Most-played agents
-  rounds_played: number;
-  rating: string;      // e.g., "1.15"
-  acs: string;         // Average Combat Score
-  kd: string;          // K/D ratio
-  kast: string;        // Kill/Assist/Survive/Trade %
-  adr: string;         // Average Damage per Round
-  kpr: string;         // Kills per Round
-  apr: string;         // Assists per Round
-  fkpr: string;        // First Kills per Round
-  fdpr: string;        // First Deaths per Round
-  hs: string;          // Headshot %
-  cl: string;          // Clutch %
-}
-
-export interface VlrTeamRoster {
-  teamName: string;
-  vlrTeamId: number;
-  players: string[];   // IGNs of starting 5
-  scrapedAt: string;   // ISO date
-}
-
-export type VlrRosterData = Record<string, VlrTeamRoster>;
-
-// Processed VLR data types (intermediate format)
-export interface ProcessedVlrPlayer {
-  name: string;
-  teamName: string | null;  // Resolved game team name
-  region: Region;
-  vlrRating: number;
-  vlrStats: VlrPlayer;
-}
-
-export interface ProcessedVlrData {
-  matchedPlayers: Map<string, ProcessedVlrPlayer[]>;  // teamName → players
-  unmatchedPlayers: ProcessedVlrPlayer[];             // Free agents
-  totalProcessed: number;
-}
-```
-
-### Tournament Transition System
-```typescript
-/**
- * Type of transition between phases
- */
-export type TransitionType = 'regional_to_playoff' | 'playoff_to_international';
-
-/**
- * Source of qualification data
- */
-export type QualificationSource =
-  | 'kickoff'
-  | 'stage1'
-  | 'stage1_playoffs'
-  | 'stage2'
-  | 'stage2_playoffs';
-
-/**
- * Configuration for a tournament transition
- * Defines how to create the next tournament when a phase completes
- */
-export interface TournamentTransitionConfig {
-  // Phase identification
-  id: string; // Unique ID (e.g., 'kickoff_to_masters1')
-  fromPhase: SeasonPhase; // Phase that just completed
-  toPhase: SeasonPhase; // Phase to transition to
-
-  // Transition metadata
-  type: TransitionType;
-  qualificationSource: QualificationSource;
-
-  // Tournament creation
-  tournamentName: string;
-  format: TournamentFormat;
-  region: TournamentRegion;
-  prizePool: number;
-
-  // Qualification rules
-  qualificationRules: QualificationRules;
-
-  // Timing
-  daysUntilStart: number;
-  durationDays: number;
-}
-
-/**
- * Rules for determining which teams qualify
- */
-export interface QualificationRules {
-  // For regional_to_playoff
-  teamsPerRegion?: number; // Top N teams from standings
-
-  // For playoff_to_international
-  teamsFromKickoff?: {
-    alpha: number; // Kickoff winners (1st place)
-    beta: number;  // 2nd place
-    omega: number; // 3rd place
-  };
-  teamsFromPlayoffs?: {
-    winners: number;    // Playoff champions
-    runnersUp: number;  // 2nd place
-    thirdPlace: number; // 3rd place
-  };
-
-  // Swiss-to-Playoff configuration
-  swissStageTeams?: number;    // Teams in Swiss stage
-  directPlayoffTeams?: number; // Teams that skip Swiss
-}
-
-/**
- * Result of executing a tournament transition
- */
-export interface TransitionResult {
-  success: boolean;
-  tournamentId?: string;
-  tournamentName?: string;
-  newPhase?: SeasonPhase;
-  error?: string;
-  qualifiedTeams?: Array<{
-    teamId: string;
-    teamName: string;
-    region: string;
-    seed: number;
-  }>;
-}
-```
-
----
+# VCT Manager Game - Implementation Details
 
 ## State Management
 
@@ -801,7 +56,7 @@ interface PlayerSlice {
   addPlayer: (player: Player) => void;
   updatePlayer: (playerId: string, updates: Partial<Player>) => void;
   removePlayer: (playerId: string) => void;
-  
+
   // Selectors
   getPlayer: (playerId: string) => Player | undefined;
   getFreeAgents: () => Player[];
@@ -814,10 +69,10 @@ const useGameStore = create<GameState & PlayerSlice & TeamSlice & ...>()(
     (set, get) => ({
       // State
       entities: { players: {}, teams: {}, ... },
-      
+
       // Player slice implementation
       ...createPlayerSlice(set, get),
-      
+
       // Other slices
       ...createTeamSlice(set, get),
       ...createMatchSlice(set, get),
@@ -845,20 +100,20 @@ class MatchSimulator {
   simulate(teamA: Team, teamB: Team, players: Record<string, Player>): MatchResult {
     const teamAStrength = this.calculateTeamStrength(teamA, players);
     const teamBStrength = this.calculateTeamStrength(teamB, players);
-    
+
     const maps: MapResult[] = [];
     let scoreA = 0;
     let scoreB = 0;
-    
+
     // Simulate up to 3 maps (best of 3)
     for (let i = 0; i < 3 && scoreA < 2 && scoreB < 2; i++) {
       const mapResult = this.simulateMap(teamA, teamB, players, teamAStrength, teamBStrength);
       maps.push(mapResult);
-      
+
       if (mapResult.winner === 'teamA') scoreA++;
       else scoreB++;
     }
-    
+
     return {
       matchId: generateId(),
       winnerId: scoreA > scoreB ? teamA.id : teamB.id,
@@ -869,29 +124,29 @@ class MatchSimulator {
       duration: maps.reduce((sum, m) => sum + this.estimateMapDuration(m), 0)
     };
   }
-  
+
   private calculateTeamStrength(team: Team, players: Record<string, Player>): number {
     const teamPlayers = team.playerIds.map(id => players[id]);
-    
+
     // Weighted average of player stats
     const avgMechanics = average(teamPlayers.map(p => p.stats.mechanics));
     const avgIGL = average(teamPlayers.map(p => p.stats.igl));
     const avgMental = average(teamPlayers.map(p => p.stats.mental));
     // ... other stats
-    
+
     // Chemistry bonus
     const chemistryBonus = team.chemistry.overall / 100;
-    
+
     const baseStrength = (
       avgMechanics * 0.3 +
       avgIGL * 0.15 +
       avgMental * 0.15 +
       // ... weights for other stats
     );
-    
+
     return baseStrength * (1 + chemistryBonus * 0.2);
   }
-  
+
   private simulateMap(/* ... */): MapResult {
     // Simulate round-by-round with probability-based outcomes
     // Generate realistic K/D/A stats for each player
@@ -900,15 +155,92 @@ class MatchSimulator {
 ```
 
 ### BracketManager
+
+Handles all bracket generation and progression logic. All methods are pure functions that return new bracket structures (immutable).
+
 ```typescript
 class BracketManager {
   /**
-   * Generate a triple elimination bracket
+   * Generate a single elimination bracket
    */
-  generateTripleElimination(teamIds: string[]): BracketStructure {
-    // Create upper, middle, lower brackets with proper routing
+  generateSingleElimination(teamIds: string[], seeding?: number[]): BracketStructure {
+    // Create upper bracket with proper seeding
+    // Calculate number of rounds: ceil(log2(numTeams))
   }
-  
+
+  /**
+   * Generate a double elimination bracket
+   * Critical structure for 8-team bracket:
+   * - Upper: 3 rounds (4+2+1 matches)
+   * - Lower: 4 rounds (2+2+1+1 matches)
+   *
+   * Lower bracket structure:
+   * - LR1: Dropout round - UR1 losers paired up (2 matches)
+   * - LR2: Combined round - UR2 losers vs LR1 winners (2 matches)
+   * - LR3: Internal round - LR2 winners face each other (1 match)
+   * - LR4: Combined round - Upper Final loser vs LR3 winner (1 match)
+   */
+  generateDoubleElimination(teamIds: string[], seeding?: number[]): BracketStructure {
+    // Upper bracket: standard single elimination
+    // Lower bracket: specific structure per round
+    // Loser destinations:
+    //   - Upper R1 (4 matches) → Lower R1 (2 matches) via floor(matchIdx/2)
+    //   - Upper R2 (2 matches) → Lower R2 (combined with LR1 winners)
+    //   - Upper Final → Lower R4 (final lower round)
+  }
+
+  /**
+   * Generate a triple elimination bracket (Kickoff format)
+   */
+  generateTripleElimination(teamIds: string[], seeding?: number[]): BracketStructure {
+    // Create upper (Alpha), middle (Beta), lower (Omega) brackets
+    // Alpha winner qualifies, Beta/Omega winners qualify
+  }
+
+  /**
+   * Initialize Swiss stage with Round 1 pairings
+   * Used for Masters tournaments
+   */
+  initializeSwissStage(
+    teamIds: string[],
+    teamRegions: Map<string, string>,
+    config: {
+      totalRounds: number;      // 3 for Masters
+      winsToQualify: number;    // 2 for Masters
+      lossesToEliminate: number; // 2 for Masters
+      tournamentId: string;
+    }
+  ): SwissStage {
+    // Create standings for all teams
+    // Generate Round 1 cross-regional pairings
+    // Return initial Swiss stage structure
+  }
+
+  /**
+   * Generate next Swiss round based on current standings
+   * Pairs teams by record, avoiding rematches
+   */
+  generateNextSwissRound(stage: SwissStage, tournamentId: string): SwissStage {
+    // Group active teams by W-L record
+    // Pair within groups (best seed vs worst seed)
+    // Handle unpaired teams via cross-group pairing
+  }
+
+  /**
+   * Complete a Swiss match and update standings
+   * Checks for qualification/elimination thresholds
+   */
+  completeSwissMatch(
+    stage: SwissStage,
+    matchId: string,
+    result: MatchResult
+  ): SwissStage {
+    // Update match result and standings
+    // Check if winner reached winsToQualify (qualify them)
+    // Check if loser reached lossesToEliminate (eliminate them)
+    // Mark round as complete if all matches done
+  }
+
   /**
    * Update bracket after match completion (immutable)
    */
@@ -916,20 +248,58 @@ class BracketManager {
     bracket: BracketStructure,
     matchId: string,
     winnerId: string,
+    loserId: string,
     result: MatchResult
   ): BracketStructure {
-    // Find match, update it, propagate winner/loser to next matches
+    // 1. Update match result
+    // 2. Propagate winner to winnerDestination
+    // 3. Propagate loser to loserDestination (for double/triple elim)
+    // 4. Update all match statuses (pending → ready when both teams known)
     // Return new bracket structure
   }
-  
+
   /**
    * Get all matches that are ready to play
    */
   getReadyMatches(bracket: BracketStructure): BracketMatch[] {
-    // Return matches where both teams are known
+    // Return matches where both teams are known (status: 'ready')
+  }
+
+  /**
+   * Check if Swiss stage is complete
+   * Complete when all teams are qualified or eliminated
+   */
+  isSwissStageComplete(stage: SwissStage): boolean {
+    const activeTeams = stage.standings.filter(t => t.status === 'active');
+    return activeTeams.length === 0;
+  }
+
+  /**
+   * Get Swiss qualified teams (for playoff seeding)
+   */
+  getSwissQualifiedTeams(stage: SwissStage): string[] {
+    return stage.qualifiedTeamIds;
   }
 }
 ```
+
+**Key Implementation Details**:
+
+1. **Double Elimination Lower Bracket Structure** (for 8 teams):
+   - LR1 (dropout): 2 matches - UR1 losers paired (loser mapping: `floor(matchIdx/2)`)
+   - LR2 (combined): 2 matches - UR2 losers vs LR1 winners
+   - LR3 (internal): 1 match - LR2 winners face each other
+   - LR4 (combined): 1 match - Upper Final loser vs LR3 winner
+   - Upper bracket losers drop to: UR1→LR1, UR2→LR2, Upper Final→LR4
+
+2. **Swiss Stage Edge Cases**:
+   - Odd number of active teams → one team unpaired
+   - Rematch constraints → may prevent valid pairings
+   - Final round complete with active teams → force-complete by standings
+
+3. **Bracket Immutability**:
+   - All methods return new bracket structures via `JSON.parse(JSON.stringify())`
+   - Store updates via `updateBracket()` action
 
 ### ChemistryCalculator
 ```typescript
@@ -942,7 +312,7 @@ class ChemistryCalculator {
     // Aggregate to team level
     // Determine stat bonuses
   }
-  
+
   /**
    * Calculate chemistry between two players
    */
@@ -952,7 +322,7 @@ class ChemistryCalculator {
     // - Time played together (from match history)
     // - Personality (from preferences)
   }
-  
+
   /**
    * Update chemistry after match
    */
@@ -1152,6 +522,240 @@ class TournamentTransitionService {
 }
 ```
 
+### TournamentService Example
+
+Orchestrates tournament lifecycle including Swiss stage progression and playoff transitions.
+
+```typescript
+class TournamentService {
+  /**
+   * Advance tournament bracket after match completion
+   * Handles both standard brackets and Swiss stage matches
+   */
+  advanceTournament(
+    tournamentId: string,
+    bracketMatchId: string,
+    result: MatchResult
+  ): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    // Check if this is a Swiss stage match
+    if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss') {
+      return this.advanceSwissMatch(tournamentId, bracketMatchId, result);
+    }
+
+    // Standard bracket handling
+    const newBracket = bracketManager.completeMatch(
+      tournament.bracket,
+      bracketMatchId,
+      result.winnerId,
+      result.loserId,
+      result
+    );
+
+    // Update store
+    state.updateBracket(tournamentId, newBracket);
+
+    // Schedule newly-ready matches and create Match entities
+    const freshTournament = useGameStore.getState().tournaments[tournamentId];
+    this.scheduleNewlyReadyMatches(freshTournament);
+    this.createMatchEntitiesForReadyBracketMatches(freshTournament);
+
+    // Check for completion
+    if (bracketManager.getBracketStatus(newBracket) === 'completed') {
+      this.handleTournamentCompletion(tournamentId);
+    }
+
+    return true;
+  }
+
+  /**
+   * Advance a Swiss match and check for stage completion
+   * Handles qualification/elimination and round progression
+   */
+  advanceSwissMatch(
+    tournamentId: string,
+    matchId: string,
+    result: MatchResult
+  ): boolean {
+    const tournament = state.tournaments[tournamentId];
+
+    // Complete match and update standings
+    const updatedSwissStage = bracketManager.completeSwissMatch(
+      tournament.swissStage,
+      matchId,
+      result
+    );
+
+    state.updateSwissStage(tournamentId, updatedSwissStage);
+
+    // Check progression
+    if (bracketManager.isSwissRoundComplete(updatedSwissStage)) {
+      if (bracketManager.isSwissStageComplete(updatedSwissStage)) {
+        // All teams qualified or eliminated → transition to playoffs
+        this.transitionToPlayoffs(tournamentId);
+      } else if (updatedSwissStage.currentRound < updatedSwissStage.totalRounds) {
+        // Generate next round
+        this.generateNextSwissRound(tournamentId);
+      } else {
+        // Edge case: final round complete but teams still active
+        // Force-complete by standings
+        this.forceCompleteSwissStage(tournamentId);
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Force-complete Swiss stage when final round is done but teams remain active
+   * Occurs when odd number of teams or rematch constraints prevent pairing
+   */
+  forceCompleteSwissStage(tournamentId: string): boolean {
+    const tournament = state.tournaments[tournamentId];
+    const swissStage = tournament.swissStage;
+
+    // Sort active teams by standings (wins desc, losses asc, round diff desc, seed asc)
+    const activeTeams = swissStage.standings
+      .filter(t => t.status === 'active')
+      .sort((a, b) => {
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        if (a.losses !== b.losses) return a.losses - b.losses;
+        if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+        return (a.seed || 999) - (b.seed || 999);
+      });
+
+    // Calculate needed qualifications
+    const qualifiersNeeded = swissStage.winsToQualify * Math.floor(swissStage.standings.length / 2)
+      - swissStage.qualifiedTeamIds.length;
+
+    // Qualify top teams, eliminate the rest
+    let qualified = 0;
+    for (const team of activeTeams) {
+      if (qualified < qualifiersNeeded) {
+        team.status = 'qualified';
+        swissStage.qualifiedTeamIds.push(team.teamId);
+        qualified++;
+      } else {
+        team.status = 'eliminated';
+        swissStage.eliminatedTeamIds.push(team.teamId);
+      }
+    }
+
+    state.updateSwissStage(tournamentId, swissStage);
+    this.transitionToPlayoffs(tournamentId);
+    return true;
+  }
+
+  /**
+   * Transition from Swiss stage to playoffs
+   * Generates playoff bracket with Swiss qualifiers + direct qualifiers
+   */
+  transitionToPlayoffs(tournamentId: string): boolean {
+    const tournament = state.tournaments[tournamentId];
+    const swissQualifiers = bracketManager.getSwissQualifiedTeams(tournament.swissStage);
+
+    // Generate playoff bracket
+    const playoffBracket = tournamentEngine.generateMastersPlayoffBracket(
+      swissQualifiers,
+      tournament.playoffOnlyTeamIds,
+      tournamentId
+    );
+
+    // Update tournament
+    state.updateTournament(tournamentId, { bracket: playoffBracket });
+    state.setTournamentCurrentStage(tournamentId, 'playoff');
+
+    // Schedule matches starting from current date + 1 (not tournament start date)
+    const freshTournament = useGameStore.getState().tournaments[tournamentId];
+    this.schedulePlayoffMatches(freshTournament);
+    state.updateBracket(tournamentId, freshTournament.bracket);
+
+    // Create Match entities and calendar events
+    const finalTournament = useGameStore.getState().tournaments[tournamentId];
+    this.createMatchEntitiesForReadyBracketMatches(finalTournament);
+    this.addTournamentCalendarEvents(finalTournament);
+
+    return true;
+  }
+
+  /**
+   * Schedule playoff matches starting from current date + 1
+   * Used when transitioning from Swiss to playoffs mid-tournament
+   */
+  private schedulePlayoffMatches(tournament: Tournament): void {
+    const currentDate = new Date(useGameStore.getState().calendar.currentDate);
+    currentDate.setDate(currentDate.getDate() + 1);
+
+    // Schedule all ready matches across upper/lower brackets
+    for (const round of tournament.bracket.upper) {
+      for (const match of round.matches) {
+        if (match.status === 'ready') {
+          match.scheduledDate = currentDate.toISOString();
+          // Increment date as needed
+        }
+      }
+    }
+    // ... same for lower bracket, middle bracket, grand final
+  }
+
+  /**
+   * Schedule newly-ready matches after a bracket match completes
+   * Creates Match entities and calendar events for them
+   */
+  private scheduleNewlyReadyMatches(tournament: Tournament): void {
+    const currentDate = useGameStore.getState().calendar.currentDate;
+    const events: CalendarEvent[] = [];
+
+    // Find matches that just became ready (have teams but no scheduled date)
+    for (const round of tournament.bracket.upper) {
+      for (const match of round.matches) {
+        if (match.status === 'ready' && !match.scheduledDate && match.teamAId && match.teamBId) {
+          // Schedule for next day
+          const nextDay = new Date(currentDate);
+          nextDay.setDate(nextDay.getDate() + 1);
+          match.scheduledDate = nextDay.toISOString();
+
+          // Create calendar event
+          events.push({
+            id: `event-match-${match.matchId}`,
+            type: 'match',
+            date: match.scheduledDate,
+            data: { matchId: match.matchId, ... },
+            processed: false,
+            required: true,
+          });
+        }
+      }
+    }
+
+    // Update bracket and add events
+    if (events.length > 0) {
+      state.updateBracket(tournament.id, tournament.bracket);
+      state.addCalendarEvents(events);
+    }
+  }
+}
+```
+
+**Key Implementation Notes**:
+
+1. **Match Scheduling Philosophy**:
+   - Initial ready matches → schedule from tournament start date
+   - Newly-ready matches (after completion) → schedule from current date + 1
+   - Playoff transition → schedule from current date + 1 (not Swiss start date)
+
+2. **Swiss Stage Edge Cases**:
+   - Final round complete with active teams → force-complete by standings
+   - Odd number of teams → one team unpaired
+   - Rematch constraints → may prevent valid pairings
+
+3. **Bracket Updates**:
+   - Always get fresh state after `updateBracket()` - store snapshots are stale
+   - Order matters: schedule first, then create entities, then add events
+   - Save updated bracket back to store after scheduling
+
 ---
 
 ## Persistence Strategy
@@ -1161,10 +765,10 @@ class TournamentTransitionService {
 class VCTDatabase extends Dexie {
   saves!: Table<SaveSlot>;
   matchHistory!: Table<MatchHistoryEntry>;
-  
+
   constructor() {
     super('VCTManagerDB');
-    
+
     this.version(1).stores({
       saves: 'slot, saveDate',
       matchHistory: '++id, season, matchId, date'
@@ -1190,11 +794,11 @@ interface SaveMetadata {
 
 ### Auto-Save Middleware
 ```typescript
-const autoSaveMiddleware = (config) => (set, get, api) => 
+const autoSaveMiddleware = (config) => (set, get, api) =>
   config(
     (args) => {
       set(args);
-      
+
       // Auto-save weekly
       const state = get();
       if (shouldAutoSave(state)) {
@@ -1205,75 +809,6 @@ const autoSaveMiddleware = (config) => (set, get, api) =>
     api
   );
 ```
-
----
-
-## Git & Deployment Strategy
-
-### Version Control Setup
-```bash
-# Initialize Git
-git init
-git add .
-git commit -m "Initial commit: Project setup"
-
-# Create branches
-git branch develop
-git checkout develop
-```
-
-### Branch Strategy
-- **main**: Production-ready code (auto-deploys to GitHub Pages)
-- **develop**: Integration branch for features
-- **feature/**: Feature branches (e.g., feature/roster-management)
-
-### Commit Convention
-Use Conventional Commits format:
-- `feat:` New feature
-- `fix:` Bug fix
-- `refactor:` Code restructure
-- `docs:` Documentation
-- `test:` Tests
-- `chore:` Maintenance
-
-### GitHub Pages Deployment
-
-**Vite Configuration:**
-```typescript
-// vite.config.ts
-export default defineConfig({
-  plugins: [react()],
-  base: '/vct-manager/', // Replace with your repo name
-})
-```
-
-**Auto-Deploy with GitHub Actions:**
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - run: npm ci
-    - run: npm test
-    - run: npm run build
-    - uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-```
-
-**Deployment URL:** `https://yourusername.github.io/vct-manager/`
 
 ---
 
@@ -1474,6 +1009,8 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 | **Roster Movement** | Service-based with UI complete | Full active/reserve roster management |
 | **Tournament Transitions** | Generic configuration system | All transitions use TournamentTransitionService |
 
+---
+
 ## Additional Architecture Details
 
 ### Error Handling Strategy
@@ -1482,21 +1019,21 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 // Global error boundary
 class GameErrorBoundary extends React.Component<Props, State> {
   state = { hasError: false, error: null };
-  
+
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Game error:', error, errorInfo);
     // Preserve game state - don't reset
     // Show user-friendly recovery options
   }
-  
+
   render() {
     if (this.state.hasError) {
       return (
-        <ErrorRecoveryScreen 
+        <ErrorRecoveryScreen
           error={this.state.error}
           onRetry={() => this.setState({ hasError: false })}
           onLoadLastSave={() => {/* Load auto-save */}}
@@ -1542,7 +1079,7 @@ interface UISlice {
 interface UISlice {
   // Single match - instant (no loading state needed)
   isSimulating: boolean;
-  
+
   // Bulk simulation - show progress
   bulkSimulation?: {
     current: number;
@@ -1556,7 +1093,7 @@ interface UISlice {
 class SimulationService {
   simulateTournamentRound(roundId: string): void {
     const matches = this.getMatchesInRound(roundId);
-    
+
     useGameStore.setState({
       isSimulating: true,
       bulkSimulation: {
@@ -1566,14 +1103,14 @@ class SimulationService {
         canCancel: true
       }
     });
-    
+
     for (let i = 0; i < matches.length; i++) {
       // Check if user cancelled
       if (this.shouldCancelSimulation()) {
         this.cleanupSimulation();
         return;
       }
-      
+
       useGameStore.setState({
         bulkSimulation: {
           current: i + 1,
@@ -1582,16 +1119,16 @@ class SimulationService {
           canCancel: true
         }
       });
-      
+
       matchService.simulateMatch(matches[i].id);
     }
-    
+
     useGameStore.setState({
       isSimulating: false,
       bulkSimulation: undefined
     });
   }
-  
+
   cancelBulkSimulation(): void {
     // User can cancel mid-simulation
     // Already-simulated matches are kept
@@ -1603,15 +1140,15 @@ class SimulationService {
 ```typescript
 function SimulationProgress() {
   const bulk = useGameStore(state => state.ui.bulkSimulation);
-  
+
   if (!bulk) return null;
-  
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center">
       <div className="bg-gray-900 p-8 rounded-lg">
         <h2>Simulating Tournament</h2>
         <div className="w-full bg-gray-700 rounded-full h-4 mt-4">
-          <div 
+          <div
             className="bg-red-600 h-4 rounded-full transition-all"
             style={{ width: `${(bulk.current / bulk.total) * 100}%` }}
           />
@@ -1634,14 +1171,14 @@ interface GameSetupOptions {
   // Player selections
   playerName: string;
   region: 'Americas' | 'EMEA' | 'Pacific' | 'China';
-  
+
   // Team selection
   teamSelection: {
     type: 'existing' | 'custom' | 'random';
     existingTeamId?: string;  // If picking existing VCT team
     customTeamName?: string;  // If creating custom team
   };
-  
+
   // Roster selection
   rosterSelection: {
     type: 'existing' | 'draft' | 'random';
@@ -1649,7 +1186,7 @@ interface GameSetupOptions {
     // If 'existing', inherit the VCT team's roster
     // If 'random', generate 5 random players
   };
-  
+
   // Difficulty (affects starting budget)
   difficulty: 'easy' | 'normal' | 'hard';
 }
@@ -1658,10 +1195,10 @@ class GameInitializer {
   async initializeNewGame(options: GameSetupOptions): Promise<GameState> {
     // Step 1: Load or generate player database
     const playerDatabase = await this.loadPlayerDatabase();
-    
+
     // Step 2: Generate all teams
     const allTeams = this.generateTeams(playerDatabase, options.region);
-    
+
     // Step 3: Create/select player's team
     let playerTeam: Team;
     switch (options.teamSelection.type) {
@@ -1675,7 +1212,7 @@ class GameInitializer {
         playerTeam = this.generateRandomTeam(options);
         break;
     }
-    
+
     // Step 4: Set up player's roster
     switch (options.rosterSelection.type) {
       case 'existing':
@@ -1689,19 +1226,19 @@ class GameInitializer {
         playerTeam.playerIds = this.selectRandomPlayers(playerDatabase, 5);
         break;
     }
-    
+
     // Step 5: Set starting budget based on difficulty
     playerTeam.finances.balance = this.calculateStartingBudget(
       playerTeam.organizationValue,
       options.difficulty
     );
-    
+
     // Step 6: Generate season schedule
     const schedule = this.generateSeasonSchedule(allTeams, options.region);
-    
+
     // Step 7: Initialize calendar
     const calendar = this.initializeCalendar(schedule);
-    
+
     return {
       entities: {
         players: this.normalizeEntities(playerDatabase),
@@ -1722,7 +1259,7 @@ class GameInitializer {
       }
     };
   }
-  
+
   private calculateStartingBudget(orgValue: number, difficulty: Difficulty): number {
     const multipliers = {
       easy: 1.5,
@@ -1731,7 +1268,7 @@ class GameInitializer {
     };
     return orgValue * multipliers[difficulty];
   }
-  
+
   // VLR data integration (Phase 2)
   private async loadPlayerDatabase(): Promise<Player[]> {
     // Try to load from VLR scraper
@@ -1743,19 +1280,19 @@ class GameInitializer {
       return this.generateProceduralPlayers();
     }
   }
-  
+
   // Procedural generation (Phase 1 fallback)
   private generateProceduralPlayers(): Player[] {
     const players: Player[] = [];
     const regions = ['Americas', 'EMEA', 'Pacific', 'China'];
-    
+
     // Generate 20 teams × 5 players = 100 players per region
     regions.forEach(region => {
       for (let i = 0; i < 100; i++) {
         players.push(this.generatePlayer(region));
       }
     });
-    
+
     return players;
   }
 }
@@ -1792,7 +1329,7 @@ interface CalendarEvent {
   data: any;
 }
 
-type CalendarEventType = 
+type CalendarEventType =
   | 'match'              // Required
   | 'tournament_start'   // Required
   | 'training_available' // Optional
@@ -1809,27 +1346,27 @@ class TimeProgression {
   advanceToNextMatch(): { date: Date; events: CalendarEvent[] } {
     const calendar = useGameStore.getState().calendar;
     const nextMatch = this.findNextEvent(calendar, ['match', 'tournament_start']);
-    
+
     if (!nextMatch) {
       throw new Error('No upcoming matches');
     }
-    
+
     // Process all events between now and next match
     const eventsToProcess = this.getEventsBetween(
-      calendar.currentDate, 
+      calendar.currentDate,
       nextMatch.date
     );
-    
+
     // Auto-process mandatory events (salary payments)
     // Skip optional events (player chooses not to do them)
     const processed = eventsToProcess.filter(e => e.type === 'salary_payment');
-    
+
     return {
       date: nextMatch.date,
       events: processed
     };
   }
-  
+
   /**
    * Advance one day at a time
    * Shows all available activities for that day
@@ -1837,19 +1374,19 @@ class TimeProgression {
   advanceDay(): { date: Date; availableActivities: Activity[] } {
     const calendar = useGameStore.getState().calendar;
     const nextDate = addDays(calendar.currentDate, 1);
-    
+
     // Get all events for this day
-    const dayEvents = calendar.scheduledEvents.filter(e => 
+    const dayEvents = calendar.scheduledEvents.filter(e =>
       isSameDay(e.date, nextDate)
     );
-    
+
     // Convert to activities player can do
     const activities: Activity[] = dayEvents.map(e => ({
       type: e.type,
       required: e.required,
       action: () => this.processEvent(e)
     }));
-    
+
     // Always allow training on off-days
     if (!dayEvents.some(e => e.type === 'match')) {
       activities.push({
@@ -1858,18 +1395,18 @@ class TimeProgression {
         action: () => {/* Show training UI */}
       });
     }
-    
+
     // Process automatic events
     dayEvents
       .filter(e => e.type === 'salary_payment')
       .forEach(e => this.processEvent(e));
-    
+
     return {
       date: nextDate,
       availableActivities: activities
     };
   }
-  
+
   /**
    * Advance one week
    * Player can choose activities each day or skip
@@ -1880,10 +1417,10 @@ class TimeProgression {
       trainingSessions: 0,
       events: []
     };
-    
+
     for (let i = 0; i < 7; i++) {
       const { availableActivities } = this.advanceDay();
-      
+
       // For each optional activity, ask player
       // For now, auto-skip optional activities in week mode
       availableActivities
@@ -1893,7 +1430,7 @@ class TimeProgression {
           if (a.type === 'match') summary.matchesPlayed++;
         });
     }
-    
+
     return { endDate: useGameStore.getState().calendar.currentDate, summary };
   }
 }
@@ -1910,16 +1447,16 @@ interface Activity {
 ```typescript
 function CalendarView() {
   const currentDate = useGameStore(state => state.calendar.currentDate);
-  const upcomingEvents = useGameStore(state => 
+  const upcomingEvents = useGameStore(state =>
     state.calendar.scheduledEvents
       .filter(e => isAfter(e.date, currentDate))
       .slice(0, 10)
   );
-  
+
   return (
     <div>
       <h2>Current Date: {format(currentDate, 'MMM dd, yyyy')}</h2>
-      
+
       <div className="flex gap-4">
         <button onClick={advanceDay}>
           Advance 1 Day
@@ -1931,7 +1468,7 @@ function CalendarView() {
           Jump to Next Match
         </button>
       </div>
-      
+
       <h3>Upcoming Events</h3>
       <ul>
         {upcomingEvents.map(event => (
@@ -1945,7 +1482,7 @@ function CalendarView() {
           </li>
         ))}
       </ul>
-      
+
       {/* Today's available activities */}
       <TodayActivities />
     </div>
@@ -1954,16 +1491,16 @@ function CalendarView() {
 
 function TodayActivities() {
   const activities = useGameStore(state => getTodayActivities(state));
-  
+
   if (activities.length === 0) {
     return <p>No scheduled activities today. Rest day!</p>;
   }
-  
+
   return (
     <div>
       <h3>Today's Activities</h3>
       {activities.map(activity => (
-        <ActivityCard 
+        <ActivityCard
           key={activity.type}
           activity={activity}
           required={activity.required}
@@ -1985,21 +1522,21 @@ class TournamentService {
   simulateEntireTournament(tournamentId: string): void {
     const tournament = useGameStore.getState().entities.tournaments[tournamentId];
     const allMatches = this.getAllTournamentMatches(tournament);
-    
+
     // Filter to only unsimulated matches
     const pendingMatches = allMatches.filter(m => m.status !== 'completed');
-    
+
     if (pendingMatches.length === 0) {
       return; // Tournament already complete
     }
-    
+
     // Ask for confirmation
     const confirmed = window.confirm(
       `Simulate entire tournament? (${pendingMatches.length} matches)`
     );
-    
+
     if (!confirmed) return;
-    
+
     // Start bulk simulation
     useGameStore.setState({
       isSimulating: true,
@@ -2010,25 +1547,25 @@ class TournamentService {
         canCancel: true
       }
     });
-    
+
     // Simulate in order (respects bracket dependencies)
     let currentMatch = 0;
-    
+
     while (currentMatch < pendingMatches.length) {
       // Check cancellation
       if (this.checkCancellation()) {
         this.cleanupBulkSimulation();
         return;
       }
-      
+
       // Find next ready match
       const nextMatch = this.getNextReadyMatch(tournament);
-      
+
       if (!nextMatch) {
         console.warn('No ready matches, but tournament not complete');
         break;
       }
-      
+
       // Update progress
       useGameStore.setState({
         bulkSimulation: {
@@ -2038,25 +1575,25 @@ class TournamentService {
           canCancel: true
         }
       });
-      
+
       // Simulate
       matchService.simulateMatch(nextMatch.id);
       currentMatch++;
-      
+
       // Small delay for UX (so progress is visible)
       await this.sleep(100);
     }
-    
+
     // Complete
     useGameStore.setState({
       isSimulating: false,
       bulkSimulation: undefined
     });
-    
+
     // Show results summary
     this.showTournamentSummary(tournament);
   }
-  
+
   /**
    * Simulate single round of tournament
    * Useful for double/triple elim (simulate upper bracket, then lower, etc.)
@@ -2070,13 +1607,11 @@ class TournamentService {
 **Tournament Control UI:**
 ```typescript
 function TournamentControls({ tournamentId }: Props) {
-  const tournament = useGameStore(state => 
-    state.entities.tournaments[tournamentId]
-  );
-  
+  const tournament = useGameStore(state => state.entities.tournaments[tournamentId]);
+
   const nextMatch = getNextReadyMatch(tournament);
   const hasMoreMatches = checkHasMoreMatches(tournament);
-  
+
   return (
     <div className="flex gap-4">
       {nextMatch && (
@@ -2084,19 +1619,19 @@ function TournamentControls({ tournamentId }: Props) {
           Simulate Next Match
         </button>
       )}
-      
+
       {hasMoreMatches && (
         <>
           <button onClick={() => simulateRound(tournament.bracket.upper[0].roundId)}>
             Simulate Current Round
           </button>
-          
+
           <button onClick={() => simulateEntireTournament(tournamentId)}>
             Simulate Entire Tournament
           </button>
         </>
       )}
-      
+
       {tournament.status === 'completed' && (
         <div>
           <h3>Tournament Complete!</h3>
@@ -2380,11 +1915,11 @@ The game follows a **"Review → Prepare → Commit"** daily loop:
 |--------|--------------|
 | `advanceDay()` | Simulate TODAY's events → Advance to tomorrow |
 
-Note: `advanceWeek()` and `advanceToNextMatch()` were removed due to bugs. Only `advanceDay()` is currently available.
+Note: `advanceWeek()` and `advanceToNextMatch()` features were removed due to bugs. Only `advanceDay()` is currently available.
 
 **Player Team Filtering:**
 
-All match-related UI only shows the player's team's matches:
+All match-related UI only shows the player's team matches:
 - `getNextMatchEvent()` returns player's team's next match only
 - `TodayActivities` shows "MATCH DAY" only when player's team plays
 - `TimeControls` shows "Play Match" button only for player's matches
@@ -2443,8 +1978,8 @@ GameInitService.generateWithVlrData()
 **Why static snapshot:**
 - No runtime API dependency (faster startup, works offline)
 - Bundle includes data - no network latency
-- Can curate/validate data before committing
 - Simple cache invalidation (just re-run `npm run fetch-vlr`)
+- Can curate/validate data before committing
 
 **VLR Stat Conversion Algorithm:**
 
@@ -2862,5 +2397,3 @@ Please create a session summary:
 5. Next steps
 
 Save to: docs/session-logs/[DATE]-[Feature].md
-```Save to: docs/session-logs/[DATE]-[Feature].md
-Please create a session summary:

@@ -16,6 +16,8 @@ import type {
   CalendarEvent,
   Match,
   MultiStageTournament,
+  SwissStage,
+  SwissTeamRecord,
 } from '../types';
 import { isMultiStageTournament } from '../types';
 import type { StandingsEntry, QualificationRecord } from '../store/slices/competitionSlice';
@@ -134,6 +136,7 @@ export class TournamentService {
     const freshState = useGameStore.getState();
     const updatedTournament = freshState.tournaments[tournamentId];
     if (updatedTournament) {
+      console.log(`After bracket update, scheduling newly-ready matches...`);
       // Order matters! Schedule first, then create entities
       this.scheduleNewlyReadyMatches(updatedTournament);
       this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
@@ -557,6 +560,17 @@ export class TournamentService {
       } else if (updatedSwissStage.currentRound < updatedSwissStage.totalRounds) {
         // Generate next Swiss round
         this.generateNextSwissRound(tournamentId);
+      } else {
+        // Final round is complete but stage is not complete
+        // This can happen if some teams didn't get paired in the final round due to:
+        // - Odd number of active teams
+        // - Rematch constraints preventing pairing
+        // Force-complete by qualifying/eliminating remaining active teams based on standings
+        console.warn(
+          `Swiss stage reached totalRounds (${updatedSwissStage.totalRounds}) but stage is not complete. ` +
+          `Forcing completion based on current standings.`
+        );
+        this.forceCompleteSwissStage(tournamentId);
       }
     }
 
@@ -633,15 +647,99 @@ export class TournamentService {
     const updatedTournament = freshState.tournaments[tournamentId];
 
     if (updatedTournament) {
-      // Schedule playoff matches
-      this.scheduleTournamentMatches(updatedTournament);
-      // Create Match entities for ready matches
-      this.createMatchEntitiesForReadyBracketMatches(updatedTournament);
+      // Schedule playoff matches starting from the next day
+      this.schedulePlayoffMatches(updatedTournament);
+      // Save the updated bracket with scheduled dates back to store
+      freshState.updateBracket(tournamentId, updatedTournament.bracket);
+      // Get fresh state again after bracket update
+      const finalState = useGameStore.getState();
+      const finalTournament = finalState.tournaments[tournamentId];
+      if (!finalTournament) return false;
+      // Create Match entities for ready matches (using updated bracket)
+      this.createMatchEntitiesForReadyBracketMatches(finalTournament);
       // Add calendar events for playoff matches
-      this.addTournamentCalendarEvents(updatedTournament);
+      this.addTournamentCalendarEvents(finalTournament);
     }
 
     console.log(`Masters tournament ${tournamentId} transitioned to playoffs`);
+    return true;
+  }
+
+  /**
+   * Force-complete the Swiss stage when totalRounds is reached but not all teams are qualified/eliminated
+   * This handles edge cases where teams couldn't be paired in the final round
+   * Qualifies/eliminates teams based on current standings
+   */
+  forceCompleteSwissStage(tournamentId: string): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament || !isMultiStageTournament(tournament)) {
+      console.error(`Invalid tournament for force-completion: ${tournamentId}`);
+      return false;
+    }
+
+    // Get current Swiss stage
+    const swissStage = tournament.swissStage;
+
+    // Get active teams sorted by standings
+    const activeTeams = swissStage.standings
+      .filter(t => t.status === 'active')
+      .sort((a, b) => {
+        // Sort by wins (desc), then losses (asc), then round diff (desc), then seed (asc)
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        if (a.losses !== b.losses) return a.losses - b.losses;
+        if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+        return (a.seed || 999) - (b.seed || 999);
+      });
+
+    if (activeTeams.length === 0) {
+      console.warn('No active teams to force-complete');
+      return false;
+    }
+
+    console.log(
+      `Force-completing Swiss stage with ${activeTeams.length} active teams: `,
+      activeTeams.map(t => `${state.teams[t.teamId]?.name} (${t.wins}-${t.losses})`).join(', ')
+    );
+
+    // Deep clone to avoid mutations
+    const updatedSwissStage: SwissStage = JSON.parse(JSON.stringify(swissStage));
+
+    // Calculate how many teams we still need to qualify
+    const qualifiersNeeded = swissStage.winsToQualify * Math.floor(swissStage.standings.length / 2) - swissStage.qualifiedTeamIds.length;
+
+    // Qualify top teams
+    let qualified = 0;
+
+    for (const team of activeTeams) {
+      const standing = updatedSwissStage.standings.find((s: SwissTeamRecord) => s.teamId === team.teamId);
+      if (!standing) continue;
+
+      if (qualified < qualifiersNeeded) {
+        // Qualify this team
+        standing.status = 'qualified';
+        if (!updatedSwissStage.qualifiedTeamIds.includes(standing.teamId)) {
+          updatedSwissStage.qualifiedTeamIds.push(standing.teamId);
+        }
+        qualified++;
+        console.log(`  Qualified: ${state.teams[standing.teamId]?.name} (${standing.wins}-${standing.losses})`);
+      } else {
+        // Eliminate this team
+        standing.status = 'eliminated';
+        if (!updatedSwissStage.eliminatedTeamIds.includes(standing.teamId)) {
+          updatedSwissStage.eliminatedTeamIds.push(standing.teamId);
+        }
+        console.log(`  Eliminated: ${state.teams[standing.teamId]?.name} (${standing.wins}-${standing.losses})`);
+      }
+    }
+
+    // Update store with modified Swiss stage
+    state.updateSwissStage(tournamentId, updatedSwissStage);
+
+    // Now transition to playoffs
+    this.transitionToPlayoffs(tournamentId);
+
     return true;
   }
 
@@ -871,6 +969,7 @@ export class TournamentService {
    */
   private createMatchEntitiesForReadyBracketMatches(tournament: Tournament): void {
     const state = useGameStore.getState();
+    console.log(`Creating Match entities for tournament ${tournament.id}`);
 
     const processMatches = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
@@ -878,8 +977,11 @@ export class TournamentService {
         if (bracketMatch.status === 'ready' && bracketMatch.teamAId && bracketMatch.teamBId) {
           // Check if Match already exists
           if (state.matches[bracketMatch.matchId]) {
+            console.log(`  Match ${bracketMatch.matchId} already exists, skipping`);
             continue;
           }
+
+          console.log(`  Creating Match entity for ${bracketMatch.matchId} (${bracketMatch.teamAId} vs ${bracketMatch.teamBId})`);
 
           // Create Match entity with same ID as bracket match
           const match: Match = {
@@ -926,6 +1028,93 @@ export class TournamentService {
         };
         state.addMatch(match);
       }
+    }
+  }
+
+  /**
+   * Schedule playoff matches starting from current date + 1 day
+   * Used when transitioning from Swiss to playoffs mid-tournament
+   */
+  private schedulePlayoffMatches(tournament: Tournament): void {
+    const state = useGameStore.getState();
+    const currentCalendarDate = state.calendar.currentDate;
+
+    // Start scheduling from next day
+    let currentDate = new Date(currentCalendarDate);
+    currentDate.setDate(currentDate.getDate() + 1);
+
+    console.log(`Scheduling playoff matches starting from ${currentDate.toISOString()}`);
+
+    // Count only ready matches for scheduling
+    const readyMatches = this.countReadyMatches(tournament.bracket);
+    console.log(`  Found ${readyMatches} ready matches to schedule`);
+    const daysAvailable = Math.max(
+      1,
+      Math.floor(
+        (new Date(tournament.endDate).getTime() - currentDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    );
+    const matchesPerDay = Math.max(1, Math.ceil(readyMatches / daysAvailable));
+
+    let matchCount = 0;
+
+    // Process upper bracket - only schedule ready matches
+    for (const round of tournament.bracket.upper) {
+      for (const match of round.matches) {
+        // Only schedule ready matches with known teams
+        if (match.status !== 'ready') {
+          console.log(`  Skipping non-ready match ${match.matchId} in upper R${round.roundNumber} (status: ${match.status})`);
+          continue;
+        }
+
+        match.scheduledDate = currentDate.toISOString();
+        console.log(`  Scheduled ${match.matchId} for ${currentDate.toISOString()}`);
+        matchCount++;
+
+        if (matchCount % matchesPerDay === 0) {
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    }
+
+    // Process lower bracket if exists - only schedule ready matches
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        for (const match of round.matches) {
+          if (match.status !== 'ready') continue;
+
+          match.scheduledDate = currentDate.toISOString();
+          matchCount++;
+
+          if (matchCount % matchesPerDay === 0) {
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+    }
+
+    // Process middle bracket if exists - only schedule ready matches
+    if (tournament.bracket.middle) {
+      for (const round of tournament.bracket.middle) {
+        for (const match of round.matches) {
+          if (match.status !== 'ready') continue;
+
+          match.scheduledDate = currentDate.toISOString();
+          matchCount++;
+
+          if (matchCount % matchesPerDay === 0) {
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+    }
+
+    // Schedule grand final only if ready
+    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
+      tournament.bracket.grandfinal.scheduledDate = new Date(
+        tournament.endDate
+      ).toISOString();
     }
   }
 
@@ -1011,6 +1200,7 @@ export class TournamentService {
    */
   private addTournamentCalendarEvents(tournament: Tournament): void {
     const state = useGameStore.getState();
+    console.log(`Adding calendar events for tournament ${tournament.id}`);
     const events: CalendarEvent[] = [
       {
         id: `event-${tournament.id}-start`,
@@ -1034,8 +1224,16 @@ export class TournamentService {
     const addMatchEvents = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
         // Only create events for ready matches with known teams
-        if (bracketMatch.status !== 'ready') continue;
-        if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
+        if (bracketMatch.status !== 'ready') {
+          console.log(`  Skipping match ${bracketMatch.matchId} - status: ${bracketMatch.status}`);
+          continue;
+        }
+        if (!bracketMatch.teamAId || !bracketMatch.teamBId) {
+          console.log(`  Skipping match ${bracketMatch.matchId} - missing teams (A: ${bracketMatch.teamAId}, B: ${bracketMatch.teamBId})`);
+          continue;
+        }
+
+        console.log(`  Adding calendar event for match ${bracketMatch.matchId} on ${bracketMatch.scheduledDate}`);
 
         const teamA = state.teams[bracketMatch.teamAId];
         const teamB = state.teams[bracketMatch.teamBId];
@@ -1103,6 +1301,7 @@ export class TournamentService {
       }
     }
 
+    console.log(`Total calendar events to add: ${events.length} (${events.filter(e => e.type === 'match').length} match events)`);
     state.addCalendarEvents(events);
   }
 
@@ -1149,6 +1348,8 @@ export class TournamentService {
     const currentDate = state.calendar.currentDate;
     const events: CalendarEvent[] = [];
 
+    console.log(`scheduleNewlyReadyMatches called for tournament ${tournament.id}`);
+
     // Deep clone bracket to avoid mutating store state directly
     // This is critical for Zustand immutability - we must not mutate objects in the store
     const bracket: BracketStructure = JSON.parse(JSON.stringify(tournament.bracket));
@@ -1159,7 +1360,12 @@ export class TournamentService {
         // Only process ready matches that don't have a scheduled date yet
         if (bracketMatch.status !== 'ready') continue;
         if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
-        if (bracketMatch.scheduledDate) continue; // Already scheduled
+        if (bracketMatch.scheduledDate) {
+          console.log(`  Match ${bracketMatch.matchId} already scheduled for ${bracketMatch.scheduledDate}`);
+          continue; // Already scheduled
+        }
+
+        console.log(`  Found newly ready match ${bracketMatch.matchId} - scheduling for next day`);
 
         // Schedule for the next day after current date
         const nextDay = new Date(currentDate);
@@ -1236,8 +1442,11 @@ export class TournamentService {
 
     // Save cloned+mutated bracket and add events to calendar
     if (events.length > 0) {
+      console.log(`  Scheduling ${events.length} newly-ready matches and adding calendar events`);
       state.updateBracket(tournament.id, bracket);
       state.addCalendarEvents(events);
+    } else {
+      console.log(`  No newly-ready matches found`);
     }
   }
 

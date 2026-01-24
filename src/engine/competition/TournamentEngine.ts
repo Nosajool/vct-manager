@@ -237,11 +237,37 @@ export class TournamentEngine {
     // Combine teams: Kickoff winners (seeds 1-4) + Swiss qualifiers (seeds 5-8)
     const seededTeamIds = [...playoffOnlyTeamIds, ...swissQualifiers];
 
+    console.log(`Generating Masters playoff bracket for ${seededTeamIds.length} teams:`, seededTeamIds);
+
     // Generate double elimination bracket
     const bracket = bracketManager.generateDoubleElimination(seededTeamIds);
 
+    console.log(`Generated bracket structure:`, {
+      upperRounds: bracket.upper.length,
+      upperRoundMatches: bracket.upper.map(r => `R${r.roundNumber}: ${r.matches.length} matches`),
+      lowerRounds: bracket.lower?.length || 0,
+      hasGrandFinal: !!bracket.grandfinal,
+    });
+
     // Prefix match IDs with tournament ID for uniqueness
-    return this.prefixBracketMatchIds(bracket, tournamentId);
+    const prefixedBracket = this.prefixBracketMatchIds(bracket, tournamentId);
+
+    // Log detailed match information for each round
+    console.log(`After prefixing, upper bracket details:`);
+    prefixedBracket.upper.forEach(round => {
+      console.log(`  Round ${round.roundNumber}:`);
+      round.matches.forEach(match => {
+        console.log(`    Match ${match.matchId}:`, {
+          status: match.status,
+          teamA: match.teamAId || 'pending',
+          teamB: match.teamBId || 'pending',
+          teamASource: match.teamASource,
+          teamBSource: match.teamBSource,
+        });
+      });
+    });
+
+    return prefixedBracket;
   }
 
   /**
