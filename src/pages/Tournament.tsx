@@ -3,9 +3,10 @@
 // Note: Match simulation is handled by the global TimeBar.
 // This page is view-only for browsing tournaments and brackets.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../store';
 import { seasonManager } from '../engine/competition';
+import { tournamentService } from '../services/TournamentService';
 import {
   BracketView,
   TournamentCard,
@@ -35,6 +36,18 @@ export function TournamentPage() {
     ? tournaments[selectedTournamentId]
     : activeTournaments[0] || upcomingTournaments[0];
 
+  // For league tournaments (stage1/stage2), calculate standings from team standings
+  // This ensures standings are up-to-date with the latest match results
+  useEffect(() => {
+    if (
+      currentTournament &&
+      (currentTournament.type === 'stage1' || currentTournament.type === 'stage2') &&
+      currentTournament.format === 'round_robin'
+    ) {
+      tournamentService.calculateLeagueStandings(currentTournament.id);
+    }
+  }, [currentTournament?.id, currentTournament?.type, currentTournament?.format]);
+
   const tournamentStandings = currentTournament
     ? standings[currentTournament.id] || []
     : [];
@@ -47,6 +60,14 @@ export function TournamentPage() {
   const getAvailableViewModes = (): ViewMode[] => {
     if (isInSwissStage) {
       return ['swiss', 'standings'];
+    }
+    // League tournaments (stage1/stage2 round_robin) only have standings view
+    if (
+      currentTournament &&
+      (currentTournament.type === 'stage1' || currentTournament.type === 'stage2') &&
+      currentTournament.format === 'round_robin'
+    ) {
+      return ['standings'];
     }
     return ['bracket', 'standings'];
   };
@@ -196,7 +217,7 @@ export function TournamentPage() {
                     highlightTop={
                       currentTournament.type === 'stage1' ||
                       currentTournament.type === 'stage2'
-                        ? 3
+                        ? 8 // Top 8 qualify for Stage Playoffs
                         : 0
                     }
                   />

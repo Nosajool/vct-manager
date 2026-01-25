@@ -5,6 +5,7 @@ import { useGameStore } from '../store';
 import { timeProgression, eventScheduler } from '../engine/calendar';
 import { economyService } from './EconomyService';
 import { matchService } from './MatchService';
+import { tournamentService } from './TournamentService';
 import type { CalendarEvent, MatchResult, MatchEventData } from '../types';
 
 /**
@@ -74,6 +75,12 @@ export class CalendarService {
         state.markEventProcessed(event.id);
         skippedEvents.push(event);
       }
+    }
+
+    // Check if a league stage has completed (all matches played)
+    // Only check after simulating matches in the current phase
+    if (simulatedMatches.length > 0) {
+      this.checkStageCompletion(state.calendar.currentPhase);
     }
 
     // Now advance the date to tomorrow
@@ -223,6 +230,25 @@ export class CalendarService {
     state.addCalendarEvents(events);
 
     return events;
+  }
+
+  /**
+   * Check if a league stage (Stage 1 or Stage 2) has completed
+   * If all league matches are done, trigger the stage completion modal
+   */
+  checkStageCompletion(currentPhase: string): void {
+    // Only check during stage1 or stage2 phases
+    if (currentPhase !== 'stage1' && currentPhase !== 'stage2') {
+      return;
+    }
+
+    const stageType = currentPhase as 'stage1' | 'stage2';
+    const { complete, tournamentId } = tournamentService.isStageComplete(stageType);
+
+    if (complete && tournamentId) {
+      console.log(`${currentPhase} league complete! Triggering completion handler.`);
+      tournamentService.handleStageCompletion(tournamentId);
+    }
   }
 
   /**

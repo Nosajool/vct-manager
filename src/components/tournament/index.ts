@@ -7,3 +7,5 @@ export { StandingsTable } from './StandingsTable';
 export { SwissStageView } from './SwissStageView';
 export { MastersCompletionModal } from './MastersCompletionModal';
 export type { MastersCompletionModalData } from './MastersCompletionModal';
+export { StageCompletionModal } from './StageCompletionModal';
+export type { StageCompletionModalData } from './StageCompletionModal';

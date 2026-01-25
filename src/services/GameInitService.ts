@@ -153,6 +153,31 @@ export class GameInitService {
     }
     console.log(`Created ${matchEvents.length} match entities`);
 
+    // Create Stage 1 and Stage 2 league tournaments for player's region
+    // These tournaments track standings during league phases
+    console.log('Creating Stage 1/2 league tournaments...');
+    const stage1Tournament = this.createLeagueTournament(
+      playerRegion,
+      'stage1',
+      teams,
+      seasonStartDate,
+      56 // Stage 1 starts at day 56 (after Masters Santiago)
+    );
+    const stage2Tournament = this.createLeagueTournament(
+      playerRegion,
+      'stage2',
+      teams,
+      seasonStartDate,
+      140 // Stage 2 starts at day 140 (after Masters London)
+    );
+
+    // Link existing league matches to their tournaments
+    this.linkLeagueMatchesToTournaments(
+      scheduleEvents,
+      stage1Tournament?.id,
+      stage2Tournament?.id
+    );
+
     // Generate initial Kickoff tournament for player's region
     console.log('Generating Kickoff tournament...');
     const regionTeams = teams.filter((t) => t.region === playerRegion);
@@ -466,6 +491,94 @@ export class GameInitService {
       default:
         return AMERICAS_KICKOFF_SEEDING;
     }
+  }
+
+  /**
+   * Create a league tournament for tracking standings during Stage 1/2
+   * Uses round_robin format with all teams in the player's region
+   */
+  private createLeagueTournament(
+    region: Region,
+    type: 'stage1' | 'stage2',
+    allTeams: ReturnType<typeof teamManager.generateAllTeams>['teams'],
+    seasonStartDate: string,
+    dayOffset: number
+  ) {
+    const regionTeams = allTeams.filter((t) => t.region === region);
+    const regionTeamIds = regionTeams.map((t) => t.id);
+
+    // Calculate tournament dates
+    const startDate = new Date(seasonStartDate);
+    startDate.setDate(startDate.getDate() + dayOffset);
+
+    const tournamentName = `VCT ${region} ${type === 'stage1' ? 'Stage 1' : 'Stage 2'} 2026`;
+
+    // Create tournament with round_robin format
+    // Note: We use status 'upcoming' - it will become 'in_progress' when phase changes
+    const tournament = tournamentService.createTournament(
+      tournamentName,
+      type,
+      'round_robin',
+      region,
+      regionTeamIds,
+      startDate,
+      200000 // Prize pool for league phase
+    );
+
+    if (tournament) {
+      console.log(`Created ${type} tournament: ${tournamentName} with ${regionTeamIds.length} teams`);
+    }
+
+    return tournament;
+  }
+
+  /**
+   * Link existing league match calendar events to their Stage 1/2 tournaments
+   * Updates both the calendar event data and the Match entity
+   */
+  private linkLeagueMatchesToTournaments(
+    scheduleEvents: ReturnType<typeof eventScheduler.generateInitialSchedule>,
+    stage1TournamentId: string | undefined,
+    stage2TournamentId: string | undefined
+  ): void {
+    if (!stage1TournamentId && !stage2TournamentId) {
+      console.warn('No Stage tournaments to link matches to');
+      return;
+    }
+
+    const store = useGameStore.getState();
+    let stage1Linked = 0;
+    let stage2Linked = 0;
+
+    for (const event of scheduleEvents) {
+      if (event.type !== 'match') continue;
+
+      const data = event.data as MatchEventData & { phase?: string };
+      if (!data.matchId) continue;
+
+      // Determine which tournament this match belongs to
+      let tournamentId: string | undefined;
+      if (data.phase === 'stage1' && stage1TournamentId) {
+        tournamentId = stage1TournamentId;
+        stage1Linked++;
+      } else if (data.phase === 'stage2' && stage2TournamentId) {
+        tournamentId = stage2TournamentId;
+        stage2Linked++;
+      }
+
+      if (tournamentId) {
+        // Update the Match entity to reference the tournament
+        const match = store.matches[data.matchId];
+        if (match) {
+          store.updateMatch(data.matchId, { tournamentId });
+        }
+
+        // Update the calendar event data to include tournamentId
+        data.tournamentId = tournamentId;
+      }
+    }
+
+    console.log(`Linked ${stage1Linked} Stage 1 matches and ${stage2Linked} Stage 2 matches to tournaments`);
   }
 }
 

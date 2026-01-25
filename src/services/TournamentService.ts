@@ -530,6 +530,120 @@ export class TournamentService {
   }
 
   /**
+   * Handle Stage 1 or Stage 2 league completion
+   *
+   * Shows the final league standings and triggers the transition to Stage Playoffs.
+   * Top 8 teams qualify for the regional playoffs.
+   *
+   * @param tournamentId - The Stage 1 or Stage 2 tournament ID
+   */
+  handleStageCompletion(tournamentId: string): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      console.error(`Tournament not found for Stage completion: ${tournamentId}`);
+      return;
+    }
+
+    // Calculate final league standings
+    const standings = this.calculateLeagueStandings(tournamentId);
+
+    // Top 8 qualify for Stage Playoffs
+    const qualifiedTeams = standings.slice(0, 8).map((entry) => ({
+      teamId: entry.teamId,
+      teamName: entry.teamName,
+      placement: entry.placement || 0,
+      wins: entry.wins,
+      losses: entry.losses,
+      roundDiff: entry.roundDiff,
+    }));
+
+    // Check player's team qualification status
+    const playerTeamId = state.playerTeamId;
+    let playerQualified = false;
+    let playerPlacement: number | undefined;
+
+    if (playerTeamId) {
+      const playerEntry = standings.find((s) => s.teamId === playerTeamId);
+      if (playerEntry) {
+        playerPlacement = playerEntry.placement;
+        playerQualified = (playerEntry.placement || 0) <= 8;
+      }
+    }
+
+    // Determine the next transition
+    // Stage 1 → Stage 1 Playoffs, Stage 2 → Stage 2 Playoffs
+    let nextTransitionId: string | undefined;
+    if (tournament.type === 'stage1') {
+      nextTransitionId = 'stage1_to_stage1_playoffs';
+    } else if (tournament.type === 'stage2') {
+      nextTransitionId = 'stage2_to_stage2_playoffs';
+    }
+
+    // Mark tournament as completed
+    state.updateTournament(tournamentId, { status: 'completed' });
+
+    // Trigger modal via UISlice
+    state.openModal('stage_completion', {
+      tournamentId,
+      tournamentName: tournament.name,
+      stageType: tournament.type, // 'stage1' or 'stage2'
+      standings,
+      qualifiedTeams,
+      playerQualified,
+      playerPlacement,
+      nextTransitionId,
+    });
+
+    console.log(`Stage tournament ${tournament.name} completed. Top 8 qualified for playoffs.`);
+  }
+
+  /**
+   * Check if Stage 1 or Stage 2 league is complete
+   * Returns true if all league matches for the stage have been played
+   */
+  isStageComplete(stageType: 'stage1' | 'stage2'): { complete: boolean; tournamentId: string | null } {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+
+    if (!playerTeamId) {
+      return { complete: false, tournamentId: null };
+    }
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) {
+      return { complete: false, tournamentId: null };
+    }
+
+    // Find the Stage tournament for player's region
+    const stageTournament = Object.values(state.tournaments).find(
+      (t) =>
+        t.type === stageType &&
+        t.region === playerTeam.region &&
+        t.status !== 'completed'
+    );
+
+    if (!stageTournament) {
+      return { complete: false, tournamentId: null };
+    }
+
+    // Count matches for this stage tournament
+    const stageMatches = Object.values(state.matches).filter(
+      (m) => m.tournamentId === stageTournament.id
+    );
+
+    if (stageMatches.length === 0) {
+      return { complete: false, tournamentId: stageTournament.id };
+    }
+
+    // Check if all matches are completed
+    const allCompleted = stageMatches.every((m) => m.status === 'completed');
+
+    return { complete: allCompleted, tournamentId: stageTournament.id };
+  }
+
+  /**
    * Get tournament standings for round-robin formats
    */
   calculateStandings(tournamentId: string): StandingsEntry[] {
@@ -585,6 +699,48 @@ export class TournamentService {
 
     // Sort by wins, then round diff
     const standings = Array.from(standingsMap.values()).sort((a, b) => {
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      return b.roundDiff - a.roundDiff;
+    });
+
+    // Assign placements
+    standings.forEach((entry, index) => {
+      entry.placement = index + 1;
+    });
+
+    // Update store
+    state.updateStandings(tournamentId, standings);
+
+    return standings;
+  }
+
+  /**
+   * Calculate league standings from team standings
+   * Used for Stage 1/2 tournaments where matches aren't in a bracket
+   * Takes standings directly from team.standings (updated by recordWin/recordLoss)
+   */
+  calculateLeagueStandings(tournamentId: string): StandingsEntry[] {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      return [];
+    }
+
+    // Build standings from team.standings for each team in the tournament
+    const standings: StandingsEntry[] = tournament.teamIds.map((teamId) => {
+      const team = state.teams[teamId];
+      return {
+        teamId,
+        teamName: team?.name || 'Unknown',
+        wins: team?.standings.wins || 0,
+        losses: team?.standings.losses || 0,
+        roundDiff: team?.standings.roundDiff || 0,
+      };
+    });
+
+    // Sort by wins (desc), then round diff (desc)
+    standings.sort((a, b) => {
       if (b.wins !== a.wins) return b.wins - a.wins;
       return b.roundDiff - a.roundDiff;
     });

@@ -18,6 +18,7 @@ import { timeProgression } from '../../engine/calendar';
 import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
+import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
 import type { MatchEventData } from '../../types';
 
 export function TimeBar() {
@@ -172,6 +173,14 @@ export function TimeBar() {
       {isModalOpen && modalType === 'masters_completion' && (
         <MastersCompletionModal
           data={modalData as MastersCompletionModalData}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Stage Completion Modal - triggered by TournamentService after Stage 1/2 league completion */}
+      {isModalOpen && modalType === 'stage_completion' && (
+        <StageCompletionModal
+          data={modalData as StageCompletionModalData}
           onClose={closeModal}
         />
       )}

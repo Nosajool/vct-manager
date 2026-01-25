@@ -11,6 +11,7 @@
 - **Phase 10-12**: Tournament scheduling, roster management, generic transitions
 - **Phase 13**: Masters/Champions completion modal
 - **Phase 14**: Masters → Stage league transition (post-Masters progression)
+- **Phase 15**: Stage 1 UI and Stage 1 Playoffs transition
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -194,6 +195,35 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 - Transition only updates the phase from `masters1` → `stage1` (or `masters2` → `stage2`)
 - Modal executes transition idempotently via `useRef` to prevent double-execution
 - All close paths (Continue button, View Bracket, backdrop click) trigger transition
+
+### Phase 15: Stage 1 UI and Stage 1 Playoffs Transition ✓ (Complete)
+- [x] Stage 1/Stage 2 league tournament entities created at game init
+- [x] League matches linked to tournament entities via `tournamentId`
+- [x] Tournament page displays league standings (StandingsTable with top 8 highlighted)
+- [x] `calculateLeagueStandings()` method using team standings (wins/losses/roundDiff)
+- [x] View mode filtering for league tournaments (standings only, no bracket view)
+- [x] `handleStageCompletion()` method in TournamentService
+- [x] `isStageComplete()` check for detecting all league matches complete
+- [x] StageCompletionModal component showing final standings and qualification
+- [x] CalendarService `checkStageCompletion()` after match simulation
+- [x] Stage 1 → Stage 1 Playoffs transition via existing `stage1_to_stage1_playoffs` config
+- [x] Stage 2 → Stage 2 Playoffs transition via existing `stage2_to_stage2_playoffs` config
+
+**Key Implementation Details:**
+- League tournaments use `round_robin` format but don't generate bracket matches
+- Team standings (`team.standings`) are source of truth for league standings
+- `calculateLeagueStandings()` builds standings from team standings (updated by `recordWin`/`recordLoss`)
+- Stage completion detection happens in CalendarService after processing day's matches
+- StageCompletionModal shows all teams with top 8 highlighted (playoff qualifiers)
+- Transition creates playoff tournament with double elimination format using top 8 teams
+
+**Flow:**
+1. Masters Santiago completes → Phase transitions to `stage1`
+2. User plays league matches (5 matches scheduled at game init)
+3. After last Stage 1 match, `checkStageCompletion()` triggers
+4. `handleStageCompletion()` calculates standings and opens StageCompletionModal
+5. On modal close, `executeTransition('stage1_to_stage1_playoffs')` creates playoffs
+6. Phase transitions to `stage1_playoffs`
 
 ### Future Phases (Not Started)
 - [ ] Coach system implementation
