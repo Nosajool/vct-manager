@@ -13,6 +13,7 @@
 - **Phase 14**: Masters → Stage league transition (post-Masters progression)
 - **Phase 15**: Stage 1 UI and Stage 1 Playoffs transition
 - **Phase 16**: Phase-based match filtering bugfix (Stage 1/2 during Masters)
+- **Phase 17**: Match type labels in simulation results (Upper Round 1 Match 2)
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -268,6 +269,25 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 - No runtime tournament creation - all structures exist, just need team resolution
 - Multi-region visibility - players can view any region's tournament brackets
 - Clean separation - scheduling, qualification, and match simulation are independent
+
+### Phase 17: Match Type Labels in Simulation Results ✓ (Complete)
+- [x] `matchLabel` field added to `MatchWithDetails` interface
+- [x] `findBracketMatchInfo()` helper to locate bracket match by ID
+- [x] `getMatchLabel()` function to generate human-readable labels
+- [x] `formatMatchLabel()` for bracket type and round formatting
+- [x] Support for triple elimination (Alpha/Beta/Omega) and double elimination (Upper/Lower) naming
+- [x] Support for Swiss stage matches (Swiss Round X Match Y)
+- [x] Match label displayed in `MatchCard` component
+
+**Feature Details:**
+- Labels like "Upper Round 1 Match 2", "Alpha Round 2 Match 1", "Grand Final"
+- Swiss tournaments show "Swiss Round 1 Match 3" for swiss stage matches
+- Triple elimination uses Alpha/Beta/Omega naming (VCT Kickoff style)
+- Double elimination uses Upper/Lower naming (Stage playoffs style)
+- Labels appear centered above the team names in the simulation results modal
+
+**Files Changed:**
+- `src/components/calendar/SimulationResultsModal.tsx` - Added match label generation and display
 
 ### Future Phases (Not Started)
 - [ ] Coach system implementation

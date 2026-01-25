@@ -7,7 +7,7 @@
 import { useState, useMemo } from 'react';
 import { useGameStore } from '../../store';
 import { MatchResult as MatchResultComponent } from '../match/MatchResult';
-import type { MatchResult, Match } from '../../types';
+import type { MatchResult, Match, Tournament, BracketStructure, BracketMatch } from '../../types';
 import type { TimeAdvanceResult } from '../../services';
 
 interface SimulationResultsModalProps {
@@ -30,8 +30,111 @@ interface MatchWithDetails {
   teamARegion: string;
   teamBRegion: string;
   tournamentName?: string;
+  matchLabel?: string;
   isPlayerTeamMatch: boolean;
   playerTeamWon?: boolean;
+}
+
+/**
+ * Find a bracket match by its matchId in a bracket structure
+ * Returns the match along with its bracket type, round number, and position in the round
+ */
+function findBracketMatchInfo(
+  bracket: BracketStructure,
+  matchId: string
+): { bracketMatch: BracketMatch; bracketType: string; roundNumber: number; matchIndex: number } | null {
+  // Check grand final
+  if (bracket.grandfinal?.matchId === matchId) {
+    return { bracketMatch: bracket.grandfinal, bracketType: 'grandfinal', roundNumber: 0, matchIndex: 0 };
+  }
+
+  // Search through upper bracket
+  for (const round of bracket.upper) {
+    const matchIndex = round.matches.findIndex(m => m.matchId === matchId);
+    if (matchIndex !== -1) {
+      return { bracketMatch: round.matches[matchIndex], bracketType: 'upper', roundNumber: round.roundNumber, matchIndex };
+    }
+  }
+
+  // Search through middle bracket (triple elimination)
+  if (bracket.middle) {
+    for (const round of bracket.middle) {
+      const matchIndex = round.matches.findIndex(m => m.matchId === matchId);
+      if (matchIndex !== -1) {
+        return { bracketMatch: round.matches[matchIndex], bracketType: 'middle', roundNumber: round.roundNumber, matchIndex };
+      }
+    }
+  }
+
+  // Search through lower bracket
+  if (bracket.lower) {
+    for (const round of bracket.lower) {
+      const matchIndex = round.matches.findIndex(m => m.matchId === matchId);
+      if (matchIndex !== -1) {
+        return { bracketMatch: round.matches[matchIndex], bracketType: 'lower', roundNumber: round.roundNumber, matchIndex };
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Generate a human-readable match label like "Upper Round 1 Match 2"
+ */
+function getMatchLabel(tournament: Tournament, matchId: string): string | undefined {
+  // Check if it's a swiss tournament and search swiss stage first
+  if (tournament.format === 'swiss_to_playoff') {
+    const multiStage = tournament as Tournament & { swissStage?: { rounds: Array<{ roundNumber: number; matches: BracketMatch[] }> }; playoffBracket?: BracketStructure };
+
+    // Search swiss stage
+    if (multiStage.swissStage) {
+      for (const round of multiStage.swissStage.rounds) {
+        const matchIndex = round.matches.findIndex(m => m.matchId === matchId);
+        if (matchIndex !== -1) {
+          return `Swiss Round ${round.roundNumber} Match ${matchIndex + 1}`;
+        }
+      }
+    }
+
+    // Search playoff bracket
+    if (multiStage.playoffBracket) {
+      const info = findBracketMatchInfo(multiStage.playoffBracket, matchId);
+      if (info) {
+        return formatMatchLabel(info.bracketType, info.roundNumber, info.matchIndex, true);
+      }
+    }
+  }
+
+  // Search main bracket
+  const info = findBracketMatchInfo(tournament.bracket, matchId);
+  if (!info) return undefined;
+
+  const hasMiddleBracket = !!(tournament.bracket.middle && tournament.bracket.middle.length > 0);
+  return formatMatchLabel(info.bracketType, info.roundNumber, info.matchIndex, hasMiddleBracket);
+}
+
+/**
+ * Format the match label based on bracket type and position
+ */
+function formatMatchLabel(
+  bracketType: string,
+  roundNumber: number,
+  matchIndex: number,
+  isTripleElim: boolean
+): string {
+  if (bracketType === 'grandfinal') {
+    return 'Grand Final';
+  }
+
+  const bracketName = isTripleElim
+    ? { upper: 'Alpha', middle: 'Beta', lower: 'Omega' }[bracketType] || bracketType
+    : { upper: 'Upper', lower: 'Lower' }[bracketType] || bracketType;
+
+  // Capitalize first letter
+  const formattedBracket = bracketName.charAt(0).toUpperCase() + bracketName.slice(1);
+
+  return `${formattedBracket} Round ${roundNumber} Match ${matchIndex + 1}`;
 }
 
 export function SimulationResultsModal({
@@ -73,6 +176,9 @@ export function SimulationResultsModal({
 
       const tournament = match.tournamentId ? tournaments[match.tournamentId] : null;
 
+      // Get match label from tournament bracket
+      const matchLabel = tournament ? getMatchLabel(tournament, match.id) : undefined;
+
       const matchWithDetails: MatchWithDetails = {
         match,
         result: matchResult,
@@ -81,6 +187,7 @@ export function SimulationResultsModal({
         teamARegion: teamA.region,
         teamBRegion: teamB.region,
         tournamentName: tournament?.name,
+        matchLabel,
         isPlayerTeamMatch,
         playerTeamWon,
       };
@@ -280,7 +387,7 @@ function MatchCard({
   isHighlighted?: boolean;
   onViewDetails: () => void;
 }) {
-  const { match, result, teamAName, teamBName, isPlayerTeamMatch, playerTeamWon } =
+  const { match, result, teamAName, teamBName, matchLabel, isPlayerTeamMatch, playerTeamWon } =
     matchDetails;
 
   const teamAWon = result.winnerId === match.teamAId;
@@ -298,6 +405,12 @@ function MatchCard({
     <div
       className={`${cardBgClass} p-3 rounded-lg border border-vct-gray/20 hover:border-vct-gray/40 transition-colors`}
     >
+      {/* Match Label */}
+      {matchLabel && (
+        <div className="text-xs text-vct-gray/70 mb-2 text-center">
+          {matchLabel}
+        </div>
+      )}
       <div className="flex items-center justify-between">
         {/* Teams and Score */}
         <div className="flex items-center gap-4 flex-1">
