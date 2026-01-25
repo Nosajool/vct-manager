@@ -14,6 +14,7 @@
 - **Phase 15**: Stage 1 UI and Stage 1 Playoffs transition
 - **Phase 16**: Phase-based match filtering bugfix (Stage 1/2 during Masters)
 - **Phase 17**: Match type labels in simulation results (Upper Round 1 Match 2)
+- **Phase 18**: Clickable bracket matches to view match details
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -288,6 +289,28 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 
 **Files Changed:**
 - `src/components/calendar/SimulationResultsModal.tsx` - Added match label generation and display
+
+### Phase 18: Clickable Bracket Matches ✓ (Complete)
+- [x] `onMatchClick` prop added to `BracketMatch` component
+- [x] `onMatchClick` prop added to `BracketView` component
+- [x] `onMatchClick` prop added to `SwissStageView` component
+- [x] Click handling in `SwissMatchCard` internal component
+- [x] Tournament page state management for selected match
+- [x] `MatchResult` modal rendered when completed match clicked
+- [x] Visual feedback (cursor pointer, hover state) on clickable matches
+
+**Feature Details:**
+- Completed matches in tournament brackets are now clickable
+- Clicking opens the `MatchResult` modal showing full match details (scoreboard, player stats)
+- Works for both bracket view (BracketMatch) and Swiss stage view (SwissMatchCard)
+- Non-completed matches (pending, ready, in_progress) are not clickable
+- Hover state provides visual feedback with border color change
+
+**Files Changed:**
+- `src/components/tournament/BracketMatch.tsx` - Added `onMatchClick` prop and click handling
+- `src/components/tournament/BracketView.tsx` - Added `onMatchClick` prop passthrough
+- `src/components/tournament/SwissStageView.tsx` - Added `onMatchClick` prop and SwissMatchCard click handling
+- `src/pages/Tournament.tsx` - Added match selection state and MatchResult modal
 
 ### Future Phases (Not Started)
 - [ ] Coach system implementation

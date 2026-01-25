@@ -16,6 +16,7 @@ import {
   StandingsTable,
   SwissStageView,
 } from '../components/tournament';
+import { MatchResult } from '../components/match/MatchResult';
 import { isMultiStageTournament } from '../types';
 import type { Region, TournamentRegion } from '../types';
 
@@ -35,12 +36,14 @@ export function TournamentPage() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('bracket');
   const [selectedRegion, setSelectedRegion] = useState<RegionFilter>('all');
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
 
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
   const calendar = useGameStore((state) => state.calendar);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+  const matches = useGameStore((state) => state.matches);
 
   // Get player's region for default filter
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
@@ -80,6 +83,18 @@ export function TournamentPage() {
   // Check if current tournament is a Swiss-to-playoff tournament
   const isSwissTournament = currentTournament && isMultiStageTournament(currentTournament);
   const isInSwissStage = isSwissTournament && currentTournament.currentStage === 'swiss';
+
+  // Handle clicking on a completed match in the bracket
+  const handleMatchClick = (matchId: string) => {
+    setSelectedMatchId(matchId);
+  };
+
+  const handleCloseMatchDetails = () => {
+    setSelectedMatchId(null);
+  };
+
+  // Get the selected match for the modal
+  const selectedMatch = selectedMatchId ? matches[selectedMatchId] : null;
 
   // Determine available view modes based on tournament type
   const getAvailableViewModes = (): ViewMode[] => {
@@ -258,11 +273,11 @@ export function TournamentPage() {
               {/* Content based on view mode */}
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
                 {effectiveViewMode === 'swiss' && isSwissTournament && (
-                  <SwissStageView swissStage={currentTournament.swissStage} />
+                  <SwissStageView swissStage={currentTournament.swissStage} onMatchClick={handleMatchClick} />
                 )}
 
                 {effectiveViewMode === 'bracket' && (
-                  <BracketView bracket={currentTournament.bracket} />
+                  <BracketView bracket={currentTournament.bracket} onMatchClick={handleMatchClick} />
                 )}
 
                 {effectiveViewMode === 'standings' && (
@@ -285,6 +300,11 @@ export function TournamentPage() {
           )}
         </div>
       </div>
+
+      {/* Match Result Modal */}
+      {selectedMatch && (
+        <MatchResult match={selectedMatch} onClose={handleCloseMatchDetails} />
+      )}
     </div>
   );
 }

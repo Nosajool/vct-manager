@@ -5,9 +5,11 @@ import type { SwissStage, SwissTeamRecord, BracketMatch } from '../../types';
 
 interface SwissStageViewProps {
   swissStage: SwissStage;
+  /** Callback when a completed match is clicked */
+  onMatchClick?: (matchId: string) => void;
 }
 
-export function SwissStageView({ swissStage }: SwissStageViewProps) {
+export function SwissStageView({ swissStage, onMatchClick }: SwissStageViewProps) {
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
 
@@ -108,6 +110,7 @@ export function SwissStageView({ swissStage }: SwissStageViewProps) {
                   match={match}
                   standings={swissStage.standings}
                   playerTeamId={playerTeamId}
+                  onMatchClick={onMatchClick}
                 />
               ))
             ) : (
@@ -133,6 +136,7 @@ export function SwissStageView({ swissStage }: SwissStageViewProps) {
                       match={match}
                       standings={swissStage.standings}
                       playerTeamId={playerTeamId}
+                      onMatchClick={onMatchClick}
                     />
                   ))}
                 </div>
@@ -218,10 +222,12 @@ function SwissMatchCard({
   match,
   standings,
   playerTeamId,
+  onMatchClick,
 }: {
   match: BracketMatch;
   standings: SwissTeamRecord[];
   playerTeamId: string | null;
+  onMatchClick?: (matchId: string) => void;
 }) {
   const teams = useGameStore((state) => state.teams);
 
@@ -233,12 +239,20 @@ function SwissMatchCard({
   const isPlayerMatch =
     match.teamAId === playerTeamId || match.teamBId === playerTeamId;
   const isCompleted = match.status === 'completed';
+  const isClickable = isCompleted && onMatchClick;
+
+  const handleClick = () => {
+    if (isClickable) {
+      onMatchClick(match.matchId);
+    }
+  };
 
   return (
     <div
+      onClick={handleClick}
       className={`bg-vct-dark rounded-lg p-3 ${
         isPlayerMatch ? 'ring-1 ring-vct-red' : ''
-      }`}
+      } ${isClickable ? 'cursor-pointer hover:bg-vct-dark/80 transition-colors' : ''}`}
     >
       <div className="flex items-center justify-between">
         {/* Team A */}

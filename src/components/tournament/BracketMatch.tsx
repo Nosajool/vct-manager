@@ -15,6 +15,8 @@ interface BracketMatchProps {
   showScore?: boolean;
   /** Optional team slots for TBD display - indexed by team position */
   teamSlots?: { teamA?: TeamSlot; teamB?: TeamSlot };
+  /** Callback when a completed match is clicked */
+  onMatchClick?: (matchId: string) => void;
 }
 
 export function BracketMatch({
@@ -22,6 +24,7 @@ export function BracketMatch({
   compact = false,
   showScore = true,
   teamSlots,
+  onMatchClick,
 }: BracketMatchProps) {
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
@@ -137,10 +140,21 @@ export function BracketMatch({
     );
   };
 
+  const isClickable = match.status === 'completed' && onMatchClick;
+
+  const handleClick = () => {
+    if (isClickable) {
+      onMatchClick(match.matchId);
+    }
+  };
+
   if (compact) {
     return (
       <div
-        className={`bg-vct-dark border ${getStatusColor()} rounded text-xs w-32`}
+        onClick={handleClick}
+        className={`bg-vct-dark border ${getStatusColor()} rounded text-xs w-32 ${
+          isClickable ? 'cursor-pointer hover:border-vct-gray/50 transition-colors' : ''
+        }`}
       >
         <TeamRow
           team={teamA}
@@ -161,9 +175,10 @@ export function BracketMatch({
 
   return (
     <div
+      onClick={handleClick}
       className={`bg-vct-darker border ${getStatusColor()} rounded-lg p-3 ${
         isPlayerMatch ? 'ring-1 ring-vct-red/30' : ''
-      }`}
+      } ${isClickable ? 'cursor-pointer hover:border-vct-gray/50 transition-colors' : ''}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2">

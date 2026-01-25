@@ -8,9 +8,11 @@ import { BracketMatch } from './BracketMatch';
 
 interface BracketViewProps {
   bracket: BracketStructure;
+  /** Callback when a completed match is clicked */
+  onMatchClick?: (matchId: string) => void;
 }
 
-export function BracketView({ bracket }: BracketViewProps) {
+export function BracketView({ bracket, onMatchClick }: BracketViewProps) {
   const hasMiddleBracket = bracket.middle && bracket.middle.length > 0;
   const hasLowerBracket = bracket.lower && bracket.lower.length > 0;
   const hasGrandFinal = !!bracket.grandfinal;
@@ -28,7 +30,7 @@ export function BracketView({ bracket }: BracketViewProps) {
       </div>
       <div className="flex flex-col gap-4 justify-around flex-1">
         {round.matches.map((match) => (
-          <BracketMatch key={match.matchId} match={match} compact />
+          <BracketMatch key={match.matchId} match={match} compact onMatchClick={onMatchClick} />
         ))}
       </div>
     </div>
@@ -136,7 +138,7 @@ export function BracketView({ bracket }: BracketViewProps) {
         <div>
           <h3 className="text-sm font-medium text-white mb-3">Grand Final</h3>
           <div className="flex justify-center">
-            <BracketMatch match={bracket.grandfinal} />
+            <BracketMatch match={bracket.grandfinal} onMatchClick={onMatchClick} />
           </div>
         </div>
       )}
