@@ -8,8 +8,9 @@
 // 2. Calls openModal('masters_completion', data)
 // 3. TimeBar renders this modal
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useGameStore } from '../../store';
+import { tournamentTransitionService } from '../../services/TournamentTransitionService';
 import type { SwissTeamRecord } from '../../types';
 
 export interface MastersCompletionModalData {
@@ -29,6 +30,8 @@ export interface MastersCompletionModalData {
     prize: number;
     qualifiedFromSwiss: boolean;
   };
+  /** Transition ID to execute when modal closes (e.g., 'masters1_to_stage1') */
+  nextTransitionId?: string;
 }
 
 interface MastersCompletionModalProps {
@@ -40,6 +43,7 @@ type ViewTab = 'summary' | 'swiss' | 'bracket';
 
 export function MastersCompletionModal({ data, onClose }: MastersCompletionModalProps) {
   const [activeTab, setActiveTab] = useState<ViewTab>('summary');
+  const transitionTriggeredRef = useRef(false);
 
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
@@ -47,6 +51,34 @@ export function MastersCompletionModal({ data, onClose }: MastersCompletionModal
   const closeModal = useGameStore((state) => state.closeModal);
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
+
+  /**
+   * Execute the next phase transition (e.g., Masters Santiago → Stage 1)
+   * This is called when the user closes the modal via any method
+   */
+  const executeTransitionIfNeeded = () => {
+    if (transitionTriggeredRef.current || !data.nextTransitionId) {
+      return;
+    }
+    transitionTriggeredRef.current = true;
+
+    console.log(`Executing transition: ${data.nextTransitionId}`);
+    const result = tournamentTransitionService.executeTransition(data.nextTransitionId);
+
+    if (result.success) {
+      console.log(`Successfully transitioned to ${result.newPhase}`);
+    } else {
+      console.error(`Transition failed: ${result.error}`);
+    }
+  };
+
+  /**
+   * Handle modal close - execute transition then close
+   */
+  const handleClose = () => {
+    executeTransitionIfNeeded();
+    onClose();
+  };
 
   // Check if player team participated
   const playerParticipated = data.finalPlacements.some((p) => p.teamId === playerTeamId);
@@ -77,6 +109,7 @@ export function MastersCompletionModal({ data, onClose }: MastersCompletionModal
 
   // Handle viewing tournament bracket
   const handleViewBracket = () => {
+    executeTransitionIfNeeded();
     closeModal();
     setActiveView('tournament');
   };
@@ -116,7 +149,7 @@ export function MastersCompletionModal({ data, onClose }: MastersCompletionModal
   return (
     <div
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div className="bg-vct-darker rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
@@ -204,7 +237,7 @@ export function MastersCompletionModal({ data, onClose }: MastersCompletionModal
             View Full Bracket
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
           >
             Continue

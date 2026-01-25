@@ -7,14 +7,35 @@ import type { TournamentTransitionConfig } from '../types';
  * VCT 2026 Tournament Transitions
  *
  * Flow:
- * 1. Kickoff → Masters Santiago
- * 2. Stage 1 → Stage 1 Playoffs (regional)
- * 3. Stage 1 Playoffs → Masters London
- * 4. Stage 2 → Stage 2 Playoffs (regional)
- * 5. Stage 2 Playoffs → Champions Shanghai
+ * 1. Kickoff → Masters Santiago (playoff_to_international)
+ * 2. Masters Santiago → Stage 1 (international_to_league)
+ * 3. Stage 1 → Stage 1 Playoffs (regional_to_playoff)
+ * 4. Stage 1 Playoffs → Masters London (playoff_to_international)
+ * 5. Masters London → Stage 2 (international_to_league)
+ * 6. Stage 2 → Stage 2 Playoffs (regional_to_playoff)
+ * 7. Stage 2 Playoffs → Champions Shanghai (playoff_to_international)
  */
 
 export const TOURNAMENT_TRANSITIONS: Record<string, TournamentTransitionConfig> = {
+  // Masters Santiago → Stage 1 (league phase, no tournament creation)
+  masters1_to_stage1: {
+    id: 'masters1_to_stage1',
+    fromPhase: 'masters1',
+    toPhase: 'stage1',
+    type: 'international_to_league',
+    qualificationSource: 'kickoff', // Not used for this transition
+
+    tournamentName: 'VCT Stage 1', // Not a tournament, just a league phase
+    format: 'round_robin', // League format
+    region: 'Americas', // Placeholder - each region has its own league
+    prizePool: 0, // No prize pool for league phase
+
+    qualificationRules: {}, // No qualification rules for league transitions
+
+    daysUntilStart: 3, // Small gap after Masters ends
+    durationDays: 35, // Stage 1 duration
+  },
+
   // Kickoff → Masters Santiago
   kickoff_to_masters1: {
     id: 'kickoff_to_masters1',
@@ -88,6 +109,25 @@ export const TOURNAMENT_TRANSITIONS: Record<string, TournamentTransitionConfig> 
 
     daysUntilStart: 7,
     durationDays: 18,
+  },
+
+  // Masters London → Stage 2 (league phase, no tournament creation)
+  masters2_to_stage2: {
+    id: 'masters2_to_stage2',
+    fromPhase: 'masters2',
+    toPhase: 'stage2',
+    type: 'international_to_league',
+    qualificationSource: 'stage1_playoffs', // Not used for this transition
+
+    tournamentName: 'VCT Stage 2', // Not a tournament, just a league phase
+    format: 'round_robin', // League format
+    region: 'Americas', // Placeholder - each region has its own league
+    prizePool: 0, // No prize pool for league phase
+
+    qualificationRules: {}, // No qualification rules for league transitions
+
+    daysUntilStart: 3, // Small gap after Masters ends
+    durationDays: 35, // Stage 2 duration
   },
 
   // Stage 2 → Stage 2 Playoffs (regional, happens per region)

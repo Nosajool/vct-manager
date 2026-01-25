@@ -10,6 +10,7 @@
 - **Phase 8-9**: VLR integration, UI enhancements
 - **Phase 10-12**: Tournament scheduling, roster management, generic transitions
 - **Phase 13**: Masters/Champions completion modal
+- **Phase 14**: Masters → Stage league transition (post-Masters progression)
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -144,10 +145,11 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 
 ### Phase 12: Generic Tournament Transition System ✓ (Complete)
 - [x] Tournament transition type definitions (`src/types/tournament-transition.ts`)
-- [x] Configuration constants for all 5 VCT transitions (`src/utils/tournament-transitions.ts`)
+- [x] Configuration constants for all 7 VCT transitions (`src/utils/tournament-transitions.ts`)
 - [x] TournamentTransitionService with generic `executeTransition()` method
 - [x] Support for regional (league → playoffs) transitions
 - [x] Support for international (playoffs → Masters/Champions) transitions
+- [x] Support for league (Masters → Stage) transitions (Phase 14)
 - [x] Idempotent transition execution (safe to call multiple times)
 - [x] QualificationModal refactored to work for all transitions via `transitionConfigId`
 - [x] RegionalSimulationService delegates to TournamentTransitionService
@@ -177,6 +179,21 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 - Final standings with prize distribution
 - Swiss stage standings showing qualified/eliminated teams
 - Consistent styling with QualificationModal
+
+### Phase 14: Masters → Stage League Transition ✓ (Complete)
+- [x] New `international_to_league` transition type in `TransitionType` union
+- [x] `masters1_to_stage1` transition configuration (Masters Santiago → Stage 1)
+- [x] `masters2_to_stage2` transition configuration (Masters London → Stage 2)
+- [x] `executeLeagueTransition()` method in TournamentTransitionService
+- [x] `nextTransitionId` prop added to MastersCompletionModalData
+- [x] MastersCompletionModal executes transition on close (any exit method)
+- [x] TournamentService.handleMastersCompletion() passes correct transition ID
+
+**Key Design Decisions:**
+- League matches are pre-generated at game init (no tournament creation needed)
+- Transition only updates the phase from `masters1` → `stage1` (or `masters2` → `stage2`)
+- Modal executes transition idempotently via `useRef` to prevent double-execution
+- All close paths (Continue button, View Bracket, backdrop click) trigger transition
 
 ### Future Phases (Not Started)
 - [ ] Coach system implementation

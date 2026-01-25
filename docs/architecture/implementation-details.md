@@ -2355,29 +2355,39 @@ Tournament Created + Phase Updated + Calendar Events Added
 
 **Configuration-Driven Design**:
 
-All 5 VCT 2026 tournament transitions are defined in `TOURNAMENT_TRANSITIONS`:
+All 7 VCT 2026 phase transitions are defined in `TOURNAMENT_TRANSITIONS`:
 
 1. **Kickoff → Masters Santiago** (`kickoff_to_masters1`)
    - Type: `playoff_to_international`
    - Qualification: Alpha (winners), Beta (2nd), Omega (3rd) from each region
    - Format: Swiss-to-Playoff (8 Swiss + 4 direct)
 
-2. **Stage 1 → Stage 1 Playoffs** (`stage1_to_stage1_playoffs`)
+2. **Masters Santiago → Stage 1** (`masters1_to_stage1`)
+   - Type: `international_to_league`
+   - No tournament creation (league matches pre-generated at game init)
+   - Just phase transition from `masters1` → `stage1`
+
+3. **Stage 1 → Stage 1 Playoffs** (`stage1_to_stage1_playoffs`)
    - Type: `regional_to_playoff`
    - Qualification: Top 8 teams from Stage 1 league standings
    - Format: Double elimination
 
-3. **Stage 1 Playoffs → Masters London** (`stage1_playoffs_to_masters2`)
+4. **Stage 1 Playoffs → Masters London** (`stage1_playoffs_to_masters2`)
    - Type: `playoff_to_international`
    - Qualification: Winners, runners-up, third place from each regional playoff
    - Format: Swiss-to-Playoff (8 Swiss + 4 direct)
 
-4. **Stage 2 → Stage 2 Playoffs** (`stage2_to_stage2_playoffs`)
+5. **Masters London → Stage 2** (`masters2_to_stage2`)
+   - Type: `international_to_league`
+   - No tournament creation (league matches pre-generated at game init)
+   - Just phase transition from `masters2` → `stage2`
+
+6. **Stage 2 → Stage 2 Playoffs** (`stage2_to_stage2_playoffs`)
    - Type: `regional_to_playoff`
    - Qualification: Top 8 teams from Stage 2 league standings
    - Format: Double elimination
 
-5. **Stage 2 Playoffs → Champions Shanghai** (`stage2_playoffs_to_champions`)
+7. **Stage 2 Playoffs → Champions Shanghai** (`stage2_playoffs_to_champions`)
    - Type: `playoff_to_international`
    - Qualification: Winners, runners-up, top 2 third-place teams
    - Format: Swiss-to-Playoff (12 Swiss + 4 direct)
@@ -2388,18 +2398,23 @@ All 5 VCT 2026 tournament transitions are defined in `TOURNAMENT_TRANSITIONS`:
 // Main entry point - handles all transitions
 tournamentTransitionService.executeTransition(configId, playerRegion?)
 
-// Regional transitions
+// Regional transitions (League → Playoffs)
 executeRegionalPlayoffTransition(config, region)
   → Get top N teams from standings
   → Create regional playoff tournament
   → Schedule matches and add events
 
-// International transitions
+// International transitions (Playoffs → Masters/Champions)
 executeInternationalTransition(config, playerRegion?)
   → Get qualifications from all 4 regions
   → Extract qualified teams (Swiss vs direct playoff)
   → Create international tournament
   → Schedule Swiss Round 1
+
+// League transitions (Masters → Stage)
+executeLeagueTransition(config)
+  → Just update phase (no tournament creation)
+  → League matches already pre-generated at game init
 ```
 
 **Idempotency**:

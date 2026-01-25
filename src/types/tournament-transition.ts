@@ -7,8 +7,9 @@ import type { SeasonPhase, TournamentFormat, TournamentRegion } from './index';
  * Type of transition between phases
  * - regional_to_playoff: Regional league/kickoff → Regional playoffs
  * - playoff_to_international: Regional playoffs → International tournament
+ * - international_to_league: International tournament → Regional league (phase change only)
  */
-export type TransitionType = 'regional_to_playoff' | 'playoff_to_international';
+export type TransitionType = 'regional_to_playoff' | 'playoff_to_international' | 'international_to_league';
 
 /**
  * Source of qualification data

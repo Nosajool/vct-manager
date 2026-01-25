@@ -54,9 +54,44 @@ export class TournamentTransitionService {
     // Execute transition based on type
     if (config.type === 'regional_to_playoff') {
       return this.executeRegionalPlayoffTransition(config, playerRegion!);
+    } else if (config.type === 'international_to_league') {
+      return this.executeLeagueTransition(config);
     } else {
       return this.executeInternationalTransition(config, playerRegion);
     }
+  }
+
+  /**
+   * League transition: International Tournament → Regional League
+   * Example: Masters Santiago → Stage 1, Masters London → Stage 2
+   *
+   * This is a simple phase transition - league matches are already pre-generated
+   * at game init time, so we just need to update the current phase.
+   */
+  private executeLeagueTransition(
+    config: TournamentTransitionConfig
+  ): TransitionResult {
+    const state = useGameStore.getState();
+
+    // Check if we're already in the target phase
+    if (state.calendar.currentPhase === config.toPhase) {
+      console.log(`Already in ${config.toPhase} phase`);
+      return {
+        success: true,
+        newPhase: config.toPhase,
+      };
+    }
+
+    // Transition to the new phase
+    state.setCurrentPhase(config.toPhase);
+
+    console.log(`Transitioned from ${config.fromPhase} to ${config.toPhase}`);
+
+    return {
+      success: true,
+      newPhase: config.toPhase,
+      tournamentName: config.tournamentName,
+    };
   }
 
   /**

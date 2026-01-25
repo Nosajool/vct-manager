@@ -500,6 +500,20 @@ export class TournamentService {
       }
     }
 
+    // Determine the next transition based on tournament type
+    // Masters 1 (Santiago) → Stage 1, Masters 2 (London) → Stage 2
+    let nextTransitionId: string | undefined;
+    if (tournament.type === 'masters') {
+      // Check which Masters this is based on the current phase
+      const currentPhase = state.calendar.currentPhase;
+      if (currentPhase === 'masters1') {
+        nextTransitionId = 'masters1_to_stage1';
+      } else if (currentPhase === 'masters2') {
+        nextTransitionId = 'masters2_to_stage2';
+      }
+    }
+    // Note: Champions doesn't transition to anything (end of season)
+
     // Trigger modal via UISlice
     state.openModal('masters_completion', {
       tournamentId,
@@ -509,6 +523,7 @@ export class TournamentService {
       finalPlacements,
       swissStandings,
       playerTeamPlacement,
+      nextTransitionId, // Pass transition ID to modal
     });
 
     console.log(`Masters tournament ${tournament.name} completed. Champion: ${championName}`);
