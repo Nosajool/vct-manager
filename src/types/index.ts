@@ -69,6 +69,10 @@ export type {
   SwissRound,
   SwissStage,
   MultiStageTournament,
+  // Team slot types (for TBD bracket positions)
+  TeamSlot,
+  QualificationSource as CompetitionQualificationSource,
+  TournamentStandingsEntry,
 } from './competition';
 
 export { isMultiStageTournament } from './competition';

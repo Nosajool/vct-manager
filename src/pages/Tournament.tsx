@@ -2,6 +2,8 @@
 //
 // Note: Match simulation is handled by the global TimeBar.
 // This page is view-only for browsing tournaments and brackets.
+//
+// Now supports viewing tournaments from ALL regions (not just player's)
 
 import { useState, useEffect } from 'react';
 import { useGameStore } from '../store';
@@ -15,18 +17,41 @@ import {
   SwissStageView,
 } from '../components/tournament';
 import { isMultiStageTournament } from '../types';
+import type { Region, TournamentRegion } from '../types';
 
 type ViewMode = 'bracket' | 'standings' | 'swiss';
+type RegionFilter = Region | 'International' | 'all';
+
+const REGION_OPTIONS: { value: RegionFilter; label: string }[] = [
+  { value: 'all', label: 'All Regions' },
+  { value: 'Americas', label: 'Americas' },
+  { value: 'EMEA', label: 'EMEA' },
+  { value: 'Pacific', label: 'Pacific' },
+  { value: 'China', label: 'China' },
+  { value: 'International', label: 'International' },
+];
 
 export function TournamentPage() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('bracket');
+  const [selectedRegion, setSelectedRegion] = useState<RegionFilter>('all');
 
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
   const calendar = useGameStore((state) => state.calendar);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const teams = useGameStore((state) => state.teams);
 
-  const allTournaments = Object.values(tournaments);
+  // Get player's region for default filter
+  const playerTeam = playerTeamId ? teams[playerTeamId] : null;
+
+  // Filter tournaments by region
+  const filterByRegion = (t: { region: TournamentRegion }) => {
+    if (selectedRegion === 'all') return true;
+    return t.region === selectedRegion;
+  };
+
+  const allTournaments = Object.values(tournaments).filter(filterByRegion);
   const activeTournaments = allTournaments.filter((t) => t.status === 'in_progress');
   const upcomingTournaments = allTournaments.filter((t) => t.status === 'upcoming');
   const completedTournaments = allTournaments.filter((t) => t.status === 'completed');
@@ -107,24 +132,53 @@ export function TournamentPage() {
           </p>
         </div>
 
-        {/* View Mode Toggle */}
-        {currentTournament && (
-          <div className="flex bg-vct-dark rounded-lg p-1">
-            {getAvailableViewModes().map((mode) => (
+        <div className="flex items-center gap-4">
+          {/* Region Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-vct-gray">Region:</span>
+            <select
+              value={selectedRegion}
+              onChange={(e) => {
+                setSelectedRegion(e.target.value as RegionFilter);
+                setSelectedTournamentId(null); // Reset selection when changing region
+              }}
+              className="bg-vct-dark border border-vct-gray/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-vct-red"
+            >
+              {REGION_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {playerTeam && selectedRegion !== playerTeam.region && selectedRegion !== 'all' && (
               <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-3 py-1.5 text-sm rounded ${
-                  effectiveViewMode === mode
-                    ? 'bg-vct-red text-white'
-                    : 'text-vct-gray hover:text-white'
-                }`}
+                onClick={() => setSelectedRegion(playerTeam.region)}
+                className="text-xs text-vct-red hover:text-vct-red/80"
               >
-                {mode === 'swiss' ? 'Swiss Stage' : mode.charAt(0).toUpperCase() + mode.slice(1)}
+                My Region
               </button>
-            ))}
+            )}
           </div>
-        )}
+
+          {/* View Mode Toggle */}
+          {currentTournament && (
+            <div className="flex bg-vct-dark rounded-lg p-1">
+              {getAvailableViewModes().map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`px-3 py-1.5 text-sm rounded ${
+                    effectiveViewMode === mode
+                      ? 'bg-vct-red text-white'
+                      : 'text-vct-gray hover:text-white'
+                  }`}
+                >
+                  {mode === 'swiss' ? 'Swiss Stage' : mode.charAt(0).toUpperCase() + mode.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

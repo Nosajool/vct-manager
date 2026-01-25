@@ -6,7 +6,8 @@ import { timeProgression, eventScheduler } from '../engine/calendar';
 import { economyService } from './EconomyService';
 import { matchService } from './MatchService';
 import { tournamentService } from './TournamentService';
-import type { CalendarEvent, MatchResult, MatchEventData } from '../types';
+import { teamSlotResolver } from './TeamSlotResolver';
+import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 
 /**
  * Result of advancing time
@@ -54,12 +55,26 @@ export class CalendarService {
     const simulatedMatches: MatchResult[] = [];
 
     // Process each event for TODAY
+    const currentPhase = state.calendar.currentPhase;
+
     for (const event of unprocessedEvents) {
       if (event.type === 'salary_payment') {
         // Auto-process salary payments
         this.processSalaryPayment(event);
         processedEvents.push(event);
       } else if (event.type === 'match') {
+        // Check if this match belongs to the current phase
+        // League matches (stage1, stage2) have a phase property that must match current phase
+        const matchData = event.data as MatchEventData;
+        const matchPhase = matchData.phase;
+
+        if (matchPhase && matchPhase !== currentPhase) {
+          // Skip matches that belong to a different phase
+          // Don't mark as processed - they'll be simulated when their phase is active
+          skippedEvents.push(event);
+          continue;
+        }
+
         // Simulate today's matches before advancing
         const result = this.simulateMatchEvent(event);
         if (result) {
@@ -82,6 +97,9 @@ export class CalendarService {
     if (simulatedMatches.length > 0) {
       this.checkStageCompletion(state.calendar.currentPhase);
     }
+
+    // Check tournament completion for ALL regions
+    this.checkAllTournamentCompletion(state.calendar.currentPhase);
 
     // Now advance the date to tomorrow
     state.advanceDay();
@@ -289,6 +307,156 @@ export class CalendarService {
     if (!nextMatch) return null;
 
     return timeProgression.getEventDescription(nextMatch);
+  }
+
+  /**
+   * Check tournament completion for ALL regions
+   * Triggers qualification resolution when tournaments complete
+   */
+  checkAllTournamentCompletion(currentPhase: SeasonPhase): void {
+    const regions: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
+
+    for (const region of regions) {
+      // Find tournaments for this phase and region that might be complete
+      const tournament = this.findTournamentForPhaseAndRegion(currentPhase, region);
+
+      if (tournament && this.isTournamentComplete(tournament.id)) {
+        // Tournament is complete, trigger qualification resolution
+        console.log(`Tournament ${tournament.name} complete, resolving qualifications`);
+        this.handleTournamentCompletion(tournament.id);
+      }
+    }
+
+    // Also check international tournaments (Masters, Champions)
+    if (currentPhase === 'masters1' || currentPhase === 'masters2' || currentPhase === 'champions') {
+      const internationalTournament = this.findInternationalTournament(currentPhase);
+      if (internationalTournament && this.isTournamentComplete(internationalTournament.id)) {
+        console.log(`International tournament ${internationalTournament.name} complete`);
+        this.handleTournamentCompletion(internationalTournament.id);
+      }
+    }
+  }
+
+  /**
+   * Find tournament for a specific phase and region
+   */
+  private findTournamentForPhaseAndRegion(
+    phase: SeasonPhase,
+    region: Region
+  ): { id: string; name: string } | null {
+    const state = useGameStore.getState();
+
+    // Map phase to tournament type
+    const phaseToType: Record<string, string> = {
+      kickoff: 'kickoff',
+      stage1: 'stage1',
+      stage1_playoffs: 'stage1',
+      stage2: 'stage2',
+      stage2_playoffs: 'stage2',
+    };
+
+    const tournamentType = phaseToType[phase];
+    if (!tournamentType) return null;
+
+    // Find matching tournament
+    for (const tournament of Object.values(state.tournaments)) {
+      if (tournament.type === tournamentType && tournament.region === region) {
+        // For playoffs phases, check if this is a playoffs tournament
+        if (phase.includes('_playoffs') && !tournament.name.includes('Playoffs')) {
+          continue;
+        }
+        // For non-playoffs phases, skip playoffs tournaments
+        if (!phase.includes('_playoffs') && tournament.name.includes('Playoffs')) {
+          continue;
+        }
+        return { id: tournament.id, name: tournament.name };
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Find international tournament for a phase
+   */
+  private findInternationalTournament(
+    phase: SeasonPhase
+  ): { id: string; name: string } | null {
+    const state = useGameStore.getState();
+
+    const phaseToType: Record<string, string> = {
+      masters1: 'masters',
+      masters2: 'masters',
+      champions: 'champions',
+    };
+
+    const tournamentType = phaseToType[phase];
+    if (!tournamentType) return null;
+
+    for (const tournament of Object.values(state.tournaments)) {
+      if (tournament.type === tournamentType && tournament.region === 'International') {
+        // For masters, distinguish by name
+        if (tournamentType === 'masters') {
+          if (phase === 'masters1' && tournament.name.includes('Santiago')) {
+            return { id: tournament.id, name: tournament.name };
+          }
+          if (phase === 'masters2' && tournament.name.includes('London')) {
+            return { id: tournament.id, name: tournament.name };
+          }
+        } else {
+          return { id: tournament.id, name: tournament.name };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if a tournament is complete
+   */
+  private isTournamentComplete(tournamentId: string): boolean {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) return false;
+
+    // Already marked complete
+    if (tournament.status === 'completed') return true;
+
+    // Check if champion has been determined
+    if (tournament.championId) return true;
+
+    // For round-robin (leagues), check if all matches are completed
+    if (tournament.format === 'round_robin') {
+      const tournamentMatches = Object.values(state.matches).filter(
+        (m) => m.tournamentId === tournamentId
+      );
+
+      if (tournamentMatches.length === 0) return false;
+
+      return tournamentMatches.every((m) => m.status === 'completed');
+    }
+
+    return false;
+  }
+
+  /**
+   * Handle tournament completion - resolve qualifications
+   */
+  private handleTournamentCompletion(tournamentId: string): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) return;
+
+    // Mark as completed if not already
+    if (tournament.status !== 'completed') {
+      state.updateTournament(tournamentId, { status: 'completed' });
+    }
+
+    // Resolve qualifications to downstream tournaments
+    teamSlotResolver.resolveQualifications(tournamentId);
   }
 }
 

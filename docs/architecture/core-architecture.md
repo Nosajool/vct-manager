@@ -78,6 +78,8 @@ src/
 │
 ├── services/            # Orchestration layer (store + engine)
 │   ├── GameInitService.ts              # Game initialization (with VLR integration)
+│   ├── GlobalTournamentScheduler.ts    # Creates ALL VCT tournaments at game init
+│   ├── TeamSlotResolver.ts             # Resolves TBD slots when teams qualify
 │   ├── MatchService.ts                 # Match simulation orchestration
 │   ├── TournamentService.ts            # Tournament lifecycle
 │   ├── TournamentTransitionService.ts  # Generic phase transition logic
@@ -332,6 +334,28 @@ export interface PlayerFatigue {
 export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
 export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
 
+// Team Slot Types (for TBD bracket positions - upfront creation pattern)
+export type TeamSlot =
+  | { type: 'resolved'; teamId: string }
+  | { type: 'tbd' }
+  | { type: 'qualified_from'; source: QualificationSource; description: string };
+
+export interface QualificationSource {
+  tournamentType: CompetitionType;
+  region?: Region;
+  placement: 'alpha' | 'beta' | 'omega' | 'first' | 'second' | 'third' | number;
+}
+
+// Per-Tournament Standings (separate from team career stats)
+export interface TournamentStandingsEntry {
+  teamId: string;
+  wins: number;
+  losses: number;
+  roundDiff: number;
+  mapDiff: number;
+  placement?: number;
+}
+
 export interface Tournament {
   id: string;
   name: string;
@@ -341,6 +365,9 @@ export interface Tournament {
 
   // Participating teams
   teamIds: string[];
+
+  // Team slots (for TBD bracket positions)
+  teamSlots?: TeamSlot[];
 
   // Schedule
   startDate: Date;
@@ -356,6 +383,9 @@ export interface Tournament {
 
   // Bracket structure
   bracket: BracketStructure;
+
+  // Per-tournament standings (for league formats)
+  standings?: TournamentStandingsEntry[];
 
   // Status
   status: 'upcoming' | 'in_progress' | 'completed';
@@ -741,3 +771,85 @@ export interface TransitionResult {
     seed: number;
   }>;
 }
+```
+
+---
+
+## Upfront Creation, Lazy Resolution Pattern
+
+The tournament system uses an **upfront creation, lazy resolution** architecture for managing the full VCT season.
+
+### Core Principle
+
+All tournament structures are created at game initialization with TBD slots. Teams are resolved into those slots when they qualify from previous phases.
+
+### Key Services
+
+#### GlobalTournamentScheduler
+Creates ALL VCT tournaments at game init:
+- 4 regional Kickoffs (teams known from region)
+- Masters 1 & 2 with TBD slots for qualifiers
+- 4 regional Stage 1/2 leagues (teams known from region)
+- 4 regional Stage 1/2 Playoffs with TBD slots
+- Champions with TBD slots
+
+```typescript
+class GlobalTournamentScheduler {
+  createAllTournaments(teams: Team[], seasonStartDate: string): TournamentScheduleResult;
+}
+```
+
+#### TeamSlotResolver
+Resolves TBD slots when teams qualify from previous tournaments:
+1. Extracts qualifiers from completed tournament (alpha/beta/omega or 1st/2nd/3rd)
+2. Finds downstream tournaments with TBD slots
+3. Resolves slots and updates brackets
+4. Creates Match entities and calendar events for newly-ready matches
+
+```typescript
+class TeamSlotResolver {
+  resolveQualifications(completedTournamentId: string): void;
+}
+```
+
+### Data Flow
+
+```
+Game Init
+    │
+    ▼
+GlobalTournamentScheduler.createAllTournaments()
+    │
+    ├── Kickoffs (teams resolved)
+    ├── Masters 1 (TBD slots: "Kickoff winner from Americas", etc.)
+    ├── Stage 1 Leagues (teams resolved)
+    ├── Stage 1 Playoffs (TBD slots: "Top 8 from Stage 1")
+    ├── Masters 2 (TBD slots)
+    ├── Stage 2 Leagues (teams resolved)
+    ├── Stage 2 Playoffs (TBD slots)
+    └── Champions (TBD slots)
+
+Tournament Completes
+    │
+    ▼
+TeamSlotResolver.resolveQualifications()
+    │
+    ├── Extract qualifiers (alpha, beta, omega / 1st, 2nd, 3rd)
+    ├── Find downstream tournaments
+    ├── Resolve TeamSlots → teamIds
+    └── Schedule newly-ready matches
+```
+
+### Per-Tournament Standings
+
+Tournament standings are separate from team career stats:
+- `Tournament.standings: TournamentStandingsEntry[]` tracks wins/losses within a single tournament
+- Reset between phases (Kickoff standings don't carry to Stage 1)
+- Used for league qualification (top 8 from Stage 1 → Stage 1 Playoffs)
+
+### Benefits
+
+1. **Predictable structure** - Full season visible from day 1
+2. **No runtime tournament creation** - All structures exist, just need team resolution
+3. **Multi-region visibility** - Players can view any region's brackets
+4. **Clean separation** - Scheduling vs. qualification vs. match simulation are independent concerns

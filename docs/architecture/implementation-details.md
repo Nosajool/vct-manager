@@ -756,6 +756,170 @@ class TournamentService {
    - Order matters: schedule first, then create entities, then add events
    - Save updated bracket back to store after scheduling
 
+### GlobalTournamentScheduler
+
+Creates ALL VCT tournaments at game initialization using the **upfront creation, lazy resolution** pattern.
+
+```typescript
+class GlobalTournamentScheduler {
+  private regions: Region[] = ['Americas', 'EMEA', 'Pacific', 'China'];
+
+  /**
+   * Create ALL VCT tournaments for the season
+   * Called once during GameInitService.initializeGame()
+   */
+  createAllTournaments(
+    teams: Team[],
+    seasonStartDate: string
+  ): TournamentScheduleResult {
+    // 1. Create 4 regional Kickoffs (teams known from region)
+    const kickoffs = this.regions.map(region =>
+      this.createKickoff(region, teams, startDate)
+    );
+
+    // 2. Create Masters 1 (Santiago) with TBD slots
+    const masters1 = this.createMasters('masters1', 'VCT Masters Santiago 2026', ...);
+
+    // 3. Create 4 regional Stage 1 leagues (teams known)
+    const stage1s = this.regions.map(region =>
+      this.createStageLeague(region, 'stage1', teams, ...)
+    );
+
+    // 4. Create 4 regional Stage 1 Playoffs with TBD slots
+    const stage1Playoffs = this.regions.map(region =>
+      this.createStagePlayoffs(region, 'stage1', ...)
+    );
+
+    // 5-8. Repeat for Masters 2, Stage 2, Stage 2 Playoffs, Champions
+    // ...
+
+    return { kickoffs, masters1, stage1s, stage1Playoffs, ... };
+  }
+
+  /**
+   * Create Masters tournament with TBD slots for qualifiers
+   */
+  private createMasters(type: string, name: string, ...): MultiStageTournament {
+    // Swiss participants have TBD slots
+    const swissTeamSlots: TeamSlot[] = [
+      { type: 'qualified_from', source: { tournamentType: 'kickoff', region: 'Americas', placement: 'beta' }, description: 'Americas Kickoff 2nd' },
+      { type: 'qualified_from', source: { tournamentType: 'kickoff', region: 'Americas', placement: 'omega' }, description: 'Americas Kickoff 3rd' },
+      // ... 6 more from other regions
+    ];
+
+    // Direct playoff qualifiers (Kickoff winners)
+    const playoffTeamSlots: TeamSlot[] = [
+      { type: 'qualified_from', source: { tournamentType: 'kickoff', region: 'Americas', placement: 'alpha' }, description: 'Americas Kickoff Winner' },
+      // ... 3 more
+    ];
+
+    return tournamentEngine.createMastersWithSlots(name, swissTeamSlots, playoffTeamSlots, ...);
+  }
+}
+export const globalTournamentScheduler = new GlobalTournamentScheduler();
+```
+
+**Key Design Points**:
+- All tournament structures created at game init with fixed dates
+- Kickoffs and Stage leagues have resolved teams (known from region)
+- Masters, Stage Playoffs, and Champions use `TeamSlot` with `qualified_from` type
+- Teams are resolved when they qualify via `TeamSlotResolver`
+
+### TeamSlotResolver
+
+Resolves TBD slots when teams qualify from previous tournaments.
+
+```typescript
+class TeamSlotResolver {
+  /**
+   * Called when a tournament completes
+   * Resolves qualifiers into downstream tournament slots
+   */
+  resolveQualifications(completedTournamentId: string): void {
+    const completed = state.tournaments[completedTournamentId];
+
+    // 1. Extract qualifiers based on tournament type
+    const qualifiers = this.extractQualifiers(completed);
+    // → e.g., [{ teamId: 'sen', placement: 'alpha', source: { ... } }, ...]
+
+    // 2. Find downstream tournaments with TBD slots
+    const downstreamIds = this.findDownstreamTournaments(completed);
+    // → e.g., ['masters-santiago-2026'] for Kickoff completion
+
+    // 3. Fill team slots in downstream tournaments
+    for (const tournamentId of downstreamIds) {
+      this.fillTeamSlots(tournamentId, qualifiers, completed);
+    }
+  }
+
+  /**
+   * Extract qualifiers from completed tournament
+   */
+  private extractQualifiers(tournament: Tournament): QualifiedTeam[] {
+    switch (tournament.type) {
+      case 'kickoff':
+        // Extract alpha (1st), beta (2nd), omega (3rd) from triple-elim bracket
+        return bracketManager.getQualifiers(tournament.bracket);
+
+      case 'stage1':
+      case 'stage2':
+        // Top 8 teams from league standings
+        return tournament.standings
+          .sort((a, b) => b.wins - a.wins || a.losses - b.losses || b.roundDiff - a.roundDiff)
+          .slice(0, 8)
+          .map((entry, i) => ({ teamId: entry.teamId, placement: i + 1, ... }));
+
+      case 'masters':
+        // 1st, 2nd, 3rd from playoff bracket
+        return bracketManager.getFinalPlacements(tournament.bracket);
+    }
+  }
+
+  /**
+   * Fill TBD slots in a downstream tournament
+   */
+  private fillTeamSlots(
+    tournamentId: string,
+    qualifiers: QualifiedTeam[],
+    sourceTournament: Tournament
+  ): void {
+    const tournament = state.tournaments[tournamentId];
+
+    // Match qualifiers to TeamSlots by source
+    for (const qualifier of qualifiers) {
+      const slot = tournament.teamSlots?.find(s =>
+        s.type === 'qualified_from' &&
+        s.source.tournamentType === sourceTournament.type &&
+        s.source.region === sourceTournament.region &&
+        s.source.placement === qualifier.placement
+      );
+
+      if (slot) {
+        // Resolve slot
+        slot.type = 'resolved';
+        slot.teamId = qualifier.teamId;
+
+        // Add team to tournament
+        tournament.teamIds.push(qualifier.teamId);
+      }
+    }
+
+    // Update bracket with resolved teams
+    this.updateBracketWithResolvedTeams(tournament);
+
+    // Schedule newly-ready matches
+    tournamentService.scheduleNewlyReadyMatches(tournament);
+    tournamentService.createMatchEntitiesForReadyBracketMatches(tournament);
+  }
+}
+export const teamSlotResolver = new TeamSlotResolver();
+```
+
+**Integration Points**:
+- `TournamentService.handleTournamentCompletion()` → calls `teamSlotResolver.resolveQualifications()`
+- `CalendarService.checkAllTournamentCompletion()` → handles all regions' tournament completions
+- `MatchService.updateTournamentStandings()` → updates per-tournament standings for league formats
+
 ---
 
 ## Persistence Strategy
@@ -1925,6 +2089,33 @@ All match-related UI only shows the player's team matches:
 - `TimeControls` shows "Play Match" button only for player's matches
 
 This is implemented by checking `MatchEventData.homeTeamId` or `awayTeamId` against `playerTeamId`.
+
+**Phase-Based Match Filtering:**
+
+League matches (Stage 1, Stage 2) are only simulated when the current game phase matches the match's phase:
+
+```typescript
+// In CalendarService.advanceDay()
+if (event.type === 'match') {
+  const matchData = event.data as MatchEventData;
+  const matchPhase = matchData.phase;
+
+  // Skip league matches that belong to a different phase
+  if (matchPhase && matchPhase !== currentPhase) {
+    skippedEvents.push(event);
+    continue;  // Don't mark as processed - will run in correct phase
+  }
+
+  // Simulate the match...
+}
+```
+
+| Match Type | Has `phase` Property | Simulation Behavior |
+|------------|---------------------|---------------------|
+| Tournament matches (Kickoff, Masters, Playoffs) | No | Always simulated when date arrives |
+| League matches (Stage 1, Stage 2) | Yes | Only simulated when `currentPhase === matchData.phase` |
+
+This prevents standings from being updated outside their intended phase timeline.
 
 ### 13. Cross-Slice State Access Pattern
 

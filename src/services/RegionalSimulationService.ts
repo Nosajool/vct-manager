@@ -1,6 +1,14 @@
 // RegionalSimulationService - Simulates tournaments for other regions
 // Follows service pattern: getState() -> engine calls -> store updates
 // Delegates to TournamentTransitionService for tournament creation
+//
+// NOTE: This service is being DEPRECATED in favor of the new architecture:
+// - GlobalTournamentScheduler creates ALL tournaments upfront at game init
+// - CalendarService handles day-by-day simulation for ALL regions
+// - TeamSlotResolver handles qualification resolution
+//
+// The batch simulation methods (simulateOtherKickoffs, simulateOtherStagePlayoffs)
+// are no longer needed as matches are simulated day-by-day for all regions.
 
 import { useGameStore } from '../store';
 import { bracketManager, tournamentEngine } from '../engine/competition';
@@ -23,8 +31,19 @@ export class RegionalSimulationService {
   /**
    * Simulate Kickoff tournaments for regions other than player's
    * Pattern: getState() -> engine calls -> store updates
+   *
+   * @deprecated This method is deprecated. With the new architecture:
+   * - ALL tournaments are created upfront by GlobalTournamentScheduler
+   * - Day-by-day simulation handles ALL regions via CalendarService
+   * - Qualification resolution is handled by TeamSlotResolver
+   *
+   * Keeping for backwards compatibility but will be removed in future.
    */
   simulateOtherKickoffs(playerRegion: Region): QualificationRecord[] {
+    console.warn(
+      'RegionalSimulationService.simulateOtherKickoffs() is DEPRECATED. ' +
+      'Use GlobalTournamentScheduler + CalendarService for multi-region simulation.'
+    );
     const otherRegions = ALL_REGIONS.filter((r) => r !== playerRegion);
     const results: QualificationRecord[] = [];
 

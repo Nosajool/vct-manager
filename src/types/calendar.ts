@@ -43,6 +43,8 @@ export interface GameCalendar {
   scheduledEvents: CalendarEvent[];
 }
 
+import type { Region } from './player';
+
 // Structured event data types (for type-safe access to event.data)
 export interface MatchEventData {
   matchId: string;
@@ -52,6 +54,8 @@ export interface MatchEventData {
   awayTeamName?: string;
   tournamentId?: string;
   isPlayerMatch?: boolean;
+  phase?: SeasonPhase;  // For league matches, indicates which phase this match belongs to
+  region?: Region;      // Which region this match belongs to
 }
 
 export interface TournamentEventData {

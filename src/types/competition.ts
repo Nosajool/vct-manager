@@ -9,6 +9,34 @@ export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | '
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed';
 export type TournamentRegion = Region | 'International';
 
+// ============================================
+// Team Slot Types (for TBD bracket positions)
+// ============================================
+
+export type TeamSlot =
+  | { type: 'resolved'; teamId: string }
+  | { type: 'tbd' }
+  | { type: 'qualified_from'; source: QualificationSource; description: string };
+
+export interface QualificationSource {
+  tournamentType: CompetitionType;
+  region?: Region;
+  placement: 'alpha' | 'beta' | 'omega' | 'first' | 'second' | 'third' | number;
+}
+
+// ============================================
+// Per-Tournament Standings
+// ============================================
+
+export interface TournamentStandingsEntry {
+  teamId: string;
+  wins: number;
+  losses: number;
+  roundDiff: number;
+  mapDiff: number;
+  placement?: number;
+}
+
 export type TeamSource =
   | { type: 'seed'; seed: number }
   | { type: 'winner'; matchId: string }
@@ -86,6 +114,9 @@ export interface Tournament {
   // Participating teams
   teamIds: string[];
 
+  // Team slots (for TBD bracket positions)
+  teamSlots?: TeamSlot[];
+
   // Schedule
   startDate: string;  // ISO date string
   endDate: string;    // ISO date string
@@ -95,6 +126,9 @@ export interface Tournament {
 
   // Bracket structure
   bracket: BracketStructure;
+
+  // Per-tournament standings (for league formats)
+  standings?: TournamentStandingsEntry[];
 
   // Status
   status: TournamentStatus;

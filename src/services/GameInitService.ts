@@ -6,15 +6,9 @@ import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
-import { tournamentService } from './TournamentService';
-import type { Player, Region, MatchEventData } from '../types';
-import {
-  FREE_AGENTS_PER_REGION,
-  AMERICAS_KICKOFF_SEEDING,
-  EMEA_KICKOFF_SEEDING,
-  PACIFIC_KICKOFF_SEEDING,
-  CHINA_KICKOFF_SEEDING,
-} from '../utils/constants';
+import { globalTournamentScheduler } from './GlobalTournamentScheduler';
+import type { Player, Region, MatchEventData, Match } from '../types';
+import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 
@@ -153,55 +147,60 @@ export class GameInitService {
     }
     console.log(`Created ${matchEvents.length} match entities`);
 
-    // Create Stage 1 and Stage 2 league tournaments for player's region
-    // These tournaments track standings during league phases
-    console.log('Creating Stage 1/2 league tournaments...');
-    const stage1Tournament = this.createLeagueTournament(
-      playerRegion,
-      'stage1',
-      teams,
-      seasonStartDate,
-      56 // Stage 1 starts at day 56 (after Masters Santiago)
+    // NEW: Create ALL tournaments upfront for ALL regions using GlobalTournamentScheduler
+    console.log('Creating ALL VCT tournaments for all regions...');
+    const allTournaments = globalTournamentScheduler.createAllTournaments(teams, seasonStartDate);
+
+    // Add all tournaments to store
+    let tournamentCount = 0;
+    for (const tournament of allTournaments.allTournaments()) {
+      store.addTournament(tournament);
+      tournamentCount++;
+    }
+    console.log(`Created ${tournamentCount} tournaments for all regions`);
+
+    // Generate match calendar events for all tournaments
+    const tournamentMatchEvents = globalTournamentScheduler.generateAllMatchEvents(allTournaments);
+    store.addCalendarEvents(tournamentMatchEvents);
+    console.log(`Added ${tournamentMatchEvents.length} tournament calendar events`);
+
+    // Create Match entities for "ready" tournament matches (both teams known)
+    let tournamentMatchCount = 0;
+    for (const event of tournamentMatchEvents) {
+      if (event.type !== 'match') continue;
+      const data = event.data as MatchEventData;
+      if (data.matchId && data.homeTeamId && data.awayTeamId) {
+        // Check if match already exists
+        if (!store.matches[data.matchId]) {
+          const match: Match = {
+            id: data.matchId,
+            teamAId: data.homeTeamId,
+            teamBId: data.awayTeamId,
+            scheduledDate: event.date,
+            status: 'scheduled',
+            tournamentId: data.tournamentId,
+          };
+          store.addMatch(match);
+          tournamentMatchCount++;
+        }
+      }
+    }
+    console.log(`Created ${tournamentMatchCount} tournament match entities`);
+
+    // Link league schedule events to Stage 1/2 tournaments
+    // Find the player region's stage tournaments
+    const playerStage1 = Object.values(store.tournaments).find(
+      (t) => t.type === 'stage1' && t.region === playerRegion
     );
-    const stage2Tournament = this.createLeagueTournament(
-      playerRegion,
-      'stage2',
-      teams,
-      seasonStartDate,
-      140 // Stage 2 starts at day 140 (after Masters London)
+    const playerStage2 = Object.values(store.tournaments).find(
+      (t) => t.type === 'stage2' && t.region === playerRegion
     );
 
-    // Link existing league matches to their tournaments
     this.linkLeagueMatchesToTournaments(
       scheduleEvents,
-      stage1Tournament?.id,
-      stage2Tournament?.id
+      playerStage1?.id,
+      playerStage2?.id
     );
-
-    // Generate initial Kickoff tournament for player's region
-    console.log('Generating Kickoff tournament...');
-    const regionTeams = teams.filter((t) => t.region === playerRegion);
-
-    // Sort teams according to official seeding for each region
-    // All regions use actual VCT 2026 seeding order based on Champions 2025 qualifiers
-    const sortedRegionTeams = this.sortTeamsByKickoffSeeding(regionTeams, playerRegion);
-    const regionTeamIds = sortedRegionTeams.map((t) => t.id);
-
-    // For Kickoff: 12 teams, top 4 get byes, bottom 8 play R1 via random draw
-    const kickoffTeamIds = regionTeamIds.slice(0, 12);
-    if (kickoffTeamIds.length > 0) {
-      // Use TournamentService to properly create tournament with calendar events
-      tournamentService.createTournament(
-        `VCT ${playerRegion} Kickoff 2026`,
-        'kickoff',
-        'triple_elim',
-        playerRegion,
-        kickoffTeamIds,
-        new Date(seasonStartDate),
-        500000
-      );
-      console.log(`Created Kickoff tournament with ${kickoffTeamIds.length} teams`);
-    }
 
     // Mark game as initialized and started
     store.setInitialized(true);
@@ -449,87 +448,6 @@ export class GameInitService {
       playersByRegion,
       teamsByRegion,
     };
-  }
-
-  /**
-   * Sort teams according to official VCT 2026 Kickoff seeding for each region
-   * All regions follow the same format:
-   * - Seeds 1-4 (bye teams): Champions 2025 qualifiers
-   * - Seeds 5-12 (play in R1): Remaining teams
-   */
-  private sortTeamsByKickoffSeeding<T extends { name: string }>(teams: T[], region: Region): T[] {
-    // Get the appropriate seeding array for the region
-    const seedingArray = this.getKickoffSeeding(region);
-
-    // Create a map of team name (lowercase) to their seed position
-    const seedingMap = new Map<string, number>();
-    seedingArray.forEach((teamName, index) => {
-      seedingMap.set(teamName.toLowerCase(), index);
-    });
-
-    // Sort teams by their seeding position
-    return [...teams].sort((a, b) => {
-      const seedA = seedingMap.get(a.name.toLowerCase()) ?? 999;
-      const seedB = seedingMap.get(b.name.toLowerCase()) ?? 999;
-      return seedA - seedB;
-    });
-  }
-
-  /**
-   * Get the official Kickoff seeding array for a region
-   */
-  private getKickoffSeeding(region: Region): string[] {
-    switch (region) {
-      case 'Americas':
-        return AMERICAS_KICKOFF_SEEDING;
-      case 'EMEA':
-        return EMEA_KICKOFF_SEEDING;
-      case 'Pacific':
-        return PACIFIC_KICKOFF_SEEDING;
-      case 'China':
-        return CHINA_KICKOFF_SEEDING;
-      default:
-        return AMERICAS_KICKOFF_SEEDING;
-    }
-  }
-
-  /**
-   * Create a league tournament for tracking standings during Stage 1/2
-   * Uses round_robin format with all teams in the player's region
-   */
-  private createLeagueTournament(
-    region: Region,
-    type: 'stage1' | 'stage2',
-    allTeams: ReturnType<typeof teamManager.generateAllTeams>['teams'],
-    seasonStartDate: string,
-    dayOffset: number
-  ) {
-    const regionTeams = allTeams.filter((t) => t.region === region);
-    const regionTeamIds = regionTeams.map((t) => t.id);
-
-    // Calculate tournament dates
-    const startDate = new Date(seasonStartDate);
-    startDate.setDate(startDate.getDate() + dayOffset);
-
-    const tournamentName = `VCT ${region} ${type === 'stage1' ? 'Stage 1' : 'Stage 2'} 2026`;
-
-    // Create tournament with round_robin format
-    // Note: We use status 'upcoming' - it will become 'in_progress' when phase changes
-    const tournament = tournamentService.createTournament(
-      tournamentName,
-      type,
-      'round_robin',
-      region,
-      regionTeamIds,
-      startDate,
-      200000 // Prize pool for league phase
-    );
-
-    if (tournament) {
-      console.log(`Created ${type} tournament: ${tournamentName} with ${regionTeamIds.length} teams`);
-    }
-
-    return tournament;
   }
 
   /**

@@ -12,6 +12,7 @@
 - **Phase 13**: Masters/Champions completion modal
 - **Phase 14**: Masters → Stage league transition (post-Masters progression)
 - **Phase 15**: Stage 1 UI and Stage 1 Playoffs transition
+- **Phase 16**: Phase-based match filtering bugfix (Stage 1/2 during Masters)
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -224,6 +225,49 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 4. `handleStageCompletion()` calculates standings and opens StageCompletionModal
 5. On modal close, `executeTransition('stage1_to_stage1_playoffs')` creates playoffs
 6. Phase transitions to `stage1_playoffs`
+
+### Phase 16: Upfront Tournament Creation & Phase Filtering ✓ (Complete)
+
+**Architecture: Upfront Creation, Lazy Resolution**
+- [x] `GlobalTournamentScheduler.ts` - Creates ALL VCT tournaments at game initialization
+  - 4 regional Kickoffs (teams known)
+  - Masters 1 & 2 with TBD slots for qualifiers
+  - 4 regional Stage 1/2 leagues (teams known)
+  - 4 regional Stage 1/2 Playoffs with TBD slots
+  - Champions with TBD slots
+- [x] `TeamSlotResolver.ts` - Resolves TBD slots when teams qualify from previous tournaments
+- [x] New types: `TeamSlot`, `QualificationSource`, `TournamentStandingsEntry`
+- [x] Added `teamSlots` and `standings` fields to `Tournament` type
+- [x] Added `region` field to `MatchEventData` for multi-region visibility
+- [x] Per-tournament standings (separate from team career stats)
+- [x] Multi-region visibility - Tournament page can view any region's brackets
+
+**Phase-Based Match Filtering Bugfix**
+- [x] Fixed bug where Stage 1/Stage 2 matches were simulated during Masters phase
+- [x] Added `phase` property to `MatchEventData` type for league matches
+- [x] CalendarService `advanceDay()` now checks match phase before simulation
+- [x] League matches are skipped (not processed) if their phase doesn't match current phase
+- [x] Matches remain unprocessed until their correct phase is active
+
+**Root Cause:**
+- League matches (Stage 1, Stage 2) were pre-generated at game init with specific scheduled dates
+- CalendarService simulated ALL matches for a given day regardless of current game phase
+- EventScheduler already tagged matches with `phase` property, but it was never checked
+
+**Fix Location:**
+- `CalendarService.advanceDay()` (lines 64-75) - Added phase validation before match simulation
+- `src/types/calendar.ts` - Added `phase?: SeasonPhase` to `MatchEventData` interface
+
+**Behavior:**
+- Tournament matches (no phase property): Always simulated when their date arrives
+- League matches (with phase property): Only simulated when `currentPhase` matches `matchData.phase`
+- Skipped matches are not marked as processed, allowing them to run when phase becomes active
+
+**Key Architecture Benefits:**
+- Full VCT season visible from day 1 (predictable structure)
+- No runtime tournament creation - all structures exist, just need team resolution
+- Multi-region visibility - players can view any region's tournament brackets
+- Clean separation - scheduling, qualification, and match simulation are independent
 
 ### Future Phases (Not Started)
 - [ ] Coach system implementation

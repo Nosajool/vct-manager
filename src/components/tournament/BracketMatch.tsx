@@ -2,26 +2,61 @@
 //
 // Note: Match simulation is handled by the global TimeBar.
 // This component is view-only.
+//
+// Supports TBD placeholders with source information when teams are not yet qualified.
 
-import type { BracketMatch as BracketMatchType } from '../../types';
+import type { BracketMatch as BracketMatchType, Team } from '../../types';
+import type { TeamSlot } from '../../types/competition';
 import { useGameStore } from '../../store';
 
 interface BracketMatchProps {
   match: BracketMatchType;
   compact?: boolean;
   showScore?: boolean;
+  /** Optional team slots for TBD display - indexed by team position */
+  teamSlots?: { teamA?: TeamSlot; teamB?: TeamSlot };
 }
 
 export function BracketMatch({
   match,
   compact = false,
   showScore = true,
+  teamSlots,
 }: BracketMatchProps) {
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
 
   const teamA = match.teamAId ? teams[match.teamAId] : null;
   const teamB = match.teamBId ? teams[match.teamBId] : null;
+
+  // Helper to get team display name from TeamSlot
+  const getTeamDisplay = (
+    team: Team | null,
+    slot?: TeamSlot
+  ): { name: string; isTbd: boolean; description?: string } => {
+    if (team) {
+      return { name: team.name, isTbd: false };
+    }
+
+    if (slot) {
+      if (slot.type === 'resolved' && slot.teamId) {
+        const resolvedTeam = teams[slot.teamId];
+        return { name: resolvedTeam?.name || 'Unknown', isTbd: false };
+      }
+      if (slot.type === 'qualified_from') {
+        return {
+          name: 'TBD',
+          isTbd: true,
+          description: slot.description,
+        };
+      }
+    }
+
+    return { name: 'TBD', isTbd: true };
+  };
+
+  const teamADisplay = getTeamDisplay(teamA, teamSlots?.teamA);
+  const teamBDisplay = getTeamDisplay(teamB, teamSlots?.teamB);
 
   const isPlayerMatch =
     match.teamAId === playerTeamId || match.teamBId === playerTeamId;
@@ -54,10 +89,12 @@ export function BracketMatch({
 
   const TeamRow = ({
     team,
+    display,
     isWinner,
     score,
   }: {
     team: typeof teamA;
+    display: { name: string; isTbd: boolean; description?: string };
     isWinner: boolean;
     score?: number;
   }) => {
@@ -69,13 +106,24 @@ export function BracketMatch({
           isWinner ? 'bg-green-500/10' : ''
         } ${isPlayerTeam ? 'bg-vct-red/10' : ''}`}
       >
-        <span
-          className={`text-sm truncate ${
-            isWinner ? 'text-white font-medium' : 'text-vct-gray'
-          } ${isPlayerTeam ? 'text-vct-red' : ''}`}
-        >
-          {team?.name || 'TBD'}
-        </span>
+        <div className="flex flex-col min-w-0 flex-1">
+          <span
+            className={`text-sm truncate ${
+              display.isTbd
+                ? 'text-vct-gray/60 italic'
+                : isWinner
+                  ? 'text-white font-medium'
+                  : 'text-vct-gray'
+            } ${isPlayerTeam ? 'text-vct-red' : ''}`}
+          >
+            {display.name}
+          </span>
+          {display.isTbd && display.description && (
+            <span className="text-xs text-vct-gray/40 truncate">
+              {display.description}
+            </span>
+          )}
+        </div>
         {showScore && match.status === 'completed' && score !== undefined && (
           <span
             className={`text-sm font-mono ${
@@ -96,12 +144,14 @@ export function BracketMatch({
       >
         <TeamRow
           team={teamA}
+          display={teamADisplay}
           isWinner={match.winnerId === match.teamAId}
           score={match.result?.scoreTeamA}
         />
         <div className="border-t border-vct-gray/20" />
         <TeamRow
           team={teamB}
+          display={teamBDisplay}
           isWinner={match.winnerId === match.teamBId}
           score={match.result?.scoreTeamB}
         />
@@ -139,12 +189,14 @@ export function BracketMatch({
       <div className="space-y-1">
         <TeamRow
           team={teamA}
+          display={teamADisplay}
           isWinner={match.winnerId === match.teamAId}
           score={match.result?.scoreTeamA}
         />
         <div className="text-center text-xs text-vct-gray">vs</div>
         <TeamRow
           team={teamB}
+          display={teamBDisplay}
           isWinner={match.winnerId === match.teamBId}
           score={match.result?.scoreTeamB}
         />

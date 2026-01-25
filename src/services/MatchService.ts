@@ -5,6 +5,7 @@ import { useGameStore } from '../store';
 import { matchSimulator } from '../engine/match';
 import { tournamentService } from './TournamentService';
 import type { Match, MatchResult, Player, Team } from '../types';
+import type { TournamentStandingsEntry } from '../types/competition';
 
 export class MatchService {
   /**
@@ -119,7 +120,12 @@ export class MatchService {
     const roundsB = result.maps.reduce((sum, m) => sum + m.teamBScore, 0);
     const roundDiff = Math.abs(roundsA - roundsB);
 
-    // 4. Update team standings
+    // 4. Update TOURNAMENT standings (per-phase, resets between tournaments)
+    if (match.tournamentId) {
+      this.updateTournamentStandings(match.tournamentId, match, result, roundDiff);
+    }
+
+    // 5. Update team career standings (for display purposes)
     if (result.winnerId === match.teamAId) {
       recordWin(match.teamAId, roundDiff);
       recordLoss(match.teamBId, roundDiff);
@@ -128,9 +134,72 @@ export class MatchService {
       recordLoss(match.teamAId, roundDiff);
     }
 
-    // 5. Update player stats
+    // 6. Update player stats
     this.updatePlayerStats(playersA, result, match.teamAId, updatePlayer);
     this.updatePlayerStats(playersB, result, match.teamBId, updatePlayer);
+  }
+
+  /**
+   * Update tournament-specific standings (used for qualification decisions)
+   */
+  private updateTournamentStandings(
+    tournamentId: string,
+    _match: Match,
+    result: MatchResult,
+    roundDiff: number
+  ): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+    if (!tournament) return;
+
+    // Calculate map differential
+    const mapsWonA = result.scoreTeamA;
+    const mapsWonB = result.scoreTeamB;
+
+    // Get or initialize standings
+    let standings: TournamentStandingsEntry[] = tournament.standings ??
+      tournament.teamIds.map(id => ({
+        teamId: id,
+        wins: 0,
+        losses: 0,
+        roundDiff: 0,
+        mapDiff: 0
+      }));
+
+    // Update winner/loser entries
+    standings = standings.map(entry => {
+      if (entry.teamId === result.winnerId) {
+        return {
+          ...entry,
+          wins: entry.wins + 1,
+          roundDiff: entry.roundDiff + roundDiff,
+          mapDiff: entry.mapDiff + (mapsWonA > mapsWonB ? mapsWonA - mapsWonB : mapsWonB - mapsWonA)
+        };
+      }
+      if (entry.teamId === result.loserId) {
+        return {
+          ...entry,
+          losses: entry.losses + 1,
+          roundDiff: entry.roundDiff - roundDiff,
+          mapDiff: entry.mapDiff - (mapsWonA > mapsWonB ? mapsWonA - mapsWonB : mapsWonB - mapsWonA)
+        };
+      }
+      return entry;
+    });
+
+    // Sort standings: wins DESC, then roundDiff DESC, then mapDiff DESC
+    standings.sort((a, b) => {
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+      return b.mapDiff - a.mapDiff;
+    });
+
+    // Assign placements
+    standings.forEach((entry, idx) => {
+      entry.placement = idx + 1;
+    });
+
+    state.updateTournament(tournamentId, { standings });
   }
 
   /**
