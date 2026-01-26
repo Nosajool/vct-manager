@@ -2,11 +2,12 @@
 // Works for all tournament transitions: Kickoff → Masters, Stage Playoffs → Masters/Champions
 //
 // Step 1: Shows player's region qualifiers
-// Step 2: Shows all regions after simulating other tournaments (when user clicks "See All")
+// Step 2: Shows all regions (when user clicks "See All")
+//
+// Note: All qualifications are passed in from TournamentService (no simulation needed)
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from '../../store';
-import { regionalSimulationService } from '../../services/RegionalSimulationService';
 import { tournamentTransitionService } from '../../services/TournamentTransitionService';
 import type { QualificationRecord } from '../../store/slices/competitionSlice';
 import type { Region, TournamentRegion } from '../../types';
@@ -33,69 +34,21 @@ const BRACKET_DISPLAY = {
 
 export function QualificationModal({ data, onClose }: QualificationModalProps) {
   const [step, setStep] = useState<'player' | 'all'>('player');
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [allQualifications, setAllQualifications] = useState<QualificationRecord[] | null>(
-    data.allRegionsQualifiers
-  );
 
-  // Track if simulation has been triggered to avoid double-calling
-  const simulationTriggeredRef = useRef(false);
+  // All qualifications are now passed in from TournamentService (no simulation needed)
+  const allQualifications = data.allRegionsQualifiers;
 
   const closeModal = useGameStore((state) => state.closeModal);
   const setActiveView = useGameStore((state) => state.setActiveView);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
 
-  // Simulate other regions if not already done (synchronous version for closing)
-  const ensureOtherRegionsSimulatedSync = useCallback((): void => {
-    if (simulationTriggeredRef.current || allQualifications !== null) {
-      // Already simulated or in progress
-      return;
-    }
-
-    simulationTriggeredRef.current = true;
-
-    // Simulate other regions' Kickoff tournaments
-    const results = regionalSimulationService.simulateOtherKickoffs(
-      data.playerRegion as Region
-    );
-
-    // Add player's region qualifiers to the list
-    const allQuals = [data.playerRegionQualifiers, ...results];
-    setAllQualifications(allQuals);
-  }, [allQualifications, data.playerRegion, data.playerRegionQualifiers]);
-
-  // Simulate other regions if not already done
-  const ensureOtherRegionsSimulated = async (): Promise<void> => {
-    if (simulationTriggeredRef.current || allQualifications !== null) {
-      // Already simulated
-      return;
-    }
-
-    ensureOtherRegionsSimulatedSync();
+  // Handle showing all qualifiers (no simulation needed - data already available)
+  const handleSeeAllQualifiers = () => {
+    setStep('all');
   };
 
-  // Handle simulating other regions and showing them
-  const handleSeeAllQualifiers = async () => {
-    setIsSimulating(true);
-
-    // Small delay for UX feedback
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    try {
-      await ensureOtherRegionsSimulated();
-      setStep('all');
-    } catch (error) {
-      console.error('Failed to simulate other regions:', error);
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  // Handle closing the modal - always simulate other regions and execute transition
+  // Handle closing the modal and executing transition
   const handleClose = useCallback(() => {
-    // Ensure other regions are simulated before closing
-    ensureOtherRegionsSimulatedSync();
-
     // Execute tournament transition using generic service
     const result = tournamentTransitionService.executeTransition(
       data.transitionConfigId,
@@ -109,54 +62,41 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
     }
 
     onClose();
-  }, [ensureOtherRegionsSimulatedSync, onClose, data.transitionConfigId, data.playerRegion]);
+  }, [onClose, data.transitionConfigId, data.playerRegion]);
 
-  // Handle Continue button - simulate other regions and execute transition before closing
-  const handleContinue = async () => {
-    setIsSimulating(true);
+  // Handle Continue button - execute transition and close
+  const handleContinue = () => {
+    // Execute tournament transition using generic service
+    const result = tournamentTransitionService.executeTransition(
+      data.transitionConfigId,
+      data.playerRegion as Region
+    );
 
-    try {
-      // Ensure other regions are simulated before closing
-      await ensureOtherRegionsSimulated();
-
-      // Execute tournament transition using generic service
-      const result = tournamentTransitionService.executeTransition(
-        data.transitionConfigId,
-        data.playerRegion as Region
-      );
-
-      if (result.success) {
-        console.log(`Transition successful: ${result.tournamentName}`);
-      } else {
-        console.error('Failed to execute transition:', result.error);
-      }
-
-      onClose();
-    } catch (error) {
-      console.error('Failed to simulate other regions:', error);
-      // Still close the modal even if simulation fails
-      onClose();
-    } finally {
-      setIsSimulating(false);
+    if (result.success) {
+      console.log(`Transition successful: ${result.tournamentName}`);
+    } else {
+      console.error('Failed to execute transition:', result.error);
     }
+
+    onClose();
   };
 
-  // Handle escape key to close modal (with simulation)
+  // Handle escape key to close modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isSimulating) {
+      if (e.key === 'Escape') {
         handleClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleClose, isSimulating]);
+  }, [handleClose]);
 
-  // Handle backdrop click to close modal (with simulation)
+  // Handle backdrop click to close modal
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only close if clicking directly on backdrop, not on modal content
-    if (e.target === e.currentTarget && !isSimulating) {
+    if (e.target === e.currentTarget) {
       handleClose();
     }
   };
@@ -228,17 +168,15 @@ export function QualificationModal({ data, onClose }: QualificationModalProps) {
             <>
               <button
                 onClick={handleSeeAllQualifiers}
-                disabled={isSimulating}
-                className="px-4 py-2 bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded-lg font-medium transition-colors"
               >
-                {isSimulating ? 'Simulating...' : 'See All Qualifiers'}
+                See All Qualifiers
               </button>
               <button
                 onClick={handleContinue}
-                disabled={isSimulating}
-                className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
               >
-                {isSimulating ? 'Simulating...' : 'Continue'}
+                Continue
               </button>
             </>
           ) : (

@@ -902,3 +902,101 @@ All matches are scheduled at tournament creation time, not dynamically when they
 
 - **TournamentService**: Uses GlobalTournamentScheduler for playoff and Swiss scheduling
 - **TeamSlotResolver**: Uses GlobalTournamentScheduler for resolved tournament brackets
+
+---
+
+## Kickoff Completion and Qualification Flow
+
+### Overview
+
+When all 4 regional Kickoff tournaments complete, qualified teams need to be resolved into the Masters tournament. This flow ensures proper data consistency without creating duplicate tournaments.
+
+### Key Principle: Save All, Show Once
+
+All regions save their qualification records as they complete, but the modal only appears when ALL 4 kickoffs are done.
+
+### Data Flow
+
+```
+Kickoff Tournament Completes (any region)
+    │
+    ▼
+TournamentService.handleKickoffCompletion()
+    │
+    ├── Extract qualifiers (alpha, beta, omega)
+    ├── Save QualificationRecord for THIS region
+    └── Check: areAllKickoffsComplete()?
+            │
+            ├── No: Return (wait for other regions)
+            │
+            └── Yes: Show QualificationModal with ALL qualifications
+                        │
+                        ▼
+                  QualificationModal displays
+                        │
+                        ▼
+                  User clicks "Continue"
+                        │
+                        ▼
+                  TournamentTransitionService.executeTransition()
+                        │
+                        ▼
+                  TeamSlotResolver fills Masters slots
+```
+
+### Key Methods
+
+#### TournamentService.handleKickoffCompletion()
+
+```typescript
+handleKickoffCompletion(tournamentId: string): void {
+  // 1. Extract qualifiers (pure engine call)
+  const qualifiers = bracketManager.getQualifiers(tournament.bracket);
+
+  // 2. Save qualification for ALL regions (not just player's)
+  state.addQualification(record);
+
+  // 3. Only show modal when ALL 4 kickoffs complete
+  if (!this.areAllKickoffsComplete()) {
+    return;
+  }
+
+  // 4. Get all qualifications and show modal
+  const allQualifications = state.getQualificationsForType('kickoff');
+  state.openModal('qualification', {
+    allRegionsQualifiers: allQualifications,  // All 4 regions ready
+    ...
+  });
+}
+```
+
+#### TournamentService.areAllKickoffsComplete()
+
+```typescript
+private areAllKickoffsComplete(): boolean {
+  const kickoffs = Object.values(state.tournaments).filter(t => t.type === 'kickoff');
+  if (kickoffs.length !== 4) return false;
+  return kickoffs.every(t => t.championId || t.status === 'completed');
+}
+```
+
+### QualificationModal (Simplified)
+
+The modal no longer runs any simulation. All qualification data is passed in:
+
+```typescript
+// All qualifications are passed in from TournamentService (no simulation needed)
+const allQualifications = data.allRegionsQualifiers;
+
+// Handle showing all qualifiers (instant - data already available)
+const handleSeeAllQualifiers = () => {
+  setStep('all');
+};
+```
+
+### Benefits
+
+1. **No Duplicate Tournaments**: Single flow prevents RegionalSimulationService from creating duplicate kickoffs
+2. **Proper TeamSlotResolver Flow**: Original kickoffs complete → qualifications saved → TeamSlotResolver resolves Masters slots
+3. **Clean Modal UX**: All data available immediately, no "Simulating..." states
+4. **Consistent Data**: All 4 regions' qualifications in the store before modal shows

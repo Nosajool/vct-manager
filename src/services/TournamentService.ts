@@ -357,8 +357,8 @@ export class TournamentService {
    * Handle Kickoff tournament completion - extract qualifiers and trigger modal
    * Follows pattern: getState() -> engine calls -> state updates
    *
-   * IMPORTANT: Only triggers modal for the player's region tournament.
-   * Other regions are simulated in bulk via RegionalSimulationService.
+   * Saves QualificationRecord for ALL regions (not just player's).
+   * Only triggers modal when ALL 4 regional kickoffs are complete.
    */
   handleKickoffCompletion(tournamentId: string): void {
     const state = useGameStore.getState();
@@ -366,17 +366,6 @@ export class TournamentService {
 
     if (!tournament) {
       console.error(`Tournament not found for Kickoff completion: ${tournamentId}`);
-      return;
-    }
-
-    // Only trigger modal for player's region tournament
-    // Other regions are simulated in bulk and shouldn't show individual modals
-    const playerTeam = state.playerTeamId ? state.teams[state.playerTeamId] : null;
-    const isPlayerRegion = playerTeam && tournament.region === playerTeam.region;
-
-    if (!isPlayerRegion) {
-      // Not player's region - still save qualification but don't trigger modal
-      // (This will be handled by RegionalSimulationService)
       return;
     }
 
@@ -401,17 +390,46 @@ export class TournamentService {
       ],
     };
 
-    // Update store with qualification record
+    // Save qualification for ALL regions (not just player's)
     state.addQualification(record);
 
-    // Trigger modal via UISlice's existing system (only for player's region)
+    // Check if all 4 kickoffs are complete - only show modal when all are done
+    if (!this.areAllKickoffsComplete()) {
+      return;
+    }
+
+    // All kickoffs complete - show modal with all qualifications
+    const playerTeam = state.playerTeamId ? state.teams[state.playerTeamId] : null;
+    if (!playerTeam) return;
+
+    const allQualifications = state.getQualificationsForType('kickoff');
+    const playerRegionQual = allQualifications.find(q => q.region === playerTeam.region);
+
+    if (!playerRegionQual) {
+      console.error('Kickoff completion: Player region qualification not found');
+      return;
+    }
+
+    // Trigger modal via UISlice's existing system
     state.openModal('qualification', {
       phase: 'kickoff',
-      playerRegion: tournament.region,
-      playerRegionQualifiers: record,
-      allRegionsQualifiers: null,  // Filled later when user clicks "See All"
+      playerRegion: playerTeam.region,
+      playerRegionQualifiers: playerRegionQual,
+      allRegionsQualifiers: allQualifications, // All 4 regions already available
       transitionConfigId: 'kickoff_to_masters1', // Transition to Masters Santiago
     });
+  }
+
+  /**
+   * Check if all 4 regional kickoff tournaments are complete
+   */
+  private areAllKickoffsComplete(): boolean {
+    const state = useGameStore.getState();
+    const kickoffs = Object.values(state.tournaments).filter(t => t.type === 'kickoff');
+
+    if (kickoffs.length !== 4) return false;
+
+    return kickoffs.every(t => t.championId || t.status === 'completed');
   }
 
   /**
