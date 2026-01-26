@@ -11,6 +11,7 @@ import type {
   SwissStage,
   BracketStructure,
   BracketRound,
+  BracketMatch,
 } from '../types';
 import type {
   TeamSlot,
@@ -24,14 +25,27 @@ import {
 } from '../utils/constants';
 
 /**
+ * Match days configuration by region type
+ * Days of week: 0=Sunday, 1=Monday, ..., 6=Saturday
+ */
+const MATCH_DAYS = {
+  // Americas, Pacific, China: Thursday(4), Friday(5), Saturday(6), Sunday(0)
+  regional_standard: [4, 5, 6, 0],
+  // EMEA: Tuesday(2), Wednesday(3), Thursday(4), Friday(5)
+  emea: [2, 3, 4, 5],
+  // International: Thu-Sun, can extend to Mon(1), Tue(2) if needed
+  international: [4, 5, 6, 0, 1, 2],
+} as const;
+
+/**
  * VCT Season timing (days from season start)
  */
 const SEASON_TIMING = {
   kickoff: { start: 0, duration: 28 },
-  masters1: { start: 35, duration: 14 },
+  masters1: { start: 35, duration: 18 },  // Swiss (8 days) + Playoffs (10 days)
   stage1: { start: 56, duration: 35 },
   stage1_playoffs: { start: 98, duration: 14 },
-  masters2: { start: 119, duration: 14 },
+  masters2: { start: 119, duration: 18 }, // Swiss (8 days) + Playoffs (10 days)
   stage2: { start: 140, duration: 35 },
   stage2_playoffs: { start: 182, duration: 14 },
   champions: { start: 217, duration: 21 },
@@ -166,6 +180,9 @@ export class GlobalTournamentScheduler {
     let bracket = bracketManager.generateTripleElimination(teamIds, seeding);
     bracket = this.prefixBracketMatchIds(bracket, id);
 
+    // Schedule all bracket matches upfront on proper match days
+    this.scheduleAllBracketMatches(bracket, startDate, endDate, region);
+
     // Initialize standings
     const standings: TournamentStandingsEntry[] = teamIds.map((teamId) => ({
       teamId,
@@ -213,7 +230,11 @@ export class GlobalTournamentScheduler {
     const startDate = new Date(seasonStart);
     startDate.setDate(startDate.getDate() + dayOffset);
     const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 18); // Swiss + Playoffs
+    // Use duration from SEASON_TIMING to ensure tournament dates are consistent
+    const duration = mastersId === 'masters1'
+      ? SEASON_TIMING.masters1.duration
+      : SEASON_TIMING.masters2.duration;
+    endDate.setDate(endDate.getDate() + duration); // Swiss + Playoffs
 
     const id = this.generateId('masters', mastersId);
 
@@ -324,6 +345,9 @@ export class GlobalTournamentScheduler {
     // Generate round-robin bracket
     let bracket = bracketManager.generateRoundRobin(teamIds);
     bracket = this.prefixBracketMatchIds(bracket, id);
+
+    // Schedule all round-robin matches across the stage period on proper match days
+    this.scheduleRoundRobinMatches(bracket, startDate, endDate, region);
 
     // Initialize standings
     const standings: TournamentStandingsEntry[] = teamIds.map((teamId) => ({
@@ -622,6 +646,179 @@ export class GlobalTournamentScheduler {
         return CHINA_KICKOFF_SEEDING;
       default:
         return AMERICAS_KICKOFF_SEEDING;
+    }
+  }
+
+  // ============================================
+  // Match Scheduling Methods
+  // ============================================
+
+  /**
+   * Get valid match days for a region
+   */
+  getMatchDays(region: Region | 'International'): readonly number[] {
+    if (region === 'International') {
+      return MATCH_DAYS.international;
+    }
+    if (region === 'EMEA') {
+      return MATCH_DAYS.emea;
+    }
+    return MATCH_DAYS.regional_standard;
+  }
+
+  /**
+   * Find next valid match day from a given date
+   */
+  getNextMatchDay(date: Date, matchDays: readonly number[]): Date {
+    const result = new Date(date);
+    // Try up to 7 days to find a valid match day
+    for (let i = 0; i < 7; i++) {
+      if (matchDays.includes(result.getUTCDay())) {
+        return result;
+      }
+      result.setUTCDate(result.getUTCDate() + 1);
+    }
+    // Fallback to original date if no match day found (shouldn't happen)
+    return new Date(date);
+  }
+
+  /**
+   * Get the last valid match day before or on a given date
+   */
+  getLastMatchDayBefore(date: Date, matchDays: readonly number[]): Date {
+    const result = new Date(date);
+    // Try up to 7 days backward to find a valid match day
+    for (let i = 0; i < 7; i++) {
+      if (matchDays.includes(result.getUTCDay())) {
+        return result;
+      }
+      result.setUTCDate(result.getUTCDate() - 1);
+    }
+    // Fallback to original date if no match day found (shouldn't happen)
+    return new Date(date);
+  }
+
+  /**
+   * Schedule all matches in a bracket by round
+   * Earlier rounds get earlier dates, all matches in same round share same date
+   */
+  scheduleAllBracketMatches(
+    bracket: BracketStructure,
+    startDate: Date,
+    endDate: Date,
+    region: Region | 'International'
+  ): void {
+    const matchDays = this.getMatchDays(region);
+
+    // Collect all rounds in order: upper R1, R2..., middle R1, R2..., lower R1, R2...
+    const allRounds: BracketRound[] = [];
+
+    // Upper bracket rounds
+    for (const round of bracket.upper) {
+      allRounds.push(round);
+    }
+
+    // Middle bracket rounds (if exists - for triple elim)
+    if (bracket.middle) {
+      for (const round of bracket.middle) {
+        allRounds.push(round);
+      }
+    }
+
+    // Lower bracket rounds
+    if (bracket.lower) {
+      for (const round of bracket.lower) {
+        allRounds.push(round);
+      }
+    }
+
+    // Calculate how many match days we have in the range
+    const totalRounds = allRounds.length;
+    if (totalRounds === 0) return;
+
+    // Start from the first valid match day on or after startDate
+    let currentDate = this.getNextMatchDay(new Date(startDate), matchDays);
+
+    // Calculate roughly how many match days we need to spread rounds
+    // Leave the last match day for grand final
+    const lastMatchDay = this.getLastMatchDayBefore(new Date(endDate), matchDays);
+
+    // Distribute rounds across available match days
+    for (let roundIndex = 0; roundIndex < totalRounds; roundIndex++) {
+      const round = allRounds[roundIndex];
+
+      // Ensure we don't exceed tournament end date
+      if (currentDate > lastMatchDay) {
+        currentDate = new Date(lastMatchDay);
+        currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+        currentDate = this.getLastMatchDayBefore(currentDate, matchDays);
+      }
+
+      // Assign same date to all matches in round (they can be played in parallel)
+      for (const match of round.matches) {
+        match.scheduledDate = currentDate.toISOString();
+      }
+
+      // Move to next match day for next round
+      const nextDay = new Date(currentDate);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      currentDate = this.getNextMatchDay(nextDay, matchDays);
+    }
+
+    // Grand final on last match day before endDate
+    if (bracket.grandfinal) {
+      bracket.grandfinal.scheduledDate = lastMatchDay.toISOString();
+    }
+  }
+
+  /**
+   * Schedule round-robin matches across a date range
+   * Distributes matches evenly across valid match days
+   */
+  scheduleRoundRobinMatches(
+    bracket: BracketStructure,
+    startDate: Date,
+    endDate: Date,
+    region: Region | 'International'
+  ): void {
+    const matchDays = this.getMatchDays(region);
+
+    // Collect all matches from the round-robin bracket
+    const allMatches: BracketMatch[] = [];
+    for (const round of bracket.upper) {
+      for (const match of round.matches) {
+        allMatches.push(match);
+      }
+    }
+
+    if (allMatches.length === 0) return;
+
+    // Collect all valid match days in the range
+    const validMatchDays: Date[] = [];
+    const current = new Date(startDate);
+    while (current <= endDate) {
+      if (matchDays.includes(current.getUTCDay())) {
+        validMatchDays.push(new Date(current));
+      }
+      current.setUTCDate(current.getUTCDate() + 1);
+    }
+
+    if (validMatchDays.length === 0) return;
+
+    // Distribute matches evenly across match days
+    const matchesPerDay = Math.ceil(allMatches.length / validMatchDays.length);
+
+    let dayIndex = 0;
+    let matchCountOnDay = 0;
+
+    for (const match of allMatches) {
+      match.scheduledDate = validMatchDays[dayIndex].toISOString();
+      matchCountOnDay++;
+
+      if (matchCountOnDay >= matchesPerDay && dayIndex < validMatchDays.length - 1) {
+        dayIndex++;
+        matchCountOnDay = 0;
+      }
     }
   }
 

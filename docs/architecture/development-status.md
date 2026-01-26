@@ -15,6 +15,7 @@
 - **Phase 16**: Phase-based match filtering bugfix (Stage 1/2 during Masters)
 - **Phase 17**: Match type labels in simulation results (Upper Round 1 Match 2)
 - **Phase 18**: Clickable bracket matches to view match details
+- **Phase 19**: Upfront match scheduling with proper match days (tournament date overlap fix)
 
 ### 🚧 **Future Phases**
 - Coach system implementation
@@ -312,6 +313,39 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 - `src/components/tournament/SwissStageView.tsx` - Added `onMatchClick` prop and SwissMatchCard click handling
 - `src/pages/Tournament.tsx` - Added match selection state and MatchResult modal
 
+### Phase 19: Upfront Match Scheduling with Proper Match Days ✓ (Complete)
+- [x] `MATCH_DAYS` configuration with region-specific scheduling patterns
+  - Americas/Pacific/China: Thu, Fri, Sat, Sun
+  - EMEA: Tue, Wed, Thu, Fri
+  - International: Thu-Tue (flexible)
+- [x] `getMatchDays()` helper to get valid match days for a region
+- [x] `getNextMatchDay()` helper to find next valid match day from a date
+- [x] `getLastMatchDayBefore()` helper to find last valid match day before a date
+- [x] `scheduleAllBracketMatches()` - schedules all bracket matches upfront by round
+- [x] `scheduleRoundRobinMatches()` - distributes round-robin matches across match days
+- [x] Updated `createKickoff()` to schedule all bracket matches at creation
+- [x] Updated `createStageLeague()` to schedule all round-robin matches at creation
+- [x] Simplified `scheduleTournamentMatches()` - now only fallback logic
+- [x] Simplified `scheduleNewlyReadyMatches()` - only creates calendar events
+- [x] Updated `schedulePlayoffMatches()` to use proper match days
+- [x] Updated `createMatchEntitiesForSwissRound()` to use proper match days
+- [x] Updated TeamSlotResolver to use proper match days for Swiss and bracket scheduling
+- [x] Removed `calculateMatchDateWithinTournament()` from TournamentService and TeamSlotResolver
+
+**Key Benefits:**
+- Matches from different tournaments no longer overlap on same dates
+- Matches follow real VCT scheduling patterns (region-specific days of week)
+- All matches have dates assigned at tournament creation time
+- No dynamic date calculation based on current game date
+
+**Files Changed:**
+- `src/services/GlobalTournamentScheduler.ts` - Added MATCH_DAYS config and scheduling utilities
+- `src/services/TournamentService.ts` - Simplified scheduling, uses GlobalTournamentScheduler
+- `src/services/TeamSlotResolver.ts` - Uses GlobalTournamentScheduler for match scheduling
+
+**Bug Fixed:**
+- Tournament Match Date Overlap Bug (2026-01-25) - Multiple tournaments having matches on same day
+
 ### Future Phases (Not Started)
 - [ ] Coach system implementation
 - [ ] AI team improvements
@@ -321,3 +355,27 @@ See `docs/feature-backlog/completed/roster-management-improvements.md` for full 
 - [ ] Map veto system
 - [ ] Performance optimizations
 - [ ] Mobile responsiveness improvements
+
+---
+
+## Known Bugs
+
+*No known bugs at this time.*
+
+### Resolved Bugs
+
+#### Bug: Tournament Match Date Overlap (2026-01-25) ✅ FIXED
+
+**Status**: Fixed in Phase 19
+**Session Logs**:
+- `docs/session-logs/2026-01-25-masters-tournament-date-overlap-bug.md` (bug identification)
+- `docs/session-logs/2026-01-26-upfront-match-scheduling.md` (fix implementation)
+
+**Description**: Multiple Masters tournaments (Santiago and London) could have matches scheduled on the same day, even though they should be sequential events with no overlap.
+
+**Root Causes** (all addressed):
+1. Match scheduling used current game date + 1 day instead of tournament date range
+2. Fallback to tournament.startDate when scheduledDate was undefined
+3. Dynamic scheduling meant matches from future tournaments could get early dates
+
+**Fix**: Implemented upfront match scheduling with region-specific match days. All matches are now scheduled at tournament creation time based on bracket structure and proper VCT match day patterns.

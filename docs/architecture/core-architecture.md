@@ -853,3 +853,52 @@ Tournament standings are separate from team career stats:
 2. **No runtime tournament creation** - All structures exist, just need team resolution
 3. **Multi-region visibility** - Players can view any region's brackets
 4. **Clean separation** - Scheduling vs. qualification vs. match simulation are independent concerns
+
+---
+
+## Match Scheduling System
+
+### Region-Specific Match Days
+
+The VCT follows specific scheduling patterns by region:
+
+```typescript
+const MATCH_DAYS = {
+  // Americas, Pacific, China: Thursday(4), Friday(5), Saturday(6), Sunday(0)
+  regional_standard: [4, 5, 6, 0],
+  // EMEA: Tuesday(2), Wednesday(3), Thursday(4), Friday(5)
+  emea: [2, 3, 4, 5],
+  // International: Thu-Sun, can extend to Mon(1), Tue(2) if needed
+  international: [4, 5, 6, 0, 1, 2],
+} as const;
+```
+
+### Upfront Match Scheduling
+
+All matches are scheduled at tournament creation time, not dynamically when they become "ready":
+
+1. **Bracket Tournaments** (Kickoff, Playoffs)
+   - `scheduleAllBracketMatches()` assigns dates to all rounds based on bracket structure
+   - Earlier rounds get earlier dates
+   - All matches in the same round share the same date (parallel play)
+   - Grand final is scheduled on the last valid match day
+
+2. **Round-Robin Tournaments** (Stage 1/2 Leagues)
+   - `scheduleRoundRobinMatches()` distributes matches evenly across valid match days
+   - Matches are spread across the tournament's date range
+
+3. **Swiss Stages** (Masters, Champions)
+   - Round matches are scheduled on the next valid match day from current date
+   - Uses tournament region for match day selection (International for Masters)
+
+### Key Services
+
+- **GlobalTournamentScheduler**: Contains match day configuration and scheduling utilities
+  - `getMatchDays(region)`: Returns valid match days for a region
+  - `getNextMatchDay(date, matchDays)`: Finds next valid match day
+  - `getLastMatchDayBefore(date, matchDays)`: Finds last valid match day before date
+  - `scheduleAllBracketMatches()`: Schedules all bracket matches by round
+  - `scheduleRoundRobinMatches()`: Distributes round-robin matches
+
+- **TournamentService**: Uses GlobalTournamentScheduler for playoff and Swiss scheduling
+- **TeamSlotResolver**: Uses GlobalTournamentScheduler for resolved tournament brackets

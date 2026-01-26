@@ -148,6 +148,12 @@ export function BracketMatch({
     }
   };
 
+  // Format date for compact display (e.g., "Jan 15")
+  const formatCompactDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   if (compact) {
     return (
       <div
@@ -156,6 +162,20 @@ export function BracketMatch({
           isClickable ? 'cursor-pointer hover:border-vct-gray/50 transition-colors' : ''
         }`}
       >
+        {/* Date header for compact view */}
+        {match.scheduledDate && (
+          <div className="px-2 py-0.5 border-b border-vct-gray/20 flex items-center justify-between">
+            <span className="text-vct-gray/60 text-[10px]">
+              {formatCompactDate(match.scheduledDate)}
+            </span>
+            {match.status === 'completed' && (
+              <span className="text-green-500/60 text-[10px]">✓</span>
+            )}
+            {match.status === 'ready' && (
+              <span className="text-vct-red/60 text-[10px]">●</span>
+            )}
+          </div>
+        )}
         <TeamRow
           team={teamA}
           display={teamADisplay}

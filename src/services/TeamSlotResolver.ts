@@ -2,6 +2,7 @@
 
 import { useGameStore } from '../store';
 import { bracketManager } from '../engine/competition';
+import { globalTournamentScheduler } from './GlobalTournamentScheduler';
 import type {
   Tournament,
   MultiStageTournament,
@@ -365,6 +366,7 @@ export class TeamSlotResolver {
 
   /**
    * Create Match entities and calendar events for a Swiss round
+   * Uses proper match days based on tournament region
    */
   private createSwissRoundMatches(
     tournamentId: string,
@@ -382,14 +384,25 @@ export class TeamSlotResolver {
     const events: CalendarEvent[] = [];
     const currentDate = state.calendar.currentDate;
 
+    // Get proper match days for the tournament
+    const region = tournament.region === 'International' ? 'International' : tournament.region;
+    const matchDays = globalTournamentScheduler.getMatchDays(region);
+
+    // Find next valid match day from current date
+    let matchDate = globalTournamentScheduler.getNextMatchDay(new Date(currentDate), matchDays);
+
+    // Ensure match date is within tournament range
+    const tournamentStart = new Date(tournament.startDate);
+    const tournamentEnd = new Date(tournament.endDate);
+    if (matchDate < tournamentStart) matchDate = globalTournamentScheduler.getNextMatchDay(tournamentStart, matchDays);
+    if (matchDate > tournamentEnd) matchDate = globalTournamentScheduler.getLastMatchDayBefore(tournamentEnd, matchDays);
+
     for (const match of round.matches) {
       if (match.status !== 'ready' || !match.teamAId || !match.teamBId) continue;
 
-      // Set scheduled date
+      // Set scheduled date on proper match day
       if (!match.scheduledDate) {
-        const nextDay = new Date(currentDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        match.scheduledDate = nextDay.toISOString();
+        match.scheduledDate = matchDate.toISOString();
       }
 
       // Create Match entity
@@ -498,6 +511,7 @@ export class TeamSlotResolver {
 
   /**
    * Create Match entities for ready bracket matches
+   * Schedules all bracket matches upfront using proper match days
    */
   private createMatchEntitiesForBracket(
     tournamentId: string,
@@ -508,19 +522,24 @@ export class TeamSlotResolver {
 
     if (!tournament) return;
 
-    const events: CalendarEvent[] = [];
-    const currentDate = state.calendar.currentDate;
+    // Get proper match days for the tournament
+    const region = tournament.region === 'International' ? 'International' : tournament.region;
 
-    const processMatches = (matches: BracketMatch[]) => {
+    // Schedule all bracket matches upfront on proper match days
+    const startDate = new Date(tournament.startDate);
+    const endDate = new Date(tournament.endDate);
+    globalTournamentScheduler.scheduleAllBracketMatches(
+      bracket as import('../types').BracketStructure,
+      startDate,
+      endDate,
+      region
+    );
+
+    const events: CalendarEvent[] = [];
+
+    const processMatches = (matches: BracketMatch[], isGrandFinal: boolean = false) => {
       for (const match of matches) {
         if (match.status !== 'ready' || !match.teamAId || !match.teamBId) continue;
-
-        // Set scheduled date
-        if (!match.scheduledDate) {
-          const nextDay = new Date(currentDate);
-          nextDay.setDate(nextDay.getDate() + 1);
-          match.scheduledDate = nextDay.toISOString();
-        }
 
         // Create Match entity
         if (!state.matches[match.matchId]) {
@@ -528,7 +547,7 @@ export class TeamSlotResolver {
             id: match.matchId,
             teamAId: match.teamAId,
             teamBId: match.teamBId,
-            scheduledDate: match.scheduledDate,
+            scheduledDate: match.scheduledDate || tournament.startDate,
             status: 'scheduled',
             tournamentId,
           };
@@ -542,7 +561,7 @@ export class TeamSlotResolver {
         events.push({
           id: `event-match-${match.matchId}`,
           type: 'match',
-          date: match.scheduledDate,
+          date: match.scheduledDate || tournament.startDate,
           data: {
             matchId: match.matchId,
             homeTeamId: match.teamAId,
@@ -550,6 +569,7 @@ export class TeamSlotResolver {
             homeTeamName: teamA?.name || 'Unknown',
             awayTeamName: teamB?.name || 'Unknown',
             tournamentId,
+            isGrandFinal,
           },
           processed: false,
           required: true,
@@ -568,7 +588,7 @@ export class TeamSlotResolver {
     }
 
     if (bracket.grandfinal) {
-      processMatches([bracket.grandfinal]);
+      processMatches([bracket.grandfinal], true);
     }
 
     if (events.length > 0) {
