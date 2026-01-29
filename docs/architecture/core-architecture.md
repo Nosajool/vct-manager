@@ -888,20 +888,43 @@ All matches are scheduled at tournament creation time, not dynamically when they
    - Matches are spread across the tournament's date range
 
 3. **Swiss Stages** (Masters, Champions)
-   - Round matches are scheduled on the next valid match day from current date
+   - Round 1 matches are scheduled at Swiss stage initialization
+   - Subsequent rounds (Round 2, 3) are generated dynamically when the prior round completes
+   - New round matches are scheduled for the next valid match day **after** the current date (not including today), because today's events have already been processed when the round transition occurs
    - Uses tournament region for match day selection (International for Masters)
+
+4. **Stage Transitions** (Swiss → Playoff, League → Playoff)
+   - When a prior stage (Swiss or Round-Robin) completes, the playoff bracket is scheduled from the day after the current date
+   - If the tournament's original `endDate` has already passed (because the prior stage took longer than expected), the end date is automatically extended by 14 days to ensure all playoff rounds fit
+   - This applies to both `TournamentService.schedulePlayoffMatches()` (Swiss → Playoff) and `TeamSlotResolver.createMatchEntitiesForBracket()` (League → Playoff)
 
 ### Key Services
 
 - **GlobalTournamentScheduler**: Contains match day configuration and scheduling utilities
   - `getMatchDays(region)`: Returns valid match days for a region
-  - `getNextMatchDay(date, matchDays)`: Finds next valid match day
+  - `getNextMatchDay(date, matchDays)`: Finds next valid match day on or after date
   - `getLastMatchDayBefore(date, matchDays)`: Finds last valid match day before date
   - `scheduleAllBracketMatches()`: Schedules all bracket matches by round
   - `scheduleRoundRobinMatches()`: Distributes round-robin matches
 
 - **TournamentService**: Uses GlobalTournamentScheduler for playoff and Swiss scheduling
 - **TeamSlotResolver**: Uses GlobalTournamentScheduler for resolved tournament brackets
+
+### Date Display Convention
+
+All date display in UI components must use timezone-safe parsing. ISO date strings (e.g., `2026-02-08T00:00:00.000Z`) must be parsed by extracting the `YYYY-MM-DD` portion and constructing a local date, not by passing the ISO string directly to `new Date()`:
+
+```typescript
+// CORRECT: timezone-safe
+const datePart = dateStr.split('T')[0];
+const [year, month, day] = datePart.split('-').map(Number);
+const date = new Date(year, month - 1, day);
+
+// WRONG: timezone shift can change the displayed day
+const date = new Date(isoDateStr);
+```
+
+The `timeProgression.formatDate()` and `timeProgression.formatDateShort()` utilities handle this correctly via `parseAsLocalDate()`. Components that format dates directly (e.g., `BracketMatch`, `MatchCard`, `MatchResult`, `TournamentCard`) must use the same pattern.
 
 ---
 

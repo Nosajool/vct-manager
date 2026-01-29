@@ -148,10 +148,24 @@ export function BracketMatch({
     }
   };
 
+  // Parse date string as local date to avoid timezone shifts
+  // Handles both "YYYY-MM-DD" and ISO "YYYY-MM-DDTHH:MM:SS.sssZ" formats
+  const parseAsLocalDate = (dateStr: string): Date => {
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   // Format date for compact display (e.g., "Jan 15")
   const formatCompactDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+    const date = parseAsLocalDate(dateStr);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  // Format date for regular display
+  const formatDate = (dateStr: string) => {
+    const date = parseAsLocalDate(dateStr);
+    return date.toLocaleDateString('en-US');
   };
 
   if (compact) {
@@ -215,7 +229,7 @@ export function BracketMatch({
         </span>
         {match.scheduledDate && (
           <span className="text-xs text-vct-gray">
-            {new Date(match.scheduledDate).toLocaleDateString()}
+            {formatDate(match.scheduledDate)}
           </span>
         )}
       </div>

@@ -23,9 +23,16 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
 
   const winnerTeam = result.winnerId === teamA.id ? teamA : teamB;
 
+  // Parse date string as local date to avoid timezone shifts
+  const parseAsLocalDate = (dateStr: string): Date => {
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   // Format date
   const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
+    const date = parseAsLocalDate(dateStr);
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',

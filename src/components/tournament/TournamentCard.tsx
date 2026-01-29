@@ -47,8 +47,15 @@ export function TournamentCard({
     }
   };
 
+  // Parse date string as local date to avoid timezone shifts
+  const parseAsLocalDate = (dateStr: string): Date => {
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return parseAsLocalDate(dateStr).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
     });
@@ -202,6 +209,16 @@ export function TournamentCardMini({ tournament, onClick }: TournamentCardMiniPr
     }
   };
 
+  // Parse date string as local date to avoid timezone shifts
+  const formatDateLocal = (dateStr: string) => {
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
   return (
     <div
       onClick={onClick}
@@ -213,7 +230,7 @@ export function TournamentCardMini({ tournament, onClick }: TournamentCardMiniPr
       <div className="flex-1 min-w-0">
         <p className="text-sm text-white truncate">{tournament.name}</p>
         <p className="text-xs text-vct-gray">
-          {new Date(tournament.startDate).toLocaleDateString()}
+          {formatDateLocal(tournament.startDate)}
         </p>
       </div>
     </div>

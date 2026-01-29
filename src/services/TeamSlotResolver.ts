@@ -525,9 +525,22 @@ export class TeamSlotResolver {
     // Get proper match days for the tournament
     const region = tournament.region === 'International' ? 'International' : tournament.region;
 
-    // Schedule all bracket matches upfront on proper match days
-    const startDate = new Date(tournament.startDate);
-    const endDate = new Date(tournament.endDate);
+    // Start from the day AFTER current date (today's events already processed)
+    const currentDate = state.calendar.currentDate;
+    const tomorrow = new Date(currentDate);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    const startDate = tomorrow;
+
+    // Ensure endDate is in the future - if tournament.endDate has passed,
+    // extend it to accommodate the bracket
+    let endDate = new Date(tournament.endDate);
+    if (endDate <= startDate) {
+      // Tournament end date is in the past, extend it
+      endDate = new Date(startDate);
+      endDate.setUTCDate(endDate.getUTCDate() + 14);
+      console.log(`  Tournament ${tournament.name} endDate was in the past, extended to ${endDate.toISOString()}`);
+    }
+
     globalTournamentScheduler.scheduleAllBracketMatches(
       bracket as import('../types').BracketStructure,
       startDate,

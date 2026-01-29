@@ -1197,8 +1197,13 @@ export class TournamentService {
     const region = tournament.region === 'International' ? 'International' : tournament.region;
     const matchDays = globalTournamentScheduler.getMatchDays(region);
 
-    // Find next valid match day from current date
-    let matchDate = globalTournamentScheduler.getNextMatchDay(new Date(currentDate), matchDays);
+    // Find next valid match day AFTER current date
+    // This is critical: when generating Round N+1 after Round N completes on day X,
+    // day X's events have already been processed and the day is about to advance.
+    // Scheduling matches for day X would put them in the past.
+    const tomorrow = new Date(currentDate);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    let matchDate = globalTournamentScheduler.getNextMatchDay(tomorrow, matchDays);
 
     // Ensure match date is within tournament range
     const tournamentStart = new Date(tournament.startDate);
@@ -1348,9 +1353,22 @@ export class TournamentService {
     // Determine region for match days
     const region = tournament.region === 'International' ? 'International' : tournament.region;
 
-    // Start scheduling from current date
-    const startDate = new Date(currentCalendarDate);
-    const endDate = new Date(tournament.endDate);
+    // Start scheduling from the day AFTER current date (today's events already processed)
+    const tomorrow = new Date(currentCalendarDate);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    const startDate = tomorrow;
+
+    // Ensure endDate is in the future - if tournament.endDate has passed,
+    // extend it to accommodate the playoff bracket
+    // Estimate: ~7-10 match days for a typical playoff bracket (8 teams double elim)
+    let endDate = new Date(tournament.endDate);
+    if (endDate <= startDate) {
+      // Tournament end date is in the past, extend it
+      // Add 14 days from startDate to ensure enough match days
+      endDate = new Date(startDate);
+      endDate.setUTCDate(endDate.getUTCDate() + 14);
+      console.log(`  Tournament endDate was in the past, extended to ${endDate.toISOString()}`);
+    }
 
     console.log(`Scheduling playoff matches from ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
