@@ -119,7 +119,8 @@ export class GameInitService {
     store.setCurrentSeason(1);
     store.setLastSaveDate(seasonStartDate);
 
-    // Generate season schedule (matches, salary payments, etc.)
+    // Generate season schedule (salary payments, training/scrim availability, tournament markers)
+    // NOTE: Match events are now handled by GlobalTournamentScheduler
     console.log('Generating season schedule...');
     const scheduleEvents = eventScheduler.generateInitialSchedule(
       playerTeamId,
@@ -128,24 +129,7 @@ export class GameInitService {
       2026
     );
     store.addCalendarEvents(scheduleEvents);
-    console.log(`Generated ${scheduleEvents.length} calendar events`);
-
-    // Create Match entities for all match calendar events
-    // This ensures the Schedule page can find and simulate these matches
-    const matchEvents = scheduleEvents.filter((e) => e.type === 'match');
-    for (const event of matchEvents) {
-      const data = event.data as MatchEventData;
-      if (data.matchId && data.homeTeamId && data.awayTeamId) {
-        store.addMatch({
-          id: data.matchId,
-          teamAId: data.homeTeamId,
-          teamBId: data.awayTeamId,
-          scheduledDate: event.date,
-          status: 'scheduled',
-        });
-      }
-    }
-    console.log(`Created ${matchEvents.length} match entities`);
+    console.log(`Generated ${scheduleEvents.length} calendar events (non-match)`);
 
     // NEW: Create ALL tournaments upfront for ALL regions using GlobalTournamentScheduler
     console.log('Creating ALL VCT tournaments for all regions...');
@@ -186,21 +170,6 @@ export class GameInitService {
       }
     }
     console.log(`Created ${tournamentMatchCount} tournament match entities`);
-
-    // Link league schedule events to Stage 1/2 tournaments
-    // Find the player region's stage tournaments
-    const playerStage1 = Object.values(store.tournaments).find(
-      (t) => t.type === 'stage1' && t.region === playerRegion
-    );
-    const playerStage2 = Object.values(store.tournaments).find(
-      (t) => t.type === 'stage2' && t.region === playerRegion
-    );
-
-    this.linkLeagueMatchesToTournaments(
-      scheduleEvents,
-      playerStage1?.id,
-      playerStage2?.id
-    );
 
     // Mark game as initialized and started
     store.setInitialized(true);
@@ -450,54 +419,6 @@ export class GameInitService {
     };
   }
 
-  /**
-   * Link existing league match calendar events to their Stage 1/2 tournaments
-   * Updates both the calendar event data and the Match entity
-   */
-  private linkLeagueMatchesToTournaments(
-    scheduleEvents: ReturnType<typeof eventScheduler.generateInitialSchedule>,
-    stage1TournamentId: string | undefined,
-    stage2TournamentId: string | undefined
-  ): void {
-    if (!stage1TournamentId && !stage2TournamentId) {
-      console.warn('No Stage tournaments to link matches to');
-      return;
-    }
-
-    const store = useGameStore.getState();
-    let stage1Linked = 0;
-    let stage2Linked = 0;
-
-    for (const event of scheduleEvents) {
-      if (event.type !== 'match') continue;
-
-      const data = event.data as MatchEventData & { phase?: string };
-      if (!data.matchId) continue;
-
-      // Determine which tournament this match belongs to
-      let tournamentId: string | undefined;
-      if (data.phase === 'stage1' && stage1TournamentId) {
-        tournamentId = stage1TournamentId;
-        stage1Linked++;
-      } else if (data.phase === 'stage2' && stage2TournamentId) {
-        tournamentId = stage2TournamentId;
-        stage2Linked++;
-      }
-
-      if (tournamentId) {
-        // Update the Match entity to reference the tournament
-        const match = store.matches[data.matchId];
-        if (match) {
-          store.updateMatch(data.matchId, { tournamentId });
-        }
-
-        // Update the calendar event data to include tournamentId
-        data.tournamentId = tournamentId;
-      }
-    }
-
-    console.log(`Linked ${stage1Linked} Stage 1 matches and ${stage2Linked} Stage 2 matches to tournaments`);
-  }
 }
 
 // Export singleton instance

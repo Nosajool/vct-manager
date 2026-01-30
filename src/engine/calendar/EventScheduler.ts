@@ -11,6 +11,8 @@ export interface ScheduleOptions {
   seasonYear: number;
   includeTrainingDays?: boolean;
   includeRestDays?: boolean;
+  /** Skip league match events (use when GlobalTournamentScheduler handles matches) */
+  skipMatchEvents?: boolean;
 }
 
 /**
@@ -422,7 +424,7 @@ export class EventScheduler {
   /**
    * Generate a complete season schedule
    * For Phase 3, this generates a simplified schedule with:
-   * - Match events for player's team (2 per week)
+   * - Match events for player's team (2 per week) - UNLESS skipMatchEvents is true
    * - Monthly salary payments
    * - Tournament phase markers
    */
@@ -432,30 +434,36 @@ export class EventScheduler {
     options: ScheduleOptions
   ): CalendarEvent[] {
     const allEvents: CalendarEvent[] = [];
-    const { startDate, seasonYear } = options;
+    const { startDate, seasonYear, skipMatchEvents = false } = options;
 
     // Generate salary payments for the year (12 months)
     const salaryEvents = this.scheduleSalaryPayments(startDate, 12);
     allEvents.push(...salaryEvents);
 
-    // For Phase 3, simplified match schedule:
-    // Generate league matches only during Stage 1 and Stage 2 periods
-    // Avoid all tournament phases (Kickoff, Masters 1, Masters 2, Champions) and offseason
-    const leaguePhases = EventScheduler.SEASON_STRUCTURE.filter(
-      (s) => s.phase === 'stage1' || s.phase === 'stage2'
-    );
+    // Track match dates for training/scrim availability (even if we don't generate match events)
+    let matchDates: string[] = [];
 
-    const matchEvents = this.generateLeagueMatchSchedule({
-      seasonStartDate: startDate,
-      leaguePhases,
-      matchesPerWeek: 2,
-      playerTeamId,
-      opponents,
-    });
-    allEvents.push(...matchEvents);
+    // Only generate match events if not skipped (GlobalTournamentScheduler handles them now)
+    if (!skipMatchEvents) {
+      // For Phase 3, simplified match schedule:
+      // Generate league matches only during Stage 1 and Stage 2 periods
+      // Avoid all tournament phases (Kickoff, Masters 1, Masters 2, Champions) and offseason
+      const leaguePhases = EventScheduler.SEASON_STRUCTURE.filter(
+        (s) => s.phase === 'stage1' || s.phase === 'stage2'
+      );
+
+      const matchEvents = this.generateLeagueMatchSchedule({
+        seasonStartDate: startDate,
+        leaguePhases,
+        matchesPerWeek: 2,
+        playerTeamId,
+        opponents,
+      });
+      allEvents.push(...matchEvents);
+      matchDates = matchEvents.map((e) => e.date);
+    }
 
     // Generate training days (available on non-match days)
-    const matchDates = matchEvents.map((e) => e.date);
     const seasonEndDate = this.addDays(startDate, 365); // Full year
     const trainingEvents = this.scheduleTrainingDays(startDate, seasonEndDate, matchDates);
     allEvents.push(...trainingEvents);
@@ -489,6 +497,9 @@ export class EventScheduler {
   /**
    * Generate initial schedule for game start
    * Called when a new game is initialized
+   *
+   * NOTE: Match events are now handled by GlobalTournamentScheduler, so we skip them here.
+   * This generates salary payments, training/scrim availability, and tournament phase markers.
    */
   generateInitialSchedule(
     playerTeamId: string,
@@ -507,6 +518,8 @@ export class EventScheduler {
     return this.generateSeasonSchedule(playerTeamId, opponents, {
       startDate,
       seasonYear,
+      // Skip match events - GlobalTournamentScheduler now handles all match scheduling
+      skipMatchEvents: true,
     });
   }
 

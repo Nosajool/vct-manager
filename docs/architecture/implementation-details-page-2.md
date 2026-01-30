@@ -765,22 +765,26 @@ Masters tournaments use a two-stage format:
 
 Stage 1 and Stage 2 use round-robin format within groups:
 
-**Group Assignment (Snake Draft):**
-```
-12 regional teams sorted by org value → snake drafted into 2 groups
+**Group Assignment:**
+- 12 regional teams split into 2 groups of 6 teams each
+- Groups created by `BracketManager.generateRoundRobin(teamIds, 2)`
+- Each group generates 15 matches (6 choose 2)
 
-Sorted: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 (by strength)
-Group A: 1, 4, 5, 8, 9, 12 (snake picks: 0,3,4,7,8,11)
-Group B: 2, 3, 6, 7, 10, 11 (snake picks: 1,2,5,6,9,10)
-```
-
-**Match Scheduling:**
-- Player's team placed in Group A with top-seeded opponents
-- Each team plays every other group opponent once (5 matches per stage)
+**Match Scheduling (Circle Method):**
+- `GlobalTournamentScheduler.scheduleRoundRobinMatches()` organizes matches into 5 match weeks
+- Uses the **circle method** (polygon algorithm) to generate pairings:
+  - Fix one team, rotate the others
+  - Ensures each team plays exactly once per week
+  - No team has multiple matches on the same day
+- Each team plays 5 matches (one against each group opponent)
 - 1 match per week over 5 weeks
-- Alternating home/away
 
-**Code Location:** `EventScheduler.generateLeagueMatchSchedule()`
+**Code Location:** `GlobalTournamentScheduler.createStageLeague()`, `scheduleRoundRobinMatches()`, `generateCircleMethodPairings()`
+
+**Important Architecture Note:**
+- `EventScheduler` no longer generates match events - it only handles salary payments, training/scrim availability, and tournament phase markers
+- All match scheduling is consolidated in `GlobalTournamentScheduler`
+- This prevents duplicate match creation that previously caused scheduling conflicts
 
 ### 6. Triple Elimination (VCT Kickoff)
 

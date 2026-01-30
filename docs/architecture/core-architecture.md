@@ -884,8 +884,11 @@ All matches are scheduled at tournament creation time, not dynamically when they
    - Grand final is scheduled on the last valid match day
 
 2. **Round-Robin Tournaments** (Stage 1/2 Leagues)
-   - `scheduleRoundRobinMatches()` distributes matches evenly across valid match days
-   - Matches are spread across the tournament's date range
+   - 12 teams split into 2 groups of 6 teams each (`generateRoundRobin(teamIds, 2)`)
+   - Each team plays 5 matches (one against each group opponent)
+   - `scheduleRoundRobinMatches()` uses the **circle method** (polygon algorithm) to organize matches into 5 match weeks
+   - Each team plays exactly once per week - no team has multiple matches on the same day
+   - Matches are spread across the tournament's 5-week date range
 
 3. **Swiss Stages** (Masters, Champions)
    - Round 1 matches are scheduled at Swiss stage initialization
@@ -905,7 +908,8 @@ All matches are scheduled at tournament creation time, not dynamically when they
   - `getNextMatchDay(date, matchDays)`: Finds next valid match day on or after date
   - `getLastMatchDayBefore(date, matchDays)`: Finds last valid match day before date
   - `scheduleAllBracketMatches()`: Schedules all bracket matches by round
-  - `scheduleRoundRobinMatches()`: Distributes round-robin matches
+  - `scheduleRoundRobinMatches()`: Organizes round-robin matches into match weeks using circle method
+  - `generateCircleMethodPairings()`: Generates round-robin pairings ensuring each team plays once per week
 
 - **TournamentService**: Uses GlobalTournamentScheduler for playoff and Swiss scheduling
 - **TeamSlotResolver**: Uses GlobalTournamentScheduler for resolved tournament brackets

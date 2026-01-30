@@ -342,8 +342,9 @@ export class GlobalTournamentScheduler {
 
     const id = this.generateId(stage, region);
 
-    // Generate round-robin bracket
-    let bracket = bracketManager.generateRoundRobin(teamIds);
+    // Generate round-robin bracket with 2 groups of 6 teams
+    // Each team plays 5 matches (one against each other team in their group)
+    let bracket = bracketManager.generateRoundRobin(teamIds, 2);
     bracket = this.prefixBracketMatchIds(bracket, id);
 
     // Schedule all round-robin matches across the stage period on proper match days
@@ -773,7 +774,8 @@ export class GlobalTournamentScheduler {
 
   /**
    * Schedule round-robin matches across a date range
-   * Distributes matches evenly across valid match days
+   * Organizes matches into "match weeks" where each team plays at most once per week
+   * Uses the circle method to create proper round-robin pairings
    */
   scheduleRoundRobinMatches(
     bracket: BracketStructure,
@@ -783,43 +785,155 @@ export class GlobalTournamentScheduler {
   ): void {
     const matchDays = this.getMatchDays(region);
 
-    // Collect all matches from the round-robin bracket
-    const allMatches: BracketMatch[] = [];
+    // Collect all matches from the round-robin bracket, organized by group
+    const groupMatches: Map<string, BracketMatch[]> = new Map();
     for (const round of bracket.upper) {
+      const groupId = round.roundId;
+      if (!groupMatches.has(groupId)) {
+        groupMatches.set(groupId, []);
+      }
       for (const match of round.matches) {
-        allMatches.push(match);
+        groupMatches.get(groupId)!.push(match);
       }
     }
 
-    if (allMatches.length === 0) return;
+    if (groupMatches.size === 0) return;
 
-    // Collect all valid match days in the range
-    const validMatchDays: Date[] = [];
+    // Collect all valid match days in the range, grouped by week
+    // A "week" starts on the first match day of each 7-day period
+    const matchWeeks: Date[][] = [];
     const current = new Date(startDate);
+    let currentWeek: Date[] = [];
+
     while (current <= endDate) {
+      // Check if we've started a new week (7 days from week start)
+      const daysSinceWeekStart = Math.floor(
+        (current.getTime() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000)
+      );
+      const currentWeekNumber = Math.floor(daysSinceWeekStart / 7);
+
+      if (matchWeeks.length < currentWeekNumber + 1) {
+        // Start a new week
+        if (currentWeek.length > 0) {
+          matchWeeks.push(currentWeek);
+        }
+        currentWeek = [];
+      }
+
       if (matchDays.includes(current.getUTCDay())) {
-        validMatchDays.push(new Date(current));
+        currentWeek.push(new Date(current));
       }
       current.setUTCDate(current.getUTCDate() + 1);
     }
 
-    if (validMatchDays.length === 0) return;
+    // Don't forget the last week
+    if (currentWeek.length > 0) {
+      matchWeeks.push(currentWeek);
+    }
 
-    // Distribute matches evenly across match days
-    const matchesPerDay = Math.ceil(allMatches.length / validMatchDays.length);
+    if (matchWeeks.length === 0) return;
 
-    let dayIndex = 0;
-    let matchCountOnDay = 0;
+    // For each group, organize matches into match weeks using circle method
+    for (const [_groupId, matches] of groupMatches) {
+      // Get unique team IDs from matches
+      const teamIds = new Set<string>();
+      for (const match of matches) {
+        if (match.teamAId) teamIds.add(match.teamAId);
+        if (match.teamBId) teamIds.add(match.teamBId);
+      }
 
-    for (const match of allMatches) {
-      match.scheduledDate = validMatchDays[dayIndex].toISOString();
-      matchCountOnDay++;
+      const teams = Array.from(teamIds);
+      const numTeams = teams.length;
 
-      if (matchCountOnDay >= matchesPerDay && dayIndex < validMatchDays.length - 1) {
-        dayIndex++;
-        matchCountOnDay = 0;
+      if (numTeams === 0) continue;
+
+      // Generate match weeks using circle method (polygon algorithm)
+      // For n teams, we need n-1 weeks, with n/2 matches per week
+      const matchWeekPairings = this.generateCircleMethodPairings(teams);
+
+      // Create a lookup for matches by team pair
+      const matchLookup = new Map<string, BracketMatch>();
+      for (const match of matches) {
+        if (match.teamAId && match.teamBId) {
+          const key1 = `${match.teamAId}-${match.teamBId}`;
+          const key2 = `${match.teamBId}-${match.teamAId}`;
+          matchLookup.set(key1, match);
+          matchLookup.set(key2, match);
+        }
+      }
+
+      // Assign dates to matches based on match week
+      for (let weekIndex = 0; weekIndex < matchWeekPairings.length; weekIndex++) {
+        const pairings = matchWeekPairings[weekIndex];
+        const weekDates = matchWeeks[Math.min(weekIndex, matchWeeks.length - 1)];
+
+        if (!weekDates || weekDates.length === 0) continue;
+
+        // Schedule all matches in this week on the first match day of the week
+        // (or distribute across the week's match days if desired)
+        const matchDate = weekDates[0];
+
+        for (const [teamA, teamB] of pairings) {
+          const key = `${teamA}-${teamB}`;
+          const match = matchLookup.get(key);
+          if (match) {
+            match.scheduledDate = matchDate.toISOString();
+          }
+        }
       }
     }
+  }
+
+  /**
+   * Generate round-robin pairings organized by match week
+   * Uses circle method: fix team 0, rotate teams 1 through n-1
+   * Returns an array of match weeks, each containing pairs of team IDs
+   */
+  private generateCircleMethodPairings(teams: string[]): [string, string][][] {
+    const n = teams.length;
+
+    // If odd number of teams, add a "bye" placeholder
+    const teamList = [...teams];
+    const hasBye = n % 2 === 1;
+    if (hasBye) {
+      teamList.push('BYE');
+    }
+
+    const numTeams = teamList.length;
+    const numWeeks = numTeams - 1; // 5 weeks for 6 teams
+    const weeks: [string, string][][] = [];
+
+    // Circle method: team 0 is fixed, others rotate
+    // Create an array of indices excluding 0 (the fixed team)
+    const rotating = teamList.slice(1); // [1, 2, 3, 4, 5] for 6 teams
+
+    for (let week = 0; week < numWeeks; week++) {
+      const pairings: [string, string][] = [];
+
+      // Team 0 (fixed) plays against the first rotating team
+      const opponent0 = rotating[0];
+      if (teamList[0] !== 'BYE' && opponent0 !== 'BYE') {
+        pairings.push([teamList[0], opponent0]);
+      }
+
+      // Pair the rest: 1 with last, 2 with second-to-last, etc.
+      for (let i = 1; i < numTeams / 2; i++) {
+        const teamA = rotating[i];
+        const teamB = rotating[numTeams - 1 - i];
+
+        if (teamA !== 'BYE' && teamB !== 'BYE') {
+          pairings.push([teamA, teamB]);
+        }
+      }
+
+      weeks.push(pairings);
+
+      // Rotate: move first element to end
+      const first = rotating.shift()!;
+      rotating.push(first);
+    }
+
+    return weeks;
   }
 
   /**
