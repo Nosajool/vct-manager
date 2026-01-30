@@ -12,6 +12,7 @@ import {
   TrainingModal,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
+import { getPhaseStatusDisplay } from '../utils/phaseStatus';
 
 export function Dashboard() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
@@ -25,10 +26,23 @@ export function Dashboard() {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const getNextMatchEvent = useGameStore((state) => state.getNextMatchEvent);
 
+  const tournaments = useGameStore((state) => state.tournaments);
+
   const playerCount = Object.keys(players).length;
   const teamCount = Object.keys(teams).length;
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
   const nextMatch = getNextMatchEvent();
+
+  // Get phase-appropriate status display
+  const phaseStatus = useMemo(() => {
+    if (!playerTeamId || !playerTeam) return null;
+    return getPhaseStatusDisplay(
+      calendar.currentPhase,
+      playerTeamId,
+      playerTeam,
+      tournaments
+    );
+  }, [calendar.currentPhase, playerTeamId, playerTeam, tournaments]);
 
   // Get financial summary
   const financialSummary = useMemo(() => {
@@ -75,9 +89,9 @@ export function Dashboard() {
             <div className="flex items-center gap-8">
               <div className="text-center">
                 <p className="text-vct-light font-bold text-xl">
-                  {playerTeam.standings.wins}W - {playerTeam.standings.losses}L
+                  {phaseStatus?.label || `${playerTeam.standings.wins}W - ${playerTeam.standings.losses}L`}
                 </p>
-                <p className="text-vct-gray text-sm">Record</p>
+                <p className="text-vct-gray text-sm">{phaseStatus?.sublabel || 'Record'}</p>
               </div>
               <div className="text-right">
                 <p className={`font-bold text-xl ${playerTeam.finances.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>

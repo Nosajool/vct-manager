@@ -13,6 +13,7 @@ import {
   DayDetailPanel,
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
+import { getPhaseStatusDisplay } from '../utils/phaseStatus';
 import type { Match, MatchEventData } from '../types';
 
 type ViewMode = 'calendar' | 'results';
@@ -44,6 +45,17 @@ export function Schedule() {
   );
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
+
+  // Get phase-appropriate status display
+  const phaseStatus = useMemo(() => {
+    if (!playerTeamId || !playerTeam) return null;
+    return getPhaseStatusDisplay(
+      calendar.currentPhase,
+      playerTeamId,
+      playerTeam,
+      tournaments
+    );
+  }, [calendar.currentPhase, playerTeamId, playerTeam, tournaments]);
 
   // Get all events for calendar display
   const allEvents = useMemo(() => {
@@ -127,33 +139,73 @@ export function Schedule() {
         </div>
 
         {/* Team Record */}
-        {playerTeam && (
+        {playerTeam && phaseStatus && (
           <div className="flex items-center gap-6 text-sm">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-400">
-                {playerTeam.standings.wins}
-              </p>
-              <p className="text-vct-gray">Wins</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-red-400">
-                {playerTeam.standings.losses}
-              </p>
-              <p className="text-vct-gray">Losses</p>
-            </div>
-            <div className="text-center">
-              <p
-                className={`text-2xl font-bold ${
-                  playerTeam.standings.roundDiff >= 0
-                    ? 'text-green-400'
-                    : 'text-red-400'
-                }`}
-              >
-                {playerTeam.standings.roundDiff >= 0 ? '+' : ''}
-                {playerTeam.standings.roundDiff}
-              </p>
-              <p className="text-vct-gray">RD</p>
-            </div>
+            {phaseStatus.type === 'bracket' ? (
+              // Bracket display - show position
+              <div className="text-center">
+                <p className={`text-2xl font-bold ${
+                  phaseStatus.bracketPosition?.isEliminated
+                    ? 'text-red-400'
+                    : phaseStatus.bracketPosition?.isChampion
+                    ? 'text-yellow-400'
+                    : 'text-vct-light'
+                }`}>
+                  {phaseStatus.label}
+                </p>
+                <p className="text-vct-gray text-xs">{phaseStatus.sublabel}</p>
+              </div>
+            ) : phaseStatus.type === 'swiss' ? (
+              // Swiss display - show record
+              <div className="text-center">
+                <p className="text-2xl font-bold text-vct-light">
+                  {phaseStatus.label}
+                </p>
+                <p className="text-vct-gray text-xs">{phaseStatus.sublabel}</p>
+              </div>
+            ) : phaseStatus.record ? (
+              // League/career display - show full record with RD
+              <>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-400">
+                    {phaseStatus.record.wins}
+                  </p>
+                  <p className="text-vct-gray">Wins</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-400">
+                    {phaseStatus.record.losses}
+                  </p>
+                  <p className="text-vct-gray">Losses</p>
+                </div>
+                {phaseStatus.record.roundDiff !== undefined && (
+                  <div className="text-center">
+                    <p
+                      className={`text-2xl font-bold ${
+                        phaseStatus.record.roundDiff >= 0
+                          ? 'text-green-400'
+                          : 'text-red-400'
+                      }`}
+                    >
+                      {phaseStatus.record.roundDiff >= 0 ? '+' : ''}
+                      {phaseStatus.record.roundDiff}
+                    </p>
+                    <p className="text-vct-gray">RD</p>
+                  </div>
+                )}
+                <div className="text-center ml-2 border-l border-vct-gray/30 pl-4">
+                  <p className="text-xs text-vct-gray">{phaseStatus.sublabel}</p>
+                </div>
+              </>
+            ) : (
+              // Fallback
+              <div className="text-center">
+                <p className="text-2xl font-bold text-vct-light">
+                  {phaseStatus.label}
+                </p>
+                <p className="text-vct-gray text-xs">{phaseStatus.sublabel}</p>
+              </div>
+            )}
           </div>
         )}
       </div>

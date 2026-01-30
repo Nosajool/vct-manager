@@ -733,9 +733,9 @@ export class TournamentService {
   }
 
   /**
-   * Calculate league standings from team standings
+   * Calculate league standings from tournament-specific standings
    * Used for Stage 1/2 tournaments where matches aren't in a bracket
-   * Takes standings directly from team.standings (updated by recordWin/recordLoss)
+   * Takes standings from tournament.standings (updated per-tournament, reset between phases)
    */
   calculateLeagueStandings(tournamentId: string): StandingsEntry[] {
     const state = useGameStore.getState();
@@ -745,15 +745,19 @@ export class TournamentService {
       return [];
     }
 
-    // Build standings from team.standings for each team in the tournament
+    // Build standings from tournament.standings (per-tournament stats, not career stats)
+    // This ensures Stage 1 shows only Stage 1 results, not cumulative career stats
     const standings: StandingsEntry[] = tournament.teamIds.map((teamId) => {
       const team = state.teams[teamId];
+      // Find this team's tournament-specific standing
+      const tournamentStanding = tournament.standings?.find(s => s.teamId === teamId);
+
       return {
         teamId,
         teamName: team?.name || 'Unknown',
-        wins: team?.standings.wins || 0,
-        losses: team?.standings.losses || 0,
-        roundDiff: team?.standings.roundDiff || 0,
+        wins: tournamentStanding?.wins || 0,
+        losses: tournamentStanding?.losses || 0,
+        roundDiff: tournamentStanding?.roundDiff || 0,
       };
     });
 

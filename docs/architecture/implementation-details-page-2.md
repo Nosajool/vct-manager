@@ -1467,6 +1467,78 @@ tournamentTransitionService.executeTransition('stage2_playoffs_to_masters_bangko
 // No new service code needed!
 ```
 
+### 23. Phase-Appropriate Team Status Display
+
+**Status**: Implemented - Dashboard and Schedule show tournament-specific records based on current phase.
+
+**Problem Solved**:
+1. Dashboard/Schedule always showed cumulative career stats (`team.standings`) instead of tournament-specific records
+2. When entering Stage 1 after Masters Santiago, teams showed carried-over records instead of 0W-0L
+3. StandingsTable also used career stats due to `calculateLeagueStandings()` implementation
+
+**Solution Architecture**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  getPhaseStatusDisplay(phase, teamId, team, tournaments)    │
+│  └── Returns: { type, label, sublabel, record?, position? } │
+└─────────────────────────────────────────────────────────────┘
+                              │
+           ┌──────────────────┼──────────────────┐
+           ▼                  ▼                  ▼
+    ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+    │   Bracket   │   │    Swiss    │   │   League    │
+    │   Stages    │   │    Stage    │   │   Stages    │
+    └─────────────┘   └─────────────┘   └─────────────┘
+    - kickoff         - masters1/2      - stage1
+    - stage1_playoffs   (swiss phase)   - stage2
+    - stage2_playoffs
+    - champions
+
+    Display:          Display:          Display:
+    "Upper R2"        "1-0"             "2W - 1L"
+    "Eliminated"      "Qualified"       "#3 VCT Stage 1"
+    "Champion"        "Eliminated"
+```
+
+**Key Implementation Details**:
+
+1. **Phase Status Utility** (`src/utils/phaseStatus.ts`):
+   - `findActiveTournament()` - Finds tournament for current phase and team region
+   - `getTeamBracketPosition()` - Determines team's position in bracket (round, eliminated status)
+   - `getPhaseStatusDisplay()` - Main entry point, returns display data
+
+2. **Data Sources by Phase Type**:
+   | Phase Type | Data Source | Example Display |
+   |------------|-------------|-----------------|
+   | Bracket | `bracket` structure traversal | "Upper R2", "Lower Final" |
+   | Swiss | `tournament.swissStage.standings` | "1-0", "Qualified" |
+   | League | `tournament.standings` | "2W - 1L" |
+   | Offseason | `team.standings` (career) | "15W - 8L" |
+
+3. **StandingsTable Fix** (`TournamentService.calculateLeagueStandings`):
+   ```typescript
+   // BEFORE (buggy - used career stats):
+   wins: team?.standings.wins || 0,
+
+   // AFTER (fixed - uses tournament-specific stats):
+   const tournamentStanding = tournament.standings?.find(s => s.teamId === teamId);
+   wins: tournamentStanding?.wins || 0,
+   ```
+
+**Two Different Standings Systems**:
+
+| System | Location | Purpose | Reset Between Phases? |
+|--------|----------|---------|----------------------|
+| Career Stats | `team.standings` | Historical tracking, overall performance | No |
+| Tournament Stats | `tournament.standings` | Per-tournament qualification, phase display | Yes (new per tournament) |
+
+**Files**:
+- `src/utils/phaseStatus.ts` - Phase status utility
+- `src/pages/Dashboard.tsx` - Uses utility for team header
+- `src/pages/Schedule.tsx` - Uses utility for record display
+- `src/services/TournamentService.ts` - Fixed `calculateLeagueStandings()`
+
 ## Session End Checklist
 
 Before ending each AI coding session:
