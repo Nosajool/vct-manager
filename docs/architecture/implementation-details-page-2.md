@@ -1471,7 +1471,67 @@ tournamentTransitionService.executeTransition('stage2_playoffs_to_masters_bangko
 // No new service code needed!
 ```
 
-### 23. Phase-Appropriate Team Status Display
+### 23. Explicit Bracket Format Field (2026-01-30)
+
+**Status**: Implemented - All brackets now have an explicit `format` field.
+
+**Problem Solved**:
+The old code tried to detect round-robin brackets by checking `winnerDestination?.type === 'placement'`, but this was flawed:
+- Round-robin: ALL matches have placement destinations (correct detection)
+- Triple elimination (Kickoff): Final match winners ALSO have placement destinations (for Masters qualification)
+
+This caused:
+- Stage 1 round-robin incorrectly triggering completion after few matches
+- Kickoff tournaments being detected as round-robin and never completing
+
+**Solution**:
+Added explicit `format: BracketFormat` field to `BracketStructure`:
+
+```typescript
+export type BracketFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
+
+export interface BracketStructure {
+  format: BracketFormat;     // Explicit format for clean completion detection
+  upper: BracketRound[];
+  middle?: BracketRound[];   // Triple elimination
+  lower?: BracketRound[];    // Double/Triple elimination
+  grandfinal?: BracketMatch;
+}
+```
+
+**Key Insight - Destination Types by Format**:
+
+| Format | Winner Destination | Loser Destination |
+|--------|-------------------|-------------------|
+| Single Elim | match/champion | eliminated |
+| Double Elim | match/champion | match/eliminated |
+| Triple Elim | match/**placement** | match/eliminated |
+| Round Robin | **placement** | **placement** |
+
+Triple-elim only uses placement for final winners (Alpha/Beta/Omega → placement 1/2/3), which is why destination-based detection failed.
+
+**Files Modified**:
+- `src/types/competition.ts` - Added `BracketFormat` type and `format` field to `BracketStructure`
+- `src/types/index.ts` - Export `BracketFormat`
+- `src/engine/competition/BracketManager.ts` - Set format in all bracket generators, updated `getBracketStatus()` and `getChampion()` to use explicit format
+- `src/services/GlobalTournamentScheduler.ts` - Set format on placeholder brackets
+- `src/engine/competition/TournamentEngine.ts` - Set format on placeholder brackets
+
+**Usage Pattern**:
+
+```typescript
+// BEFORE (flawed detection)
+const isRoundRobin = bracket.upper.some((round) =>
+  round.matches.some((m) => m.winnerDestination?.type === 'placement')
+);
+
+// AFTER (explicit format)
+if (bracket.format === 'round_robin') {
+  // Handle round-robin specific logic
+}
+```
+
+### 24. Phase-Appropriate Team Status Display
 
 **Status**: Implemented - Dashboard and Schedule show tournament-specific records based on current phase.
 

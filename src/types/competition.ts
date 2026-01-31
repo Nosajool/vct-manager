@@ -7,6 +7,7 @@ import type { MatchResult } from './match';
 export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
 export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed';
+export type BracketFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
 export type TournamentRegion = Region | 'International';
 
 // ============================================
@@ -89,6 +90,7 @@ export interface BracketRound {
 }
 
 export interface BracketStructure {
+  format: BracketFormat;
   upper: BracketRound[];
   middle?: BracketRound[];  // Triple elimination
   lower?: BracketRound[];   // Double/Triple elimination

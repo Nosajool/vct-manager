@@ -197,7 +197,7 @@ export class TournamentEngine {
     const allTeamIds = [...swissTeamIds, ...playoffOnlyTeamIds];
 
     // Create empty placeholder bracket (will be populated when Swiss completes)
-    const emptyBracket: BracketStructure = { upper: [] };
+    const emptyBracket: BracketStructure = { format: 'double_elim', upper: [] };
 
     const tournament: MultiStageTournament = {
       id,
@@ -403,6 +403,7 @@ export class TournamentEngine {
 
     // Process all brackets
     const newBracket: BracketStructure = {
+      format: bracket.format,
       upper: bracket.upper.map(processRound),
     };
 

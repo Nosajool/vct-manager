@@ -424,10 +424,8 @@ export class CalendarService {
     // Already marked complete
     if (tournament.status === 'completed') return true;
 
-    // Check if champion has been determined
-    if (tournament.championId) return true;
-
-    // For round-robin (leagues), check if all matches are completed
+    // For round-robin (leagues), ALWAYS check if all matches are completed
+    // Don't rely on championId since round-robin doesn't have a single champion
     if (tournament.format === 'round_robin') {
       const tournamentMatches = Object.values(state.matches).filter(
         (m) => m.tournamentId === tournamentId
@@ -437,6 +435,9 @@ export class CalendarService {
 
       return tournamentMatches.every((m) => m.status === 'completed');
     }
+
+    // For non-round-robin formats, check if champion has been determined
+    if (tournament.championId) return true;
 
     return false;
   }

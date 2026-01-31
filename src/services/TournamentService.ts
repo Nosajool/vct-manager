@@ -634,12 +634,15 @@ export class TournamentService {
       return { complete: false, tournamentId: null };
     }
 
-    // Find the Stage tournament for player's region
+    // Find the Stage LEAGUE tournament for player's region (exclude Playoffs)
+    // Both Stage 1 League and Stage 1 Playoffs have type === 'stage1',
+    // so we need to exclude Playoffs to find the correct league tournament
     const stageTournament = Object.values(state.tournaments).find(
       (t) =>
         t.type === stageType &&
         t.region === playerTeam.region &&
-        t.status !== 'completed'
+        t.status !== 'completed' &&
+        !t.name.includes('Playoffs')
     );
 
     if (!stageTournament) {

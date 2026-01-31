@@ -55,6 +55,7 @@ export type {
   TournamentStatus,
   TournamentRegion,
   CompetitionType,
+  BracketFormat,
   BracketStructure,
   BracketRound,
   BracketMatch,

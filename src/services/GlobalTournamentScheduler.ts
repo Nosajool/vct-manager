@@ -283,7 +283,7 @@ export class GlobalTournamentScheduler {
     }
 
     // Empty placeholder bracket (created when Swiss completes)
-    const emptyBracket: BracketStructure = { upper: [] };
+    const emptyBracket: BracketStructure = { format: 'double_elim', upper: [] };
 
     // Initialize Swiss stage with empty team IDs (TBD)
     // We'll need 8 teams for Swiss (beta + omega from each region)
@@ -419,7 +419,7 @@ export class GlobalTournamentScheduler {
     }
 
     // Empty bracket (will be generated when teams qualify)
-    const emptyBracket: BracketStructure = { upper: [] };
+    const emptyBracket: BracketStructure = { format: 'double_elim', upper: [] };
 
     const tournament: Tournament = {
       id,
@@ -470,7 +470,7 @@ export class GlobalTournamentScheduler {
     }
 
     // Empty bracket (will be generated when teams qualify)
-    const emptyBracket: BracketStructure = { upper: [] };
+    const emptyBracket: BracketStructure = { format: 'double_elim', upper: [] };
 
     // Swiss stage for Champions
     const swissStage: SwissStage = {
@@ -800,24 +800,26 @@ export class GlobalTournamentScheduler {
     if (groupMatches.size === 0) return;
 
     // Collect all valid match days in the range, grouped by week
-    // A "week" starts on the first match day of each 7-day period
+    // A "week" is a 7-day period starting from startDate
     const matchWeeks: Date[][] = [];
     const current = new Date(startDate);
     let currentWeek: Date[] = [];
+    let lastSeenWeekNumber = -1;
 
     while (current <= endDate) {
-      // Check if we've started a new week (7 days from week start)
-      const daysSinceWeekStart = Math.floor(
+      // Calculate which week we're in (0-indexed from startDate)
+      const daysSinceStart = Math.floor(
         (current.getTime() - new Date(startDate).getTime()) / (24 * 60 * 60 * 1000)
       );
-      const currentWeekNumber = Math.floor(daysSinceWeekStart / 7);
+      const currentWeekNumber = Math.floor(daysSinceStart / 7);
 
-      if (matchWeeks.length < currentWeekNumber + 1) {
-        // Start a new week
+      // If we've entered a new week, push the previous week's match days
+      if (currentWeekNumber !== lastSeenWeekNumber) {
         if (currentWeek.length > 0) {
           matchWeeks.push(currentWeek);
+          currentWeek = [];
         }
-        currentWeek = [];
+        lastSeenWeekNumber = currentWeekNumber;
       }
 
       if (matchDays.includes(current.getUTCDay())) {
@@ -973,6 +975,7 @@ export class GlobalTournamentScheduler {
     });
 
     const newBracket: BracketStructure = {
+      format: bracket.format,
       upper: bracket.upper.map(processRound),
     };
 

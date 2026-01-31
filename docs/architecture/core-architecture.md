@@ -422,7 +422,11 @@ export interface SwissTeamRecord {
   status: 'active' | 'qualified' | 'eliminated';
 }
 
+// Explicit bracket format - avoids inferring format from match destinations
+export type BracketFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
+
 export interface BracketStructure {
+  format: BracketFormat;     // Explicit format for clean completion detection
   upper: BracketRound[];
   middle?: BracketRound[];  // Triple elimination
   lower?: BracketRound[];   // Double/Triple elimination

@@ -136,7 +136,7 @@ export class BracketManager {
     }
 
     // Process byes (auto-advance teams with bye opponents)
-    let bracket: BracketStructure = { upper };
+    let bracket: BracketStructure = { format: 'single_elim', upper };
     bracket = this.processByes(bracket);
 
     return bracket;
@@ -429,7 +429,7 @@ export class BracketManager {
       loserDestination: { type: 'placement', place: 2 },
     };
 
-    let bracket: BracketStructure = { upper, lower, grandfinal };
+    let bracket: BracketStructure = { format: 'double_elim', upper, lower, grandfinal };
     bracket = this.processByes(bracket);
 
     return bracket;
@@ -731,7 +731,7 @@ export class BracketManager {
     });
 
     // No Grand Final in Kickoff - 3 bracket winners qualify for Masters
-    const bracket: BracketStructure = { upper, middle, lower };
+    const bracket: BracketStructure = { format: 'triple_elim', upper, middle, lower };
 
     // No need to process byes - bye teams are already set in UR2
     return this.updateMatchStatuses(bracket);
@@ -790,7 +790,7 @@ export class BracketManager {
       });
     }
 
-    return { upper };
+    return { format: 'round_robin', upper };
   }
 
   // ============================================
@@ -909,8 +909,20 @@ export class BracketManager {
       return 'completed';
     }
 
+    // For round-robin: ALL matches must be completed
+    if (bracket.format === 'round_robin') {
+      // Round-robin is complete only when all matches are done (no pending or ready)
+      if (hasCompleted && !hasPending && !hasReady) {
+        return 'completed';
+      }
+      if (!hasCompleted && !hasReady && hasPending) {
+        return 'not_started';
+      }
+      return 'in_progress';
+    }
+
     // Check if last upper bracket match is completed (for single elim)
-    if (!bracket.lower && !bracket.grandfinal) {
+    if (bracket.format === 'single_elim') {
       const lastRound = bracket.upper[bracket.upper.length - 1];
       if (lastRound?.matches[0]?.status === 'completed') {
         return 'completed';
@@ -918,10 +930,10 @@ export class BracketManager {
     }
 
     // For triple elim (no grand final): check if all 3 finals are completed
-    if (bracket.middle && bracket.lower && !bracket.grandfinal) {
+    if (bracket.format === 'triple_elim') {
       const upperFinal = bracket.upper[bracket.upper.length - 1]?.matches[0];
-      const middleFinal = bracket.middle[bracket.middle.length - 1]?.matches[0];
-      const lowerFinal = bracket.lower[bracket.lower.length - 1]?.matches[0];
+      const middleFinal = bracket.middle?.[bracket.middle.length - 1]?.matches[0];
+      const lowerFinal = bracket.lower?.[bracket.lower.length - 1]?.matches[0];
 
       if (
         upperFinal?.status === 'completed' &&
@@ -942,6 +954,7 @@ export class BracketManager {
   /**
    * Get the champion team ID
    * For triple elim without grand final, returns Alpha bracket winner
+   * For round-robin, returns null (no champion - placements are by standings)
    */
   getChampion(bracket: BracketStructure): string | null {
     // Check grand final first
@@ -949,8 +962,13 @@ export class BracketManager {
       return bracket.grandfinal.winnerId || null;
     }
 
+    // Round-robin leagues don't have a single champion - placements are by standings
+    if (bracket.format === 'round_robin') {
+      return null;
+    }
+
     // For single elimination, check last upper bracket round
-    if (!bracket.lower && !bracket.grandfinal) {
+    if (bracket.format === 'single_elim') {
       const lastRound = bracket.upper[bracket.upper.length - 1];
       if (lastRound?.matches[0]?.status === 'completed') {
         return lastRound.matches[0].winnerId || null;
@@ -958,7 +976,7 @@ export class BracketManager {
     }
 
     // For triple elim without grand final, return Alpha (upper) bracket winner
-    if (bracket.middle && bracket.lower && !bracket.grandfinal) {
+    if (bracket.format === 'triple_elim') {
       const upperFinal = bracket.upper[bracket.upper.length - 1]?.matches[0];
       if (upperFinal?.status === 'completed') {
         return upperFinal.winnerId || null;
