@@ -158,21 +158,13 @@ export function ContractNegotiationModal({
           </button>
         </div>
 
-        {/* Success/Error Message */}
-        {result && (
+        {/* Success Message (at top for confirmation) */}
+        {result?.success && (
           <div
-            className={`mx-6 mt-4 p-4 rounded-lg ${
-              result.success
-                ? 'bg-green-900/30 border border-green-500/50'
-                : 'bg-red-900/30 border border-red-500/50'
-            }`}
+            className="mx-6 mt-4 p-4 rounded-lg bg-green-900/30 border border-green-500/50"
           >
-            <p
-              className={`font-medium ${
-                result.success ? 'text-green-400' : 'text-red-400'
-              }`}
-            >
-              {result.success ? 'Contract Signed!' : 'Offer Rejected'}
+            <p className="font-medium text-green-400">
+              Contract Signed!
             </p>
             {result.negotiationResult && (
               <p className="text-vct-gray text-sm mt-1">
@@ -491,6 +483,25 @@ export function ContractNegotiationModal({
             {result?.success ? 'Done' : 'Cancel'}
           </button>
         </div>
+
+        {/* Rejection Message (at bottom for immediate feedback) */}
+        {result && !result.success && (
+          <div
+            className="mx-6 mb-4 p-4 rounded-lg bg-red-900/30 border border-red-500/50"
+          >
+            <p className="font-medium text-red-400">
+              Offer Rejected
+            </p>
+            {result.negotiationResult && (
+              <p className="text-vct-gray text-sm mt-1">
+                {result.negotiationResult.reason}
+              </p>
+            )}
+            {result.error && !result.negotiationResult && (
+              <p className="text-vct-gray text-sm mt-1">{result.error}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

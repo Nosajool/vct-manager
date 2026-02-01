@@ -1,7 +1,7 @@
 # BUG-005: Signing player modal feedback appears at top instead of bottom
 
 **Priority:** Low
-**Status:** Open
+**Status:** Resolved
 **Component:** Contract Negotiation Modal / Roster Management
 
 ---
