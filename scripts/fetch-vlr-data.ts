@@ -64,7 +64,7 @@ const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'Leviatán': 2359,
     'KRÜ Esports': 2355,
     'G2 Esports': 11058,
-    '2GAME Esports': 15072,
+    'ENVY': 427,
   },
   EMEA: {
     'Fnatic': 2593,
@@ -76,9 +76,9 @@ const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'FUT Esports': 1184,
     'BBL Esports': 397,
     'Giants Gaming': 14419,
-    'KOI': 7035,
+    'PCIFIC Esports': 3478,
     'Gentle Mates': 12694,
-    'Apeks': 11479,
+    'ULF Esports': 18019,
   },
   Pacific: {
     'Paper Rex': 624,
@@ -89,9 +89,9 @@ const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'DetonatioN Gaming': 278,
     'Global Esports': 918,
     'Team Secret': 6199,
-    'Talon Esports': 8304,
+    'FULL SENSE': 4050,
     'Rex Regum Qeon': 878,
-    'BLEED Esports': 6387,
+    'VARREL': 11229,
     'Nongshim RedForce': 11060,
   },
   China: {
@@ -106,7 +106,7 @@ const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'Titan Esports Club': 14137,
     'TYLOO': 731,
     'Trace Esports': 12685,
-    'Attacking Soul Esports': 1837,
+    'Xi Lai Gaming': 13581,
   },
 };
 
