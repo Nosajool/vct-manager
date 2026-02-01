@@ -14,6 +14,7 @@ import type {
   Match,
   CalendarEvent,
   BracketMatch,
+  SeasonPhase,
 } from '../types';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
 import { TOURNAMENT_TRANSITIONS } from '../utils/tournament-transitions';
@@ -374,6 +375,8 @@ export class TournamentTransitionService {
 
     // Add Swiss Round 1 match events
     const round1 = tournament.swissStage.rounds[0];
+    const tournamentPhase = this.getPhaseForTournament(tournament);
+
     if (round1) {
       for (const match of round1.matches) {
         if (match.teamAId && match.teamBId) {
@@ -393,6 +396,7 @@ export class TournamentTransitionService {
               tournamentId: tournament.id,
               tournamentName: tournament.name,
               isSwissMatch: true,
+              phase: tournamentPhase,
             },
             processed: false,
             required: true,
@@ -442,7 +446,28 @@ export class TournamentTransitionService {
   }
 
   /**
+   * Get the SeasonPhase for a tournament based on its type and name
+   */
+  private getPhaseForTournament(tournament: Tournament): SeasonPhase | undefined {
+    switch (tournament.type) {
+      case 'masters':
+        return tournament.name.includes('Santiago') ? 'masters1' : 'masters2';
+      case 'champions':
+        return 'champions';
+      case 'stage1':
+        return tournament.name.includes('Playoffs') ? 'stage1_playoffs' : 'stage1';
+      case 'stage2':
+        return tournament.name.includes('Playoffs') ? 'stage2_playoffs' : 'stage2';
+      case 'kickoff':
+        return 'kickoff';
+      default:
+        return undefined;
+    }
+  }
+
+  /**
    * Schedule tournament matches (assigns dates to ready bracket matches)
+   * Uses immutable updates to avoid mutating objects in Zustand store
    */
   private scheduleTournamentMatches(tournament: Tournament): void {
     const startDate = new Date(tournament.startDate);
@@ -460,33 +485,40 @@ export class TournamentTransitionService {
 
     let matchCount = 0;
 
-    for (const round of tournament.bracket.upper) {
-      for (const match of round.matches) {
-        if (match.status !== 'ready') continue;
-        match.scheduledDate = currentDate.toISOString();
-        matchCount++;
-        if (matchCount % matchesPerDay === 0) {
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
+    // Helper to schedule a match immutably
+    const scheduleMatch = (): string => {
+      const scheduledDate = currentDate.toISOString();
+      matchCount++;
+      if (matchCount % matchesPerDay === 0) {
+        currentDate = new Date(currentDate);
+        currentDate.setDate(currentDate.getDate() + 1);
       }
-    }
+      return scheduledDate;
+    };
 
-    if (tournament.bracket.lower) {
-      for (const round of tournament.bracket.lower) {
-        for (const match of round.matches) {
-          if (match.status !== 'ready') continue;
-          match.scheduledDate = currentDate.toISOString();
-          matchCount++;
-          if (matchCount % matchesPerDay === 0) {
-            currentDate.setDate(currentDate.getDate() + 1);
-          }
-        }
-      }
-    }
-
-    if (tournament.bracket.grandfinal && tournament.bracket.grandfinal.status === 'ready') {
-      tournament.bracket.grandfinal.scheduledDate = new Date(tournament.endDate).toISOString();
-    }
+    // Create new bracket with immutable updates
+    tournament.bracket = {
+      ...tournament.bracket,
+      upper: tournament.bracket.upper.map(round => ({
+        ...round,
+        matches: round.matches.map(match =>
+          match.status === 'ready'
+            ? { ...match, scheduledDate: scheduleMatch() }
+            : match
+        )
+      })),
+      lower: tournament.bracket.lower?.map(round => ({
+        ...round,
+        matches: round.matches.map(match =>
+          match.status === 'ready'
+            ? { ...match, scheduledDate: scheduleMatch() }
+            : match
+        )
+      })),
+      grandfinal: tournament.bracket.grandfinal?.status === 'ready'
+        ? { ...tournament.bracket.grandfinal, scheduledDate: new Date(tournament.endDate).toISOString() }
+        : tournament.bracket.grandfinal,
+    };
   }
 
   /**
@@ -513,6 +545,8 @@ export class TournamentTransitionService {
       },
     ];
 
+    const tournamentPhase = this.getPhaseForTournament(tournament);
+
     const addMatchEvents = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
         if (bracketMatch.status !== 'ready') continue;
@@ -533,6 +567,7 @@ export class TournamentTransitionService {
             awayTeamName: teamB?.name || 'Unknown',
             tournamentId: tournament.id,
             tournamentName: tournament.name,
+            phase: tournamentPhase,
           },
           processed: false,
           required: true,
@@ -569,6 +604,7 @@ export class TournamentTransitionService {
             tournamentId: tournament.id,
             tournamentName: tournament.name,
             isGrandFinal: true,
+            phase: tournamentPhase,
           },
           processed: false,
           required: true,

@@ -1031,3 +1031,125 @@ const handleSeeAllQualifiers = () => {
 2. **Proper TeamSlotResolver Flow**: Original kickoffs complete → qualifications saved → TeamSlotResolver resolves Masters slots
 3. **Clean Modal UX**: All data available immediately, no "Simulating..." states
 4. **Consistent Data**: All 4 regions' qualifications in the store before modal shows
+
+---
+
+## Service Layer Orchestration Patterns
+
+### Principle: Services Orchestrate State Updates
+
+The service layer is responsible for coordinating state updates across multiple slices. UI components should be purely presentational - they read from the store but should not trigger service calls for state synchronization.
+
+### Cross-Slice Synchronization
+
+When a single action needs to update multiple parts of state, the service layer handles this:
+
+```typescript
+// MatchService.updateTournamentStandings()
+// After updating tournament.standings, also sync to standings slice
+state.updateTournament(tournamentId, { standings });
+
+// Sync to standings slice for round-robin tournaments
+if (tournament.format === 'round_robin') {
+  tournamentService.calculateLeagueStandings(tournamentId);
+}
+```
+
+**Anti-pattern (UI-triggered sync)**:
+```typescript
+// DON'T DO THIS - UI calling service for state sync
+useEffect(() => {
+  if (tournament.format === 'round_robin') {
+    tournamentService.calculateLeagueStandings(tournament.id);
+  }
+}, [tournament.id]);
+```
+
+**Correct pattern (Service-triggered sync)**:
+```typescript
+// DO THIS - Service handles sync after state change
+// In MatchService, after updating tournament standings:
+if (tournament.format === 'round_robin') {
+  tournamentService.calculateLeagueStandings(tournamentId);
+}
+```
+
+### Calendar Event Phase Filtering
+
+Match calendar events include a `phase` property to enable correct phase filtering during time advancement:
+
+```typescript
+// In TournamentTransitionService.addTournamentCalendarEvents()
+events.push({
+  id: `event-match-${bracketMatch.matchId}`,
+  type: 'match',
+  date: bracketMatch.scheduledDate,
+  data: {
+    matchId: bracketMatch.matchId,
+    // ... other fields
+    phase: this.getPhaseForTournament(tournament), // Required for filtering
+  },
+});
+```
+
+The `phase` property maps tournament types to season phases:
+- `kickoff` → `'kickoff'`
+- `stage1` → `'stage1'` or `'stage1_playoffs'`
+- `stage2` → `'stage2'` or `'stage2_playoffs'`
+- `masters` → `'masters1'` or `'masters2'` (based on tournament name)
+- `champions` → `'champions'`
+
+CalendarService uses this to skip matches from wrong phases:
+```typescript
+if (matchPhase && matchPhase !== currentPhase) {
+  skippedEvents.push(event);
+  continue;
+}
+```
+
+### Stage Completion Detection
+
+Stage completion must be checked on every day advancement during stage phases, not just when matches are simulated. The last match might have been yesterday:
+
+```typescript
+// In CalendarService.advanceDay()
+// Always check during stage phases - the last match might have been yesterday
+if (currentPhase === 'stage1' || currentPhase === 'stage2') {
+  this.checkStageCompletion(currentPhase);
+}
+```
+
+---
+
+## Immutable State Updates
+
+### Bracket Mutation Warning
+
+Never mutate objects stored in or destined for the Zustand store. The `scheduleTournamentMatches()` method demonstrates the correct immutable pattern:
+
+**Anti-pattern (Direct mutation)**:
+```typescript
+// DON'T DO THIS - mutates bracket matches directly
+for (const match of round.matches) {
+  match.scheduledDate = currentDate.toISOString(); // MUTATION!
+}
+```
+
+**Correct pattern (Immutable updates)**:
+```typescript
+// DO THIS - creates new objects with spread operator
+tournament.bracket = {
+  ...tournament.bracket,
+  upper: tournament.bracket.upper.map(round => ({
+    ...round,
+    matches: round.matches.map(match =>
+      match.status === 'ready'
+        ? { ...match, scheduledDate: scheduleMatch() }
+        : match
+    )
+  })),
+  // ... same pattern for lower bracket and grandfinal
+};
+```
+
+This ensures React detects state changes and triggers proper re-renders.

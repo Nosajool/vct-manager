@@ -93,9 +93,9 @@ export class CalendarService {
     }
 
     // Check if a league stage has completed (all matches played)
-    // Only check after simulating matches in the current phase
-    if (simulatedMatches.length > 0) {
-      this.checkStageCompletion(state.calendar.currentPhase);
+    // Always check during stage phases - the last match might have been yesterday
+    if (currentPhase === 'stage1' || currentPhase === 'stage2') {
+      this.checkStageCompletion(currentPhase);
     }
 
     // Check tournament completion for ALL regions

@@ -8,7 +8,6 @@
 import { useState, useEffect } from 'react';
 import { useGameStore } from '../store';
 import { seasonManager } from '../engine/competition';
-import { tournamentService } from '../services/TournamentService';
 import {
   BracketView,
   TournamentCard,
@@ -41,9 +40,16 @@ export function TournamentPage() {
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
   const calendar = useGameStore((state) => state.calendar);
+  const currentPhase = useGameStore((state) => state.calendar.currentPhase);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const matches = useGameStore((state) => state.matches);
+
+  // Reset tournament selection when phase changes (e.g., Stage 1 → Stage 1 Playoffs)
+  // This ensures the view updates to show the current phase's tournament
+  useEffect(() => {
+    setSelectedTournamentId(null);
+  }, [currentPhase]);
 
   // Get player's region for default filter
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
@@ -64,17 +70,8 @@ export function TournamentPage() {
     ? tournaments[selectedTournamentId]
     : activeTournaments[0] || upcomingTournaments[0];
 
-  // For league tournaments (stage1/stage2), calculate standings from team standings
-  // This ensures standings are up-to-date with the latest match results
-  useEffect(() => {
-    if (
-      currentTournament &&
-      (currentTournament.type === 'stage1' || currentTournament.type === 'stage2') &&
-      currentTournament.format === 'round_robin'
-    ) {
-      tournamentService.calculateLeagueStandings(currentTournament.id);
-    }
-  }, [currentTournament?.id, currentTournament?.type, currentTournament?.format]);
+  // Note: Standings sync for league tournaments is now handled by MatchService
+  // after each match result, following the service layer orchestration pattern
 
   const tournamentStandings = currentTournament
     ? standings[currentTournament.id] || []

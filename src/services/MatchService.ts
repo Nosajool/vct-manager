@@ -200,6 +200,12 @@ export class MatchService {
     });
 
     state.updateTournament(tournamentId, { standings });
+
+    // Sync to standings slice for round-robin (league) tournaments
+    // This moves the sync logic from UI (Tournament.tsx useEffect) to service layer
+    if (tournament.format === 'round_robin') {
+      tournamentService.calculateLeagueStandings(tournamentId);
+    }
   }
 
   /**
