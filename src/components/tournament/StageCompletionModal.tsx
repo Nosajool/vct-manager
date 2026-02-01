@@ -48,6 +48,7 @@ export function StageCompletionModal({ data, onClose }: StageCompletionModalProp
   const closeModal = useGameStore((state) => state.closeModal);
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
+  const playerRegion = playerTeam?.region;
 
   // Get stage display name
   const stageDisplayName = data.stageType === 'stage1' ? 'Stage 1' : 'Stage 2';
@@ -63,8 +64,13 @@ export function StageCompletionModal({ data, onClose }: StageCompletionModalProp
     }
     transitionTriggeredRef.current = true;
 
-    console.log(`Executing transition: ${data.nextTransitionId}`);
-    const result = tournamentTransitionService.executeTransition(data.nextTransitionId);
+    console.log(`Executing transition: ${data.nextTransitionId} for region: ${playerRegion}`);
+
+    // Pass the player's region - required for regional_to_playoff transitions
+    const result = tournamentTransitionService.executeTransition(
+      data.nextTransitionId,
+      playerRegion
+    );
 
     if (result.success) {
       console.log(`Successfully transitioned to ${result.newPhase}`);
