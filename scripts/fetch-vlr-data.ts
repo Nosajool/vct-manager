@@ -14,6 +14,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as cheerio from 'cheerio';
 
 // VLR API types (duplicated here to avoid import issues with path aliases)
 interface VlrPlayerStats {
@@ -34,12 +35,6 @@ interface VlrPlayerStats {
   clutch_success_percentage: string;
 }
 
-interface VlrApiResponse {
-  data: {
-    status: number;
-    segments: VlrPlayerStats[];
-  };
-}
 
 interface VlrTeamRoster {
   teamName: string;
@@ -111,11 +106,10 @@ const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
 };
 
 // Configuration
-const API_BASE = 'https://vlrggapi.vercel.app';
 const VLR_BASE = 'https://www.vlr.gg';
 const REGIONS = ['na', 'eu', 'br', 'ap', 'kr', 'cn'] as const;
 const OUTPUT_PATH = path.join(process.cwd(), 'src/data/vlrSnapshot.ts');
-const REQUEST_DELAY = 1000; // 1 second between requests to be polite
+// const REQUEST_DELAY = 1000; // 1 second between requests to be polite
 const ROSTER_REQUEST_DELAY = 1500; // Slightly longer for web scraping
 
 // Colors for console output
@@ -137,25 +131,204 @@ async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchRegionStats(region: string): Promise<VlrPlayerStats[]> {
-  const url = `${API_BASE}/stats?region=${region}&timespan=all`;
+/**
+ * Clean text by removing extra whitespace, newlines, and tabs
+ */
+function cleanText(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Extract player name and team from player cell text
+ * VLR format: "PlayerName\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tTeam"
+ */
+function parsePlayerCell(playerText: string): { playerName: string; teamName: string } {
+  // Split by newlines and filter out empty strings
+  const parts = playerText.split('\n').map(cleanText).filter(part => part.length > 0);
+  
+  if (parts.length >= 2) {
+    // First part is player name, last part is team name
+    return {
+      playerName: parts[0],
+      teamName: parts[parts.length - 1]
+    };
+  } else if (parts.length === 1) {
+    // Only player name found
+    return {
+      playerName: parts[0],
+      teamName: 'Unknown'
+    };
+  }
+  
+  return {
+    playerName: 'Unknown',
+    teamName: 'Unknown'
+  };
+}
+
+/**
+ * Extract agent names from agent cell HTML
+ * VLR uses <img> tags with src like "/img/vlr/game/agents/agentname.png"
+ */
+function parseAgentCell(agentHtml: string): string[] {
+  const agents: string[] = [];
+  
+  // Look for agent image sources
+  const agentImageRegex = /\/img\/vlr\/game\/agents\/([a-z]+)\.png/g;
+  let match;
+  
+  while ((match = agentImageRegex.exec(agentHtml)) !== null) {
+    const agentName = match[1];
+    if (agentName && !agents.includes(agentName)) {
+      agents.push(agentName);
+    }
+  }
+  
+  return agents.length > 0 ? agents : ['Unknown'];
+}
+
+/**
+ * Fetch player statistics from VLR HTML for a specific event.
+ * @param eventGroupId The VLR event group ID (86 for VCT Champions Tour 2026, 85 for VCL)
+ * @param region The region to filter by (e.g., 'na', 'eu', 'all')
+ * @param minRating The minimum rating to filter by
+ * @param description A description for logging purposes
+ */
+async function fetchVlrStats(eventGroupId: number, region: string, minRating: number, description: string): Promise<VlrPlayerStats[]> {
+  const url = `https://www.vlr.gg/stats/?event_group_id=${eventGroupId}&region=${region}&min_rounds=0&min_rating=${minRating}&agent=all&map_id=all&timespan=all`;
 
   try {
     const response = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+      },
     });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const json: VlrApiResponse = await response.json();
-    return json.data?.segments || [];
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    const players: VlrPlayerStats[] = [];
+
+    // Find the main stats table
+    // VLR typically uses a table with class like 'wf-card' or 'stats-table'
+    const statsTable = $('.wf-card').find('table') || $('.stats-table');
+    
+    if (!statsTable.length) {
+      throw new Error('Could not find stats table in HTML');
+    }
+
+    // Find all player rows (typically tr elements within tbody)
+    const playerRows = statsTable.find('tbody tr');
+    
+    if (playerRows.length === 0) {
+      throw new Error('No player data found in stats table');
+    }
+
+    playerRows.each((index: number, row: cheerio.Element) => {
+      const $row = $(row);
+      
+      try {
+        // Extract player name and team from the first column
+        const playerCell = $row.find('td').first();
+        const playerLink = playerCell.find('a[href^="/player/"]');
+        const playerText = playerLink.text();
+        
+        const { playerName, teamName } = parsePlayerCell(playerText);
+        
+        if (!playerName || playerName === 'Unknown') {
+          return; // Skip rows without valid player names
+        }
+
+        // Extract agent icons from the second cell
+        const agentCell = $row.find('td').eq(1);
+        const agentHtml = agentCell.html() || '';
+        const agents = parseAgentCell(agentHtml);
+
+        // Extract stats from other columns
+        // VLR stats table has columns in this order:
+        // Player, Agent, Rounds, Rating, ACS, K/D, KAST, ADR, KPR, APR, FKPR, FDPR, HS%, Clutch%
+        const cells = $row.find('td');
+        
+        if (cells.length < 10) {
+          return; // Skip rows with insufficient data
+        }
+
+        // Helper function to clean stat values
+        const cleanStat = (text: string): string => {
+          return text.replace(/[^\d.%]/g, '').trim();
+        };
+
+        // Extract stats based on column positions
+        // Column 2: Rounds, 3: Rating, 4: ACS, 5: K/D, 6: KAST, 7: ADR, 8: KPR, 9: APR, 10: FKPR, 11: FDPR, 12: HS%, 13: Clutch%
+        const rounds = cleanStat($(cells[2]).text().trim()) || '0';
+        const rating = cleanStat($(cells[3]).text().trim()) || '0';
+        const acs = cleanStat($(cells[4]).text().trim()) || '0';
+        const kd = cleanStat($(cells[5]).text().trim()) || '0';
+        const kast = cleanStat($(cells[6]).text().trim()) || '0';
+        const adr = cleanStat($(cells[7]).text().trim()) || '0';
+        const kpr = cleanStat($(cells[8]).text().trim()) || '0';
+        const apr = cleanStat($(cells[9]).text().trim()) || '0';
+        const fkpr = cleanStat($(cells[10]).text().trim()) || '0';
+        const fdpr = cleanStat($(cells[11]).text().trim()) || '0';
+        const hs = cleanStat($(cells[12]).text().trim()) || '0';
+        const clutch = cleanStat($(cells[13]).text().trim()) || '0';
+
+        // Create VlrPlayerStats object
+        const playerStats: VlrPlayerStats = {
+          player: playerName,
+          org: teamName,
+          agents: agents,
+          rounds_played: rounds,
+          rating: rating,
+          average_combat_score: acs,
+          kill_deaths: kd,
+          kill_assists_survived_traded: kast,
+          average_damage_per_round: adr,
+          kills_per_round: kpr,
+          assists_per_round: apr,
+          first_kills_per_round: fkpr,
+          first_deaths_per_round: fdpr,
+          headshot_percentage: hs,
+          clutch_success_percentage: clutch,
+        };
+
+        players.push(playerStats);
+      } catch (rowError) {
+        log(`  Warning: Error parsing row ${index}: ${rowError}`, 'yellow');
+      }
+    });
+
+    log(`  ✓ Parsed ${players.length} players from ${description}`, 'green');
+    return players;
   } catch (error) {
-    log(`  Failed to fetch ${region}: ${error}`, 'red');
+    log(`  Failed to fetch ${description} stats: ${error}`, 'red');
     return [];
   }
 }
+
+/**
+ * Fetch VCT Champions Tour 2026 player statistics from VLR HTML.
+ */
+async function fetchVctChampionsTour2026Stats(): Promise<VlrPlayerStats[]> {
+  return fetchVlrStats(86, 'all', 0, 'VCT Champions Tour 2026');
+}
+
+/**
+ * Fetch VCL player statistics from VLR HTML.
+ */
+async function fetchVclStats(): Promise<VlrPlayerStats[]> {
+  return fetchVlrStats(85, 'all', 1599, 'Valorant Challengers League 2026 ');
+}
+
 
 /**
  * Scrape team roster from VLR team page.
@@ -173,7 +346,7 @@ async function fetchRegionStats(region: string): Promise<VlrPlayerStats[]> {
  * </div>
  */
 async function scrapeTeamRoster(teamName: string, teamId: number): Promise<VlrTeamRoster | null> {
-  const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+    const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '').replace(/-+$/, '');
   const url = `${VLR_BASE}/team/${teamId}/${slug}`;
 
   try {
@@ -227,7 +400,7 @@ async function scrapeTeamRoster(teamName: string, teamId: number): Promise<VlrTe
       //   <i class="flag ..."></i>
       //   PlayerName
       // </div>
-      const aliasRegex = /team-roster-item-name-alias[^>]*>[\s\S]*?<\/i>\s*([A-Za-z0-9_\-]+)\s*<\/div>/gi;
+      const aliasRegex = /team-roster-item-name-alias[^>]*>[\s\S]*?<\/i>\s*([A-Za-z0-9_-]+)\s*<\/div>/gi;
 
       while ((match = aliasRegex.exec(html)) !== null && players.length < 10) {
         const playerName = match[1].trim();
@@ -378,27 +551,32 @@ async function main() {
   log('\n🎮 VLR Data Fetcher', 'cyan');
   log('==================\n', 'cyan');
 
-  // Phase 1: Fetch player stats from API
-  log('Phase 1: Fetching player statistics...', 'cyan');
+  // Phase 1: Fetch player statistics from VLR for each region
+  log('Phase 1: Fetching player statistics for all regions...', 'cyan');
+  
+  // Initialize data structure with region keys
   const allStatsData: Record<string, VlrPlayerStats[]> = {};
   let totalPlayers = 0;
 
+  // For each region, fetch both VCT and VCL data
   for (const region of REGIONS) {
-    log(`Fetching ${region.toUpperCase()}...`, 'yellow');
-
-    const players = await fetchRegionStats(region);
-    allStatsData[region] = players;
-    totalPlayers += players.length;
-
-    log(`  ✓ Got ${players.length} players`, 'green');
-
-    // Be polite to the API
-    if (region !== REGIONS[REGIONS.length - 1]) {
-      await sleep(REQUEST_DELAY);
-    }
+    log(`  Fetching data for ${region.toUpperCase()} region...`, 'cyan');
+    
+    // Fetch VCT data for this specific region
+    const vctPlayers = await fetchVlrStats(86, region, 0, `VCT Champions Tour 2026 (${region.toUpperCase()})`);
+    
+    // Fetch VCL data for this specific region
+    const vclPlayers = await fetchVlrStats(85, region, 1599, `VCL (${region.toUpperCase()})`);
+    
+    // Combine both datasets for this region
+    const regionPlayers = [...vctPlayers, ...vclPlayers];
+    allStatsData[region] = regionPlayers;
+    totalPlayers += regionPlayers.length;
+    
+    log(`    ✓ ${region.toUpperCase()}: ${vctPlayers.length} VCT + ${vclPlayers.length} VCL = ${regionPlayers.length} total players`, 'green');
   }
 
-  log(`\nTotal: ${totalPlayers} players across ${REGIONS.length} regions`, 'cyan');
+  log(`\nTotal: ${totalPlayers} players across all regions`, 'cyan');
 
   // Phase 2: Scrape team rosters
   log('\nPhase 2: Scraping team rosters...', 'cyan');
@@ -419,13 +597,16 @@ async function main() {
   log(`\n✓ Written to ${OUTPUT_PATH}`, 'green');
 
   // Show some sample data
-  log('\nSample players:', 'dim');
-  const samplePlayers = Object.values(allStatsData)
-    .flat()
-    .slice(0, 5);
-
-  for (const player of samplePlayers) {
-    log(`  ${player.player} (${player.org}) - Rating: ${player.rating}`, 'dim');
+  log('\nSample players by region:', 'dim');
+  for (const region of REGIONS) {
+    const regionPlayers = allStatsData[region];
+    if (regionPlayers && regionPlayers.length > 0) {
+      log(`  ${region.toUpperCase()} (${regionPlayers.length} players):`, 'dim');
+      const samplePlayers = regionPlayers.slice(0, 3);
+      for (const player of samplePlayers) {
+        log(`    ${player.player} (${player.org}) - Rating: ${player.rating}`, 'dim');
+      }
+    }
   }
 
   log('\nSample rosters:', 'dim');
@@ -439,5 +620,6 @@ async function main() {
 
 main().catch((error) => {
   log(`\n❌ Error: ${error.message}\n`, 'red');
-  process.exit(1);
+  console.error(error);
+  // Exit gracefully without process.exit for better compatibility
 });
