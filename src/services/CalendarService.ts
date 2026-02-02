@@ -73,6 +73,10 @@ export class CalendarService {
         // Auto-process salary payments
         this.processSalaryPayment(event);
         processedEvents.push(event);
+      } else if (event.type === 'tournament_start') {
+        // Transition tournament from 'upcoming' to 'in_progress'
+        this.processTournamentStart(event);
+        processedEvents.push(event);
       } else if (event.type === 'match') {
         // Check if this match belongs to the current phase
         // League matches (stage1, stage2) have a phase property that must match current phase
@@ -138,6 +142,36 @@ export class CalendarService {
       simulatedMatches,
       autoSaveTriggered,
     };
+  }
+
+  /**
+   * Process a tournament start event
+   * Transitions tournament status from 'upcoming' to 'in_progress'
+   */
+  processTournamentStart(event: CalendarEvent): void {
+    const state = useGameStore.getState();
+    const data = event.data as { tournamentId: string; tournamentName: string };
+
+    if (!data.tournamentId) {
+      console.warn('Tournament start event has no tournamentId:', event.id);
+      state.markEventProcessed(event.id);
+      return;
+    }
+
+    const tournament = state.tournaments[data.tournamentId];
+    if (!tournament) {
+      console.warn(`Tournament not found: ${data.tournamentId}`);
+      state.markEventProcessed(event.id);
+      return;
+    }
+
+    // Only transition if currently upcoming
+    if (tournament.status === 'upcoming') {
+      state.updateTournament(data.tournamentId, { status: 'in_progress' });
+      console.log(`Tournament started: ${data.tournamentName} (${data.tournamentId})`);
+    }
+
+    state.markEventProcessed(event.id);
   }
 
   /**

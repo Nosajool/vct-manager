@@ -1164,6 +1164,27 @@ if (tournament.format === 'round_robin') {
 }
 ```
 
+### Calendar Event Handling
+
+`CalendarService.advanceDay()` processes calendar events when time advances. Each event type requires explicit handling:
+
+| Event Type | Handler Method | Behavior |
+|------------|----------------|----------|
+| `match` | `simulateMatchEvent()` | Simulates the match, updates tournament standings |
+| `tournament_start` | `processTournamentStart()` | Transitions tournament status `upcoming` → `in_progress` |
+| `salary_payment` | `processSalaryPayment()` | Processes monthly finances for all teams |
+| `tournament_end` | None (informational) | No action needed - completion detected via `checkAllTournamentCompletion()` |
+| `training_available` | None (optional) | User-initiated action, skipped if not taken |
+| `scrim_available` | None (optional) | User-initiated action, skipped if not taken |
+| `rest_day` | None (informational) | Calendar display only |
+
+**Future event types** (defined but not yet created):
+- `transfer_window_open` / `transfer_window_close` - Will control roster changes
+- `sponsorship_renewal` - Will trigger sponsorship decisions
+- `season_end` - Will trigger end-of-season logic
+
+When adding new event types, ensure a handler is added to `advanceDay()` or the event is explicitly marked as optional/informational.
+
 ### Calendar Event Phase Filtering
 
 Match calendar events include a `phase` property to enable correct phase filtering during time advancement. This is critical for Stage tournaments where the phase changes mid-tournament.
