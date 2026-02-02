@@ -15,11 +15,11 @@ import { useState } from 'react';
 import { calendarService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
+import { useMatchDay } from '../../hooks';
 import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
-import type { MatchEventData } from '../../types';
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
@@ -28,9 +28,6 @@ export function TimeBar() {
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
-  const getTodaysActivities = useGameStore((state) => state.getTodaysActivities);
-  const playerTeamId = useGameStore((state) => state.playerTeamId);
-  const teams = useGameStore((state) => state.teams);
 
   // Modal state from UISlice
   const isModalOpen = useGameStore((state) => state.isModalOpen);
@@ -38,26 +35,12 @@ export function TimeBar() {
   const modalData = useGameStore((state) => state.modalData);
   const closeModal = useGameStore((state) => state.closeModal);
 
+  // Use centralized match day detection
+  const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
+
   // Don't show if game hasn't started
   if (!gameStarted) {
     return null;
-  }
-
-  // Check if there's a match for PLAYER'S TEAM today
-  const todaysActivities = getTodaysActivities();
-  const playerMatchToday = todaysActivities.find((e) => {
-    if (e.type !== 'match' || e.processed) return false;
-    const data = e.data as MatchEventData;
-    return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
-  });
-  const hasMatchToday = !!playerMatchToday;
-
-  // Get opponent name for display
-  let opponentName = '';
-  if (playerMatchToday) {
-    const data = playerMatchToday.data as MatchEventData;
-    const opponentId = data.homeTeamId === playerTeamId ? data.awayTeamId : data.homeTeamId;
-    opponentName = teams[opponentId]?.name || 'TBD';
   }
 
   const handleTimeAdvance = (advanceFn: () => TimeAdvanceResult) => {

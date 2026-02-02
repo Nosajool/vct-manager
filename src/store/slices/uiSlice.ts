@@ -4,12 +4,10 @@
 import type { StateCreator } from 'zustand';
 
 export type ActiveView =
-  | 'dashboard'
-  | 'roster'
-  | 'schedule'
-  | 'match'
-  | 'finances'
-  | 'tournament';
+  | 'today'
+  | 'team'
+  | 'tournament'
+  | 'finances';
 
 export interface BulkSimulationProgress {
   current: number;
@@ -72,7 +70,7 @@ export const createUISlice: StateCreator<
   selectedPlayerId: null,
   selectedMatchId: null,
   selectedTournamentId: null,
-  activeView: 'dashboard',
+  activeView: 'today',
   error: null,
   isSimulating: false,
   bulkSimulation: null,

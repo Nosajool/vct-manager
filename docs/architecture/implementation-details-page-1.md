@@ -43,7 +43,7 @@ interface GameState {
   bulkSimulation: BulkSimulationProgress | null;
 }
 
-type ActiveView = 'dashboard' | 'roster' | 'schedule' | 'tournament' | 'finances';
+type ActiveView = 'today' | 'team' | 'tournament' | 'finances';
 ```
 
 ### Store Slices Pattern

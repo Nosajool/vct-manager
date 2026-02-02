@@ -9,9 +9,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-  { id: 'roster', label: 'Roster', icon: '👥' },
-  { id: 'schedule', label: 'Schedule', icon: '📅' },
+  { id: 'today', label: 'Today', icon: '📊' },
+  { id: 'team', label: 'Team', icon: '👥' },
   { id: 'tournament', label: 'Tournament', icon: '🏆' },
   { id: 'finances', label: 'Finances', icon: '💰' },
 ];

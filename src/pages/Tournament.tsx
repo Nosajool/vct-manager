@@ -5,7 +5,7 @@
 //
 // Now supports viewing tournaments from ALL regions (not just player's)
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useGameStore } from '../store';
 import { seasonManager } from '../engine/competition';
 import {
@@ -17,9 +17,12 @@ import {
   LeagueStageView,
 } from '../components/tournament';
 import { MatchResult } from '../components/match/MatchResult';
+import { MonthCalendar, DayDetailPanel, TrainingModal } from '../components/calendar';
+import { ScrimModal } from '../components/scrim';
 import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
-import type { Region, TournamentRegion } from '../types';
+import type { Region, TournamentRegion, Match } from '../types';
 
+type TournamentTab = 'current' | 'schedule';
 type ViewMode = 'bracket' | 'standings' | 'swiss' | 'league';
 type RegionFilter = Region | 'International' | 'all';
 
@@ -33,10 +36,21 @@ const REGION_OPTIONS: { value: RegionFilter; label: string }[] = [
 ];
 
 export function TournamentPage() {
+  // Main tab state
+  const [activeTab, setActiveTab] = useState<TournamentTab>('current');
+
+  // Current tournament view state
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('bracket');
   const [selectedRegion, setSelectedRegion] = useState<RegionFilter>('all');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+
+  // Schedule view state
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [viewDate, setViewDate] = useState<string | null>(null);
+  const [trainingModalOpen, setTrainingModalOpen] = useState(false);
+  const [scrimModalOpen, setScrimModalOpen] = useState(false);
+  const [scheduleSelectedMatch, setScheduleSelectedMatch] = useState<Match | null>(null);
 
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
@@ -108,6 +122,31 @@ export function TournamentPage() {
   // Get the selected match for the modal
   const selectedMatch = selectedMatchId ? matches[selectedMatchId] : null;
 
+  // === Schedule view data ===
+  // Get all events for calendar display
+  const allEvents = useMemo(() => {
+    return calendar.scheduledEvents;
+  }, [calendar.scheduledEvents]);
+
+  // Initialize selectedDate to current date if not set
+  const currentSelectedDate = selectedDate || calendar.currentDate;
+  const currentViewDate = viewDate || calendar.currentDate;
+
+  // Handle schedule view callbacks
+  const handleDateSelect = useCallback((date: string) => {
+    setSelectedDate(date);
+  }, []);
+
+  const handleMonthChange = useCallback((date: string) => {
+    setViewDate(date);
+  }, []);
+
+  const handleScheduleViewMatch = useCallback((match: Match) => {
+    if (match.status === 'completed') {
+      setScheduleSelectedMatch(match);
+    }
+  }, []);
+
   // Determine available view modes based on tournament type
   const getAvailableViewModes = (): ViewMode[] => {
     // Swiss stage of swiss_to_playoff tournaments
@@ -165,7 +204,7 @@ export function TournamentPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Tournaments</h1>
+          <h1 className="text-2xl font-bold text-white">Tournament</h1>
           <p className="text-sm text-vct-gray">
             {seasonManager.getPhaseName(calendar.currentPhase)} &middot;{' '}
             Season {calendar.currentSeason}
@@ -173,57 +212,87 @@ export function TournamentPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Region Filter */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-vct-gray">Region:</span>
-            <select
-              value={selectedRegion}
-              onChange={(e) => {
-                setSelectedRegion(e.target.value as RegionFilter);
-                setSelectedTournamentId(null); // Reset selection when changing region
-              }}
-              className="bg-vct-dark border border-vct-gray/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-vct-red"
-            >
-              {REGION_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            {playerTeam && selectedRegion !== playerTeam.region && selectedRegion !== 'all' && (
-              <button
-                onClick={() => setSelectedRegion(playerTeam.region)}
-                className="text-xs text-vct-red hover:text-vct-red/80"
-              >
-                My Region
-              </button>
-            )}
-          </div>
-
-          {/* View Mode Toggle */}
-          {currentTournament && (
-            <div className="flex bg-vct-dark rounded-lg p-1">
-              {getAvailableViewModes().map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`px-3 py-1.5 text-sm rounded ${
-                    effectiveViewMode === mode
-                      ? 'bg-vct-red text-white'
-                      : 'text-vct-gray hover:text-white'
-                  }`}
+          {/* Region Filter - only show on Current tab */}
+          {activeTab === 'current' && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-vct-gray">Region:</span>
+                <select
+                  value={selectedRegion}
+                  onChange={(e) => {
+                    setSelectedRegion(e.target.value as RegionFilter);
+                    setSelectedTournamentId(null); // Reset selection when changing region
+                  }}
+                  className="bg-vct-dark border border-vct-gray/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-vct-red"
                 >
-                  {mode === 'swiss' ? 'Swiss Stage' :
-                   mode === 'league' ? 'League Stage' :
-                   mode.charAt(0).toUpperCase() + mode.slice(1)}
-                </button>
-              ))}
-            </div>
+                  {REGION_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {playerTeam && selectedRegion !== playerTeam.region && selectedRegion !== 'all' && (
+                  <button
+                    onClick={() => setSelectedRegion(playerTeam.region)}
+                    className="text-xs text-vct-red hover:text-vct-red/80"
+                  >
+                    My Region
+                  </button>
+                )}
+              </div>
+
+              {/* View Mode Toggle */}
+              {currentTournament && (
+                <div className="flex bg-vct-dark rounded-lg p-1">
+                  {getAvailableViewModes().map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => setViewMode(mode)}
+                      className={`px-3 py-1.5 text-sm rounded ${
+                        effectiveViewMode === mode
+                          ? 'bg-vct-red text-white'
+                          : 'text-vct-gray hover:text-white'
+                      }`}
+                    >
+                      {mode === 'swiss' ? 'Swiss Stage' :
+                       mode === 'league' ? 'League Stage' :
+                       mode.charAt(0).toUpperCase() + mode.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* Sub-tabs */}
+      <div className="flex gap-2 border-b border-vct-gray/20">
+        <button
+          onClick={() => setActiveTab('current')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'current'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          Current
+        </button>
+        <button
+          onClick={() => setActiveTab('schedule')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'schedule'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          Schedule
+        </button>
+      </div>
+
+      {/* Current Tab Content */}
+      {activeTab === 'current' && (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Tournament List Sidebar */}
         <div className="lg:col-span-1 space-y-4">
           {/* Active Tournaments */}
@@ -330,12 +399,65 @@ export function TournamentPage() {
             </div>
           )}
         </div>
-      </div>
+        </div>
+      )}
 
-      {/* Match Result Modal */}
+      {/* Schedule Tab Content */}
+      {activeTab === 'schedule' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Calendar Grid */}
+          <div className="lg:col-span-2">
+            <MonthCalendar
+              currentDate={calendar.currentDate}
+              viewDate={currentViewDate}
+              events={allEvents}
+              selectedDate={currentSelectedDate}
+              onDateSelect={handleDateSelect}
+              onMonthChange={handleMonthChange}
+            />
+          </div>
+
+          {/* Day Details Panel */}
+          <div>
+            <DayDetailPanel
+              selectedDate={currentSelectedDate}
+              currentDate={calendar.currentDate}
+              events={allEvents}
+              teams={teams}
+              matches={matches}
+              playerTeamId={playerTeamId}
+              onViewMatch={handleScheduleViewMatch}
+              onTrainingClick={() => setTrainingModalOpen(true)}
+              onScrimClick={() => setScrimModalOpen(true)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Match Result Modal - for Current tab */}
       {selectedMatch && (
         <MatchResult match={selectedMatch} onClose={handleCloseMatchDetails} />
       )}
+
+      {/* Match Result Modal - for Schedule tab */}
+      {scheduleSelectedMatch && scheduleSelectedMatch.status === 'completed' && (
+        <MatchResult
+          match={scheduleSelectedMatch}
+          onClose={() => setScheduleSelectedMatch(null)}
+        />
+      )}
+
+      {/* Training Modal */}
+      <TrainingModal
+        isOpen={trainingModalOpen}
+        onClose={() => setTrainingModalOpen(false)}
+      />
+
+      {/* Scrim Modal */}
+      <ScrimModal
+        isOpen={scrimModalOpen}
+        onClose={() => setScrimModalOpen(false)}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// Roster Page - Manage team roster and browse free agents
+// Team Page - Manage team roster and browse free agents
 
 import { useState } from 'react';
 import { useGameStore } from '../store';
@@ -11,10 +11,10 @@ import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 
-type RosterTab = 'myteam' | 'allteams' | 'freeagents';
+type TeamTab = 'roster' | 'freeagents' | 'allteams';
 
 export function Roster() {
-  const [activeTab, setActiveTab] = useState<RosterTab>('myteam');
+  const [activeTab, setActiveTab] = useState<TeamTab>('roster');
   const [isInitializing, setIsInitializing] = useState(false);
   const [showSetupWizard, setShowSetupWizard] = useState(false);
 
@@ -123,7 +123,7 @@ export function Roster() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-vct-light">Roster Management</h1>
+        <h1 className="text-2xl font-bold text-vct-light">Team</h1>
 
         {/* Quick Stats */}
         <div className="flex items-center gap-4 text-sm">
@@ -145,24 +145,14 @@ export function Roster() {
       {/* Tabs */}
       <div className="flex gap-2 border-b border-vct-gray/20">
         <button
-          onClick={() => setActiveTab('myteam')}
+          onClick={() => setActiveTab('roster')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'myteam'
+            activeTab === 'roster'
               ? 'text-vct-red border-vct-red'
               : 'text-vct-gray border-transparent hover:text-vct-light'
           }`}
         >
-          My Team
-        </button>
-        <button
-          onClick={() => setActiveTab('allteams')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'allteams'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          All Teams
+          Roster
         </button>
         <button
           onClick={() => setActiveTab('freeagents')}
@@ -174,19 +164,29 @@ export function Roster() {
         >
           Free Agents
         </button>
+        <button
+          onClick={() => setActiveTab('allteams')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'allteams'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          All Teams
+        </button>
       </div>
 
       {/* Content */}
-      {activeTab === 'myteam' && playerTeam ? (
+      {activeTab === 'roster' && playerTeam ? (
         <RosterList
           team={playerTeam}
           players={teamPlayers}
           onReleasePlayer={handleReleasePlayer}
         />
-      ) : activeTab === 'allteams' ? (
-        <AllTeamsView />
       ) : activeTab === 'freeagents' ? (
         <FreeAgentList players={allPlayers} onSignPlayer={handleSignPlayer} />
+      ) : activeTab === 'allteams' ? (
+        <AllTeamsView />
       ) : (
         <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-8 text-center">
           <p className="text-vct-gray">No team selected</p>

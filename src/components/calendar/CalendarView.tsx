@@ -133,10 +133,10 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
       {showFullSchedule && upcomingEvents.length >= maxEvents && (
         <div className="mt-3 pt-2 border-t border-vct-gray/10">
           <button
-            onClick={() => setActiveView('schedule')}
+            onClick={() => setActiveView('tournament')}
             className="text-sm text-vct-red hover:text-vct-red/80 transition-colors"
           >
-            View Full Schedule
+            View Tournament Schedule
           </button>
         </div>
       )}

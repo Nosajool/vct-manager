@@ -111,20 +111,25 @@ src/
 │   ├── tournament-transition.ts # Tournament transition configuration types
 │   └── index.ts
 │
+├── hooks/               # Custom React hooks
+│   ├── useMatchDay.ts   # Centralized match day detection
+│   ├── useAlerts.ts     # Computed alerts from game state
+│   └── index.ts
+│
 ├── components/          # React UI components
-│   ├── layout/          # Header, Navigation, Layout
+│   ├── layout/          # Header, Navigation, Layout, TimeBar
+│   ├── today/           # TournamentContextPanel, ActionsPanel, AlertsPanel
 │   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal, AllTeamsView
-│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TimeControls, TrainingModal, SimulationResultsModal
+│   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TrainingModal, SimulationResultsModal
 │   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable
-│   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable
+│   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable, SwissStageView, LeagueStageView
 │   ├── scrim/           # ScrimModal, MapPoolView, RelationshipView
 │   └── shared/          # SaveLoadModal
 │
-├── pages/               # Top-level route components
-│   ├── Dashboard.tsx    # Main hub with calendar and activities
-│   ├── Roster.tsx       # Roster and free agent management (My Team, Free Agents, All Teams tabs)
-│   ├── Schedule.tsx     # Match schedule and results
-│   ├── Tournament.tsx   # Tournament brackets and simulation
+├── pages/               # Top-level route components (4 tabs)
+│   ├── Today.tsx        # Main hub with tournament context, actions, alerts
+│   ├── Roster.tsx       # Team page (Roster, Free Agents, All Teams tabs)
+│   ├── Tournament.tsx   # Tournament brackets (Current, Schedule sub-tabs)
 │   ├── Finances.tsx     # Financial management
 │   └── index.ts
 │
