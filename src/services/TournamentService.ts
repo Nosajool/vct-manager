@@ -12,6 +12,7 @@ import type {
   CompetitionType,
   TournamentRegion,
   BracketMatch,
+  BracketStructure,
   MatchResult,
   CalendarEvent,
   Match,
@@ -19,7 +20,7 @@ import type {
   SwissStage,
   SwissTeamRecord,
 } from '../types';
-import { isMultiStageTournament } from '../types';
+import { isMultiStageTournament, isLeagueToPlayoffTournament } from '../types';
 import type { StandingsEntry, QualificationRecord } from '../store/slices/competitionSlice';
 
 export class TournamentService {
@@ -107,7 +108,7 @@ export class TournamentService {
     }
 
     // Check if this is a Swiss stage match
-    if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss') {
+    if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss' && tournament.swissStage) {
       // Check if match ID is a Swiss match
       const isSwissMatch = tournament.swissStage.rounds.some(
         round => round.matches.some(m => m.matchId === bracketMatchId)
@@ -493,7 +494,7 @@ export class TournamentService {
 
     // Get Swiss stage standings if this is a swiss_to_playoff tournament
     let swissStandings: SwissTeamRecord[] = [];
-    if (isMultiStageTournament(tournament)) {
+    if (isMultiStageTournament(tournament) && tournament.swissStage) {
       swissStandings = tournament.swissStage.standings;
     }
 
@@ -547,15 +548,29 @@ export class TournamentService {
     console.log(`Masters tournament ${tournament.name} completed. Champion: ${championName}`);
   }
 
+  // Track tournaments that have already triggered stage completion
+  // Prevents duplicate calls from MatchService and CalendarService in the same cycle
+  private stageCompletionTriggered: Set<string> = new Set();
+
   /**
    * Handle Stage 1 or Stage 2 league completion
    *
    * Shows the final league standings and triggers the transition to Stage Playoffs.
    * Top 8 teams qualify for the regional playoffs.
    *
+   * For league_to_playoff tournaments, this triggers an internal stage transition
+   * rather than creating a separate playoffs tournament.
+   *
    * @param tournamentId - The Stage 1 or Stage 2 tournament ID
    */
   handleStageCompletion(tournamentId: string): void {
+    // Guard against duplicate calls for the same tournament
+    if (this.stageCompletionTriggered.has(tournamentId)) {
+      console.log(`handleStageCompletion already triggered for ${tournamentId}, skipping duplicate call`);
+      return;
+    }
+    this.stageCompletionTriggered.add(tournamentId);
+
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
@@ -590,17 +605,25 @@ export class TournamentService {
       }
     }
 
-    // Determine the next transition
-    // Stage 1 → Stage 1 Playoffs, Stage 2 → Stage 2 Playoffs
+    // Check if this is a league_to_playoff tournament (internal transition)
+    // vs legacy separate tournament architecture (external transition)
+    const isInternalTransition = isLeagueToPlayoffTournament(tournament);
+
+    // Determine the next transition ID (only for legacy architecture)
     let nextTransitionId: string | undefined;
-    if (tournament.type === 'stage1') {
-      nextTransitionId = 'stage1_to_stage1_playoffs';
-    } else if (tournament.type === 'stage2') {
-      nextTransitionId = 'stage2_to_stage2_playoffs';
+    if (!isInternalTransition) {
+      if (tournament.type === 'stage1') {
+        nextTransitionId = 'stage1_to_stage1_playoffs';
+      } else if (tournament.type === 'stage2') {
+        nextTransitionId = 'stage2_to_stage2_playoffs';
+      }
     }
 
-    // Mark tournament as completed
-    state.updateTournament(tournamentId, { status: 'completed' });
+    // For league_to_playoff format, don't mark as completed yet
+    // The transition will update the stage, not complete the tournament
+    if (!isInternalTransition) {
+      state.updateTournament(tournamentId, { status: 'completed' });
+    }
 
     // Trigger modal via UISlice
     state.openModal('stage_completion', {
@@ -611,15 +634,20 @@ export class TournamentService {
       qualifiedTeams,
       playerQualified,
       playerPlacement,
-      nextTransitionId,
+      nextTransitionId,           // undefined for internal transitions
+      internalTransition: isInternalTransition,  // Flag for modal to handle differently
     });
 
-    console.log(`Stage tournament ${tournament.name} completed. Top 8 qualified for playoffs.`);
+    console.log(`Stage tournament ${tournament.name} league phase completed. Top 8 qualified for playoffs.`);
   }
 
   /**
    * Check if Stage 1 or Stage 2 league is complete
    * Returns true if all league matches for the stage have been played
+   *
+   * For league_to_playoff tournaments, checks if:
+   * 1. Tournament is in 'league' stage
+   * 2. All league matches are completed
    */
   isStageComplete(stageType: 'stage1' | 'stage2'): { complete: boolean; tournamentId: string | null } {
     const state = useGameStore.getState();
@@ -634,22 +662,49 @@ export class TournamentService {
       return { complete: false, tournamentId: null };
     }
 
-    // Find the Stage LEAGUE tournament for player's region (exclude Playoffs)
-    // Both Stage 1 League and Stage 1 Playoffs have type === 'stage1',
-    // so we need to exclude Playoffs to find the correct league tournament
-    const stageTournament = Object.values(state.tournaments).find(
-      (t) =>
-        t.type === stageType &&
-        t.region === playerTeam.region &&
-        t.status !== 'completed' &&
-        !t.name.includes('Playoffs')
-    );
+    // Find the Stage tournament for player's region
+    // For league_to_playoff format: check if in 'league' stage
+    // For legacy format: exclude Playoffs by name
+    const stageTournament = Object.values(state.tournaments).find((t) => {
+      if (t.type !== stageType) return false;
+      if (t.region !== playerTeam.region) return false;
+
+      // For league_to_playoff format
+      if (isLeagueToPlayoffTournament(t)) {
+        // Must be in league stage (not already transitioned to playoffs)
+        return t.currentStage === 'league';
+      }
+
+      // Legacy format: exclude completed and Playoffs tournaments
+      return t.status !== 'completed' && !t.name.includes('Playoffs');
+    });
 
     if (!stageTournament) {
       return { complete: false, tournamentId: null };
     }
 
-    // Count matches for this stage tournament
+    // For league_to_playoff format, check league stage matches
+    if (isLeagueToPlayoffTournament(stageTournament) && stageTournament.leagueStage) {
+      const leagueBracket = stageTournament.leagueStage.bracket;
+      let completedMatches = 0;
+      let totalMatches = 0;
+
+      for (const round of leagueBracket.upper) {
+        for (const match of round.matches) {
+          totalMatches++;
+          if (match.status === 'completed') {
+            completedMatches++;
+          }
+        }
+      }
+
+      return {
+        complete: totalMatches > 0 && completedMatches === totalMatches,
+        tournamentId: stageTournament.id,
+      };
+    }
+
+    // Legacy format: count matches from store
     const stageMatches = Object.values(state.matches).filter(
       (m) => m.tournamentId === stageTournament.id
     );
@@ -842,6 +897,11 @@ export class TournamentService {
       return false;
     }
 
+    if (!tournament.swissStage) {
+      console.error(`Tournament has no Swiss stage: ${tournamentId}`);
+      return false;
+    }
+
     // Complete the Swiss match (pure engine call)
     const updatedSwissStage = bracketManager.completeSwissMatch(
       tournament.swissStage,
@@ -890,6 +950,11 @@ export class TournamentService {
       return false;
     }
 
+    if (!tournament.swissStage) {
+      console.error(`Tournament has no Swiss stage: ${tournamentId}`);
+      return false;
+    }
+
     // Generate next round (pure engine call)
     const updatedSwissStage = bracketManager.generateNextSwissRound(
       tournament.swissStage,
@@ -922,6 +987,11 @@ export class TournamentService {
       return false;
     }
 
+    if (!tournament.swissStage) {
+      console.error(`Tournament has no Swiss stage: ${tournamentId}`);
+      return false;
+    }
+
     // Get Swiss qualifiers
     const swissQualifiers = bracketManager.getSwissQualifiedTeams(tournament.swissStage);
 
@@ -933,7 +1003,7 @@ export class TournamentService {
     // Generate playoff bracket (pure engine call)
     const playoffBracket = tournamentEngine.generateMastersPlayoffBracket(
       swissQualifiers,
-      tournament.playoffOnlyTeamIds,
+      tournament.playoffOnlyTeamIds || [],
       tournamentId
     );
 
@@ -967,6 +1037,240 @@ export class TournamentService {
   }
 
   /**
+   * Transition a Stage tournament from League to Playoffs
+   * Called when league stage is complete (all round-robin matches played)
+   *
+   * Similar to transitionToPlayoffs() for Swiss tournaments.
+   * Top 8 teams from league standings qualify for double elimination playoffs.
+   */
+  transitionLeagueToPlayoffs(tournamentId: string): boolean {
+    console.log(`transitionLeagueToPlayoffs called for tournament: ${tournamentId}`);
+
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament || !isLeagueToPlayoffTournament(tournament)) {
+      console.error(`Invalid tournament for league-to-playoff transition: ${tournamentId}`);
+      return false;
+    }
+
+    if (tournament.currentStage !== 'league') {
+      console.log(`Tournament ${tournamentId} already in ${tournament.currentStage} stage, skipping transition`);
+      return false;
+    }
+
+    console.log(`  Tournament name: ${tournament.name}, currentStage: ${tournament.currentStage}`);
+
+    // Get top 8 teams from league standings
+    const standings = tournament.leagueStage?.standings || tournament.standings || [];
+    const sortedStandings = [...standings].sort((a, b) => {
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+      return b.mapDiff - a.mapDiff;
+    });
+
+    const qualifiedTeamIds = sortedStandings.slice(0, 8).map(s => s.teamId);
+
+    if (qualifiedTeamIds.length < 8) {
+      console.error(`Not enough qualified teams for playoffs: ${qualifiedTeamIds.length}`);
+      return false;
+    }
+
+    console.log(`Transitioning ${tournament.name} from league to playoffs with teams:`,
+      qualifiedTeamIds.map(id => state.teams[id]?.name || id).join(', ')
+    );
+
+    // Generate double elimination playoff bracket
+    const playoffBracket = bracketManager.generateDoubleElimination(qualifiedTeamIds);
+
+    // Prefix match IDs with tournament ID for uniqueness
+    const prefix = tournamentId.slice(-12);
+    this.prefixBracketMatchIds(playoffBracket, prefix);
+
+    // Update tournament with playoff bracket
+    state.updateTournament(tournamentId, {
+      bracket: playoffBracket,
+    });
+
+    // Set current stage to playoff
+    state.setTournamentCurrentStage(tournamentId, 'playoff');
+
+    // Get fresh state after updates
+    const freshState = useGameStore.getState();
+    const updatedTournament = freshState.tournaments[tournamentId];
+
+    if (updatedTournament) {
+      // Schedule playoff matches starting from tomorrow
+      // The tournament's designated playoff period will be respected
+      this.schedulePlayoffMatches(updatedTournament);
+
+      // Save the updated bracket with scheduled dates back to store
+      freshState.updateBracket(tournamentId, updatedTournament.bracket);
+
+      // Get fresh state again after bracket update
+      const finalState = useGameStore.getState();
+      const finalTournament = finalState.tournaments[tournamentId];
+
+      if (!finalTournament) return false;
+
+      // Create Match entities for ready matches
+      this.createMatchEntitiesForReadyBracketMatches(finalTournament);
+
+      // Add calendar events for playoff matches
+      this.addPlayoffCalendarEvents(finalTournament);
+    }
+
+    // Clear the stage completion flag for this tournament
+    // (it's now in playoffs stage, so can't trigger stage completion again anyway)
+    this.stageCompletionTriggered.delete(tournamentId);
+
+    console.log(`Stage tournament ${tournament.name} transitioned to playoffs`);
+    return true;
+  }
+
+  /**
+   * Add calendar events specifically for playoff matches
+   * Used when transitioning from league/swiss to playoffs mid-tournament
+   */
+  private addPlayoffCalendarEvents(tournament: Tournament): void {
+    const state = useGameStore.getState();
+    const events: CalendarEvent[] = [];
+
+    console.log(`addPlayoffCalendarEvents for ${tournament.name}:`);
+    console.log(`  Upper bracket rounds: ${tournament.bracket.upper.length}`);
+    console.log(`  Lower bracket rounds: ${tournament.bracket.lower?.length || 0}`);
+
+    // Determine the correct phase for these playoff matches
+    // stage1 tournament playoffs -> stage1_playoffs phase
+    // stage2 tournament playoffs -> stage2_playoffs phase
+    const playoffPhase = tournament.type === 'stage1' ? 'stage1_playoffs'
+                       : tournament.type === 'stage2' ? 'stage2_playoffs'
+                       : undefined;
+
+    const addMatchEvents = (matches: BracketMatch[], isGrandFinal: boolean = false) => {
+      for (const bracketMatch of matches) {
+        console.log(`  Checking match ${bracketMatch.matchId}: status=${bracketMatch.status}, teamA=${bracketMatch.teamAId}, teamB=${bracketMatch.teamBId}, date=${bracketMatch.scheduledDate}`);
+        if (bracketMatch.status !== 'ready') {
+          console.log(`    Skipping - not ready`);
+          continue;
+        }
+        if (!bracketMatch.teamAId || !bracketMatch.teamBId) {
+          console.log(`    Skipping - missing teams`);
+          continue;
+        }
+
+        // Skip if event already exists
+        const eventId = `event-match-${bracketMatch.matchId}`;
+        const existingEvent = state.calendar.scheduledEvents.find(e => e.id === eventId);
+        if (existingEvent) {
+          console.log(`    Skipping - event already exists`);
+          continue;
+        }
+        console.log(`    Adding event for date ${bracketMatch.scheduledDate}`);
+
+        const teamA = state.teams[bracketMatch.teamAId];
+        const teamB = state.teams[bracketMatch.teamBId];
+
+        events.push({
+          id: eventId,
+          type: 'match',
+          date: bracketMatch.scheduledDate || tournament.startDate,
+          data: {
+            matchId: bracketMatch.matchId,
+            homeTeamId: bracketMatch.teamAId,
+            awayTeamId: bracketMatch.teamBId,
+            homeTeamName: teamA?.name || 'Unknown',
+            awayTeamName: teamB?.name || 'Unknown',
+            tournamentId: tournament.id,
+            tournamentName: tournament.name,
+            isGrandFinal,
+            isPlayoffMatch: true,
+            phase: playoffPhase,
+          },
+          processed: false,
+          required: true,
+        });
+      }
+    };
+
+    // Process all bracket rounds
+    for (const round of tournament.bracket.upper) {
+      addMatchEvents(round.matches);
+    }
+
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        addMatchEvents(round.matches);
+      }
+    }
+
+    // Handle grand final
+    if (tournament.bracket.grandfinal) {
+      addMatchEvents([tournament.bracket.grandfinal], true);
+    }
+
+    if (events.length > 0) {
+      console.log(`  Adding ${events.length} calendar events for playoff matches:`);
+      for (const event of events) {
+        const data = event.data as { matchId: string; phase?: string };
+        console.log(`    - ${event.id} on ${event.date.slice(0, 10)} (matchId: ${data.matchId}, phase: ${data.phase})`);
+      }
+      state.addCalendarEvents(events);
+    }
+  }
+
+  /**
+   * Helper to prefix all match IDs in a bracket for uniqueness
+   */
+  private prefixBracketMatchIds(bracket: BracketStructure, prefix: string): void {
+    const prefixId = (id: string) => id.startsWith(prefix) ? id : `${prefix}-${id}`;
+
+    const updateDestination = (dest: { type: string; matchId?: string }) => {
+      if (dest.type === 'match' && dest.matchId) {
+        dest.matchId = prefixId(dest.matchId);
+      }
+    };
+
+    const updateSource = (source: { type: string; matchId?: string }) => {
+      if ((source.type === 'winner' || source.type === 'loser') && source.matchId) {
+        source.matchId = prefixId(source.matchId);
+      }
+    };
+
+    const processRound = (round: { roundId: string; matches: BracketMatch[] }) => {
+      round.roundId = prefixId(round.roundId);
+      for (const match of round.matches) {
+        match.matchId = prefixId(match.matchId);
+        match.roundId = prefixId(match.roundId);
+        updateSource(match.teamASource);
+        updateSource(match.teamBSource);
+        updateDestination(match.winnerDestination);
+        updateDestination(match.loserDestination);
+      }
+    };
+
+    for (const round of bracket.upper) {
+      processRound(round);
+    }
+
+    if (bracket.lower) {
+      for (const round of bracket.lower) {
+        processRound(round);
+      }
+    }
+
+    if (bracket.grandfinal) {
+      const gf = bracket.grandfinal;
+      gf.matchId = prefixId(gf.matchId);
+      gf.roundId = prefixId(gf.roundId);
+      updateSource(gf.teamASource);
+      updateSource(gf.teamBSource);
+      updateDestination(gf.winnerDestination);
+      updateDestination(gf.loserDestination);
+    }
+  }
+
+  /**
    * Force-complete the Swiss stage when totalRounds is reached but not all teams are qualified/eliminated
    * This handles edge cases where teams couldn't be paired in the final round
    * Qualifies/eliminates teams based on current standings
@@ -982,6 +1286,11 @@ export class TournamentService {
 
     // Get current Swiss stage
     const swissStage = tournament.swissStage;
+
+    if (!swissStage) {
+      console.error(`Tournament has no Swiss stage: ${tournamentId}`);
+      return false;
+    }
 
     // Get active teams sorted by standings
     const activeTeams = swissStage.standings
@@ -1071,7 +1380,7 @@ export class TournamentService {
       const freshState = useGameStore.getState();
       const tournament = freshState.tournaments[tournamentId];
 
-      if (!tournament || !isMultiStageTournament(tournament)) {
+      if (!tournament || !isMultiStageTournament(tournament) || !tournament.swissStage) {
         break;
       }
 
@@ -1129,7 +1438,7 @@ export class TournamentService {
     // Return qualified teams
     const finalState = useGameStore.getState();
     const finalTournament = finalState.tournaments[tournamentId];
-    if (finalTournament && isMultiStageTournament(finalTournament)) {
+    if (finalTournament && isMultiStageTournament(finalTournament) && finalTournament.swissStage) {
       return bracketManager.getSwissQualifiedTeams(finalTournament.swissStage);
     }
 
@@ -1143,7 +1452,7 @@ export class TournamentService {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
-    if (!tournament || !isMultiStageTournament(tournament)) {
+    if (!tournament || !isMultiStageTournament(tournament) || !tournament.swissStage) {
       return null;
     }
 
@@ -1193,6 +1502,9 @@ export class TournamentService {
     roundNumber: number
   ): void {
     const state = useGameStore.getState();
+
+    if (!tournament.swissStage) return;
+
     const round = tournament.swissStage.rounds.find(r => r.roundNumber === roundNumber);
 
     if (!round) return;
@@ -1287,15 +1599,16 @@ export class TournamentService {
    */
   private createMatchEntitiesForReadyBracketMatches(tournament: Tournament): void {
     const state = useGameStore.getState();
-    console.log(`Creating Match entities for tournament ${tournament.id}`);
+    console.log(`Creating Match entities for tournament ${tournament.id} (stage: ${isMultiStageTournament(tournament) ? (tournament as MultiStageTournament).currentStage : 'N/A'})`);
 
     const processMatches = (matches: BracketMatch[]) => {
       for (const bracketMatch of matches) {
         // Only create Match entities for ready matches with known teams
         if (bracketMatch.status === 'ready' && bracketMatch.teamAId && bracketMatch.teamBId) {
           // Check if Match already exists
-          if (state.matches[bracketMatch.matchId]) {
-            console.log(`  Match ${bracketMatch.matchId} already exists, skipping`);
+          const existingMatch = state.matches[bracketMatch.matchId];
+          if (existingMatch) {
+            console.log(`  Match ${bracketMatch.matchId} already exists (tournamentId: ${existingMatch.tournamentId}, date: ${existingMatch.scheduledDate}), skipping`);
             continue;
           }
 

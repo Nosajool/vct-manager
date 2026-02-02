@@ -16,6 +16,8 @@ import type {
   BracketMatch,
   SeasonPhase,
 } from '../types';
+import { isLeagueToPlayoffTournament } from '../types';
+import { tournamentService } from './TournamentService';
 import type { QualificationRecord } from '../store/slices/competitionSlice';
 import { TOURNAMENT_TRANSITIONS } from '../utils/tournament-transitions';
 
@@ -98,6 +100,9 @@ export class TournamentTransitionService {
   /**
    * Regional transition: League → Regional Playoffs
    * Example: Stage 1 → Stage 1 Playoffs (per region)
+   *
+   * For league_to_playoff tournaments, this delegates to TournamentService
+   * to perform an internal stage transition instead of creating a new tournament.
    */
   private executeRegionalPlayoffTransition(
     config: TournamentTransitionConfig,
@@ -105,6 +110,40 @@ export class TournamentTransitionService {
   ): TransitionResult {
     const state = useGameStore.getState();
 
+    // Check if this region has a league_to_playoff tournament for this stage
+    // If so, transition internally instead of creating a new tournament
+    const stageType = config.qualificationSource as 'stage1' | 'stage2';
+    const existingTournament = Object.values(state.tournaments).find(
+      t => t.type === stageType &&
+           t.region === region &&
+           isLeagueToPlayoffTournament(t)
+    ) as MultiStageTournament | undefined;
+
+    if (existingTournament) {
+      // Use internal transition for league_to_playoff format
+      console.log(`Using internal transition for ${existingTournament.name}`);
+
+      const success = tournamentService.transitionLeagueToPlayoffs(existingTournament.id);
+
+      if (success) {
+        // Update phase
+        state.setCurrentPhase(config.toPhase);
+
+        return {
+          success: true,
+          tournamentId: existingTournament.id,
+          tournamentName: existingTournament.name,
+          newPhase: config.toPhase,
+        };
+      } else {
+        return {
+          success: false,
+          error: `Failed to transition ${existingTournament.name} to playoffs`,
+        };
+      }
+    }
+
+    // Legacy flow: Create a new regional playoff tournament
     // Get top N teams from league standings for this region
     const teamsPerRegion = config.qualificationRules.teamsPerRegion || 8;
     const regionalTeams = Object.values(state.teams)
@@ -329,6 +368,9 @@ export class TournamentTransitionService {
    */
   private createSwissRound1MatchEntities(tournament: MultiStageTournament): void {
     const state = useGameStore.getState();
+
+    if (!tournament.swissStage) return;
+
     const round1 = tournament.swissStage.rounds[0];
 
     if (!round1) return;
@@ -374,7 +416,7 @@ export class TournamentTransitionService {
     ];
 
     // Add Swiss Round 1 match events
-    const round1 = tournament.swissStage.rounds[0];
+    const round1 = tournament.swissStage?.rounds[0];
     const tournamentPhase = this.getPhaseForTournament(tournament);
 
     if (round1) {

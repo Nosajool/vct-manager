@@ -53,9 +53,14 @@ export interface MatchEventData {
   homeTeamName?: string;
   awayTeamName?: string;
   tournamentId?: string;
+  tournamentName?: string;
   isPlayerMatch?: boolean;
   phase?: SeasonPhase;  // For league matches, indicates which phase this match belongs to
   region?: Region;      // Which region this match belongs to
+  isSwissMatch?: boolean;    // Match is part of Swiss stage
+  swissRound?: number;       // Which Swiss round this match is in
+  isPlayoffMatch?: boolean;  // Match is part of playoff stage
+  isGrandFinal?: boolean;    // Match is the grand final
 }
 
 export interface TournamentEventData {

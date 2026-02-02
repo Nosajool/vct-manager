@@ -288,7 +288,7 @@ export function getPhaseStatusDisplay(
   }
 
   // Check if this is a Swiss-to-playoff tournament in Swiss stage
-  if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss') {
+  if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss' && tournament.swissStage) {
     const swissRecord = tournament.swissStage.standings.find(
       (s) => s.teamId === playerTeamId
     );

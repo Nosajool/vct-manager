@@ -8,6 +8,7 @@ import { matchService } from './MatchService';
 import { tournamentService } from './TournamentService';
 import { teamSlotResolver } from './TeamSlotResolver';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
+import { isLeagueToPlayoffTournament } from '../types';
 
 /**
  * Result of advancing time
@@ -50,12 +51,22 @@ export class CalendarService {
     );
 
     const unprocessedEvents = eventsToday.filter((e) => !e.processed);
+
+    // Debug logging
+    console.log(`CalendarService.advanceDay: Processing ${currentDate}`);
+    console.log(`  Total events in store: ${state.calendar.scheduledEvents.length}`);
+    console.log(`  Events today: ${eventsToday.length}`);
+    console.log(`  Unprocessed events: ${unprocessedEvents.length}`);
+    if (unprocessedEvents.length > 0) {
+      console.log(`  Events:`, unprocessedEvents.map(e => ({ id: e.id, type: e.type, date: e.date })));
+    }
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
 
     // Process each event for TODAY
     const currentPhase = state.calendar.currentPhase;
+    console.log(`  Current phase: ${currentPhase}`);
 
     for (const event of unprocessedEvents) {
       if (event.type === 'salary_payment') {
@@ -68,9 +79,12 @@ export class CalendarService {
         const matchData = event.data as MatchEventData;
         const matchPhase = matchData.phase;
 
+        console.log(`  Processing match event ${event.id}: matchPhase=${matchPhase}, isPlayoffMatch=${matchData.isPlayoffMatch}`);
+
         if (matchPhase && matchPhase !== currentPhase) {
           // Skip matches that belong to a different phase
           // Don't mark as processed - they'll be simulated when their phase is active
+          console.log(`    SKIPPED: phase mismatch (event phase: ${matchPhase}, current: ${currentPhase})`);
           skippedEvents.push(event);
           continue;
         }
@@ -358,15 +372,32 @@ export class CalendarService {
     const tournamentType = phaseToType[phase];
     if (!tournamentType) return null;
 
+    const isPlayoffPhase = phase.includes('_playoffs');
+
     // Find matching tournament
     for (const tournament of Object.values(state.tournaments)) {
       if (tournament.type === tournamentType && tournament.region === region) {
+        // For league_to_playoff tournaments, check currentStage instead of name
+        if (isLeagueToPlayoffTournament(tournament)) {
+          const isInPlayoffStage = tournament.currentStage === 'playoff';
+          // During playoffs phase, only match tournaments in playoff stage
+          if (isPlayoffPhase && !isInPlayoffStage) {
+            continue;
+          }
+          // During league phase, only match tournaments in league stage
+          if (!isPlayoffPhase && isInPlayoffStage) {
+            continue;
+          }
+          return { id: tournament.id, name: tournament.name };
+        }
+
+        // Legacy handling for separate tournament architecture
         // For playoffs phases, check if this is a playoffs tournament
-        if (phase.includes('_playoffs') && !tournament.name.includes('Playoffs')) {
+        if (isPlayoffPhase && !tournament.name.includes('Playoffs')) {
           continue;
         }
         // For non-playoffs phases, skip playoffs tournaments
-        if (!phase.includes('_playoffs') && tournament.name.includes('Playoffs')) {
+        if (!isPlayoffPhase && tournament.name.includes('Playoffs')) {
           continue;
         }
         return { id: tournament.id, name: tournament.name };

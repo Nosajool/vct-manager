@@ -5,7 +5,8 @@ import { useGameStore } from '../store';
 import { matchSimulator } from '../engine/match';
 import { tournamentService } from './TournamentService';
 import type { Match, MatchResult, Player, Team } from '../types';
-import type { TournamentStandingsEntry } from '../types/competition';
+import { isLeagueToPlayoffTournament } from '../types';
+import type { TournamentStandingsEntry, LeagueStage } from '../types/competition';
 
 export class MatchService {
   /**
@@ -204,6 +205,42 @@ export class MatchService {
     // Sync to standings slice for round-robin (league) tournaments
     // This moves the sync logic from UI (Tournament.tsx useEffect) to service layer
     if (tournament.format === 'round_robin') {
+      tournamentService.calculateLeagueStandings(tournamentId);
+    }
+
+    // For league_to_playoff tournaments, also update leagueStage standings and matchesCompleted
+    if (isLeagueToPlayoffTournament(tournament) && tournament.currentStage === 'league') {
+      const leagueStage = tournament.leagueStage;
+      if (leagueStage) {
+        // Update leagueStage standings to match tournament standings
+        const updatedLeagueStage: LeagueStage = {
+          ...leagueStage,
+          standings: standings,
+          matchesCompleted: leagueStage.matchesCompleted + 1,
+        };
+
+        // Update leagueStage in tournament using dedicated action
+        state.updateLeagueStage(tournamentId, updatedLeagueStage);
+
+        // Check if league stage is complete (all matches played)
+        if (updatedLeagueStage.matchesCompleted >= updatedLeagueStage.totalMatches) {
+          console.log(`League stage complete for ${tournament.name} (${updatedLeagueStage.matchesCompleted}/${updatedLeagueStage.totalMatches} matches)`);
+
+          // Only trigger stage completion modal for the player's region tournament
+          const playerTeamId = state.playerTeamId;
+          const playerTeam = playerTeamId ? state.teams[playerTeamId] : null;
+
+          if (playerTeam && tournament.region === playerTeam.region) {
+            // Trigger stage completion modal for player's tournament
+            tournamentService.handleStageCompletion(tournamentId);
+          } else {
+            // For other regions, just log completion (no modal)
+            console.log(`  (Not player's region - no modal shown)`);
+          }
+        }
+      }
+
+      // Also sync to standings slice
       tournamentService.calculateLeagueStandings(tournamentId);
     }
   }

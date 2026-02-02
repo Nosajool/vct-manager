@@ -13,6 +13,7 @@
 import { useRef } from 'react';
 import { useGameStore } from '../../store';
 import { tournamentTransitionService } from '../../services/TournamentTransitionService';
+import { tournamentService } from '../../services/TournamentService';
 import type { StandingsEntry } from '../../store/slices/competitionSlice';
 
 export interface StageCompletionModalData {
@@ -32,6 +33,8 @@ export interface StageCompletionModalData {
   playerPlacement?: number;
   /** Transition ID to execute when modal closes (e.g., 'stage1_to_stage1_playoffs') */
   nextTransitionId?: string;
+  /** Flag indicating internal transition (league_to_playoff format) */
+  internalTransition?: boolean;
 }
 
 interface StageCompletionModalProps {
@@ -57,25 +60,55 @@ export function StageCompletionModal({ data, onClose }: StageCompletionModalProp
   /**
    * Execute the next phase transition (Stage → Stage Playoffs)
    * This is called when the user closes the modal via any method
+   *
+   * For league_to_playoff tournaments, this triggers an internal stage transition
+   * via TournamentService. For legacy tournaments, it uses TournamentTransitionService.
    */
   const executeTransitionIfNeeded = () => {
-    if (transitionTriggeredRef.current || !data.nextTransitionId) {
+    // Skip if already triggered or no transition needed
+    if (transitionTriggeredRef.current) {
       return;
     }
+
+    // Must have either internal transition or external transition ID
+    if (!data.internalTransition && !data.nextTransitionId) {
+      return;
+    }
+
     transitionTriggeredRef.current = true;
 
-    console.log(`Executing transition: ${data.nextTransitionId} for region: ${playerRegion}`);
+    const state = useGameStore.getState();
 
-    // Pass the player's region - required for regional_to_playoff transitions
-    const result = tournamentTransitionService.executeTransition(
-      data.nextTransitionId,
-      playerRegion
-    );
+    if (data.internalTransition) {
+      // Internal transition for league_to_playoff format
+      console.log(`Executing internal transition for tournament: ${data.tournamentId}`);
 
-    if (result.success) {
-      console.log(`Successfully transitioned to ${result.newPhase}`);
-    } else {
-      console.error(`Transition failed: ${result.error}`);
+      const success = tournamentService.transitionLeagueToPlayoffs(data.tournamentId);
+
+      // Always update phase to playoffs for internal transitions
+      // (transitionLeagueToPlayoffs returns false if already in playoffs, but we still need to set phase)
+      const newPhase = data.stageType === 'stage1' ? 'stage1_playoffs' : 'stage2_playoffs';
+      state.setCurrentPhase(newPhase);
+
+      if (success) {
+        console.log(`Successfully transitioned to ${newPhase} (internal)`);
+      } else {
+        console.log(`Tournament already in playoffs stage, phase set to ${newPhase}`);
+      }
+    } else if (data.nextTransitionId) {
+      // External transition for legacy architecture
+      console.log(`Executing transition: ${data.nextTransitionId} for region: ${playerRegion}`);
+
+      const result = tournamentTransitionService.executeTransition(
+        data.nextTransitionId,
+        playerRegion
+      );
+
+      if (result.success) {
+        console.log(`Successfully transitioned to ${result.newPhase}`);
+      } else {
+        console.error(`Transition failed: ${result.error}`);
+      }
     }
   };
 
@@ -122,6 +155,9 @@ export function StageCompletionModal({ data, onClose }: StageCompletionModalProp
             {stageDisplayName} League Complete!
           </h2>
           <p className="text-vct-gray mt-1">
+            {data.tournamentName}
+          </p>
+          <p className="text-vct-gray/70 text-sm mt-1">
             Top 8 teams qualify for {playoffsName}
           </p>
         </div>

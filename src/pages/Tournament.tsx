@@ -14,12 +14,13 @@ import {
   TournamentCardMini,
   StandingsTable,
   SwissStageView,
+  LeagueStageView,
 } from '../components/tournament';
 import { MatchResult } from '../components/match/MatchResult';
-import { isMultiStageTournament } from '../types';
+import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
 import type { Region, TournamentRegion } from '../types';
 
-type ViewMode = 'bracket' | 'standings' | 'swiss';
+type ViewMode = 'bracket' | 'standings' | 'swiss' | 'league';
 type RegionFilter = Region | 'International' | 'all';
 
 const REGION_OPTIONS: { value: RegionFilter; label: string }[] = [
@@ -66,9 +67,20 @@ export function TournamentPage() {
   const completedTournaments = allTournaments.filter((t) => t.status === 'completed');
 
   // Get selected tournament or current one
+  // Prefer player's region tournament when none is selected
   const currentTournament = selectedTournamentId
     ? tournaments[selectedTournamentId]
-    : activeTournaments[0] || upcomingTournaments[0];
+    : (() => {
+        // Try to find an active tournament in the player's region first
+        if (playerTeam) {
+          const playerRegionActive = activeTournaments.find(t => t.region === playerTeam.region);
+          if (playerRegionActive) return playerRegionActive;
+          const playerRegionUpcoming = upcomingTournaments.find(t => t.region === playerTeam.region);
+          if (playerRegionUpcoming) return playerRegionUpcoming;
+        }
+        // Fall back to any active/upcoming tournament
+        return activeTournaments[0] || upcomingTournaments[0];
+      })();
 
   // Note: Standings sync for league tournaments is now handled by MatchService
   // after each match result, following the service layer orchestration pattern
@@ -77,9 +89,12 @@ export function TournamentPage() {
     ? standings[currentTournament.id] || []
     : [];
 
-  // Check if current tournament is a Swiss-to-playoff tournament
-  const isSwissTournament = currentTournament && isMultiStageTournament(currentTournament);
+  // Check if current tournament is a multi-stage tournament
+  const isSwissTournament = currentTournament && isSwissToPlayoffTournament(currentTournament);
+  const isLeagueTournament = currentTournament && isLeagueToPlayoffTournament(currentTournament);
   const isInSwissStage = isSwissTournament && currentTournament.currentStage === 'swiss';
+  const isInLeagueStage = isLeagueTournament && currentTournament.currentStage === 'league';
+  const isInPlayoffStage = currentTournament && isMultiStageTournament(currentTournament) && currentTournament.currentStage === 'playoff';
 
   // Handle clicking on a completed match in the bracket
   const handleMatchClick = (matchId: string) => {
@@ -95,10 +110,22 @@ export function TournamentPage() {
 
   // Determine available view modes based on tournament type
   const getAvailableViewModes = (): ViewMode[] => {
+    // Swiss stage of swiss_to_playoff tournaments
     if (isInSwissStage) {
       return ['swiss', 'standings'];
     }
-    // League tournaments (stage1/stage2 round_robin) only have standings view
+
+    // League stage of league_to_playoff tournaments
+    if (isInLeagueStage) {
+      return ['league', 'standings'];
+    }
+
+    // Playoff stage of multi-stage tournaments
+    if (isInPlayoffStage) {
+      return ['bracket', 'standings'];
+    }
+
+    // Legacy league tournaments (stage1/stage2 round_robin) only have standings view
     if (
       currentTournament &&
       (currentTournament.type === 'stage1' || currentTournament.type === 'stage2') &&
@@ -106,6 +133,7 @@ export function TournamentPage() {
     ) {
       return ['standings'];
     }
+
     return ['bracket', 'standings'];
   };
 
@@ -185,7 +213,9 @@ export function TournamentPage() {
                       : 'text-vct-gray hover:text-white'
                   }`}
                 >
-                  {mode === 'swiss' ? 'Swiss Stage' : mode.charAt(0).toUpperCase() + mode.slice(1)}
+                  {mode === 'swiss' ? 'Swiss Stage' :
+                   mode === 'league' ? 'League Stage' :
+                   mode.charAt(0).toUpperCase() + mode.slice(1)}
                 </button>
               ))}
             </div>
@@ -269,8 +299,12 @@ export function TournamentPage() {
 
               {/* Content based on view mode */}
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-                {effectiveViewMode === 'swiss' && isSwissTournament && (
+                {effectiveViewMode === 'swiss' && isSwissTournament && currentTournament.swissStage && (
                   <SwissStageView swissStage={currentTournament.swissStage} onMatchClick={handleMatchClick} />
+                )}
+
+                {effectiveViewMode === 'league' && isLeagueTournament && currentTournament.leagueStage && (
+                  <LeagueStageView leagueStage={currentTournament.leagueStage} onMatchClick={handleMatchClick} />
                 )}
 
                 {effectiveViewMode === 'bracket' && (

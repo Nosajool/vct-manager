@@ -291,8 +291,8 @@ export class TeamSlotResolver {
     if (!tournament) return;
 
     // Separate alpha (playoff) and beta/omega (Swiss) qualifiers
-    const playoffTeams: string[] = [...tournament.playoffOnlyTeamIds];
-    const swissTeams: string[] = [...tournament.swissTeamIds];
+    const playoffTeams: string[] = [...(tournament.playoffOnlyTeamIds || [])];
+    const swissTeams: string[] = [...(tournament.swissTeamIds || [])];
 
     for (const q of qualifiers) {
       if (q.placement === 'alpha') {

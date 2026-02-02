@@ -392,14 +392,29 @@ export interface Tournament {
   championId?: string;
 }
 
-// Swiss-to-Playoff tournament (for Masters events)
+// Multi-stage tournament (for Masters and Stage tournaments)
 export interface MultiStageTournament extends Tournament {
-  format: 'swiss_to_playoff';
-  swissStage: SwissStage;
-  playoffBracket?: BracketStructure;
-  currentStage: 'swiss' | 'playoff';
-  swissTeamIds: string[];       // 8 teams in Swiss (2nd+3rd from each region)
-  playoffOnlyTeamIds: string[]; // 4 Kickoff winners (join at playoffs)
+  format: 'swiss_to_playoff' | 'league_to_playoff';
+  currentStage: 'swiss' | 'league' | 'playoff';
+
+  // Swiss-to-Playoff fields (Masters, Champions)
+  swissStage?: SwissStage;
+  swissTeamIds?: string[];       // Teams in Swiss (2nd+3rd from each region)
+  playoffOnlyTeamIds?: string[]; // Teams that skip Swiss (Kickoff winners)
+
+  // League-to-Playoff fields (Stage 1, Stage 2)
+  leagueStage?: LeagueStage;
+  leagueTeamIds?: string[];      // All 12 regional teams
+}
+
+// League stage structure (for Stage 1/2 tournaments)
+export interface LeagueStage {
+  format: 'round_robin';
+  bracket: BracketStructure;           // Round-robin matches
+  standings: TournamentStandingsEntry[];
+  matchesCompleted: number;
+  totalMatches: number;                // 30 for 12 teams in 2 groups
+  teamsQualify: number;                // Top 8 qualify for playoffs
 }
 
 export interface SwissStage {
@@ -779,6 +794,68 @@ export interface TransitionResult {
 
 ---
 
+## VCT Tournament Architecture Overview
+
+### Season Structure
+
+The VCT season consists of these tournaments in order:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VCT 2026 SEASON                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  KICKOFF (Jan-Feb)          4 regional single-elim tournaments               │
+│       │                                                                      │
+│       ▼                                                                      │
+│  MASTERS SANTIAGO (Mar)     International swiss_to_playoff                   │
+│       │                     - Swiss: 2nd+3rd from each Kickoff               │
+│       │                     - Playoff: Kickoff winners + Swiss qualifiers    │
+│       │                                                                      │
+│       ▼                                                                      │
+│  STAGE 1 (Feb-Apr)          4 regional league_to_playoff tournaments         │
+│       │                     - League: 12 teams round-robin                   │
+│       │                     - Playoffs: Top 8 double-elim                    │
+│       │                                                                      │
+│       ▼                                                                      │
+│  MASTERS LONDON (May)       International swiss_to_playoff                   │
+│       │                     - Teams from Stage 1 Playoffs                    │
+│       │                                                                      │
+│       ▼                                                                      │
+│  STAGE 2 (May-Jul)          4 regional league_to_playoff tournaments         │
+│       │                     - League: 12 teams round-robin                   │
+│       │                     - Playoffs: Top 8 double-elim                    │
+│       │                                                                      │
+│       ▼                                                                      │
+│  CHAMPIONS (Aug)            International swiss_to_playoff                   │
+│                             - Teams from Stage 2 Playoffs                    │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Tournament Formats
+
+| Tournament | Type | Format | Stage Transition |
+|------------|------|--------|------------------|
+| Kickoff | `kickoff` | `single_elim` | N/A (single stage) |
+| Masters 1/2 | `masters` | `swiss_to_playoff` | Internal: `swiss` → `playoff` |
+| Stage 1/2 | `stage1`/`stage2` | `league_to_playoff` | Internal: `league` → `playoff` |
+| Champions | `champions` | `swiss_to_playoff` | Internal: `swiss` → `playoff` |
+
+### Qualification Flow
+
+```
+Kickoff Winners ─────────────────────┐
+                                     ├──▶ Masters 1 Playoff Bracket
+Kickoff 2nd/3rd ──▶ Masters Swiss ───┘
+
+Stage 1 League Top 8 ──▶ Stage 1 Playoffs ──▶ Masters 2
+
+Stage 2 League Top 8 ──▶ Stage 2 Playoffs ──▶ Champions
+```
+
+---
+
 ## Upfront Creation, Lazy Resolution Pattern
 
 The tournament system uses an **upfront creation, lazy resolution** architecture for managing the full VCT season.
@@ -791,11 +868,10 @@ All tournament structures are created at game initialization with TBD slots. Tea
 
 #### GlobalTournamentScheduler
 Creates ALL VCT tournaments at game init:
-- 4 regional Kickoffs (teams known from region)
-- Masters 1 & 2 with TBD slots for qualifiers
-- 4 regional Stage 1/2 leagues (teams known from region)
-- 4 regional Stage 1/2 Playoffs with TBD slots
-- Champions with TBD slots
+- 4 regional Kickoffs (single-stage, teams known from region)
+- Masters 1 & 2 (MultiStageTournament: `swiss_to_playoff` format, TBD slots for qualifiers)
+- 4 regional Stage 1/2 (MultiStageTournament: `league_to_playoff` format, teams known from region)
+- Champions (MultiStageTournament: `swiss_to_playoff` format, TBD slots)
 
 ```typescript
 class GlobalTournamentScheduler {
@@ -824,16 +900,14 @@ Game Init
     ▼
 GlobalTournamentScheduler.createAllTournaments()
     │
-    ├── Kickoffs (teams resolved)
-    ├── Masters 1 (TBD slots: "Kickoff winner from Americas", etc.)
-    ├── Stage 1 Leagues (teams resolved)
-    ├── Stage 1 Playoffs (TBD slots: "Top 8 from Stage 1")
-    ├── Masters 2 (TBD slots)
-    ├── Stage 2 Leagues (teams resolved)
-    ├── Stage 2 Playoffs (TBD slots)
-    └── Champions (TBD slots)
+    ├── Kickoffs (single-stage, teams resolved)
+    ├── Masters 1 (swiss_to_playoff, TBD slots: "Kickoff winner from Americas", etc.)
+    ├── Stage 1 (league_to_playoff, teams resolved, internal league→playoff transition)
+    ├── Masters 2 (swiss_to_playoff, TBD slots)
+    ├── Stage 2 (league_to_playoff, teams resolved, internal league→playoff transition)
+    └── Champions (swiss_to_playoff, TBD slots)
 
-Tournament Completes
+Tournament Completes (Kickoff, Masters, Champions)
     │
     ▼
 TeamSlotResolver.resolveQualifications()
@@ -842,6 +916,17 @@ TeamSlotResolver.resolveQualifications()
     ├── Find downstream tournaments
     ├── Resolve TeamSlots → teamIds
     └── Schedule newly-ready matches
+
+Stage League Completes (Stage 1 or Stage 2)
+    │
+    ▼
+TournamentService.transitionLeagueToPlayoffs()
+    │
+    ├── Get top 8 from league standings
+    ├── Generate double-elimination playoff bracket
+    ├── Update tournament.currentStage to 'playoff'
+    ├── Schedule playoff matches
+    └── Create Match entities and calendar events
 ```
 
 ### Per-Tournament Standings
@@ -1076,10 +1161,33 @@ if (tournament.format === 'round_robin') {
 
 ### Calendar Event Phase Filtering
 
-Match calendar events include a `phase` property to enable correct phase filtering during time advancement:
+Match calendar events include a `phase` property to enable correct phase filtering during time advancement. This is critical for Stage tournaments where the phase changes mid-tournament.
+
+#### Why Phase Filtering Matters
+
+| Tournament Type | Format | Phase Changes? | Needs Phase on Events? |
+|-----------------|--------|----------------|------------------------|
+| Kickoff | single_elim | No (stays `kickoff`) | No |
+| Masters | swiss_to_playoff | No (stays `masters1`/`masters2`) | No |
+| Stage 1/2 | league_to_playoff | Yes (`stage1` → `stage1_playoffs`) | **Yes** |
+| Champions | swiss_to_playoff | No (stays `champions`) | No |
+
+**Stage tournaments need phase filtering** because:
+1. League matches are created during `stage1` phase
+2. Playoff matches are created when transitioning to `stage1_playoffs`
+3. Without phase filtering, old league match events (already processed) could be re-processed, or playoff matches could be skipped
+
+**Masters/Champions don't need it** because the season phase doesn't change when Swiss transitions to playoffs - it stays `masters1` or `champions` throughout.
+
+#### Implementation
 
 ```typescript
-// In TournamentTransitionService.addTournamentCalendarEvents()
+// In TournamentService.addPlayoffCalendarEvents()
+// Determine correct phase for playoff events
+const playoffPhase = tournament.type === 'stage1' ? 'stage1_playoffs'
+                   : tournament.type === 'stage2' ? 'stage2_playoffs'
+                   : undefined;  // Masters/Champions don't need phase
+
 events.push({
   id: `event-match-${bracketMatch.matchId}`,
   type: 'match',
@@ -1087,23 +1195,41 @@ events.push({
   data: {
     matchId: bracketMatch.matchId,
     // ... other fields
-    phase: this.getPhaseForTournament(tournament), // Required for filtering
+    phase: playoffPhase,  // Only set for Stage playoffs
+    isPlayoffMatch: true,
   },
 });
 ```
 
-The `phase` property maps tournament types to season phases:
-- `kickoff` → `'kickoff'`
-- `stage1` → `'stage1'` or `'stage1_playoffs'`
-- `stage2` → `'stage2'` or `'stage2_playoffs'`
-- `masters` → `'masters1'` or `'masters2'` (based on tournament name)
-- `champions` → `'champions'`
-
 CalendarService uses this to skip matches from wrong phases:
 ```typescript
+// In CalendarService.advanceDay()
+const matchPhase = matchData.phase;
+
 if (matchPhase && matchPhase !== currentPhase) {
+  // Skip matches that belong to a different phase
+  console.log(`SKIPPED: phase mismatch (event phase: ${matchPhase}, current: ${currentPhase})`);
   skippedEvents.push(event);
   continue;
+}
+```
+
+#### Finding Tournaments by Phase
+
+`CalendarService.findTournamentForPhaseAndRegion()` must handle both legacy tournaments and `league_to_playoff` tournaments:
+
+```typescript
+// For league_to_playoff tournaments, check currentStage instead of name
+if (isLeagueToPlayoffTournament(tournament)) {
+  const isInPlayoffStage = tournament.currentStage === 'playoff';
+
+  // During playoffs phase, only match tournaments in playoff stage
+  if (isPlayoffPhase && !isInPlayoffStage) continue;
+
+  // During league phase, only match tournaments in league stage
+  if (!isPlayoffPhase && isInPlayoffStage) continue;
+
+  return { id: tournament.id, name: tournament.name };
 }
 ```
 
@@ -1116,6 +1242,125 @@ Stage completion must be checked on every day advancement during stage phases, n
 // Always check during stage phases - the last match might have been yesterday
 if (currentPhase === 'stage1' || currentPhase === 'stage2') {
   this.checkStageCompletion(currentPhase);
+}
+```
+
+---
+
+## League-to-Playoff Tournament Flow
+
+### Overview
+
+Stage 1 and Stage 2 tournaments use the `league_to_playoff` format, which combines the round-robin league phase and double-elimination playoffs into a single `MultiStageTournament`. This is similar to how Masters uses `swiss_to_playoff` format.
+
+### Tournament Structure
+
+```typescript
+interface MultiStageTournament extends Tournament {
+  format: 'league_to_playoff';
+  currentStage: 'league' | 'playoff';
+
+  leagueStage: {
+    format: 'round_robin';
+    bracket: BracketStructure;           // Round-robin matches
+    standings: TournamentStandingsEntry[];
+    matchesCompleted: number;
+    totalMatches: number;                // 30 for 12 teams
+    teamsQualify: number;                // 8
+  };
+
+  // Playoff bracket (populated when league completes)
+  playoffBracket?: BracketStructure;
+}
+```
+
+### Internal Stage Transition
+
+Unlike Kickoff → Masters (separate tournaments, uses `TeamSlotResolver`), Stage leagues use **internal transitions** within the same tournament:
+
+```
+Stage 1 League (currentStage: 'league')
+    │
+    ▼ All 30 league matches complete
+    │
+    ▼ TournamentService.handleStageCompletion()
+    │
+    ├── Calculate final standings
+    ├── Show StageCompletionModal with standings
+    │
+    ▼ User clicks "Continue"
+    │
+    ▼ TournamentService.transitionLeagueToPlayoffs()
+    │
+    ├── Get top 8 from standings
+    ├── Generate double-elim playoff bracket
+    ├── Set currentStage = 'playoff'
+    ├── Schedule playoff matches
+    └── Create Match entities + calendar events
+
+Stage 1 Playoffs (currentStage: 'playoff')
+    │
+    ▼ Phase changes to 'stage1_playoffs'
+```
+
+### Key Method: transitionLeagueToPlayoffs()
+
+```typescript
+// TournamentService.ts
+transitionLeagueToPlayoffs(tournamentId: string): boolean {
+  const tournament = state.tournaments[tournamentId] as MultiStageTournament;
+
+  if (tournament.format !== 'league_to_playoff') return false;
+  if (tournament.currentStage === 'playoff') return false; // Already transitioned
+
+  // 1. Get qualified teams from league standings
+  const standings = tournament.leagueStage?.standings || tournament.standings || [];
+  const sortedStandings = [...standings].sort((a, b) => {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
+    return b.mapDiff - a.mapDiff;
+  });
+  const qualifiedTeamIds = sortedStandings.slice(0, 8).map(s => s.teamId);
+
+  // 2. Generate playoff bracket
+  const playoffBracket = bracketManager.generateDoubleElimination(qualifiedTeamIds);
+
+  // 3. Update tournament state
+  state.updateTournament(tournamentId, { bracket: playoffBracket });
+  state.setTournamentCurrentStage(tournamentId, 'playoff');
+
+  // 4. Schedule matches and create calendar events
+  this.schedulePlayoffMatches(tournament);
+  this.createMatchEntitiesForReadyBracketMatches(tournament);
+  this.addPlayoffCalendarEvents(tournament);
+
+  return true;
+}
+```
+
+### Phase Handling for League-to-Playoff
+
+The season phase changes when the league completes:
+- `'stage1'` → `'stage1_playoffs'` (when Stage 1 league completes)
+- `'stage2'` → `'stage2_playoffs'` (when Stage 2 league completes)
+
+This is different from Masters, where the phase stays `'masters1'` throughout both Swiss and playoff stages.
+
+### Duplicate Call Prevention
+
+Since both `MatchService` and `CalendarService` can detect stage completion, a guard prevents duplicate modal triggers:
+
+```typescript
+// TournamentService.ts
+private stageCompletionTriggered: Set<string> = new Set();
+
+handleStageCompletion(tournamentId: string): void {
+  if (this.stageCompletionTriggered.has(tournamentId)) {
+    console.log(`handleStageCompletion already triggered for ${tournamentId}`);
+    return;
+  }
+  this.stageCompletionTriggered.add(tournamentId);
+  // ... rest of method
 }
 ```
 

@@ -91,6 +91,7 @@ const TOURNAMENT_DURATION: Record<TournamentFormat, number> = {
   triple_elim: 14,
   round_robin: 35, // ~5 weeks for league play
   swiss_to_playoff: 18, // 4 days Swiss + 10 days Playoffs + 4 days buffer
+  league_to_playoff: 49, // 5 weeks league + 2 weeks playoffs
 };
 
 /**
@@ -355,6 +356,7 @@ export class TournamentEngine {
       triple_elim: 'Triple Elimination',
       round_robin: 'Round Robin',
       swiss_to_playoff: 'Swiss to Playoffs',
+      league_to_playoff: 'League to Playoffs',
     };
     return names[format];
   }

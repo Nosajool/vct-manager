@@ -5,7 +5,7 @@ import type { Region } from './player';
 import type { MatchResult } from './match';
 
 export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
-export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff';
+export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff' | 'league_to_playoff';
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed';
 export type BracketFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';
 export type TournamentRegion = Region | 'International';
@@ -173,17 +173,45 @@ export interface SwissStage {
   lossesToEliminate: number;    // 2 for Masters
 }
 
-// Multi-stage tournament (Swiss → Playoffs)
-export interface MultiStageTournament extends Tournament {
-  format: 'swiss_to_playoff';
-  swissStage: SwissStage;
-  playoffBracket?: BracketStructure;
-  currentStage: 'swiss' | 'playoff';
-  swissTeamIds: string[];       // 8 teams in Swiss (2nd+3rd from each region)
-  playoffOnlyTeamIds: string[]; // 4 Kickoff winners (join at playoffs)
+// League stage structure (for league_to_playoff format)
+export interface LeagueStage {
+  format: 'round_robin';
+  bracket: BracketStructure;  // Round-robin matches
+  standings: TournamentStandingsEntry[];
+  matchesCompleted: number;
+  totalMatches: number;
+  teamsQualify: number;  // Top N qualify (e.g., 8)
 }
 
-// Type guard for MultiStageTournament
+// Multi-stage tournament (Swiss → Playoffs OR League → Playoffs)
+export interface MultiStageTournament extends Tournament {
+  format: 'swiss_to_playoff' | 'league_to_playoff';
+  currentStage: 'swiss' | 'league' | 'playoff';
+
+  // Swiss stage (for swiss_to_playoff)
+  swissStage?: SwissStage;
+  swissTeamIds?: string[];       // 8 teams in Swiss (2nd+3rd from each region)
+  playoffOnlyTeamIds?: string[]; // 4 Kickoff winners (join at playoffs)
+
+  // League stage (for league_to_playoff)
+  leagueStage?: LeagueStage;
+  leagueTeamIds?: string[];
+
+  // Shared playoff bracket
+  playoffBracket?: BracketStructure;
+}
+
+// Type guard for MultiStageTournament (either swiss_to_playoff or league_to_playoff)
 export function isMultiStageTournament(tournament: Tournament): tournament is MultiStageTournament {
+  return tournament.format === 'swiss_to_playoff' || tournament.format === 'league_to_playoff';
+}
+
+// Type guard specifically for swiss_to_playoff tournaments
+export function isSwissToPlayoffTournament(tournament: Tournament): tournament is MultiStageTournament {
   return tournament.format === 'swiss_to_playoff';
+}
+
+// Type guard specifically for league_to_playoff tournaments
+export function isLeagueToPlayoffTournament(tournament: Tournament): tournament is MultiStageTournament {
+  return tournament.format === 'league_to_playoff';
 }

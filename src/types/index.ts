@@ -70,13 +70,15 @@ export type {
   SwissRound,
   SwissStage,
   MultiStageTournament,
+  // League stage types (for league_to_playoff)
+  LeagueStage,
   // Team slot types (for TBD bracket positions)
   TeamSlot,
   QualificationSource as CompetitionQualificationSource,
   TournamentStandingsEntry,
 } from './competition';
 
-export { isMultiStageTournament } from './competition';
+export { isMultiStageTournament, isSwissToPlayoffTournament, isLeagueToPlayoffTournament } from './competition';
 
 // Economy types
 export type {

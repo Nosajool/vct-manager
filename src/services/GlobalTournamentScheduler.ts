@@ -9,6 +9,7 @@ import type {
   CalendarEvent,
   Region,
   SwissStage,
+  LeagueStage,
   BracketStructure,
   BracketRound,
   BracketMatch,
@@ -57,11 +58,9 @@ const SEASON_TIMING = {
 export interface TournamentScheduleResult {
   kickoffs: Tournament[];
   masters1: MultiStageTournament;
-  stage1s: Tournament[];
-  stage1Playoffs: Tournament[];
+  stage1s: MultiStageTournament[];  // Now league_to_playoff format (unified league + playoffs)
   masters2: MultiStageTournament;
-  stage2s: Tournament[];
-  stage2Playoffs: Tournament[];
+  stage2s: MultiStageTournament[];  // Now league_to_playoff format (unified league + playoffs)
   champions: MultiStageTournament;
 
   /** Get all tournaments as a flat array */
@@ -101,17 +100,20 @@ export class GlobalTournamentScheduler {
       SEASON_TIMING.masters1.start
     );
 
-    // 3. Create 4 regional Stage 1 leagues (teams known from region)
+    // 3. Create 4 regional Stage 1 tournaments (unified league + playoffs)
+    // Uses league_to_playoff format - single tournament that transitions internally
     const stage1s = this.regions.map((region) =>
-      this.createStageLeague(region, 'stage1', teams, startDate, SEASON_TIMING.stage1.start)
+      this.createStageLeagueToPlayoff(
+        region,
+        'stage1',
+        teams,
+        startDate,
+        SEASON_TIMING.stage1.start,
+        SEASON_TIMING.stage1_playoffs.start
+      )
     );
 
-    // 4. Create 4 regional Stage 1 Playoffs with TBD slots
-    const stage1Playoffs = this.regions.map((region) =>
-      this.createStagePlayoffs(region, 'stage1', startDate, SEASON_TIMING.stage1_playoffs.start)
-    );
-
-    // 5. Create Masters 2 (London) with TBD slots
+    // 4. Create Masters 2 (London) with TBD slots
     const masters2 = this.createMasters(
       'masters2',
       'VCT Masters London 2026',
@@ -119,37 +121,36 @@ export class GlobalTournamentScheduler {
       SEASON_TIMING.masters2.start
     );
 
-    // 6. Create 4 regional Stage 2 leagues (teams known from region)
+    // 5. Create 4 regional Stage 2 tournaments (unified league + playoffs)
+    // Uses league_to_playoff format - single tournament that transitions internally
     const stage2s = this.regions.map((region) =>
-      this.createStageLeague(region, 'stage2', teams, startDate, SEASON_TIMING.stage2.start)
+      this.createStageLeagueToPlayoff(
+        region,
+        'stage2',
+        teams,
+        startDate,
+        SEASON_TIMING.stage2.start,
+        SEASON_TIMING.stage2_playoffs.start
+      )
     );
 
-    // 7. Create 4 regional Stage 2 Playoffs with TBD slots
-    const stage2Playoffs = this.regions.map((region) =>
-      this.createStagePlayoffs(region, 'stage2', startDate, SEASON_TIMING.stage2_playoffs.start)
-    );
-
-    // 8. Create Champions with TBD slots
+    // 6. Create Champions with TBD slots
     const champions = this.createChampions(startDate, SEASON_TIMING.champions.start);
 
     return {
       kickoffs,
       masters1,
       stage1s,
-      stage1Playoffs,
       masters2,
       stage2s,
-      stage2Playoffs,
       champions,
       allTournaments() {
         return [
           ...this.kickoffs,
           this.masters1,
           ...this.stage1s,
-          ...this.stage1Playoffs,
           this.masters2,
           ...this.stage2s,
-          ...this.stage2Playoffs,
           this.champions,
         ];
       },
@@ -322,33 +323,52 @@ export class GlobalTournamentScheduler {
   }
 
   /**
-   * Create a regional Stage league tournament
-   * All 12 teams in region, round-robin format
+   * Create a regional Stage tournament with league_to_playoff format
+   * This is a unified tournament that starts with round-robin league play
+   * and transitions internally to playoffs when league completes.
+   *
+   * Mirrors the swiss_to_playoff pattern used by Masters tournaments.
+   *
+   * @param region - The region for this tournament
+   * @param stage - 'stage1' or 'stage2'
+   * @param teams - All teams in the game
+   * @param seasonStart - Season start date
+   * @param leagueStartOffset - Days from season start to league phase start
+   * @param playoffStartOffset - Days from season start to playoff phase start
    */
-  private createStageLeague(
+  private createStageLeagueToPlayoff(
     region: Region,
     stage: 'stage1' | 'stage2',
     teams: Team[],
     seasonStart: Date,
-    dayOffset: number
-  ): Tournament {
+    leagueStartOffset: number,
+    playoffStartOffset: number
+  ): MultiStageTournament {
     const regionTeams = teams.filter((t) => t.region === region);
     const teamIds = regionTeams.map((t) => t.id);
 
-    const startDate = new Date(seasonStart);
-    startDate.setDate(startDate.getDate() + dayOffset);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 35); // 5 weeks
+    // League phase dates
+    const leagueStartDate = new Date(seasonStart);
+    leagueStartDate.setDate(leagueStartDate.getDate() + leagueStartOffset);
+
+    // Playoff phase dates (used as tournament end date)
+    const playoffStartDate = new Date(seasonStart);
+    playoffStartDate.setDate(playoffStartDate.getDate() + playoffStartOffset);
+    const playoffEndDate = new Date(playoffStartDate);
+    playoffEndDate.setDate(playoffEndDate.getDate() + 14); // 2 weeks for playoffs
 
     const id = this.generateId(stage, region);
+    const stageName = stage === 'stage1' ? 'Stage 1' : 'Stage 2';
 
-    // Generate round-robin bracket with 2 groups of 6 teams
-    // Each team plays 5 matches (one against each other team in their group)
-    let bracket = bracketManager.generateRoundRobin(teamIds, 2);
-    bracket = this.prefixBracketMatchIds(bracket, id);
+    // Generate round-robin bracket for league phase
+    // 2 groups of 6 teams, each team plays 5 matches
+    let leagueBracket = bracketManager.generateRoundRobin(teamIds, 2);
+    leagueBracket = this.prefixBracketMatchIds(leagueBracket, id);
 
-    // Schedule all round-robin matches across the stage period on proper match days
-    this.scheduleRoundRobinMatches(bracket, startDate, endDate, region);
+    // Schedule all round-robin matches during league phase
+    const leagueEndDate = new Date(leagueStartDate);
+    leagueEndDate.setDate(leagueEndDate.getDate() + 35); // 5 weeks for league
+    this.scheduleRoundRobinMatches(leagueBracket, leagueStartDate, leagueEndDate, region);
 
     // Initialize standings
     const standings: TournamentStandingsEntry[] = teamIds.map((teamId) => ({
@@ -365,75 +385,47 @@ export class GlobalTournamentScheduler {
       teamId,
     }));
 
-    const stageName = stage === 'stage1' ? 'Stage 1' : 'Stage 2';
+    // League stage structure
+    const leagueStage: LeagueStage = {
+      format: 'round_robin',
+      bracket: leagueBracket,
+      standings,
+      matchesCompleted: 0,
+      totalMatches: 30, // 12 teams in 2 groups of 6, each team plays 5 = 30 total
+      teamsQualify: 8,  // Top 8 qualify for playoffs
+    };
 
-    const tournament: Tournament = {
+    // Combined prize pool (league portion + playoffs portion)
+    const leaguePrizePool = tournamentEngine.calculatePrizePool(stage, 200000);
+    const playoffsPrizePool = tournamentEngine.calculatePrizePool(stage, 300000);
+    const combinedPrizePool = {
+      first: leaguePrizePool.first + playoffsPrizePool.first,
+      second: leaguePrizePool.second + playoffsPrizePool.second,
+      third: leaguePrizePool.third + playoffsPrizePool.third,
+      fourth: (leaguePrizePool.fourth || 0) + (playoffsPrizePool.fourth || 0),
+      fifthSixth: (leaguePrizePool.fifthSixth || 0) + (playoffsPrizePool.fifthSixth || 0),
+      seventhEighth: (leaguePrizePool.seventhEighth || 0) + (playoffsPrizePool.seventhEighth || 0),
+    };
+
+    const tournament: MultiStageTournament = {
       id,
       name: `VCT ${region} ${stageName} 2026`,
       type: stage,
-      format: 'round_robin',
+      format: 'league_to_playoff',
       region,
       teamIds,
       teamSlots,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      prizePool: tournamentEngine.calculatePrizePool(stage, 200000),
-      bracket,
+      startDate: leagueStartDate.toISOString(),
+      endDate: playoffEndDate.toISOString(),  // Extended to cover playoffs
+      prizePool: combinedPrizePool,
+      bracket: leagueBracket,  // Initially shows league bracket
       standings,
       status: 'upcoming',
-    };
 
-    return tournament;
-  }
-
-  /**
-   * Create a regional Stage Playoffs tournament with TBD slots
-   * Top 8 from stage league qualify
-   */
-  private createStagePlayoffs(
-    region: Region,
-    stage: 'stage1' | 'stage2',
-    seasonStart: Date,
-    dayOffset: number
-  ): Tournament {
-    const startDate = new Date(seasonStart);
-    startDate.setDate(startDate.getDate() + dayOffset);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 14); // 2 weeks
-
-    const id = this.generateId(`${stage}_playoffs`, region);
-    const stageName = stage === 'stage1' ? 'Stage 1' : 'Stage 2';
-
-    // Create TBD team slots for top 8 from stage league
-    const teamSlots: TeamSlot[] = [];
-    for (let i = 1; i <= 8; i++) {
-      teamSlots.push({
-        type: 'qualified_from',
-        source: {
-          tournamentType: stage,
-          region,
-          placement: i,
-        },
-        description: `${region} ${stageName} #${i}`,
-      });
-    }
-
-    // Empty bracket (will be generated when teams qualify)
-    const emptyBracket: BracketStructure = { format: 'double_elim', upper: [] };
-
-    const tournament: Tournament = {
-      id,
-      name: `VCT ${region} ${stageName} Playoffs 2026`,
-      type: stage, // Use 'stage1' or 'stage2' type
-      format: 'double_elim',
-      region,
-      teamIds: [], // Will be filled when qualifiers are resolved
-      teamSlots,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      prizePool: tournamentEngine.calculatePrizePool(stage, 300000),
-      bracket: emptyBracket,
-      status: 'upcoming',
+      // MultiStageTournament fields
+      currentStage: 'league',
+      leagueStage,
+      leagueTeamIds: teamIds,
     };
 
     return tournament;
