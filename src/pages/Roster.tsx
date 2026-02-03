@@ -7,11 +7,12 @@ import { AllTeamsView } from '../components/roster/AllTeamsView';
 import { FreeAgentList } from '../components/roster/FreeAgentList';
 import { ContractNegotiationModal } from '../components/roster/ContractNegotiationModal';
 import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
+import { TeamStrategy } from '../components/roster/TeamStrategy';
 import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 
-type TeamTab = 'roster' | 'freeagents' | 'allteams';
+type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy';
 
 export function Roster() {
   const [activeTab, setActiveTab] = useState<TeamTab>('roster');
@@ -174,6 +175,16 @@ export function Roster() {
         >
           All Teams
         </button>
+        <button
+          onClick={() => setActiveTab('strategy')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'strategy'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          Strategy
+        </button>
       </div>
 
       {/* Content */}
@@ -187,6 +198,8 @@ export function Roster() {
         <FreeAgentList players={allPlayers} onSignPlayer={handleSignPlayer} />
       ) : activeTab === 'allteams' ? (
         <AllTeamsView />
+      ) : activeTab === 'strategy' && playerTeamId ? (
+        <TeamStrategy teamId={playerTeamId} />
       ) : (
         <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-8 text-center">
           <p className="text-vct-gray">No team selected</p>

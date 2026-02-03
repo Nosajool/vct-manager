@@ -33,8 +33,37 @@ export type {
   MatchStatus,
   MapResult,
   PlayerMapPerformance,
+  EnhancedPlayerMapPerformance,
   RoundInfo,
+  EnhancedRoundInfo,
+  WinCondition,
+  TeamEconomy,
+  PlayerUltState,
+  FirstBlood,
+  ClutchAttempt,
+  UltUsage,
 } from './match';
+
+// Strategy types
+export type {
+  TeamStrategy,
+  PlayerAgentPreferences,
+  CompositionBonus,
+  AgentSelection,
+  CompositionRequirements,
+  BuyType,
+  AgentRole,
+  PlaystyleType,
+  EconomyDiscipline,
+  UltUsageStyle,
+} from './strategy';
+
+export {
+  DEFAULT_TEAM_STRATEGY,
+  AI_STRATEGY_PRESETS,
+  getStrategyDisplayName,
+  validateStrategy,
+} from './strategy';
 
 // Calendar types
 export type {

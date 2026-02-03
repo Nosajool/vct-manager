@@ -44,8 +44,25 @@ export class MatchService {
       return null;
     }
 
-    // Run simulation
-    const result = matchSimulator.simulate(teamA, teamB, playersA, playersB);
+    // Get team strategies
+    const strategyA = state.getTeamStrategy(match.teamAId);
+    const strategyB = state.getTeamStrategy(match.teamBId);
+
+    // Get map pools if available
+    const mapPoolA = teamA.mapPool;
+    const mapPoolB = teamB.mapPool;
+
+    // Run simulation with strategies
+    const result = matchSimulator.simulate(
+      teamA,
+      teamB,
+      playersA,
+      playersB,
+      mapPoolA,
+      mapPoolB,
+      strategyA,
+      strategyB
+    );
 
     // Update result's matchId to the actual match
     result.matchId = matchId;
@@ -53,12 +70,23 @@ export class MatchService {
 // Apply all updates to the store
     this.applyMatchResult(match, result, playersA, playersB);
 
+    // Store round data for detailed viewing
+    this.storeRoundData(result);
+
     // Advance tournament bracket if this is a tournament match
     if (match.tournamentId) {
       tournamentService.advanceTournament(match.tournamentId, matchId, result);
     }
 
     return result;
+  }
+
+  /**
+   * Store detailed round data for the match
+   */
+  private storeRoundData(result: MatchResult): void {
+    const state = useGameStore.getState();
+    state.storeMatchRoundData(result.matchId, result.maps);
   }
 
   /**

@@ -1,6 +1,6 @@
 // MatchSimulator Engine
 // Pure class with no React/store dependencies
-// Handles match simulation logic
+// Handles match simulation logic with enhanced round-by-round simulation
 
 import type {
   Team,
@@ -8,14 +8,32 @@ import type {
   MatchResult,
   MapResult,
   PlayerMapPerformance,
+  EnhancedRoundInfo,
   MapPoolStrength,
   MapStrength,
+  TeamStrategy,
 } from '../../types';
-import { MAPS, ALL_AGENTS } from '../../utils/constants';
+import { MAPS } from '../../utils/constants';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
 import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
+import { EconomyEngine } from './EconomyEngine';
+import { UltimateEngine } from './UltimateEngine';
+import { CompositionEngine } from './CompositionEngine';
+import { RoundSimulator, type TeamRoundContext, type RoundPlayerPerformance } from './RoundSimulator';
 
 export class MatchSimulator {
+  private economyEngine: EconomyEngine;
+  private ultimateEngine: UltimateEngine;
+  private compositionEngine: CompositionEngine;
+  private roundSimulator: RoundSimulator;
+
+  constructor() {
+    this.economyEngine = new EconomyEngine();
+    this.ultimateEngine = new UltimateEngine();
+    this.compositionEngine = new CompositionEngine();
+    this.roundSimulator = new RoundSimulator();
+  }
+
   /**
    * Simulate a complete match between two teams
    * Best-of-3 format (first to 2 maps)
@@ -25,6 +43,8 @@ export class MatchSimulator {
    * @param playersB - Players on team B
    * @param mapPoolA - Optional map pool for team A (applies map-specific bonuses)
    * @param mapPoolB - Optional map pool for team B (applies map-specific bonuses)
+   * @param strategyA - Optional strategy for team A
+   * @param strategyB - Optional strategy for team B
    */
   simulate(
     teamA: Team,
@@ -32,9 +52,15 @@ export class MatchSimulator {
     playersA: Player[],
     playersB: Player[],
     mapPoolA?: MapPoolStrength,
-    mapPoolB?: MapPoolStrength
+    mapPoolB?: MapPoolStrength,
+    strategyA?: TeamStrategy,
+    strategyB?: TeamStrategy
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    // Use default strategies if not provided
+    const teamAStrategy = strategyA || this.getDefaultStrategy();
+    const teamBStrategy = strategyB || this.getDefaultStrategy();
 
     // Calculate base team strengths
     const strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
@@ -61,6 +87,8 @@ export class MatchSimulator {
         strengthB,
         playersA,
         playersB,
+        teamAStrategy,
+        teamBStrategy,
         mapStrengthA,
         mapStrengthB
       );
@@ -129,6 +157,24 @@ export class MatchSimulator {
   }
 
   /**
+   * Get default strategy
+   */
+  private getDefaultStrategy(): TeamStrategy {
+    return {
+      playstyle: 'balanced',
+      economyDiscipline: 'standard',
+      forceThreshold: 2400,
+      defaultComposition: {
+        duelist: 1,
+        controller: 1,
+        initiator: 2,
+        sentinel: 1,
+      },
+      ultUsageStyle: 'save_for_key_rounds',
+    };
+  }
+
+  /**
    * Select random unique maps
    */
   private selectMaps(count: number): string[] {
@@ -154,9 +200,7 @@ export class MatchSimulator {
   }
 
   /**
-   * Simulate a single map
-   * @param mapStrengthA - Optional map-specific strength for team A
-   * @param mapStrengthB - Optional map-specific strength for team B
+   * Simulate a single map with enhanced round-by-round simulation
    */
   private simulateMap(
     mapName: string,
@@ -164,6 +208,8 @@ export class MatchSimulator {
     teamBStrength: number,
     playersA: Player[],
     playersB: Player[],
+    strategyA: TeamStrategy,
+    strategyB: TeamStrategy,
     mapStrengthA?: MapStrength,
     mapStrengthB?: MapStrength
   ): MapResult {
@@ -181,28 +227,100 @@ export class MatchSimulator {
       adjustedStrengthB *= 1 + mapBonus;
     }
 
-    // Calculate win probability for each round
-    const totalStrength = adjustedStrengthA + adjustedStrengthB;
-    const probA = adjustedStrengthA / totalStrength;
+    // Select agents for each team
+    const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
+    const agentSelectionB = this.compositionEngine.selectAgents(playersB, strategyB, mapName);
 
-    // Simulate rounds
+    const agentsA = playersA.map((p) => agentSelectionA.assignments[p.id]);
+    const agentsB = playersB.map((p) => agentSelectionB.assignments[p.id]);
+
+    // Initialize economy and ult states
+    let economyA = this.economyEngine.initializeHalf();
+    let economyB = this.economyEngine.initializeHalf();
+    let ultsA = this.ultimateEngine.initializeUltState(
+      playersA.map((p) => p.id),
+      agentsA
+    );
+    let ultsB = this.ultimateEngine.initializeUltState(
+      playersB.map((p) => p.id),
+      agentsB
+    );
+
+    // Track rounds and performances
+    const enhancedRounds: EnhancedRoundInfo[] = [];
+    const roundPerformances: Map<string, RoundPlayerPerformance>[] = [];
+
     let scoreA = 0;
     let scoreB = 0;
     let roundsPlayed = 0;
 
-    // First to 13 wins, but must win by 2 in OT
+    // Team A attacks first half (rounds 1-12)
+    // Team B attacks second half (rounds 13-24)
+    // After 12 rounds, sides switch and economy resets
+
     while (true) {
       roundsPlayed++;
 
-      // Add some randomness to each round (±10% swing)
-      const roundRandom = 0.9 + Math.random() * 0.2;
-      const adjustedProbA = Math.min(0.85, Math.max(0.15, probA * roundRandom));
+      // Side switch at round 13
+      if (roundsPlayed === 13) {
+        // Reset economy for second half
+        economyA = this.economyEngine.initializeHalf();
+        economyB = this.economyEngine.initializeHalf();
+        // Ults persist through half (this is realistic)
+      }
 
-      if (Math.random() < adjustedProbA) {
+      // Determine which side is attacking
+      const isFirstHalf = roundsPlayed <= 12;
+      const teamAAttacking = isFirstHalf; // Team A attacks first half
+
+      // Create round contexts
+      const contextA: TeamRoundContext = {
+        players: playersA,
+        agents: agentsA,
+        strategy: strategyA,
+        economy: economyA,
+        ultState: ultsA,
+        baseStrength: adjustedStrengthA,
+        compositionBonus: agentSelectionA.bonus.modifier,
+        isAttacking: teamAAttacking,
+      };
+
+      const contextB: TeamRoundContext = {
+        players: playersB,
+        agents: agentsB,
+        strategy: strategyB,
+        economy: economyB,
+        ultState: ultsB,
+        baseStrength: adjustedStrengthB,
+        compositionBonus: agentSelectionB.bonus.modifier,
+        isAttacking: !teamAAttacking,
+      };
+
+      // Simulate the round
+      const roundResult = this.roundSimulator.simulateRound(
+        roundsPlayed,
+        contextA,
+        contextB,
+        scoreA,
+        scoreB
+      );
+
+      // Update states
+      economyA = roundResult.teamAEconomy;
+      economyB = roundResult.teamBEconomy;
+      ultsA = roundResult.teamAUlts;
+      ultsB = roundResult.teamBUlts;
+
+      // Update scores
+      if (roundResult.roundInfo.winner === 'teamA') {
         scoreA++;
       } else {
         scoreB++;
       }
+
+      // Store round data
+      enhancedRounds.push(roundResult.roundInfo);
+      roundPerformances.push(roundResult.playerPerformance);
 
       // Check win conditions
       if (scoreA >= 13 && scoreA - scoreB >= 2) break;
@@ -216,90 +334,36 @@ export class MatchSimulator {
     const overtime = scoreA > 12 && scoreB > 12;
     const overtimeRounds = overtime ? roundsPlayed - 24 : 0;
 
-    // Generate player performances
-    const teamAPerformances = playersA.map((player) =>
-      this.generatePlayerPerformance(player, teamAStrength, winner === 'teamA', roundsPlayed)
+    // Aggregate player performances
+    const teamAPerformances = this.roundSimulator.aggregatePerformances(
+      roundPerformances,
+      playersA,
+      agentsA,
+      roundsPlayed
     );
-    const teamBPerformances = playersB.map((player) =>
-      this.generatePlayerPerformance(player, teamBStrength, winner === 'teamB', roundsPlayed)
+
+    const teamBPerformances = this.roundSimulator.aggregatePerformances(
+      roundPerformances,
+      playersB,
+      agentsB,
+      roundsPlayed
     );
+
+    // Convert enhanced performances to basic format for backward compatibility
+    const basicTeamAPerformances: PlayerMapPerformance[] = teamAPerformances;
+    const basicTeamBPerformances: PlayerMapPerformance[] = teamBPerformances;
 
     return {
       map: mapName,
       teamAScore: scoreA,
       teamBScore: scoreB,
       winner,
-      teamAPerformances,
-      teamBPerformances,
+      teamAPerformances: basicTeamAPerformances,
+      teamBPerformances: basicTeamBPerformances,
       totalRounds: roundsPlayed,
       overtime,
       overtimeRounds: overtime ? overtimeRounds : undefined,
-    };
-  }
-
-  /**
-   * Generate individual player performance for a map
-   */
-  private generatePlayerPerformance(
-    player: Player,
-    _teamStrength: number,
-    teamWon: boolean,
-    totalRounds: number
-  ): PlayerMapPerformance {
-    // Base performance from player stats
-    const mechanicsImpact = player.stats.mechanics / 100;
-    const entryImpact = player.stats.entry / 100;
-    const supportImpact = player.stats.support / 100;
-
-    // Expected kills per round (0.6-1.2 based on skill)
-    const baseKillsPerRound = 0.6 + mechanicsImpact * 0.6;
-
-    // Winners get slightly better stats (+10%)
-    const winBonus = teamWon ? 1.1 : 0.95;
-
-    // Add randomness (±20%)
-    const randomFactor = 0.8 + Math.random() * 0.4;
-
-    // Calculate kills
-    const kills = Math.round(
-      totalRounds * baseKillsPerRound * winBonus * randomFactor
-    );
-
-    // Deaths are based on team performance and opponent strength
-    // Fewer deaths if your team won
-    const deathsPerRound = teamWon ? 0.7 : 0.85;
-    const deaths = Math.round(
-      totalRounds * deathsPerRound * (0.8 + Math.random() * 0.4)
-    );
-
-    // Assists based on support stat
-    const assistsPerRound = 0.2 + supportImpact * 0.4;
-    const assists = Math.round(
-      totalRounds * assistsPerRound * (0.7 + Math.random() * 0.6)
-    );
-
-    // Calculate K/D ratio
-    const kd = deaths > 0 ? Math.round((kills / deaths) * 100) / 100 : kills;
-
-    // Calculate ACS (Average Combat Score)
-    // Simplified: based on kills, assists, and some randomness
-    // Real ACS is more complex but this gives realistic values
-    const acs = Math.round(
-      (kills * 200 + assists * 50 + kills * entryImpact * 50) / (totalRounds / 10)
-    );
-
-    // Select a random agent
-    const agent = ALL_AGENTS[Math.floor(Math.random() * ALL_AGENTS.length)];
-
-    return {
-      playerId: player.id,
-      playerName: player.name,
-      agent,
-      kills,
-      deaths,
-      assists,
-      acs,
-      kd,
+      enhancedRounds,
     };
   }
 }

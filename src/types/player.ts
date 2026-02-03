@@ -1,6 +1,8 @@
 // Player System Types
 // Based on VCT Manager Technical Specification
 
+import type { PlayerAgentPreferences } from './strategy';
+
 export interface PlayerStats {
   mechanics: number;    // 0-100: Aim and gunplay ability
   igl: number;          // 0-100: In-game leadership and strategy
@@ -63,6 +65,9 @@ export interface Player {
 
   // Preferences (for AI negotiations)
   preferences: PlayerPreferences;
+
+  // Agent preferences (for match simulation)
+  agentPreferences?: PlayerAgentPreferences;
 }
 
 export type CoachType = 'Head Coach' | 'Assistant Coach' | 'Performance Coach';

@@ -27,8 +27,12 @@ Browser-based Valorant Champions Tour (VCT) management simulation game. Single-p
 src/
 ├── engine/              # Pure game logic (no React dependencies)
 │   ├── match/
-│   │   ├── MatchSimulator.ts    # Probabilistic match simulation
-│   │   ├── constants.ts         # Shared constants (STAT_WEIGHTS, MAX_CHEMISTRY_BONUS)
+│   │   ├── MatchSimulator.ts    # Round-by-round match simulation
+│   │   ├── RoundSimulator.ts    # Single round simulation with all systems
+│   │   ├── EconomyEngine.ts     # Credit calculations, buy decisions
+│   │   ├── UltimateEngine.ts    # Ult tracking, usage decisions
+│   │   ├── CompositionEngine.ts # Agent selection, role validation
+│   │   ├── constants.ts         # ECONOMY_CONSTANTS, ULT_CONSTANTS, etc.
 │   │   └── index.ts
 │   ├── competition/
 │   │   ├── BracketManager.ts    # Bracket generation and advancement
@@ -70,6 +74,8 @@ src/
 │   │   ├── competitionSlice.ts # Tournaments and standings
 │   │   ├── matchSlice.ts       # Matches and results
 │   │   ├── scrimSlice.ts       # Tier teams and scrim history
+│   │   ├── strategySlice.ts    # Team strategies, player agent preferences
+│   │   ├── roundDataSlice.ts   # Season-scoped round-by-round data
 │   │   ├── uiSlice.ts          # UI state
 │   │   └── index.ts
 │   └── middleware/
@@ -89,6 +95,7 @@ src/
 │   ├── CalendarService.ts              # Time progression orchestration
 │   ├── EconomyService.ts               # Financial operations
 │   ├── ScrimService.ts                 # Scrim orchestration
+│   ├── StrategyService.ts              # Team strategies, agent preferences
 │   └── index.ts
 │
 ├── db/                  # IndexedDB configuration
@@ -102,11 +109,12 @@ src/
 ├── types/               # TypeScript type definitions
 │   ├── player.ts        # Player, PlayerStats, Coach
 │   ├── team.ts          # Team, TeamFinances, Transaction, Loan
-│   ├── match.ts         # Match, MatchResult, MapResult
+│   ├── match.ts         # Match, MatchResult, MapResult, EnhancedRoundInfo
 │   ├── competition.ts   # Tournament, BracketStructure, BracketMatch
 │   ├── calendar.ts      # GameCalendar, CalendarEvent, SeasonPhase
 │   ├── economy.ts       # TrainingSession, TrainingResult, Difficulty
 │   ├── scrim.ts         # MapPoolStrength, ScrimRelationship, TierTeam
+│   ├── strategy.ts      # TeamStrategy, PlayerAgentPreferences, BuyType
 │   ├── vlr.ts           # VLR API response types
 │   ├── tournament-transition.ts # Tournament transition configuration types
 │   └── index.ts
@@ -119,9 +127,9 @@ src/
 ├── components/          # React UI components
 │   ├── layout/          # Header, Navigation, Layout, TimeBar
 │   ├── today/           # TournamentContextPanel, ActionsPanel, AlertsPanel
-│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal, AllTeamsView
+│   ├── roster/          # PlayerCard, RosterList, FreeAgentList, ContractNegotiationModal, AllTeamsView, TeamStrategy, AgentPreferenceEditor
 │   ├── calendar/        # CalendarView, MonthCalendar, DayDetailPanel, TrainingModal, SimulationResultsModal
-│   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable
+│   ├── match/           # MatchCard, MatchResult, Scoreboard, PlayerStatsTable, RoundTimeline
 │   ├── tournament/      # BracketView, BracketMatch, TournamentCard, StandingsTable, SwissStageView, LeagueStageView
 │   ├── scrim/           # ScrimModal, MapPoolView, RelationshipView
 │   └── shared/          # SaveLoadModal
@@ -1424,3 +1432,430 @@ tournament.bracket = {
 ```
 
 This ensures React detects state changes and triggers proper re-renders.
+
+---
+
+## Match Simulation System
+
+### Overview
+
+The match simulation system provides realistic round-by-round simulation with economy management, ultimate tracking, and agent compositions. Each round is simulated individually with buy types affecting team strength, ultimates providing bonuses, and agent compositions providing team synergy bonuses.
+
+### Architecture
+
+```
+MatchSimulator
+    │
+    ├── RoundSimulator (single round simulation)
+    │       │
+    │       ├── EconomyEngine (credits, buy types)
+    │       ├── UltimateEngine (ult points, usage)
+    │       └── CompositionEngine (agent selection)
+    │
+    └── Outputs: MapResult with EnhancedRoundInfo[]
+```
+
+### Engine Classes
+
+#### EconomyEngine
+Handles credit calculations, buy type decisions, and economic state tracking.
+
+```typescript
+class EconomyEngine {
+  // Initialize economy for half start (pistol round)
+  initializeHalf(): TeamEconomyState;
+
+  // Determine buy type based on credits and strategy
+  determineBuyType(
+    economyState: TeamEconomyState,
+    strategy: TeamStrategy,
+    roundNumber: number,
+    opponentEconomy?: TeamEconomyState
+  ): BuyType;
+
+  // Get strength modifier for buy type
+  getBuyStrengthModifier(buyType: BuyType): number;
+
+  // Calculate credits earned after a round
+  calculateRoundCredits(
+    won: boolean,
+    kills: number[],
+    planted: boolean,
+    defused: boolean,
+    currentState: TeamEconomyState
+  ): EconomyUpdate;
+
+  // Update economy state after a round
+  updateEconomyState(
+    currentState: TeamEconomyState,
+    update: EconomyUpdate,
+    buyType: BuyType,
+    playerKills: number[]
+  ): TeamEconomyState;
+}
+```
+
+**Key Constants:**
+```typescript
+ECONOMY_CONSTANTS = {
+  PISTOL_ROUND_CREDITS: 800,
+  ROUND_WIN_CREDITS: 3000,
+  ROUND_LOSS_BASE: 1900,
+  LOSS_STREAK_BONUS: [0, 500, 1000, 1500, 1900],
+  KILL_CREDIT: 200,
+  PLANT_CREDIT: 300,
+  MAX_CREDITS: 9000,
+
+  BUY_THRESHOLDS: {
+    full_buy: 3900,
+    force_buy: 2600,
+    half_buy: 1500,
+    eco: 0
+  },
+
+  BUY_STRENGTH_MODIFIER: {
+    eco: 0.65,
+    half_buy: 0.80,
+    force_buy: 0.90,
+    full_buy: 1.0
+  }
+}
+```
+
+#### UltimateEngine
+Tracks ultimate points, decides when to use ultimates, and calculates impact bonuses.
+
+```typescript
+class UltimateEngine {
+  // Initialize ult state for all players
+  initializeUltState(
+    playerIds: string[],
+    agentAssignments: Record<string, string>
+  ): PlayerUltState[];
+
+  // Award ult points after a round
+  awardUltPoints(
+    ultStates: PlayerUltState[],
+    roundResult: {
+      won: boolean;
+      kills: Map<string, number>;
+      planted: boolean;
+      defused: boolean;
+    }
+  ): PlayerUltState[];
+
+  // Decide which players should use ultimates this round
+  decideUltUsage(
+    ultStates: PlayerUltState[],
+    strategy: TeamStrategy,
+    roundContext: {
+      roundNumber: number;
+      teamScore: number;
+      opponentScore: number;
+      buyType: BuyType;
+    }
+  ): string[];  // Player IDs who should ult
+
+  // Calculate strength bonus from ultimates used
+  getUltImpactBonus(
+    playerIds: string[],
+    ultStates: PlayerUltState[]
+  ): number;
+}
+```
+
+**Key Constants:**
+```typescript
+ULT_CONSTANTS = {
+  KILL_POINTS: 1,
+  DEATH_POINTS: 1,
+  PLANT_POINTS: 1,
+  DEFUSE_POINTS: 1,
+  ROUND_WIN_POINTS: 1,
+
+  ULT_COSTS: {
+    Jett: 7, Raze: 8, Reyna: 6, Phoenix: 6, Yoru: 7, Neon: 7, Iso: 7,
+    Sova: 8, Breach: 7, Skye: 6, KAY/O: 7, Fade: 7, Gekko: 7,
+    Brimstone: 7, Omen: 7, Viper: 8, Astra: 7, Harbor: 7, Clove: 7,
+    Killjoy: 8, Cypher: 7, Sage: 8, Chamber: 8, Deadlock: 8, Vyse: 8
+  },
+
+  ULT_IMPACT: {
+    LOW: 0.05,      // Sage, Cypher, Killjoy
+    MEDIUM: 0.10,   // Sova, Viper, Omen
+    HIGH: 0.15      // Jett, Raze, Chamber
+  }
+}
+```
+
+#### CompositionEngine
+Handles agent selection based on player preferences and calculates composition bonuses.
+
+```typescript
+class CompositionEngine {
+  // Select agents for a team based on player preferences and strategy
+  selectAgents(
+    playerIds: string[],
+    players: Record<string, Player>,
+    preferences: Record<string, PlayerAgentPreferences>,
+    strategy: TeamStrategy
+  ): AgentSelection;
+
+  // Calculate composition bonus/penalty
+  calculateCompositionBonus(
+    agentAssignments: Record<string, string>
+  ): CompositionBonus;
+
+  // Get all agents for a role
+  getAgentsByRole(role: AgentRole): string[];
+
+  // Get role for an agent
+  getAgentRole(agent: string): AgentRole;
+
+  // Generate default preferences for a player based on stats
+  generateDefaultPreferences(player: Player): PlayerAgentPreferences;
+}
+```
+
+**Key Constants:**
+```typescript
+COMPOSITION_CONSTANTS = {
+  BALANCED_BONUS: 0.05,           // 1 Duelist, 1+ Controller, 1+ Initiator, 1+ Sentinel
+  DOUBLE_CONTROLLER_ATTACK: 0.10, // 2 Controllers on attack
+  NO_CONTROLLER_PENALTY: -0.15,   // No smokes
+  NO_INITIATOR_PENALTY: -0.10,    // No info
+  TRIPLE_DUELIST_PENALTY: -0.10,  // Too aggressive
+
+  AGENT_ROLES: {
+    Duelist: ['Jett', 'Raze', 'Reyna', 'Phoenix', 'Yoru', 'Neon', 'Iso'],
+    Initiator: ['Sova', 'Breach', 'Skye', 'KAY/O', 'Fade', 'Gekko'],
+    Controller: ['Brimstone', 'Omen', 'Viper', 'Astra', 'Harbor', 'Clove'],
+    Sentinel: ['Killjoy', 'Cypher', 'Sage', 'Chamber', 'Deadlock', 'Vyse']
+  }
+}
+```
+
+#### RoundSimulator
+Integrates all engines to simulate a single round with full event tracking.
+
+```typescript
+class RoundSimulator {
+  // Simulate a single round
+  simulateRound(
+    teamAContext: TeamRoundContext,
+    teamBContext: TeamRoundContext,
+    roundNumber: number,
+    isAttackSide: 'teamA' | 'teamB'
+  ): RoundResult;
+}
+
+interface RoundResult {
+  winner: 'teamA' | 'teamB';
+  winCondition: 'elimination' | 'spike_defused' | 'spike_detonated' | 'time_expired';
+  firstBlood: FirstBlood | null;
+  spikePlanted: boolean;
+  clutchAttempt: ClutchAttempt | null;
+  ultsUsed: UltUsage[];
+  teamAPerformance: Map<string, RoundPlayerPerformance>;
+  teamBPerformance: Map<string, RoundPlayerPerformance>;
+  teamAEconomyUpdate: EconomyUpdate;
+  teamBEconomyUpdate: EconomyUpdate;
+}
+```
+
+### Type Definitions
+
+#### TeamStrategy
+```typescript
+interface TeamStrategy {
+  playstyle: 'aggressive' | 'balanced' | 'passive';
+  economyDiscipline: 'risky' | 'standard' | 'conservative';
+  forceThreshold: number;  // 1000-4000
+  defaultComposition: {
+    duelist: number;     // 0-2
+    controller: number;  // 1-2
+    initiator: number;   // 1-2
+    sentinel: number;    // 0-2
+  };
+  ultUsageStyle: 'aggressive' | 'save_for_key_rounds' | 'combo_focused';
+}
+```
+
+#### PlayerAgentPreferences
+```typescript
+interface PlayerAgentPreferences {
+  preferredAgents: [string, string, string];  // Top 3 agents
+  primaryRole: 'Duelist' | 'Initiator' | 'Controller' | 'Sentinel';
+  flexRoles?: ('Duelist' | 'Initiator' | 'Controller' | 'Sentinel')[];
+}
+```
+
+#### EnhancedRoundInfo
+```typescript
+interface EnhancedRoundInfo {
+  roundNumber: number;
+  winner: 'teamA' | 'teamB';
+  winCondition: 'elimination' | 'spike_defused' | 'spike_detonated' | 'time_expired';
+  teamAEconomy: TeamEconomy;
+  teamBEconomy: TeamEconomy;
+  firstBlood: FirstBlood | null;
+  spikePlanted: boolean;
+  clutchAttempt: ClutchAttempt | null;
+  ultsUsed: UltUsage[];
+  teamAScore: number;
+  teamBScore: number;
+}
+
+interface TeamEconomy {
+  credits: number;
+  buyType: BuyType;
+  roundsLost: number;
+}
+
+interface FirstBlood {
+  killerId: string;
+  victimId: string;
+  side: 'teamA' | 'teamB';
+}
+
+interface ClutchAttempt {
+  playerId: string;
+  situation: '1v1' | '1v2' | '1v3' | '1v4' | '1v5';
+  won: boolean;
+}
+
+interface UltUsage {
+  playerId: string;
+  agent: string;
+}
+```
+
+#### EnhancedPlayerMapPerformance
+```typescript
+interface EnhancedPlayerMapPerformance extends PlayerMapPerformance {
+  firstKills: number;
+  firstDeaths: number;
+  clutchesAttempted: number;
+  clutchesWon: number;
+  plants: number;
+  defuses: number;
+  kast: number;       // Kill/Assist/Survive/Trade %
+  adr: number;        // Average Damage per Round
+  hsPercent: number;  // Headshot %
+  ultsUsed: number;
+}
+```
+
+### Store Slices
+
+#### StrategySlice
+Manages team strategies and player agent preferences.
+
+```typescript
+interface StrategySlice {
+  // State
+  teamStrategies: Record<string, TeamStrategy>;
+  playerAgentPreferences: Record<string, PlayerAgentPreferences>;
+
+  // Actions
+  setTeamStrategy: (teamId: string, strategy: TeamStrategy) => void;
+  updateTeamStrategy: (teamId: string, updates: Partial<TeamStrategy>) => void;
+  resetTeamStrategy: (teamId: string) => void;
+  initializeAIStrategies: (teamIds: string[], playerTeamId?: string) => void;
+  setPlayerAgentPreferences: (playerId: string, preferences: PlayerAgentPreferences) => void;
+  updatePlayerAgentPreferences: (playerId: string, updates: Partial<PlayerAgentPreferences>) => void;
+
+  // Selectors
+  getTeamStrategy: (teamId: string) => TeamStrategy;
+  getPlayerAgentPreferences: (playerId: string) => PlayerAgentPreferences | undefined;
+}
+```
+
+#### RoundDataSlice
+Stores detailed round-by-round data during the season, cleared at season end to prevent save file bloat.
+
+```typescript
+interface RoundDataSlice {
+  // State
+  roundData: Record<string, MatchRoundData>;  // matchId -> round data
+  roundDataSeasonId: string;                  // Current season for cleanup
+  maxStoredMatches: number;                   // 200 (auto-prune limit)
+
+  // Actions
+  storeMatchRoundData: (matchId: string, maps: MapResult[]) => void;
+  getMatchRoundData: (matchId: string) => MatchRoundData | undefined;
+  clearMatchRoundData: (matchId: string) => void;
+  clearSeasonRoundData: () => void;
+  pruneOldRoundData: () => void;
+}
+
+interface MatchRoundData {
+  matchId: string;
+  maps: {
+    mapName: string;
+    rounds: EnhancedRoundInfo[];
+  }[];
+  storedAt: string;  // ISO date
+}
+```
+
+### UI Components
+
+#### TeamStrategy Component
+Main strategy configuration panel in the Roster page's "Strategy" tab.
+
+- Playstyle selector (Aggressive/Balanced/Passive)
+- Economy discipline selector (Risky/Standard/Conservative)
+- Force threshold slider (1000-4000 credits)
+- Composition requirements editor (role counts that sum to 5)
+- Ultimate usage style selector
+- Preset strategy buttons (apply AI presets)
+
+#### AgentPreferenceEditor Component
+Modal for editing individual player agent preferences.
+
+- Primary role selector (4 roles)
+- Flex roles checkboxes
+- Preferred agents reorderable list (top 3)
+- Role-filtered agent suggestions
+
+#### RoundTimeline Component
+Visual timeline showing round-by-round match data.
+
+- Economy bars per round (credits + buy type)
+- Score progression graph
+- Round event icons (first blood, plant, clutch, ults)
+- Expandable round details
+- Win condition labels
+
+#### PlayerStatsTable Enhancements
+Toggle for advanced stats view showing:
+
+- ADR (Average Damage per Round)
+- KAST % (Kill/Assist/Survive/Trade)
+- FK/FD (First Kills / First Deaths)
+- HS% (Headshot Percentage)
+- Clutch stats (attempted/won)
+
+### Stat Mapping Formulas
+
+Player stats are converted to match performance using these formulas:
+
+| Match Stat | Formula |
+|------------|---------|
+| First Kill % | `entry * 0.6 + mechanics * 0.4` |
+| First Death % | `inverse(entry * 0.5 + lurking * 0.3 + mental * 0.2)` |
+| Clutch % | `clutch * 0.7 + mental * 0.2 + mechanics * 0.1` |
+| Plants | `entry * 0.5 + support * 0.3` (attackers only) |
+| Defuses | `mental * 0.5 + clutch * 0.3` |
+| KAST | `support * 0.4 + mental * 0.3 + mechanics * 0.3` |
+| ADR | `mechanics * 0.6 + entry * 0.4` |
+| HS% | `mechanics * 0.8 + random variance` |
+
+### Integration Points
+
+1. **MatchService** retrieves team strategies and passes them to MatchSimulator
+2. **MatchSimulator** uses RoundSimulator for each round, generating EnhancedRoundInfo
+3. **MatchService** stores round data via roundDataSlice after simulation
+4. **Scoreboard** component displays RoundTimeline with enhanced stats
+5. **Roster page** includes Strategy tab for team configuration

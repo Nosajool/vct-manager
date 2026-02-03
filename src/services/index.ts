@@ -27,3 +27,4 @@ export {
   RegionalSimulationService,
   regionalSimulationService,
 } from './RegionalSimulationService';
+export { StrategyService, strategyService } from './StrategyService';

@@ -9,6 +9,8 @@ import { createUISlice, type UISlice } from './slices/uiSlice';
 import { createMatchSlice, type MatchSlice } from './slices/matchSlice';
 import { createCompetitionSlice, type CompetitionSlice } from './slices/competitionSlice';
 import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
+import { createStrategySlice, type StrategySlice } from './slices/strategySlice';
+import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
 import {
   autoSave,
   saveManager,
@@ -18,7 +20,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice;
 
 // Create the combined store with auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -30,6 +32,8 @@ export const useGameStore = create<GameState>()(
     ...createMatchSlice(...args),
     ...createCompetitionSlice(...args),
     ...createScrimSlice(...args),
+    ...createStrategySlice(...args),
+    ...createRoundDataSlice(...args),
   }))
 );
 
@@ -41,6 +45,8 @@ export type { UISlice, ActiveView, BulkSimulationProgress } from './slices/uiSli
 export type { MatchSlice } from './slices/matchSlice';
 export type { CompetitionSlice, StandingsEntry, QualificationRecord } from './slices/competitionSlice';
 export type { ScrimSlice } from './slices/scrimSlice';
+export type { StrategySlice } from './slices/strategySlice';
+export type { RoundDataSlice, MatchRoundData } from './slices/roundDataSlice';
 
 // ============================================
 // Save/Load API
@@ -210,6 +216,28 @@ export const usePlayerTeamMapPool = () =>
   useGameStore((state) =>
     state.playerTeamId ? state.teams[state.playerTeamId]?.mapPool : undefined
   );
+
+// ============================================
+// Strategy-related selector hooks
+// ============================================
+
+export const useTeamStrategy = (teamId: string) =>
+  useGameStore((state) => state.getTeamStrategy(teamId));
+
+export const usePlayerTeamStrategy = () =>
+  useGameStore((state) =>
+    state.playerTeamId ? state.getTeamStrategy(state.playerTeamId) : undefined
+  );
+
+export const usePlayerAgentPrefs = (playerId: string) =>
+  useGameStore((state) => state.getPlayerAgentPreferences(playerId));
+
+// ============================================
+// Round data selector hooks
+// ============================================
+
+export const useMatchRoundData = (matchId: string) =>
+  useGameStore((state) => state.getMatchRoundData(matchId));
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';

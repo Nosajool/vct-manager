@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { MatchResult, MapResult } from '../../types';
 import { PlayerStatsTable } from './PlayerStatsTable';
+import { RoundTimeline } from './RoundTimeline';
 
 interface ScoreboardProps {
   result: MatchResult;
@@ -12,7 +13,11 @@ interface ScoreboardProps {
 
 export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
   const [selectedMapIndex, setSelectedMapIndex] = useState(0);
+  const [showTimeline, setShowTimeline] = useState(false);
   const selectedMap = result.maps[selectedMapIndex];
+
+  // Check if enhanced round data is available
+  const hasEnhancedRounds = selectedMap?.enhancedRounds && selectedMap.enhancedRounds.length > 0;
 
   return (
     <div className="space-y-4">
@@ -39,17 +44,46 @@ export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
             teamBName={teamBName}
           />
 
+          {/* Timeline Toggle */}
+          {hasEnhancedRounds && (
+            <div className="flex justify-center">
+              <button
+                onClick={() => setShowTimeline(!showTimeline)}
+                className={`px-4 py-2 rounded-lg transition-colors text-sm ${
+                  showTimeline
+                    ? 'bg-vct-red/20 text-vct-red border border-vct-red/30'
+                    : 'bg-vct-gray/20 text-vct-gray hover:bg-vct-gray/30'
+                }`}
+              >
+                {showTimeline ? 'Hide Round Timeline' : 'Show Round Timeline'}
+              </button>
+            </div>
+          )}
+
+          {/* Round Timeline */}
+          {showTimeline && hasEnhancedRounds && selectedMap.enhancedRounds && (
+            <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
+              <RoundTimeline
+                rounds={selectedMap.enhancedRounds}
+                teamAName={teamAName}
+                teamBName={teamBName}
+              />
+            </div>
+          )}
+
           {/* Player Stats Tables */}
           <div className="grid gap-4 lg:grid-cols-2">
             <PlayerStatsTable
               performances={selectedMap.teamAPerformances}
               teamName={teamAName}
               isWinner={selectedMap.winner === 'teamA'}
+              showEnhanced={hasEnhancedRounds}
             />
             <PlayerStatsTable
               performances={selectedMap.teamBPerformances}
               teamName={teamBName}
               isWinner={selectedMap.winner === 'teamB'}
+              showEnhanced={hasEnhancedRounds}
             />
           </div>
         </div>
