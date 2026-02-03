@@ -30,3 +30,6 @@ dist-ssr
 
 # Test coverage
 coverage
+
+# Claude code switcher
+ccswitch.sh

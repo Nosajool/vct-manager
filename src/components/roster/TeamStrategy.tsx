@@ -23,6 +23,7 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
 
   const [localStrategy, setLocalStrategy] = useState<TeamStrategyType>(strategy);
   const [hasChanges, setHasChanges] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handlePlaystyleChange = (playstyle: PlaystyleType) => {
     setLocalStrategy((prev) => ({ ...prev, playstyle }));
@@ -45,16 +46,13 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
   };
 
   const handleCompositionChange = (role: keyof CompositionRequirements, delta: number) => {
+    setSaveError(null);
     setLocalStrategy((prev) => {
       const newComp = { ...prev.defaultComposition };
       const newValue = newComp[role] + delta;
 
       // Validate bounds
       if (newValue < 0 || newValue > 3) return prev;
-
-      // Calculate new total
-      const total = Object.values(newComp).reduce((sum, v) => sum + v, 0) + delta;
-      if (total !== 5) return prev;
 
       newComp[role] = newValue;
       return { ...prev, defaultComposition: newComp };
@@ -63,9 +61,20 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
   };
 
   const handleSave = () => {
+    setSaveError(null);
+    
+    // Validate composition totals exactly 5 players
+    const total = Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0);
+    if (total !== 5) {
+      setSaveError(`Composition must total exactly 5 players (currently ${total})`);
+      return;
+    }
+
     const success = strategyService.updateTeamStrategy(teamId, localStrategy);
     if (success) {
       setHasChanges(false);
+    } else {
+      setSaveError('Failed to save strategy');
     }
   };
 
@@ -118,6 +127,13 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
           </button>
         </div>
       </div>
+
+      {/* Error Messages */}
+      {saveError && (
+        <div className="p-3 bg-red-900/30 border border-red-500/50 rounded text-red-300 text-sm">
+          {saveError}
+        </div>
+      )}
 
       {/* Presets */}
       <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-4">
@@ -254,9 +270,18 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
       {/* Default Composition */}
       <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-vct-light mb-1">Default Composition</h3>
-        <p className="text-xs text-vct-gray mb-4">
-          Preferred role distribution (must total 5)
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xs text-vct-gray">
+            Preferred role distribution
+          </p>
+          <div className={`text-sm font-medium ${
+            Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0) === 5
+              ? 'text-green-400'
+              : 'text-yellow-400'
+          }`}>
+            Total: {Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0)} / 5
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <RoleCounter
             role="Duelist"

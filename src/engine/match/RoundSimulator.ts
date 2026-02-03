@@ -16,10 +16,8 @@ import type {
 import { STAT_FORMULAS } from './constants';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
-
-/**
- * Individual round result with all tracking data
- */
+import { selectWeapon } from '../weapon/WeaponSelector';
+import { WEAPONS } from '../weapon/WeaponDatabase';
 export interface RoundResult {
   /** Enhanced round info for storage */
   roundInfo: EnhancedRoundInfo;
@@ -53,6 +51,9 @@ export interface RoundPlayerPerformance {
   survivedRound: boolean;
   usedUlt: boolean;
   headshotKills: number;
+  shotsFired: number;      // New: track shots per round
+  totalHits: number;       // New: track successful hits
+  weaponUsed: string;      // New: which weapon this round
 }
 
 /**
@@ -304,13 +305,25 @@ export class RoundSimulator {
 
       const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
       const adr = totalRounds > 0 ? totalDamage / totalRounds : 0;
-      const hsPercent = totalKills > 0 ? (headshotKills / totalKills) * 100 : 0;
+      
+      // Calculate total shots and hits across all rounds for this player
+      const totalShots = roundPerformances.reduce((sum, roundPerf) => {
+        const playerPerf = roundPerf.get(player.id);
+        return sum + (playerPerf?.shotsFired || 0);
+      }, 0);
+      const totalHits = roundPerformances.reduce((sum, roundPerf) => {
+        const playerPerf = roundPerf.get(player.id);
+        return sum + (playerPerf?.totalHits || 0);
+      }, 0);
+
+      // Headshot percentage formula: (headshots/hits) × 100
+      const hsPercent = totalHits > 0 ? (headshotKills / totalHits) * 100 : 0;
       const kast = totalRounds > 0 ? (kastRounds / totalRounds) * 100 : 0;
 
       // Calculate ACS (simplified formula)
       const acs = Math.round(
         (totalKills * 200 + totalAssists * 50 + plants * 75 + defuses * 75) /
-          Math.max(1, totalRounds / 10)
+          Math.max(1, totalRounds)
       );
 
       return {
@@ -332,7 +345,7 @@ export class RoundSimulator {
         adr: Math.round(adr),
         hsPercent: Math.round(hsPercent),
         ultsUsed,
-      };
+        headshotKills,      };
     });
   }
 
@@ -374,6 +387,9 @@ export class RoundSimulator {
         survivedRound: true,
         usedUlt: false,
         headshotKills: 0,
+        shotsFired: 0,
+        totalHits: 0,
+        weaponUsed: 'classic',
       });
     });
 
@@ -660,9 +676,33 @@ export class RoundSimulator {
       const perf = playerPerformance.get(p.id);
       if (perf) {
         perf.kills = playerKillsA[i];
-        // Estimate headshots (30-50% based on mechanics)
-        const hsRate = 0.3 + (p.stats.mechanics / 100) * 0.2;
-        perf.headshotKills = Math.round(playerKillsA[i] * hsRate);
+        // Economy-aware weapon selection with realistic headshot calculation
+        const weapon = selectWeapon(800, p.name, p.stats.mechanics); // Start with 800 credits
+        
+        // Calculate shots and hits based on mechanics and weapon
+        const mechanics = p.stats?.mechanics ?? 70;
+        const baseAccuracy = 0.15 + (mechanics / 100) * 0.25; // 15-40% accuracy
+        const weaponHsRate = (weapon?.baseHeadshotRate ?? 28) / 100;
+        const shotsPerRound = weapon?.shotsPerRound ?? { min: 5, max: 10 };
+        const shotsFired = Math.floor(
+          shotsPerRound.min + Math.random() * (shotsPerRound.max - shotsPerRound.min)
+        );
+        // Calculate hits with reasonable minimum
+        const rawHits = Math.floor(shotsFired * baseAccuracy);
+        const totalHits = Math.max(2, rawHits); // Min 2 hits to ensure HS variance
+
+        // Probabilistic headshot calculation - each hit rolls independently
+        let headshotKills = 0;
+        for (let h = 0; h < totalHits; h++) {
+          if (Math.random() < weaponHsRate) {
+            headshotKills++;
+          }
+        }
+
+        perf.weaponUsed = weapon?.id ?? 'classic';
+        perf.shotsFired = shotsFired;
+        perf.totalHits = totalHits;
+        perf.headshotKills = headshotKills;
         // Estimate damage
         perf.damage = playerKillsA[i] * 130 + Math.round(Math.random() * 50);
       }
@@ -672,8 +712,33 @@ export class RoundSimulator {
       const perf = playerPerformance.get(p.id);
       if (perf) {
         perf.kills = playerKillsB[i];
-        const hsRate = 0.3 + (p.stats.mechanics / 100) * 0.2;
-        perf.headshotKills = Math.round(playerKillsB[i] * hsRate);
+        // Economy-aware weapon selection with realistic headshot calculation
+        const weapon = selectWeapon(800, p.name, p.stats?.mechanics ?? 70);
+
+        // Calculate shots and hits based on mechanics and weapon
+        const mechanics = p.stats?.mechanics ?? 70;
+        const baseAccuracy = 0.15 + (mechanics / 100) * 0.25; // 15-40% accuracy
+        const weaponHsRate = (weapon?.baseHeadshotRate ?? 28) / 100;
+        const shotsPerRound = weapon?.shotsPerRound ?? { min: 5, max: 10 };
+        const shotsFired = Math.floor(
+          shotsPerRound.min + Math.random() * (shotsPerRound.max - shotsPerRound.min)
+        );
+        // Calculate hits with reasonable minimum
+        const rawHits = Math.floor(shotsFired * baseAccuracy);
+        const totalHits = Math.max(2, rawHits); // Min 2 hits to ensure HS variance
+
+        // Probabilistic headshot calculation - each hit rolls independently
+        let headshotKills = 0;
+        for (let h = 0; h < totalHits; h++) {
+          if (Math.random() < weaponHsRate) {
+            headshotKills++;
+          }
+        }
+
+        perf.weaponUsed = weapon?.id ?? 'classic';
+        perf.shotsFired = shotsFired;
+        perf.totalHits = totalHits;
+        perf.headshotKills = headshotKills;
         perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
       }
     });

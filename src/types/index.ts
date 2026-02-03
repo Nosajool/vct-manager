@@ -44,6 +44,20 @@ export type {
   UltUsage,
 } from './match';
 
+// Weapon types
+export type {
+  Weapon,
+  WeaponCategory,
+  HitZone,
+  HeadshotTier,
+  WeaponProficiency,
+  HeadshotContext,
+  HeadshotResult,
+  WeaponStats,
+  RadiantWeaponData,
+  DamageResult,
+} from './weapons';
+
 // Strategy types
 export type {
   TeamStrategy,
@@ -58,15 +72,22 @@ export type {
   UltUsageStyle,
 } from './strategy';
 
-export {
-  DEFAULT_TEAM_STRATEGY,
-  AI_STRATEGY_PRESETS,
-  getStrategyDisplayName,
-  validateStrategy,
-} from './strategy';
-
-// Calendar types
+// Competition types
 export type {
+  CompetitionType,
+  TournamentFormat,
+  TournamentStatus,
+  TournamentRegion,
+  Tournament,
+  MultiStageTournament,
+  TournamentStandingsEntry,
+  BracketMatch,
+  BracketRound,
+  BracketStructure,
+  SwissTeamRecord,
+  SwissStage,
+  LeagueStage,
+  TournamentTransitionConfig,
   GameCalendar,
   CalendarEvent,
   CalendarEventType,
@@ -75,91 +96,27 @@ export type {
   TournamentEventData,
   SalaryPaymentEventData,
   RestDayEventData,
-} from './calendar';
-
-// Competition types
-export type {
-  Tournament,
-  TournamentFormat,
-  TournamentStatus,
-  TournamentRegion,
-  CompetitionType,
-  BracketFormat,
-  BracketStructure,
-  BracketRound,
-  BracketMatch,
-  BracketMatchStatus,
-  BracketType,
-  TeamSource,
-  Destination,
-  PrizePool,
-  // Swiss stage types
-  SwissTeamStatus,
-  SwissTeamRecord,
-  SwissRound,
-  SwissStage,
-  MultiStageTournament,
-  // League stage types (for league_to_playoff)
-  LeagueStage,
-  // Team slot types (for TBD bracket positions)
-  TeamSlot,
-  QualificationSource as CompetitionQualificationSource,
-  TournamentStandingsEntry,
 } from './competition';
-
-export { isMultiStageTournament, isSwissToPlayoffTournament, isLeagueToPlayoffTournament } from './competition';
 
 // Economy types
 export type {
-  TrainingFocus,
-  TrainingIntensity,
-  TrainingSession,
-  TrainingResult,
-  TrainingFactors,
-  PlayerFatigue,
-  Difficulty,
-  DifficultySettings,
+  EconomyEngine,
+  TeamEconomyState,
+  BuyType,
 } from './economy';
-
-export { DIFFICULTY_SETTINGS } from './economy';
-
-// Scrim types
-export type {
-  TeamTier,
-  TierTeam,
-  ScrimRelationship,
-  RelationshipEventType,
-  RelationshipEvent,
-  MapStrengthAttributes,
-  MapStrength,
-  MapPoolStrength,
-  ScrimFormat,
-  ScrimIntensity,
-  ScrimOptions,
-  ScrimResult,
-  WeeklyScrimTracker,
-} from './scrim';
-
-export { SCRIM_CONSTANTS } from './scrim';
 
 // VLR types
 export type {
-  VlrRegion,
-  VlrPlayerStats,
-  VlrTeamRanking,
-  VlrStatsApiResponse,
-  VlrRankingsApiResponse,
-  VlrCacheData,
-  VlrCacheEntry,
+  VlrPlayer,
+  VlrTeam,
+  VlrMatchStats,
+  VlrAgentStats,
+  VlrGameStats,
 } from './vlr';
 
-export { VLR_TO_GAME_REGION } from './vlr';
-
-// Tournament transition types
-export type {
-  TransitionType,
-  QualificationSource,
-  TournamentTransitionConfig,
-  QualificationRules,
-  TransitionResult,
-} from './tournament-transition';
+// Competition type guards (value re-exports, not type-only)
+export {
+  isMultiStageTournament,
+  isLeagueToPlayoffTournament,
+  isSwissToPlayoffTournament,
+} from './competition';

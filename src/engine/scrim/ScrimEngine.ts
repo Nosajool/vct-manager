@@ -194,7 +194,7 @@ export class ScrimEngine {
         kills: Math.round(kills * modifier),
         deaths: Math.max(1, deaths),
         assists: Math.round(assists * modifier),
-        acs: Math.round((kills * 200 + assists * 50) / totalRounds + Math.random() * 50),
+        acs: Math.round((kills * 200 + assists * 50) / Math.max(1, totalRounds)),
         kd: Number(((kills * modifier) / Math.max(1, deaths)).toFixed(2)),
       };
     });
