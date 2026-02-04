@@ -13,11 +13,12 @@ import type {
   EnhancedPlayerMapPerformance,
   BuyType,
 } from '../../types';
-import { STAT_FORMULAS } from './constants';
+import { STAT_FORMULAS, ASSIST_CONSTANTS } from './constants';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
-import { selectWeapon } from '../weapon/WeaponSelector';
-import { WEAPONS } from '../weapon/WeaponDatabase';
+import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
+import { WEAPON_PROFILES, type DamageEvent, type RoundDamageEvents, type PlayerArmorState, type HitLocation, type WeaponProfile } from '../../types/match';
+
 export interface RoundResult {
   /** Enhanced round info for storage */
   roundInfo: EnhancedRoundInfo;
@@ -32,6 +33,9 @@ export interface RoundResult {
 
   /** Player performance updates for this round */
   playerPerformance: Map<string, RoundPlayerPerformance>;
+
+  /** Player loadouts for the round */
+  playerLoadouts: Map<string, PlayerLoadout>;
 }
 
 /**
@@ -103,6 +107,21 @@ export class RoundSimulator {
       teamAContext.economy
     );
 
+    // Generate player loadouts based on economy and buy types
+    const playerLoadoutsA = this.generatePlayerLoadouts(
+      teamAContext.players,
+      buyTypeA,
+      teamAContext.economy.playerCredits
+    );
+    const playerLoadoutsB = this.generatePlayerLoadouts(
+      teamBContext.players,
+      buyTypeB,
+      teamBContext.economy.playerCredits
+    );
+    const allLoadouts = new Map<string, PlayerLoadout>();
+    playerLoadoutsA.forEach((loadout, playerId) => allLoadouts.set(playerId, loadout));
+    playerLoadoutsB.forEach((loadout, playerId) => allLoadouts.set(playerId, loadout));
+
     // Get buy strength modifiers
     const buyModA = this.economyEngine.getBuyStrengthModifier(buyTypeA);
     const buyModB = this.economyEngine.getBuyStrengthModifier(buyTypeB);
@@ -150,13 +169,50 @@ export class RoundSimulator {
     const teamAWins = Math.random() < probA;
     const winner = teamAWins ? 'teamA' : 'teamB';
 
+    // Initialize player performance tracking
+    const playerPerformance = new Map<string, RoundPlayerPerformance>();
+    [...teamAContext.players, ...teamBContext.players].forEach(player => {
+      playerPerformance.set(player.id, {
+        kills: 0,
+        deaths: 0,
+        assists: 0,
+        damage: 0,
+        gotFirstKill: false,
+        gotFirstDeath: false,
+        attemptedClutch: false,
+        wonClutch: false,
+        planted: false,
+        defused: false,
+        survivedRound: false,
+        usedUlt: false,
+        headshotKills: 0,
+        shotsFired: 0,
+        totalHits: 0,
+        weaponUsed: 'classic',
+      });
+    });
+
+    // Simulate damage events first
+    const damageEvents = this.simulateDamageEvents(
+      teamAContext,
+      teamBContext,
+      allLoadouts,
+      playerPerformance
+    );
+
+    // Calculate assists based on damage contributions and ability usage
+    this.calculateAssists(playerPerformance, damageEvents.damageContributions);
+    this.calculateAbilityAssists(playerPerformance, damageEvents.events);
+
     // Simulate round events
     const events = this.simulateRoundEvents(
       teamAContext,
       teamBContext,
       teamAWins,
       ultDecisionA.ultsToUse,
-      ultDecisionB.ultsToUse
+      ultDecisionB.ultsToUse,
+      playerPerformance,
+      allLoadouts
     );
 
     // Update economy states
@@ -199,7 +255,7 @@ export class RoundSimulator {
       ultDecisionB.ultsToUse
     );
 
-    // Create round info
+    // Create round info with damage events and armor states
     const roundInfo: EnhancedRoundInfo = {
       roundNumber,
       winner,
@@ -210,6 +266,8 @@ export class RoundSimulator {
       spikePlanted: events.spikePlanted,
       clutchAttempt: events.clutchAttempt,
       ultsUsed: [...ultDecisionA.ultsToUse, ...ultDecisionB.ultsToUse],
+      damageEvents: damageEvents,
+      playerArmorStates: this.createPlayerArmorStates([...teamAContext.players, ...teamBContext.players], allLoadouts),
       teamAScore: currentScoreA + (teamAWins ? 1 : 0),
       teamBScore: currentScoreB + (teamAWins ? 0 : 1),
     };
@@ -220,7 +278,8 @@ export class RoundSimulator {
       teamBEconomy: updatedEconomyB,
       teamAUlts: updatedUltsA,
       teamBUlts: updatedUltsB,
-      playerPerformance: events.playerPerformance,
+      playerPerformance: playerPerformance,
+      playerLoadouts: allLoadouts,
     };
   }
 
@@ -306,11 +365,7 @@ export class RoundSimulator {
       const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
       const adr = totalRounds > 0 ? totalDamage / totalRounds : 0;
       
-      // Calculate total shots and hits across all rounds for this player
-      const totalShots = roundPerformances.reduce((sum, roundPerf) => {
-        const playerPerf = roundPerf.get(player.id);
-        return sum + (playerPerf?.shotsFired || 0);
-      }, 0);
+      // Calculate total hits across all rounds for this player
       const totalHits = roundPerformances.reduce((sum, roundPerf) => {
         const playerPerf = roundPerf.get(player.id);
         return sum + (playerPerf?.totalHits || 0);
@@ -320,9 +375,10 @@ export class RoundSimulator {
       const hsPercent = totalHits > 0 ? (headshotKills / totalHits) * 100 : 0;
       const kast = totalRounds > 0 ? (kastRounds / totalRounds) * 100 : 0;
 
-      // Calculate ACS (simplified formula)
+      // Calculate ACS with proper Valorant formula
+      // ACS = (Kills × 150 + Assists × 50 + Total Damage / 100) / Rounds
       const acs = Math.round(
-        (totalKills * 200 + totalAssists * 50 + plants * 75 + defuses * 75) /
+        (totalKills * 150 + totalAssists * 50 + totalDamage / 100) /
           Math.max(1, totalRounds)
       );
 
@@ -357,7 +413,9 @@ export class RoundSimulator {
     teamBContext: TeamRoundContext,
     teamAWins: boolean,
     ultsUsedA: UltUsage[],
-    ultsUsedB: UltUsage[]
+    ultsUsedB: UltUsage[],
+    playerPerformance: Map<string, RoundPlayerPerformance>,
+    allLoadouts: Map<string, PlayerLoadout>
   ): {
     firstBlood: FirstBlood | null;
     spikePlanted: boolean;
@@ -367,9 +425,7 @@ export class RoundSimulator {
     playerKillsB: number[];
     planterId?: string;
     defuserId?: string;
-    playerPerformance: Map<string, RoundPlayerPerformance>;
   } {
-    const playerPerformance = new Map<string, RoundPlayerPerformance>();
 
     // Initialize performance for all players
     [...teamAContext.players, ...teamBContext.players].forEach((p) => {
@@ -446,7 +502,8 @@ export class RoundSimulator {
       teamAContext,
       teamBContext,
       teamAWins,
-      playerPerformance
+      playerPerformance,
+      allLoadouts
     );
 
     // Simulate clutch scenario
@@ -473,7 +530,6 @@ export class RoundSimulator {
       playerKillsB,
       planterId,
       defuserId,
-      playerPerformance,
     };
   }
 
@@ -630,7 +686,8 @@ export class RoundSimulator {
     teamAContext: TeamRoundContext,
     teamBContext: TeamRoundContext,
     teamAWins: boolean,
-    playerPerformance: Map<string, RoundPlayerPerformance>
+    playerPerformance: Map<string, RoundPlayerPerformance>,
+    allLoadouts: Map<string, PlayerLoadout>
   ): { playerKillsA: number[]; playerKillsB: number[] } {
     // Average total kills per round is about 7-8 across both teams
     const totalKills = 5 + Math.floor(Math.random() * 4); // 5-8 kills
@@ -671,40 +728,30 @@ export class RoundSimulator {
     const playerKillsA = distributeKills(teamAContext, teamAKills);
     const playerKillsB = distributeKills(teamBContext, teamBKills);
 
-    // Update performance map
+    // Update performance map with proper weapon integration
     teamAContext.players.forEach((p, i) => {
       const perf = playerPerformance.get(p.id);
       if (perf) {
         perf.kills = playerKillsA[i];
-        // Economy-aware weapon selection with realistic headshot calculation
-        const weapon = selectWeapon(800, p.name, p.stats.mechanics); // Start with 800 credits
         
-        // Calculate shots and hits based on mechanics and weapon
-        const mechanics = p.stats?.mechanics ?? 70;
-        const baseAccuracy = 0.15 + (mechanics / 100) * 0.25; // 15-40% accuracy
-        const weaponHsRate = (weapon?.baseHeadshotRate ?? 28) / 100;
-        const shotsPerRound = weapon?.shotsPerRound ?? { min: 5, max: 10 };
-        const shotsFired = Math.floor(
-          shotsPerRound.min + Math.random() * (shotsPerRound.max - shotsPerRound.min)
-        );
-        // Calculate hits with reasonable minimum
-        const rawHits = Math.floor(shotsFired * baseAccuracy);
-        const totalHits = Math.max(2, rawHits); // Min 2 hits to ensure HS variance
-
-        // Probabilistic headshot calculation - each hit rolls independently
-        let headshotKills = 0;
-        for (let h = 0; h < totalHits; h++) {
-          if (Math.random() < weaponHsRate) {
-            headshotKills++;
-          }
+        // Get player's loadout to determine weapon used
+        const playerLoadouts = allLoadouts.get(p.id);
+        if (playerLoadouts?.primary) {
+          perf.weaponUsed = playerLoadouts.primary.name;
+          perf.shotsFired = Math.floor(5 + Math.random() * 10);
+          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
+          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
+          // Estimate damage based on weapon used
+          const baseDamagePerKill = playerLoadouts.primary.cost >= 2500 ? 160 : 130; // Heavier weapons do more damage
+          perf.damage = playerKillsA[i] * baseDamagePerKill + Math.round(Math.random() * 50);
+        } else {
+          // Fallback to secondary weapon
+          perf.weaponUsed = playerLoadouts?.secondary?.name || 'classic';
+          perf.shotsFired = Math.floor(5 + Math.random() * 10);
+          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
+          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
+          perf.damage = playerKillsA[i] * 130 + Math.round(Math.random() * 50);
         }
-
-        perf.weaponUsed = weapon?.id ?? 'classic';
-        perf.shotsFired = shotsFired;
-        perf.totalHits = totalHits;
-        perf.headshotKills = headshotKills;
-        // Estimate damage
-        perf.damage = playerKillsA[i] * 130 + Math.round(Math.random() * 50);
       }
     });
 
@@ -712,33 +759,25 @@ export class RoundSimulator {
       const perf = playerPerformance.get(p.id);
       if (perf) {
         perf.kills = playerKillsB[i];
-        // Economy-aware weapon selection with realistic headshot calculation
-        const weapon = selectWeapon(800, p.name, p.stats?.mechanics ?? 70);
-
-        // Calculate shots and hits based on mechanics and weapon
-        const mechanics = p.stats?.mechanics ?? 70;
-        const baseAccuracy = 0.15 + (mechanics / 100) * 0.25; // 15-40% accuracy
-        const weaponHsRate = (weapon?.baseHeadshotRate ?? 28) / 100;
-        const shotsPerRound = weapon?.shotsPerRound ?? { min: 5, max: 10 };
-        const shotsFired = Math.floor(
-          shotsPerRound.min + Math.random() * (shotsPerRound.max - shotsPerRound.min)
-        );
-        // Calculate hits with reasonable minimum
-        const rawHits = Math.floor(shotsFired * baseAccuracy);
-        const totalHits = Math.max(2, rawHits); // Min 2 hits to ensure HS variance
-
-        // Probabilistic headshot calculation - each hit rolls independently
-        let headshotKills = 0;
-        for (let h = 0; h < totalHits; h++) {
-          if (Math.random() < weaponHsRate) {
-            headshotKills++;
-          }
+        
+        // Get player's loadout to determine weapon used
+        const playerLoadouts = allLoadouts.get(p.id);
+        if (playerLoadouts?.primary) {
+          perf.weaponUsed = playerLoadouts.primary.name;
+          perf.shotsFired = Math.floor(5 + Math.random() * 10);
+          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
+          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
+          // Estimate damage based on weapon used
+          const baseDamagePerKill = playerLoadouts.primary.cost >= 2500 ? 160 : 130; // Heavier weapons do more damage
+          perf.damage = playerKillsB[i] * baseDamagePerKill + Math.round(Math.random() * 50);
+        } else {
+          // Fallback to secondary weapon
+          perf.weaponUsed = playerLoadouts?.secondary?.name || 'classic';
+          perf.shotsFired = Math.floor(5 + Math.random() * 10);
+          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
+          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
+          perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
         }
-
-        perf.weaponUsed = weapon?.id ?? 'classic';
-        perf.shotsFired = shotsFired;
-        perf.totalHits = totalHits;
-        perf.headshotKills = headshotKills;
         perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
       }
     });
@@ -919,6 +958,342 @@ export class RoundSimulator {
     }
 
     return items[items.length - 1].player;
+  }
+
+  /**
+   * Create initial player armor states from loadouts
+   */
+  private createPlayerArmorStates(
+    players: Player[],
+    playerLoadouts: Map<string, PlayerLoadout>
+  ): Record<string, PlayerArmorState> {
+    const armorStates: Record<string, PlayerArmorState> = {};
+
+    players.forEach(player => {
+      const loadout = playerLoadouts.get(player.id)!;
+      armorStates[player.id] = {
+        shieldType: loadout.shield,
+        shieldHealth: this.getShieldHealth(loadout.shield),
+        regenPool: loadout.shield === 'regen' ? 25 : 0,
+        health: 100,
+        maxHealth: 100,
+      };
+    });
+
+    return armorStates;
+  }
+
+  /**
+   * Generate player loadouts based on economy and buy type
+   */
+  private generatePlayerLoadouts(
+    players: Player[],
+    buyType: BuyType,
+    playerCredits: number[]
+  ): Map<string, PlayerLoadout> {
+    const loadouts = new Map<string, PlayerLoadout>();
+
+    players.forEach((player, index) => {
+      const credits = playerCredits[index];
+      const loadout = weaponEngine.generateLoadout(buyType, credits, { mechanics: player.stats.mechanics });
+      loadouts.set(player.id, loadout);
+    });
+
+    return loadouts;
+  }
+
+  /**
+   * Simulate damage events for a round
+   */
+  private simulateDamageEvents(
+    teamAContext: TeamRoundContext,
+    teamBContext: TeamRoundContext,
+    playerLoadouts: Map<string, PlayerLoadout>,
+    playerPerformance: Map<string, RoundPlayerPerformance>
+  ): RoundDamageEvents {
+    const events: DamageEvent[] = [];
+    const totalDamageByPlayer: Record<string, number> = {};
+    const totalDamageReceived: Record<string, number> = {};
+    const damageContributions: Record<string, DamageEvent[]> = {};
+
+    // Initialize damage tracking
+    [...teamAContext.players, ...teamBContext.players].forEach(player => {
+      totalDamageByPlayer[player.id] = 0;
+      totalDamageReceived[player.id] = 0;
+      damageContributions[player.id] = [];
+    });
+
+    // Initialize player armor states
+    const playerArmorStates: Record<string, PlayerArmorState> = {};
+    [...teamAContext.players, ...teamBContext.players].forEach(player => {
+      const loadout = playerLoadouts.get(player.id)!;
+      playerArmorStates[player.id] = {
+        shieldType: loadout.shield,
+        shieldHealth: this.getShieldHealth(loadout.shield),
+        regenPool: loadout.shield === 'regen' ? 25 : 0,
+        health: 100,
+        maxHealth: 100,
+      };
+    });
+
+    // Simulate combat encounters
+    let totalKills = 0;
+    playerPerformance.forEach(perf => {
+      totalKills += perf.kills;
+    });
+    const totalEncounters = Math.max(totalKills * 2, 5); // Ensure some encounters even with few kills
+
+    for (let i = 0; i < totalEncounters; i++) {
+      const encounter = this.simulateCombatEncounter(
+        teamAContext,
+        teamBContext,
+        playerLoadouts,
+        playerArmorStates
+      );
+
+      if (encounter) {
+        events.push(encounter);
+        totalDamageByPlayer[encounter.dealerId] += encounter.finalDamage;
+        totalDamageReceived[encounter.victimId] += encounter.finalDamage;
+        damageContributions[encounter.victimId].push(encounter);
+
+        // Update victim's armor state
+        const victimArmor = playerArmorStates[encounter.victimId];
+        victimArmor.shieldHealth = encounter.armorBreakdown.remainingShield;
+        victimArmor.health = encounter.armorBreakdown.remainingHp;
+      }
+    }
+
+    return {
+      events,
+      totalDamageByPlayer,
+      totalDamageReceived,
+      damageContributions,
+    };
+  }
+
+  /**
+   * Get initial shield health based on shield type
+   */
+  private getShieldHealth(shieldType: PlayerLoadout['shield']): number {
+    switch (shieldType) {
+      case 'light': return 25;
+      case 'heavy': return 50;
+      case 'regen': return 25;
+      default: return 0;
+    }
+  }
+
+  /**
+   * Simulate a single combat encounter between two players
+   */
+  private simulateCombatEncounter(
+    teamAContext: TeamRoundContext,
+    teamBContext: TeamRoundContext,
+    playerLoadouts: Map<string, PlayerLoadout>,
+    playerArmorStates: Record<string, PlayerArmorState>
+  ): DamageEvent | null {
+    // Random attacker and victim from opposite teams
+    const teamA = teamAContext.players;
+    const teamB = teamBContext.players;
+    
+    if (teamA.length === 0 || teamB.length === 0) return null;
+
+    const attackerTeam = Math.random() < 0.5 ? teamA : teamB;
+    const victimTeam = attackerTeam === teamA ? teamB : teamA;
+
+    const attacker = attackerTeam[Math.floor(Math.random() * attackerTeam.length)];
+    const victim = victimTeam[Math.floor(Math.random() * victimTeam.length)];
+
+    const loadout = playerLoadouts.get(attacker.id);
+    if (!loadout) return null;
+
+    // Select weapon (prefer primary, fallback to secondary)
+    let weapon: WeaponProfile;
+    if (loadout.primary && Math.random() < 0.8) {
+      weapon = loadout.primary;
+    } else {
+      weapon = loadout.secondary;
+    }
+
+    // Check for melee attack
+    if (weaponEngine.shouldMeleeAttack()) {
+      weapon = WEAPON_PROFILES.Melee;
+    }
+
+    // Calculate distance
+    const distance = weaponEngine.getRandomCombatDistance();
+
+    // Determine hit location
+    const hitProbs = weaponEngine.getHitLocationProbabilities(weapon, attacker.stats.mechanics, distance);
+    const hitLocation = this.selectHitLocation(hitProbs);
+
+    // Calculate damage
+    const victimArmor = playerArmorStates[victim.id];
+    const damageResult = weaponEngine.calculateDamage(
+      weapon,
+      distance,
+      hitLocation,
+      victimArmor.shieldType,
+      victimArmor.shieldHealth,
+      victimArmor.regenPool,
+      victimArmor.health
+    );
+
+    // Determine if this is an ability-based damage event
+    const isAbilityEvent = Math.random() < 0.15; // 15% chance of ability damage vs weapon damage
+    
+    // Get attacker's agent from team context
+    const attackerAgent = this.getPlayerAgent(attacker, attackerTeam === teamA ? teamAContext : teamBContext);
+    
+    // Create damage event
+    const damageEvent: DamageEvent = {
+      id: `damage-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      dealerId: attacker.id,
+      victimId: victim.id,
+      baseDamage: damageResult.baseDamage,
+      finalDamage: damageResult.finalDamage,
+      hitLocation,
+      source: isAbilityEvent ? 'ability' : (weapon.category === 'melee' ? 'melee' : 'weapon'),
+      weapon: weapon.name,
+      ability: isAbilityEvent ? this.getRandomAbility(attackerAgent) : undefined,
+      distance,
+      timestamp: Math.floor(Math.random() * 100000), // Random timestamp within round
+      armorBreakdown: {
+        shieldDamage: damageResult.shieldDamage,
+        hpDamage: damageResult.hpDamage,
+        remainingShield: damageResult.remainingShield,
+        remainingHp: damageResult.remainingHp,
+      },
+    };
+
+    return damageEvent;
+  }
+
+  /**
+   * Select hit location based on probabilities
+   */
+  private selectHitLocation(probabilities: Record<HitLocation, number>): HitLocation {
+    const random = Math.random();
+    let cumulative = 0;
+
+    for (const [location, prob] of Object.entries(probabilities)) {
+      cumulative += prob;
+      if (random <= cumulative) {
+        return location as HitLocation;
+      }
+    }
+
+    return 'body'; // Default fallback
+  }
+
+  /**
+   * Get agent for a player from team context
+   */
+  private getPlayerAgent(player: Player, teamContext: TeamRoundContext): string {
+    const playerIndex = teamContext.players.findIndex(p => p.id === player.id);
+    return playerIndex >= 0 && playerIndex < teamContext.agents.length ? teamContext.agents[playerIndex] : 'Unknown';
+  }
+
+
+
+  /**
+   * Calculate ability-based assists
+   */
+  private calculateAbilityAssists(
+    playerPerformance: Map<string, RoundPlayerPerformance>,
+    damageEvents: DamageEvent[]
+  ): void {
+    const abilityEvents = damageEvents.filter(event => event.source === 'ability');
+    
+    for (const event of abilityEvents) {
+      const perf = playerPerformance.get(event.dealerId);
+      if (perf && Math.random() < 0.6) { // 60% chance ability damage leads to assist
+        if (perf.assists === 0) {
+          perf.assists += 1;
+        }
+      }
+    }
+  }
+
+  /**
+   * Get random ability for an agent
+   */
+  private getRandomAbility(agent: string): string {
+    // Define agent abilities
+    const agentAbilities: Record<string, string[]> = {
+      'Breach': ['Flashpoint', 'Faulty Lines', 'Aftershock'],
+      'Phoenix': ['Curveball', 'Flash', 'Run It Back'],
+      'Kayo': ['ZERO/point', 'FLASH/drive'],
+      'Skye': ['Guiding Light', 'Trailblazer'],
+      'Cypher': ['Cypher Cage', 'Trapwire'],
+      'Astra': ['Gravity Well', 'Nebula', 'Dispel'],
+      'Sova': ['Recon Bolt', 'Owl Drone', 'Hunter\'s Fury'],
+      'Killjoy': ['Alarmbot', 'Nanoswarm', 'Lockdown'],
+      'Viper': ['Poison Cloud', 'Toxic Screen', 'Snake Bite'],
+      'Brimstone': ['Incendiary', 'Stim Beacon', 'Orbital Strike'],
+      'Sage': ['Healing Orb', 'Barrier Orb', 'Resurrection'],
+      'Chamber': ['Headhunter', 'Rendezvous'],
+      'Deadlock': ['Sonic Sensor'],
+      'Vyse': ['Razorvine'],
+      'Jett': ['Cloudburst', 'Updraft'],
+      'Reyna': ['Leer', 'Dismiss'],
+      'Omen': ['Dark Cover'],
+      'Yoru': ['Dimensional Drift'],
+      'Neon': ['Fast Lane'],
+      'Iso': ['Double Tap'],
+      'Fade': ['Haunt', 'Prowler'],
+      'Gekko': ['Mosh Pit', 'Wingman'],
+      'Harbor': ['High Tide'],
+      'Clove': ['Ruse'],
+    };
+    
+    const abilities = agentAbilities[agent] || ['Generic'];
+    return abilities[Math.floor(Math.random() * abilities.length)];
+  }
+
+  /**
+   * Calculate assists based on damage contributions
+   */
+  private calculateAssists(
+    playerPerformance: Map<string, RoundPlayerPerformance>,
+    damageContributions: Record<string, DamageEvent[]>
+  ): void {
+    console.log(`calculateAssists called with ${Object.keys(damageContributions).length} damage contributions`);
+    for (const [, contributions] of Object.entries(damageContributions)) {
+      if (contributions.length === 0) continue;
+
+      // Group damage by dealer within time window
+      const damageByDealer = new Map<string, number>();
+      const dealerEvents = new Map<string, DamageEvent[]>();
+
+      for (const event of contributions) {
+        const currentDamage = damageByDealer.get(event.dealerId) || 0;
+        const currentEvents = dealerEvents.get(event.dealerId) || [];
+
+        // Check if this event is within 5 seconds of previous events from same dealer
+        const isInTimeWindow = currentEvents.some(prevEvent => 
+          Math.abs(event.timestamp - prevEvent.timestamp) <= ASSIST_CONSTANTS.TIME_WINDOW
+        );
+
+        if (isInTimeWindow) {
+          damageByDealer.set(event.dealerId, currentDamage + event.finalDamage);
+          dealerEvents.set(event.dealerId, [...currentEvents, event]);
+        }
+      }
+
+      // Award assists to dealers who dealt 40+ damage
+      damageByDealer.forEach((totalDamage, dealerId) => {
+        if (totalDamage >= ASSIST_CONSTANTS.DAMAGE_THRESHOLD) {
+          const perf = playerPerformance.get(dealerId);
+          if (perf && perf.assists === 0) { // Only count one assist per victim per round
+            perf.assists = 1;
+            console.log(`Assist awarded to dealerId=${dealerId} for totalDamage=${totalDamage} on victimId=${contributions[0].victimId}`);
+    }
+    console.log(`calculateAssists completed processing all damage contributions`);
+  }
+      });
+    }
   }
 
   /**

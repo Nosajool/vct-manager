@@ -288,5 +288,48 @@ export const STAT_FORMULAS = {
   },
 } as const;
 
+// ============================================
+// ASSIST CALCULATION CONSTANTS
+// ============================================
+
+export const ASSIST_CONSTANTS = {
+  /** Minimum damage threshold for assist eligibility */
+  DAMAGE_THRESHOLD: 50,
+
+  /** Time window in milliseconds for assist eligibility (5 seconds) */
+  TIME_WINDOW: 5000,
+
+  /** Multiplier for utility damage in assist calculation */
+  UTILITY_DAMAGE_MULTIPLIER: 0.8,
+
+  /** Armor absorption values by shield type */
+  ARMOR_ABSORPTION: {
+    LIGHT_SHIELD: 25,
+    HEAVY_SHIELD: 50,
+    REGEN_SHIELD: 25,
+    REGEN_POOL: 25,
+  } as const,
+
+  /** Probability of melee attack occurring in a round */
+  MELEE_CHANCE: 1 / 5000,
+
+  /** Distance unit for damage calculations */
+  DISTANCE_UNIT: 'metres',
+
+  /** Damage multipliers by hit location */
+  HIT_LOCATION_MULTIPLIERS: {
+    HEAD: 1.0,  // Base damage values are already headshot damage
+    BODY: 0.4,  // Body damage is ~40% of headshot
+    LEG: 0.34,  // Leg damage is ~34% of headshot
+  } as const,
+
+  /** Distance ranges for damage falloff (in metres) */
+  DISTANCE_RANGES: {
+    CLOSE: 15,    // Close range distance
+    MEDIUM: 30,   // Medium range distance
+    LONG: 50,     // Maximum effective range
+  } as const,
+} as const;
+
 // Type exports for consumers
 export type { Player, TeamChemistry } from '../../types';
