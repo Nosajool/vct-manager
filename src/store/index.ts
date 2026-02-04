@@ -1,6 +1,10 @@
 // VCT Manager - Zustand Store
 // Combines all slices into a single store with persistence
 
+// NOTE: Save/load UI functionality has been removed from the application.
+// The backend persistence system remains intact for future development.
+// Auto-save is currently disabled for development purposes.
+
 import { create } from 'zustand';
 import { createPlayerSlice, type PlayerSlice } from './slices/playerSlice';
 import { createTeamSlice, type TeamSlice } from './slices/teamSlice';
@@ -12,7 +16,6 @@ import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
 import { createStrategySlice, type StrategySlice } from './slices/strategySlice';
 import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
 import {
-  autoSave,
   saveManager,
   applyLoadedState,
   type SaveSlotInfo,
@@ -22,9 +25,9 @@ import type { SaveSlotNumber } from '../db/schema';
 // Combined game state type
 export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice;
 
-// Create the combined store with auto-save middleware
+// Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
-  autoSave((...args) => ({
+  (...args) => ({
     ...createPlayerSlice(...args),
     ...createTeamSlice(...args),
     ...createGameSlice(...args),
@@ -34,7 +37,7 @@ export const useGameStore = create<GameState>()(
     ...createScrimSlice(...args),
     ...createStrategySlice(...args),
     ...createRoundDataSlice(...args),
-  }))
+  })
 );
 
 // Re-export slice types for convenience

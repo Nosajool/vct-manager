@@ -1,6 +1,10 @@
 // Persistence Middleware and SaveManager
 // Handles auto-save and manual save/load operations
 
+// NOTE: Save/load UI functionality has been removed from the application.
+// The backend persistence system remains intact for future development.
+// Auto-save is currently disabled for development purposes.
+
 import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
 import { db, isIndexedDBAvailable } from '../../db/database';
 import {

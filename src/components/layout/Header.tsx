@@ -3,11 +3,6 @@
 import { useCurrentDate, useGameStore } from '../../store';
 import { format } from 'date-fns';
 
-interface HeaderProps {
-  onSaveClick: () => void;
-  onLoadClick: () => void;
-}
-
 // Parse date string as local time to avoid timezone issues
 function parseAsLocalDate(dateStr: string): Date {
   const datePart = dateStr.split('T')[0];
@@ -15,7 +10,7 @@ function parseAsLocalDate(dateStr: string): Date {
   return new Date(year, month - 1, day);
 }
 
-export function Header({ onSaveClick, onLoadClick }: HeaderProps) {
+export function Header() {
   const currentDate = useCurrentDate();
   const currentPhase = useGameStore((state) => state.calendar.currentPhase);
   const currentSeason = useGameStore((state) => state.calendar.currentSeason);
@@ -28,7 +23,7 @@ export function Header({ onSaveClick, onLoadClick }: HeaderProps) {
   // Format phase for display
   const phaseDisplay = currentPhase
     .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, (str) => str.toUpperCase())
+    .replace(/^./, (str: string) => str.toUpperCase())
     .replace(/(\d+)/, ' $1');
 
   return (
@@ -54,26 +49,9 @@ export function Header({ onSaveClick, onLoadClick }: HeaderProps) {
             </p>
           </div>
 
-          {/* Save/Load Buttons */}
+          {/* Save/Load Buttons - REMOVED */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={onSaveClick}
-              className="px-4 py-2 bg-vct-dark border border-vct-gray/30 rounded
-                         text-vct-light text-sm font-medium
-                         hover:bg-vct-gray/20 hover:border-vct-gray/50
-                         transition-colors"
-            >
-              Save
-            </button>
-            <button
-              onClick={onLoadClick}
-              className="px-4 py-2 bg-vct-dark border border-vct-gray/30 rounded
-                         text-vct-light text-sm font-medium
-                         hover:bg-vct-gray/20 hover:border-vct-gray/50
-                         transition-colors"
-            >
-              Load
-            </button>
+            {/* Save and Load buttons removed - UI functionality removed */}
           </div>
         </div>
       </div>
