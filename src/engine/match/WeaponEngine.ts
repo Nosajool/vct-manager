@@ -233,7 +233,7 @@ export class WeaponEngine {
     };
 
     const weaponBase = baseProbabilities[weapon.category];
-    const headshotBonus = (playerMechanics - 0.5) * 0.2; // Up to 10% headshot bonus for high mechanics
+    const headshotBonus = (playerMechanics / 100 - 0.5) * 0.2; // Up to 10% headshot bonus for high mechanics
     const distancePenalty = distance > 30 ? 0.05 : 0; // Less headshots at long range
 
     return {
