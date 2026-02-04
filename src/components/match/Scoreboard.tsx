@@ -61,15 +61,38 @@ export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
           )}
 
           {/* Round Timeline */}
-          {showTimeline && hasEnhancedRounds && selectedMap.enhancedRounds && (
-            <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-              <RoundTimeline
-                rounds={selectedMap.enhancedRounds}
-                teamAName={teamAName}
-                teamBName={teamBName}
-              />
-            </div>
-          )}
+          {showTimeline && hasEnhancedRounds && selectedMap.enhancedRounds && (() => {
+            // Extract player data for RoundTimeline
+            const playerNames: Record<string, string> = {};
+            const playerAgents: Record<string, string> = {};
+            const teamAPlayerIds: string[] = [];
+            const teamBPlayerIds: string[] = [];
+
+            selectedMap.teamAPerformances.forEach(p => {
+              playerNames[p.playerId] = p.playerName;
+              playerAgents[p.playerId] = p.agent;
+              teamAPlayerIds.push(p.playerId);
+            });
+            selectedMap.teamBPerformances.forEach(p => {
+              playerNames[p.playerId] = p.playerName;
+              playerAgents[p.playerId] = p.agent;
+              teamBPlayerIds.push(p.playerId);
+            });
+
+            return (
+              <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
+                <RoundTimeline
+                  rounds={selectedMap.enhancedRounds}
+                  teamAName={teamAName}
+                  teamBName={teamBName}
+                  playerNames={playerNames}
+                  playerAgents={playerAgents}
+                  teamAPlayerIds={teamAPlayerIds}
+                  teamBPlayerIds={teamBPlayerIds}
+                />
+              </div>
+            );
+          })()}
 
           {/* Player Stats Tables */}
           <div className="grid gap-4 lg:grid-cols-2">

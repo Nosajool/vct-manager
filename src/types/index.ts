@@ -49,6 +49,12 @@ export type {
   DamageSource,
   WeaponProfile,
   ArmorDamageBreakdown,
+  // Round event types
+  RoundEventType,
+  RoundEvent,
+  KillEvent,
+  PlantEvent,
+  DefuseEvent,
 } from './match';
 
 // Weapon types

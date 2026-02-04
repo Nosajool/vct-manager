@@ -13,6 +13,10 @@ interface RoundTimelineProps {
   rounds: EnhancedRoundInfo[];
   teamAName: string;
   teamBName: string;
+  playerNames: Record<string, string>;
+  playerAgents: Record<string, string>;
+  teamAPlayerIds: string[];
+  teamBPlayerIds: string[];
   onRoundSelect?: (roundNumber: number) => void;
 }
 
@@ -48,6 +52,10 @@ export function RoundTimeline({
   rounds,
   teamAName,
   teamBName,
+  playerNames,
+  playerAgents,
+  teamAPlayerIds,
+  teamBPlayerIds,
   onRoundSelect,
 }: RoundTimelineProps) {
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
@@ -130,6 +138,10 @@ export function RoundTimeline({
           round={selectedRoundData}
           teamAName={teamAName}
           teamBName={teamBName}
+          playerNames={playerNames}
+          playerAgents={playerAgents}
+          teamAPlayerIds={teamAPlayerIds}
+          teamBPlayerIds={teamBPlayerIds}
         />
       )}
 
@@ -211,10 +223,18 @@ function RoundDetails({
   round,
   teamAName,
   teamBName,
+  playerNames,
+  playerAgents,
+  teamAPlayerIds,
+  teamBPlayerIds,
 }: {
   round: EnhancedRoundInfo;
   teamAName: string;
   teamBName: string;
+  playerNames: Record<string, string>;
+  playerAgents: Record<string, string>;
+  teamAPlayerIds: string[];
+  teamBPlayerIds: string[];
 }) {
   const [showDamageTimeline, setShowDamageTimeline] = useState(false);
   const teamAWon = round.winner === 'teamA';
@@ -320,14 +340,11 @@ function RoundDetails({
         <div className="mt-4 pt-4 border-t border-vct-gray/20">
           <DamageTimeline
             damageEvents={round.damageEvents}
-            playerNames={{}}
-            playerAgents={round.ultsUsed.reduce((acc, ult) => {
-              acc[ult.playerId] = ult.agent;
-              return acc;
-            }, {} as Record<string, string>)}
+            playerNames={playerNames}
+            playerAgents={playerAgents}
             teams={{
-              teamA: { players: [], name: teamAName },
-              teamB: { players: [], name: teamBName },
+              teamA: { players: teamAPlayerIds, name: teamAName },
+              teamB: { players: teamBPlayerIds, name: teamBName },
             }}
           />
         </div>

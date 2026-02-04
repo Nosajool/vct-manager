@@ -17,7 +17,7 @@ import { STAT_FORMULAS, ASSIST_CONSTANTS } from './constants';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
 import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
-import { WEAPON_PROFILES, type DamageEvent, type RoundDamageEvents, type PlayerArmorState, type HitLocation, type WeaponProfile } from '../../types/match';
+import { WEAPON_PROFILES, type DamageEvent, type RoundDamageEvents, type PlayerArmorState, type HitLocation, type WeaponProfile, type RoundEvent, type KillEvent, type PlantEvent, type DefuseEvent } from '../../types/match';
 
 export interface RoundResult {
   /** Enhanced round info for storage */
@@ -215,6 +215,19 @@ export class RoundSimulator {
     // IMPORTANT: This must happen AFTER simulateRoundEvents() which initializes playerPerformance
     this.calculateAssists(playerPerformance, damageEvents.damageContributions);
     this.calculateAbilityAssists(playerPerformance, damageEvents.events);
+
+    // Generate kill/plant/defuse events for timeline display
+    damageEvents.allEvents = this.generateAllRoundEvents(
+      damageEvents.events,
+      teamAContext,
+      teamBContext,
+      playerPerformance,
+      allLoadouts,
+      events.spikePlanted,
+      events.planterId,
+      events.defuserId,
+      events.winCondition
+    );
 
     // Update economy states
     const updatedEconomyA = this.updateEconomy(
@@ -1270,6 +1283,105 @@ export class RoundSimulator {
     
     const abilities = agentAbilities[agent] || ['Generic'];
     return abilities[Math.floor(Math.random() * abilities.length)];
+  }
+
+  /**
+   * Generate all round events including damage, kills, plants, and defuses
+   */
+  private generateAllRoundEvents(
+    damageEvents: DamageEvent[],
+    teamAContext: TeamRoundContext,
+    teamBContext: TeamRoundContext,
+    playerPerformance: Map<string, RoundPlayerPerformance>,
+    allLoadouts: Map<string, PlayerLoadout>,
+    spikePlanted: boolean,
+    planterId: string | undefined,
+    defuserId: string | undefined,
+    winCondition: WinCondition
+  ): RoundEvent[] {
+    const allEvents: RoundEvent[] = [];
+
+    // Add damage events with type discriminator
+    damageEvents.forEach(event => {
+      allEvents.push({ ...event, type: 'damage' as const });
+    });
+
+    // Generate kill events based on player deaths
+    let killTimestamp = 15000; // Start kills after initial damage
+    const allPlayers = [...teamAContext.players, ...teamBContext.players];
+
+    allPlayers.forEach(player => {
+      const perf = playerPerformance.get(player.id);
+      if (!perf || perf.deaths === 0) return;
+
+      // Find who likely killed this player (player with kills from opposite team)
+      const playerTeam = teamAContext.players.find(p => p.id === player.id)
+        ? teamAContext
+        : teamBContext;
+      const oppositeTeam = playerTeam === teamAContext ? teamBContext : teamAContext;
+
+      // Find a killer from opposite team who has kills
+      let killerId: string | null = null;
+      for (const opponent of oppositeTeam.players) {
+        const opponentPerf = playerPerformance.get(opponent.id);
+        if (opponentPerf && opponentPerf.kills > 0) {
+          killerId = opponent.id;
+          break;
+        }
+      }
+
+      if (!killerId) {
+        // Fallback: pick random opponent
+        killerId = oppositeTeam.players[Math.floor(Math.random() * oppositeTeam.players.length)].id;
+      }
+
+      const loadout = allLoadouts.get(killerId);
+      const weapon = loadout?.primary?.name || loadout?.secondary?.name || 'Vandal';
+
+      // Determine if headshot based on damage events
+      const isHeadshot = Math.random() < 0.25; // ~25% headshot kills
+
+      const killEvent: KillEvent = {
+        id: `kill-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        type: 'kill',
+        killerId,
+        victimId: player.id,
+        weapon,
+        isHeadshot,
+        timestamp: killTimestamp,
+      };
+
+      allEvents.push(killEvent);
+      killTimestamp += Math.floor(Math.random() * 10000) + 5000; // 5-15 seconds between kills
+    });
+
+    // Add plant event if spike was planted
+    if (spikePlanted && planterId) {
+      const plantEvent: PlantEvent = {
+        id: `plant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        type: 'plant',
+        planterId,
+        site: Math.random() < 0.5 ? 'A' : 'B',
+        timestamp: 30000 + Math.floor(Math.random() * 20000), // 30-50 seconds into round
+      };
+      allEvents.push(plantEvent);
+    }
+
+    // Add defuse event if spike was defused
+    if (winCondition === 'spike_defused' && defuserId) {
+      const defuseEvent: DefuseEvent = {
+        id: `defuse-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        type: 'defuse',
+        defuserId,
+        timestamp: 85000 + Math.floor(Math.random() * 10000), // 85-95 seconds (near end)
+      };
+      allEvents.push(defuseEvent);
+    }
+
+    // Sort all events by timestamp
+    allEvents.sort((a, b) => a.timestamp - b.timestamp);
+
+    return allEvents;
   }
 
   /**

@@ -63,6 +63,54 @@ export interface UltUsage {
 }
 
 // ============================================
+// ROUND EVENT TYPES (for timeline display)
+// ============================================
+
+/**
+ * Round event type discriminator
+ */
+export type RoundEventType = 'damage' | 'kill' | 'plant' | 'defuse';
+
+/**
+ * Kill event for timeline display
+ */
+export interface KillEvent {
+  id: string;
+  type: 'kill';
+  killerId: string;
+  victimId: string;
+  weapon: string;
+  isHeadshot: boolean;
+  timestamp: number;
+}
+
+/**
+ * Plant event for timeline display
+ */
+export interface PlantEvent {
+  id: string;
+  type: 'plant';
+  planterId: string;
+  site: 'A' | 'B';
+  timestamp: number;
+}
+
+/**
+ * Defuse event for timeline display
+ */
+export interface DefuseEvent {
+  id: string;
+  type: 'defuse';
+  defuserId: string;
+  timestamp: number;
+}
+
+/**
+ * Union type for all round events
+ */
+export type RoundEvent = (DamageEvent & { type: 'damage' }) | KillEvent | PlantEvent | DefuseEvent;
+
+// ============================================
 // DAMAGE EVENT TRACKING TYPES
 // ============================================
 
@@ -141,6 +189,8 @@ export interface DamageEvent {
 export interface RoundDamageEvents {
   /** All damage events in chronological order */
   events: DamageEvent[];
+  /** All round events including kills, plants, defuses (for timeline display) */
+  allEvents?: RoundEvent[];
   /** Total damage dealt by each player */
   totalDamageByPlayer: Record<string, number>;
   /** Total damage received by each player */
