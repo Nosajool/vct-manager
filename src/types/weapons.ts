@@ -4,7 +4,7 @@
 /**
  *  * Weapon categories in Valorant
  */
-export type WeaponCategory = 'sidearm' | 'smg' | 'shotgun' | 'rifle' | 'sniper' | 'heavy';
+export type WeaponCategory = 'sidearm' | 'smg' | 'shotgun' | 'rifle' | 'sniper' | 'machine' | 'melee';
 
 /**
  *  * Headshot tiers for weapon balance

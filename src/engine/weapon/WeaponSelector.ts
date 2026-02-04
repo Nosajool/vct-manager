@@ -1,28 +1,30 @@
 // Weapon Selection Helper
 // Economy-aware weapon selection with agent preferences
 
-import { WEAPONS, getAgentWeaponCategory, getAffordableWeapons } from './WeaponDatabase';
+import type { Weapon } from '../../types/weapons';
+import type { Player } from '../../types/player';
+import { getAgentWeaponCategory, getAffordableWeapons } from './WeaponDatabase';
 
-export function selectWeapon(credits: number, agent: string, mechanics: number): any {
+export function selectWeapon(credits: number, agent: string, mechanics: number): Weapon | undefined {
   // Exclude melee from weapon selection - it's not a real combat weapon
-  const affordableWeapons = getAffordableWeapons(credits).filter((w: any) => w.category !== 'melee');
+  const affordableWeapons = getAffordableWeapons(credits).filter(w => w.category !== 'melee');
 
   // Get agent's preferred weapon categories
   const preferredCategories = agent ? getAgentWeaponCategory(agent) : 'rifle';
 
   // Filter affordable weapons by agent preferences
-  const preferredWeapons = affordableWeapons.filter((w: any) => w.category === preferredCategories);
+  const preferredWeapons = affordableWeapons.filter(w => w.category === preferredCategories);
 
   if (preferredWeapons.length > 0) {
     // Choose best option within preferred category (higher HS rate = better)
-    return preferredWeapons.sort((a: any, b: any) => b.baseHeadshotRate - a.baseHeadshotRate)[0];
+    return preferredWeapons.sort((a, b) => b.baseHeadshotRate - a.baseHeadshotRate)[0];
   }
 
   // Fallback to best affordable weapon (higher HS rate = better)
-  return affordableWeapons.sort((a: any, b: any) => b.baseHeadshotRate - a.baseHeadshotRate)[0];
+  return affordableWeapons.sort((a, b) => b.baseHeadshotRate - a.baseHeadshotRate)[0];
 }
 
-export function calculateShotsAndHits(player: any, weapon: any, roundNumber: number): {
+export function calculateShotsAndHits(player: Player, weapon: Weapon, roundNumber: number): {
   shotsFired: number; 
   totalHits: number; 
   headshotKills: number 
