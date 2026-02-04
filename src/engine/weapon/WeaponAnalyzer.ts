@@ -1,14 +1,7 @@
 // Weapon Analyzer - Comprehensive analysis system for weapon headshot data
 // Provides insights, recommendations, and statistical analysis
 
-import type { 
-  Weapon, 
-  HeadshotTier, 
-  WeaponCategory, 
-  RadiantWeaponData,
-  WeaponStats,
-  WeaponProficiency 
-} from '../../types/weapons';
+import type { Weapon, HeadshotTier } from '../../types/weapons';
 import { WEAPONS, RADIANT_WEAPON_DATA, BASELINE_HEADSHOT_RATES } from './WeaponDatabase';
 import { HeadshotCalculator } from './HeadshotCalculator';
 
