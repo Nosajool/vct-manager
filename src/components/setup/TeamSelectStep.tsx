@@ -7,7 +7,7 @@ interface TeamSelectStepProps {
   region: Region;
   onSelect: (teamName: string) => void;
   onBack: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 function getPrestigeStars(orgValue: number): number {
@@ -98,12 +98,14 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
         >
           ← Back
         </button>
-        <button
-          onClick={onCancel}
-          className="px-6 py-2 text-vct-gray hover:text-vct-light transition-colors"
-        >
-          Cancel
-        </button>
+        {onCancel && (
+          <button
+            onClick={onCancel}
+            className="px-6 py-2 text-vct-gray hover:text-vct-light transition-colors"
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </div>
   );

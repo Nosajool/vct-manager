@@ -14,7 +14,7 @@ export interface SetupOptions {
 
 interface SetupWizardProps {
   onComplete: (options: SetupOptions) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 type Step = 1 | 2 | 3;

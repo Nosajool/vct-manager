@@ -4,7 +4,7 @@ import type { Region } from '../../types';
 
 interface RegionSelectStepProps {
   onSelect: (region: Region) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 const REGION_INFO: Record<Region, { flag: string; description: string }> = {
@@ -53,14 +53,16 @@ export function RegionSelectStep({ onSelect, onCancel }: RegionSelectStepProps) 
       </div>
 
       {/* Cancel Button */}
-      <div className="flex justify-center">
-        <button
-          onClick={onCancel}
-          className="px-6 py-2 text-vct-gray hover:text-vct-light transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
+      {onCancel && (
+        <div className="flex justify-center">
+          <button
+            onClick={onCancel}
+            className="px-6 py-2 text-vct-gray hover:text-vct-light transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -17,7 +17,6 @@ type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy';
 export function Roster() {
   const [activeTab, setActiveTab] = useState<TeamTab>('roster');
   const [isInitializing, setIsInitializing] = useState(false);
-  const [showSetupWizard, setShowSetupWizard] = useState(false);
 
   // Modal states
   const [signingPlayer, setSigningPlayer] = useState<Player | null>(null);
@@ -40,7 +39,6 @@ export function Roster() {
 
   // Handle setup wizard completion
   const handleSetupComplete = async (options: SetupOptions) => {
-    setShowSetupWizard(false);
     setIsInitializing(true);
     try {
       await gameInitService.initializeNewGame({
@@ -52,11 +50,6 @@ export function Roster() {
       console.error('Failed to initialize game:', error);
     }
     setIsInitializing(false);
-  };
-
-  // Handle setup wizard cancel
-  const handleSetupCancel = () => {
-    setShowSetupWizard(false);
   };
 
   // Open contract negotiation modal for signing
@@ -84,40 +77,25 @@ export function Roster() {
     setReleasingPlayer(null);
   };
 
-  // Not started yet - show start game UI or setup wizard
+  // Not started yet - auto-show setup wizard
   if (!gameStarted) {
-    return (
-      <>
-        {showSetupWizard && (
-          <SetupWizard
-            onComplete={handleSetupComplete}
-            onCancel={handleSetupCancel}
-          />
-        )}
-
+    if (isInitializing) {
+      return (
         <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-24 h-24 bg-vct-darker border border-vct-gray/30 rounded-lg flex items-center justify-center mb-6">
+          <div className="w-24 h-24 bg-vct-darker border border-vct-gray/30 rounded-lg flex items-center justify-center mb-6 animate-pulse">
             <span className="text-5xl">🎮</span>
           </div>
           <h2 className="text-2xl font-bold text-vct-light mb-2">
-            Start Your Career
+            Initializing Game...
           </h2>
-          <p className="text-vct-gray mb-6 text-center max-w-md">
-            Choose your region and team to begin your VCT management journey.
-            Manage one of 48 teams across all VCT regions.
+          <p className="text-vct-gray text-center max-w-md">
+            Generating teams, players, and tournaments. This may take a moment.
           </p>
-          <button
-            onClick={() => setShowSetupWizard(true)}
-            disabled={isInitializing}
-            className="px-8 py-3 bg-vct-red text-white font-bold rounded-lg
-                       hover:bg-vct-red/80 disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-colors"
-          >
-            {isInitializing ? 'Generating...' : 'Start New Game'}
-          </button>
         </div>
-      </>
-    );
+      );
+    }
+
+    return <SetupWizard onComplete={handleSetupComplete} />;
   }
 
   return (
