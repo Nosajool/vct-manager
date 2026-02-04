@@ -40,6 +40,7 @@ function KillEventCard({
           </div>
           <div className="flex items-center gap-3 text-xs text-vct-gray mt-1">
             <span>{event.weapon}</span>
+            <span className="text-red-300">{event.damage} damage</span>
             {event.isHeadshot && (
               <span className="text-yellow-400 font-semibold">HEADSHOT</span>
             )}

@@ -82,6 +82,8 @@ export interface KillEvent {
   weapon: string;
   isHeadshot: boolean;
   timestamp: number;
+  /** Total damage dealt that resulted in this kill */
+  damage: number;
 }
 
 /**

@@ -1341,6 +1341,14 @@ export class RoundSimulator {
       // Determine if headshot based on damage events
       const isHeadshot = Math.random() < 0.25; // ~25% headshot kills
 
+      // Calculate total damage dealt by killer to victim from damage events
+      const killerDamageToVictim = damageEvents
+        .filter(event => event.dealerId === killerId && event.victimId === player.id)
+        .reduce((sum, event) => sum + event.finalDamage, 0);
+
+      // Use actual damage if available, otherwise estimate based on health (100-150 for kill)
+      const killDamage = killerDamageToVictim > 0 ? killerDamageToVictim : 100 + Math.floor(Math.random() * 50);
+
       const killEvent: KillEvent = {
         id: `kill-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         type: 'kill',
@@ -1349,6 +1357,7 @@ export class RoundSimulator {
         weapon,
         isHeadshot,
         timestamp: killTimestamp,
+        damage: killDamage,
       };
 
       allEvents.push(killEvent);
