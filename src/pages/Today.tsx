@@ -16,6 +16,19 @@ import { ScrimModal } from '../components/scrim';
 export function Today() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
+  const [scrimInitialMaps, setScrimInitialMaps] = useState<string[] | undefined>(undefined);
+
+  // Handler for opening scrim modal from alerts
+  const handleOpenScrimModal = (initialMaps?: string[]) => {
+    setScrimInitialMaps(initialMaps);
+    setScrimModalOpen(true);
+  };
+
+  // Handler for closing scrim modal (clears initial maps)
+  const handleCloseScrimModal = () => {
+    setScrimModalOpen(false);
+    setScrimInitialMaps(undefined);
+  };
 
   const initialized = useGameStore((state) => state.initialized);
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -94,7 +107,7 @@ export function Today() {
             onTrainingClick={() => setTrainingModalOpen(true)}
             onScrimClick={() => setScrimModalOpen(true)}
           />
-          <AlertsPanel />
+          <AlertsPanel onOpenScrimModal={handleOpenScrimModal} />
         </div>
       </div>
 
@@ -102,7 +115,11 @@ export function Today() {
       <TrainingModal isOpen={trainingModalOpen} onClose={() => setTrainingModalOpen(false)} />
 
       {/* Scrim Modal */}
-      <ScrimModal isOpen={scrimModalOpen} onClose={() => setScrimModalOpen(false)} />
+      <ScrimModal
+        isOpen={scrimModalOpen}
+        onClose={handleCloseScrimModal}
+        initialMaps={scrimInitialMaps}
+      />
     </div>
   );
 }

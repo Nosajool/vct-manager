@@ -20,7 +20,9 @@ export interface Alert {
     label: string;
     navigateTo: ActiveView;
     subTab?: string;
+    openModal?: 'scrim' | 'training';
   };
+  data?: Record<string, unknown>;
 }
 
 interface AlertRule {
@@ -161,6 +163,16 @@ const ALERT_RULES: AlertRule[] = [
 
       const avgStrength = Math.round(Object.values(lowestMap.attributes).reduce((a, b) => a + b, 0) / 6);
 
+      // Collect all weak map names for pre-selection (up to 3)
+      const weakMapNames = lowMaps
+        .sort((a, b) => {
+          const avgA = Object.values(a[1].attributes).reduce((x, y) => x + y, 0) / 6;
+          const avgB = Object.values(b[1].attributes).reduce((x, y) => x + y, 0) / 6;
+          return avgA - avgB;
+        })
+        .slice(0, 3)
+        .map(([name]) => name);
+
       return {
         id: 'map-practice-low',
         severity: avgStrength < 30 ? 'urgent' : 'warning',
@@ -170,7 +182,9 @@ const ALERT_RULES: AlertRule[] = [
         action: {
           label: 'Schedule Scrim',
           navigateTo: 'today',
+          openModal: 'scrim',
         },
+        data: { weakMaps: weakMapNames },
       };
     },
   },

@@ -1,6 +1,6 @@
 // ScrimModal Component - Scrim session scheduling and results
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGameStore } from '../../store';
 import { scrimService } from '../../services';
 import type { TeamTier, ScrimIntensity, ScrimResult } from '../../types';
@@ -11,6 +11,7 @@ interface ScrimModalProps {
   isOpen: boolean;
   onClose: () => void;
   onScrimComplete?: (result: ScrimResult) => void;
+  initialMaps?: string[];
 }
 
 const SCRIM_INTENSITIES: { value: ScrimIntensity; label: string; description: string }[] = [
@@ -25,7 +26,7 @@ const TIER_LABELS: Record<TeamTier, { label: string; efficiency: string; color: 
   T3: { label: 'Amateur Teams', efficiency: '40%', color: 'text-vct-gray' },
 };
 
-export function ScrimModal({ isOpen, onClose, onScrimComplete }: ScrimModalProps) {
+export function ScrimModal({ isOpen, onClose, onScrimComplete, initialMaps }: ScrimModalProps) {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [selectedMaps, setSelectedMaps] = useState<Set<string>>(new Set());
   const [intensity, setIntensity] = useState<ScrimIntensity>('moderate');
@@ -33,6 +34,13 @@ export function ScrimModal({ isOpen, onClose, onScrimComplete }: ScrimModalProps
   const [isProcessing, setIsProcessing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTier, setActiveTier] = useState<TeamTier>('T1');
+
+  // Pre-select maps when modal opens with initial maps
+  useEffect(() => {
+    if (isOpen && initialMaps && initialMaps.length > 0) {
+      setSelectedMaps(new Set(initialMaps.slice(0, 3)));
+    }
+  }, [isOpen, initialMaps]);
 
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);

@@ -1,12 +1,16 @@
 // AlertsPanel - Display actionable alerts
 //
 // Shows alerts computed from game state.
-// Each alert can navigate to relevant page/tab.
+// Each alert can navigate to relevant page/tab or open modals.
 
 import { useGameStore } from '../../store';
 import { useAlerts, type Alert } from '../../hooks';
 
-export function AlertsPanel() {
+export interface AlertsPanelProps {
+  onOpenScrimModal?: (initialMaps?: string[]) => void;
+}
+
+export function AlertsPanel({ onOpenScrimModal }: AlertsPanelProps) {
   const setActiveView = useGameStore((state) => state.setActiveView);
   const alerts = useAlerts();
 
@@ -21,6 +25,13 @@ export function AlertsPanel() {
 
   const handleAlertClick = (alert: Alert) => {
     if (alert.action) {
+      // Handle modal opening
+      if (alert.action.openModal === 'scrim' && onOpenScrimModal) {
+        const weakMaps = alert.data?.weakMaps as string[] | undefined;
+        onOpenScrimModal(weakMaps);
+        return;
+      }
+
       setActiveView(alert.action.navigateTo);
       // Note: sub-tab navigation would need additional store support
       // For now, just navigate to the main view
