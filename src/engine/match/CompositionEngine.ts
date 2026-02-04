@@ -136,7 +136,7 @@ export class CompositionEngine {
       
       // If still not assigned, pick first available agent
       if (!assignments[player.id]) {
-        const allAgents = Object.values(COMPOSITION_CONSTANTS.AGENT_ROLES);
+        const allAgents = Object.keys(COMPOSITION_CONSTANTS.AGENT_ROLES);
         for (const agent of allAgents) {
           if (!usedAgents.has(agent)) {
             assignments[player.id] = agent;
