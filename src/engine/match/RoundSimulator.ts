@@ -200,10 +200,6 @@ export class RoundSimulator {
       playerPerformance
     );
 
-    // Calculate assists based on damage contributions and ability usage
-    this.calculateAssists(playerPerformance, damageEvents.damageContributions);
-    this.calculateAbilityAssists(playerPerformance, damageEvents.events);
-
     // Simulate round events
     const events = this.simulateRoundEvents(
       teamAContext,
@@ -214,6 +210,11 @@ export class RoundSimulator {
       playerPerformance,
       allLoadouts
     );
+
+    // Calculate assists based on damage contributions and ability usage
+    // IMPORTANT: This must happen AFTER simulateRoundEvents() which initializes playerPerformance
+    this.calculateAssists(playerPerformance, damageEvents.damageContributions);
+    this.calculateAbilityAssists(playerPerformance, damageEvents.events);
 
     // Update economy states
     const updatedEconomyA = this.updateEconomy(
@@ -734,23 +735,31 @@ export class RoundSimulator {
       if (perf) {
         perf.kills = playerKillsA[i];
         
-        // Get player's loadout to determine weapon used
         const playerLoadouts = allLoadouts.get(p.id);
-        if (playerLoadouts?.primary) {
-          perf.weaponUsed = playerLoadouts.primary.name;
-          perf.shotsFired = Math.floor(5 + Math.random() * 10);
-          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
-          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
-          // Estimate damage based on weapon used
-          const baseDamagePerKill = playerLoadouts.primary.cost >= 2500 ? 160 : 130; // Heavier weapons do more damage
-          perf.damage = playerKillsA[i] * baseDamagePerKill + Math.round(Math.random() * 50);
-        } else {
-          // Fallback to secondary weapon
-          perf.weaponUsed = playerLoadouts?.secondary?.name || 'classic';
-          perf.shotsFired = Math.floor(5 + Math.random() * 10);
-          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
-          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
-          perf.damage = playerKillsA[i] * 130 + Math.round(Math.random() * 50);
+        if (playerLoadouts) {
+          // Use primary weapon if available, otherwise secondary
+          const weapon = playerLoadouts.primary || playerLoadouts.secondary;
+          perf.weaponUsed = weapon.name;
+          
+          // Use weapon-specific data for realistic simulation
+          const distance = weaponEngine.getRandomCombatDistance();
+          const hitProbs = weaponEngine.getHitLocationProbabilities(weapon, p.stats.mechanics, distance);
+          
+          // Calculate realistic shots fired based on weapon type and player mechanics
+          const baseShots = weapon.category === 'sniper' ? 3 : 
+                          weapon.category === 'shotgun' ? 5 : 
+                          8;
+          perf.shotsFired = Math.floor(baseShots + Math.random() * 4);
+          
+          // Calculate hits based on player mechanics and weapon accuracy
+          const hitChance = Math.min(0.8, 0.4 + p.stats.mechanics * 0.3);
+          perf.totalHits = Math.max(1, Math.floor(perf.shotsFired * hitChance));
+          
+          // Headshot kills based on hit location probabilities
+          const headshotChance = hitProbs.head;
+          perf.headshotKills = Math.floor(perf.totalHits * headshotChance);
+          
+          const damagePerHit = this.calculateAverageWeaponDamage(weapon, hitProbs);
         }
       }
     });
@@ -760,23 +769,31 @@ export class RoundSimulator {
       if (perf) {
         perf.kills = playerKillsB[i];
         
-        // Get player's loadout to determine weapon used
         const playerLoadouts = allLoadouts.get(p.id);
-        if (playerLoadouts?.primary) {
-          perf.weaponUsed = playerLoadouts.primary.name;
-          perf.shotsFired = Math.floor(5 + Math.random() * 10);
-          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
-          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
-          // Estimate damage based on weapon used
-          const baseDamagePerKill = playerLoadouts.primary.cost >= 2500 ? 160 : 130; // Heavier weapons do more damage
-          perf.damage = playerKillsB[i] * baseDamagePerKill + Math.round(Math.random() * 50);
-        } else {
-          // Fallback to secondary weapon
-          perf.weaponUsed = playerLoadouts?.secondary?.name || 'classic';
-          perf.shotsFired = Math.floor(5 + Math.random() * 10);
-          perf.totalHits = Math.max(2, Math.floor(perf.shotsFired * 0.25));
-          perf.headshotKills = Math.floor(Math.random() * perf.totalHits * 0.3);
-          perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
+        if (playerLoadouts) {
+          // Use primary weapon if available, otherwise secondary
+          const weapon = playerLoadouts.primary || playerLoadouts.secondary;
+          perf.weaponUsed = weapon.name;
+          
+          // Use weapon-specific data for realistic simulation
+          const distance = weaponEngine.getRandomCombatDistance();
+          const hitProbs = weaponEngine.getHitLocationProbabilities(weapon, p.stats.mechanics, distance);
+          
+          // Calculate realistic shots fired based on weapon type and player mechanics
+          const baseShots = weapon.category === 'sniper' ? 3 : 
+                          weapon.category === 'shotgun' ? 5 : 
+                          8;
+          perf.shotsFired = Math.floor(baseShots + Math.random() * 4);
+          
+          // Calculate hits based on player mechanics and weapon accuracy
+          const hitChance = Math.min(0.8, 0.4 + p.stats.mechanics * 0.3);
+          perf.totalHits = Math.max(1, Math.floor(perf.shotsFired * hitChance));
+          
+          // Headshot kills based on hit location probabilities
+          const headshotChance = hitProbs.head;
+          perf.headshotKills = Math.floor(perf.totalHits * headshotChance);
+          
+          const damagePerHit = this.calculateAverageWeaponDamage(weapon, hitProbs);
         }
         perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
       }
@@ -785,19 +802,22 @@ export class RoundSimulator {
     return { playerKillsA, playerKillsB };
   }
 
-  /**
-   * Simulate clutch scenario
-   */
+  private calculateAverageWeaponDamage(weapon: WeaponProfile, hitProbs: Record<HitLocation, number>): number {
+    // Use the first damage range for average calculation
+    const damageRange = weapon.damageRanges[0];
+    const avgDamage = 
+      (damageRange.head * hitProbs.head) + 
+      (damageRange.body * hitProbs.body) + 
+      (damageRange.leg * hitProbs.leg);
+    return Math.round(avgDamage);
+  }
+  
   private simulateClutch(
     teamAContext: TeamRoundContext,
     teamBContext: TeamRoundContext,
     teamAWins: boolean,
     playerPerformance: Map<string, RoundPlayerPerformance>
   ): ClutchAttempt | null {
-    // 15% of rounds have clutch situations
-    if (Math.random() > 0.15) return null;
-
-    // Clutcher is from winning team 60% of the time
     const clutcherContext = Math.random() < 0.6
       ? (teamAWins ? teamAContext : teamBContext)
       : (teamAWins ? teamBContext : teamAContext);
@@ -1272,7 +1292,8 @@ export class RoundSimulator {
         const currentEvents = dealerEvents.get(event.dealerId) || [];
 
         // Check if this event is within 5 seconds of previous events from same dealer
-        const isInTimeWindow = currentEvents.some(prevEvent => 
+        // First event is always included, subsequent events must be within time window
+        const isInTimeWindow = currentEvents.length === 0 || currentEvents.some(prevEvent =>
           Math.abs(event.timestamp - prevEvent.timestamp) <= ASSIST_CONSTANTS.TIME_WINDOW
         );
 
@@ -1282,18 +1303,18 @@ export class RoundSimulator {
         }
       }
 
-      // Award assists to dealers who dealt 40+ damage
+      // Award assists to dealers who dealt enough damage
       damageByDealer.forEach((totalDamage, dealerId) => {
         if (totalDamage >= ASSIST_CONSTANTS.DAMAGE_THRESHOLD) {
           const perf = playerPerformance.get(dealerId);
           if (perf && perf.assists === 0) { // Only count one assist per victim per round
             perf.assists = 1;
             console.log(`Assist awarded to dealerId=${dealerId} for totalDamage=${totalDamage} on victimId=${contributions[0].victimId}`);
-    }
-    console.log(`calculateAssists completed processing all damage contributions`);
-  }
+          }
+        }
       });
     }
+    console.log(`calculateAssists completed processing all damage contributions`);
   }
 
   /**

@@ -7,6 +7,7 @@ import type {
   BuyType,
   WinCondition,
 } from '../../types';
+import { DamageTimeline } from './DamageTimeline';
 
 interface RoundTimelineProps {
   rounds: EnhancedRoundInfo[];
@@ -215,6 +216,7 @@ function RoundDetails({
   teamAName: string;
   teamBName: string;
 }) {
+  const [showDamageTimeline, setShowDamageTimeline] = useState(false);
   const teamAWon = round.winner === 'teamA';
 
   return (
@@ -297,7 +299,39 @@ function RoundDetails({
             </span>
           </div>
         )}
+
+        {/* Damage Timeline Button */}
+        {round.damageEvents && round.damageEvents.events.length > 0 && (
+          <div className="pt-2">
+            <button
+              onClick={() => setShowDamageTimeline(!showDamageTimeline)}
+              className="flex items-center gap-2 text-sm bg-vct-red/20 hover:bg-vct-red/30 text-vct-red px-3 py-2 rounded transition-colors"
+            >
+              <span>🔫</span>
+              <span>{showDamageTimeline ? 'Hide' : 'Show'} Damage Timeline</span>
+              <span className="text-vct-gray">({round.damageEvents.events.length} events)</span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Damage Timeline */}
+      {showDamageTimeline && round.damageEvents && (
+        <div className="mt-4 pt-4 border-t border-vct-gray/20">
+          <DamageTimeline
+            damageEvents={round.damageEvents}
+            playerNames={{}}
+            playerAgents={round.ultsUsed.reduce((acc, ult) => {
+              acc[ult.playerId] = ult.agent;
+              return acc;
+            }, {} as Record<string, string>)}
+            teams={{
+              teamA: { players: [], name: teamAName },
+              teamB: { players: [], name: teamBName },
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

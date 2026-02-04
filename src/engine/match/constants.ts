@@ -294,7 +294,7 @@ export const STAT_FORMULAS = {
 
 export const ASSIST_CONSTANTS = {
   /** Minimum damage threshold for assist eligibility */
-  DAMAGE_THRESHOLD: 50,
+  DAMAGE_THRESHOLD: 25,
 
   /** Time window in milliseconds for assist eligibility (5 seconds) */
   TIME_WINDOW: 5000,

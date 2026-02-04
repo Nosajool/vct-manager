@@ -42,6 +42,13 @@ export type {
   FirstBlood,
   ClutchAttempt,
   UltUsage,
+  DamageEvent,
+  RoundDamageEvents,
+  PlayerArmorState,
+  HitLocation,
+  DamageSource,
+  WeaponProfile,
+  ArmorDamageBreakdown,
 } from './match';
 
 // Weapon types
@@ -102,7 +109,6 @@ export type {
 export type {
   EconomyEngine,
   TeamEconomyState,
-  BuyType,
 } from './economy';
 
 // VLR types

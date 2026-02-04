@@ -9,12 +9,10 @@ import type {
   MapResult,
   PlayerMapPerformance,
   EnhancedRoundInfo,
-  MapPoolStrength,
-  MapStrength,
   TeamStrategy,
 } from '../../types';
 import { MAPS } from '../../utils/constants';
-import { SCRIM_CONSTANTS } from '../../types/scrim';
+
 import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
 import { EconomyEngine } from './EconomyEngine';
 import { UltimateEngine } from './UltimateEngine';
@@ -51,8 +49,6 @@ export class MatchSimulator {
     teamB: Team,
     playersA: Player[],
     playersB: Player[],
-    mapPoolA?: MapPoolStrength,
-    mapPoolB?: MapPoolStrength,
     strategyA?: TeamStrategy,
     strategyB?: TeamStrategy
   ): MatchResult {
@@ -77,10 +73,6 @@ export class MatchSimulator {
     for (const map of selectedMaps) {
       if (mapsWonA >= 2 || mapsWonB >= 2) break;
 
-      // Get map-specific strengths for each team
-      const mapStrengthA = mapPoolA?.maps[map];
-      const mapStrengthB = mapPoolB?.maps[map];
-
       const mapResult = this.simulateMap(
         map,
         strengthA,
@@ -88,9 +80,7 @@ export class MatchSimulator {
         playersA,
         playersB,
         teamAStrategy,
-        teamBStrategy,
-        mapStrengthA,
-        mapStrengthB
+        teamBStrategy
       );
       maps.push(mapResult);
 
@@ -182,22 +172,7 @@ export class MatchSimulator {
     return shuffled.slice(0, count);
   }
 
-  /**
-   * Calculate map strength bonus (0 to MAX_MAP_BONUS based on attributes)
-   */
-  private calculateMapBonus(mapStrength: MapStrength): number {
-    const attrs = mapStrength.attributes;
-    const average =
-      (attrs.executes +
-        attrs.retakes +
-        attrs.utility +
-        attrs.communication +
-        attrs.mapControl +
-        attrs.antiStrat) /
-      6;
-    // Scale from 0 to MAX_MAP_BONUS (15%) based on overall strength
-    return (average / 100) * SCRIM_CONSTANTS.MAX_MAP_BONUS;
-  }
+
 
   /**
    * Simulate a single map with enhanced round-by-round simulation
@@ -209,23 +184,10 @@ export class MatchSimulator {
     playersA: Player[],
     playersB: Player[],
     strategyA: TeamStrategy,
-    strategyB: TeamStrategy,
-    mapStrengthA?: MapStrength,
-    mapStrengthB?: MapStrength
+    strategyB: TeamStrategy
   ): MapResult {
-    // Apply map-specific bonuses if available
     let adjustedStrengthA = teamAStrength;
     let adjustedStrengthB = teamBStrength;
-
-    if (mapStrengthA) {
-      const mapBonus = this.calculateMapBonus(mapStrengthA);
-      adjustedStrengthA *= 1 + mapBonus;
-    }
-
-    if (mapStrengthB) {
-      const mapBonus = this.calculateMapBonus(mapStrengthB);
-      adjustedStrengthB *= 1 + mapBonus;
-    }
 
     // Select agents for each team
     const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
