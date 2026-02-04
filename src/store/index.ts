@@ -242,6 +242,108 @@ export const usePlayerAgentPrefs = (playerId: string) =>
 export const useMatchRoundData = (matchId: string) =>
   useGameStore((state) => state.getMatchRoundData(matchId));
 
+// ============================================
+// Team Stats selector hooks
+// ============================================
+
+export const useTeamWinRate = (teamId: string) =>
+  useGameStore((state) => state.getTeamWinRate(teamId));
+
+export const useTeamRecentForm = (teamId: string, count = 5) =>
+  useGameStore((state) => state.getTeamRecentForm(teamId, count));
+
+export const useTeamMapStats = (teamId: string) =>
+  useGameStore((state) => state.getTeamMapStats(teamId));
+
+export const useHeadToHead = (teamIdA: string, teamIdB: string) =>
+  useGameStore((state) => state.getHeadToHead(teamIdA, teamIdB));
+
+export const useTeamAverageRoundDiff = (teamId: string) =>
+  useGameStore((state) => state.getTeamAverageRoundDiff(teamId));
+
+export const useTeamClutchStats = (teamId: string) =>
+  useGameStore((state) => state.getTeamClutchStats(teamId));
+
+export const useTeamPlayerAggregateStats = (teamId: string) =>
+  useGameStore((state) => state.getTeamPlayerAggregateStats(teamId));
+
+export const useTeamMatchHistory = (teamId: string) =>
+  useGameStore((state) => state.getTeamMatchHistory(teamId));
+
+export const useUpcomingMatches = (teamId: string) =>
+  useGameStore((state) => state.getUpcomingMatches(teamId));
+
+export const useCompletedMatches = (teamId: string) =>
+  useGameStore((state) => state.getCompletedMatches(teamId));
+
+/**
+ * Comprehensive team stats hook
+ * Combines multiple stats into a single object for easy consumption
+ */
+export const useTeamStats = (teamId: string) =>
+  useGameStore((state) => {
+    const team = state.teams[teamId];
+    if (!team) return null;
+
+    const matchHistory = state.getTeamMatchHistory(teamId);
+    const winRate = state.getTeamWinRate(teamId);
+    const recentForm = state.getTeamRecentForm(teamId, 5);
+    const mapStats = state.getTeamMapStats(teamId);
+    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId);
+    const clutchStats = state.getTeamClutchStats(teamId);
+    const playerStats = state.getTeamPlayerAggregateStats(teamId);
+
+    return {
+      team,
+      standings: team.standings,
+      chemistry: team.chemistry,
+      matchHistory,
+      matchCount: matchHistory.length,
+      winRate,
+      recentForm,
+      mapStats,
+      avgRoundDiff,
+      clutchStats,
+      playerStats,
+      mapPool: team.mapPool,
+    };
+  });
+
+/**
+ * Player team stats hook - shorthand for useTeamStats with player's team
+ */
+export const usePlayerTeamStats = () =>
+  useGameStore((state) => {
+    const teamId = state.playerTeamId;
+    if (!teamId) return null;
+
+    const team = state.teams[teamId];
+    if (!team) return null;
+
+    const matchHistory = state.getTeamMatchHistory(teamId);
+    const winRate = state.getTeamWinRate(teamId);
+    const recentForm = state.getTeamRecentForm(teamId, 5);
+    const mapStats = state.getTeamMapStats(teamId);
+    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId);
+    const clutchStats = state.getTeamClutchStats(teamId);
+    const playerStats = state.getTeamPlayerAggregateStats(teamId);
+
+    return {
+      team,
+      standings: team.standings,
+      chemistry: team.chemistry,
+      matchHistory,
+      matchCount: matchHistory.length,
+      winRate,
+      recentForm,
+      mapStats,
+      avgRoundDiff,
+      clutchStats,
+      playerStats,
+      mapPool: team.mapPool,
+    };
+  });
+
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';
 export type { SaveSlotNumber, SaveMetadata } from '../db/schema';
