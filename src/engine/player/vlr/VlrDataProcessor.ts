@@ -184,6 +184,16 @@ export function createPlayerFromVlr(
     potential: Math.min(99, processed.overall + Math.floor(Math.random() * 15)),
     contract: teamId ? generateContract(processed.overall) : null,
     careerStats: generateCareerStats(processed.vlrStats, age),
+    seasonStats: {
+      season: 1,
+      matchesPlayed: 0,
+      wins: 0,
+      losses: 0,
+      avgKills: 0,
+      avgDeaths: 0,
+      avgAssists: 0,
+      tournamentsWon: 0,
+    },
     preferences: generatePreferences(),
   };
 }

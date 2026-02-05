@@ -29,6 +29,18 @@ export function PlayerDetailModal({
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
 
+  // Default season stats for players without the field (backward compatibility)
+  const seasonStats = player.seasonStats ?? {
+    season: 1,
+    matchesPlayed: 0,
+    wins: 0,
+    losses: 0,
+    avgKills: 0,
+    avgDeaths: 0,
+    avgAssists: 0,
+    tournamentsWon: 0,
+  };
+
   const formatSalary = (salary: number): string => {
     if (salary >= 1000000) {
       return `$${(salary / 1000000).toFixed(2)}M`;
@@ -208,25 +220,25 @@ export function PlayerDetailModal({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
                   <p className="text-2xl font-bold text-vct-light">
-                    {player.seasonStats.matchesPlayed}
+                    {seasonStats.matchesPlayed}
                   </p>
                   <p className="text-vct-gray text-sm">Matches</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-green-400">
-                    {player.seasonStats.wins}
+                    {seasonStats.wins}
                   </p>
                   <p className="text-vct-gray text-sm">Wins</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-red-400">
-                    {player.seasonStats.losses}
+                    {seasonStats.losses}
                   </p>
                   <p className="text-vct-gray text-sm">Losses</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-yellow-400">
-                    {player.seasonStats.tournamentsWon}
+                    {seasonStats.tournamentsWon}
                   </p>
                   <p className="text-vct-gray text-sm">Titles</p>
                 </div>
@@ -234,19 +246,21 @@ export function PlayerDetailModal({
               <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-vct-gray/20 text-center">
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {player.seasonStats.avgKills.toFixed(1)}
+                    {seasonStats.avgKills.toFixed(1)}
                   </p>
                   <p className="text-vct-gray text-xs">Avg Kills</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {player.seasonStats.avgDeaths.toFixed(1)}
+                    {seasonStats.avgDeaths.toFixed(1)}
                   </p>
                   <p className="text-vct-gray text-xs">Avg Deaths</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {(player.seasonStats.avgKills / player.seasonStats.avgDeaths).toFixed(2)}
+                    {seasonStats.avgDeaths > 0
+                      ? (seasonStats.avgKills / seasonStats.avgDeaths).toFixed(2)
+                      : '-'}
                   </p>
                   <p className="text-vct-gray text-xs">K/D Ratio</p>
                 </div>
@@ -311,7 +325,9 @@ export function PlayerDetailModal({
                   </div>
                   <div>
                     <p className="text-lg font-bold text-vct-light">
-                      {(player.careerStats.avgKills / player.careerStats.avgDeaths).toFixed(2)}
+                      {player.careerStats.avgDeaths > 0
+                        ? (player.careerStats.avgKills / player.careerStats.avgDeaths).toFixed(2)
+                        : '-'}
                     </p>
                     <p className="text-vct-gray text-xs">K/D Ratio</p>
                   </div>

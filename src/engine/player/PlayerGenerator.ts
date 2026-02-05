@@ -289,6 +289,22 @@ export class PlayerGenerator {
   }
 
   /**
+   * Generate initial season stats (empty stats for new season)
+   */
+  private generateSeasonStats(season: number = 1): Player['seasonStats'] {
+    return {
+      season,
+      matchesPlayed: 0,
+      wins: 0,
+      losses: 0,
+      avgKills: 0,
+      avgDeaths: 0,
+      avgAssists: 0,
+      tournamentsWon: 0,
+    };
+  }
+
+  /**
    * Generate player preferences for AI negotiations
    */
   private generatePreferences(): Player['preferences'] {
@@ -343,6 +359,7 @@ export class PlayerGenerator {
       potential: this.generatePotential(age, overall),
       contract: teamId ? this.generateContract(overall) : null,
       careerStats: this.generateCareerStats(age),
+      seasonStats: this.generateSeasonStats(),
       preferences: this.generatePreferences(),
     };
   }
