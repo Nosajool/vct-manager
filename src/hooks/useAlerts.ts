@@ -6,6 +6,7 @@
 import { useGameStore } from '../store';
 import type { ActiveView } from '../store/slices/uiSlice';
 import type { Player, Team } from '../types';
+import { useMatchDay } from './useMatchDay';
 
 export type AlertSeverity = 'urgent' | 'warning' | 'info';
 export type AlertCategory = 'contract' | 'morale' | 'sponsor' | 'map' | 'roster' | 'finance' | 'other';
@@ -28,6 +29,7 @@ export interface Alert {
 interface AlertRule {
   id: string;
   check: (context: AlertContext) => Alert | null;
+  shouldShow?: (context: AlertContext) => boolean;
 }
 
 interface AlertContext {
@@ -35,6 +37,7 @@ interface AlertContext {
   playerTeam: Team | null;
   players: Record<string, Player>;
   currentDate: string;
+  isMatchDay: boolean;
 }
 
 /**
@@ -144,6 +147,7 @@ const ALERT_RULES: AlertRule[] = [
   // Map practice low (any map below 50%)
   {
     id: 'map-practice-low',
+    shouldShow: ({ isMatchDay }) => !isMatchDay,
     check: ({ playerTeam }) => {
       if (!playerTeam?.mapPool?.maps) return null;
 
@@ -254,6 +258,7 @@ export function useAlerts(): Alert[] {
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);
   const calendar = useGameStore((state) => state.calendar);
+  const { isMatchDay } = useMatchDay();
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
@@ -262,9 +267,11 @@ export function useAlerts(): Alert[] {
     playerTeam,
     players,
     currentDate: calendar.currentDate,
+    isMatchDay,
   };
 
   return ALERT_RULES
+    .filter(rule => !rule.shouldShow || rule.shouldShow(context))
     .map(rule => rule.check(context))
     .filter((alert): alert is Alert => alert !== null);
 }
