@@ -118,6 +118,62 @@ export type {
   TeamEconomyState,
 } from './economy';
 
+// Round simulation types (revamped simulation system)
+export type {
+  // Basic types
+  WeaponId,
+  AgentId,
+  AbilityId,
+  ShieldType,
+  Position,
+  // Player state
+  PlayerState,
+  TeamSide,
+  AbilityCharges,
+  PlayerRoundState,
+  // Spike state
+  SpikeState,
+  SpikeRoundState,
+  // Damage calculation
+  HitBreakdown,
+  DamageSourceType,
+  // Timeline events
+  TimelineEvent,
+  TimelineEventType,
+  SimDamageEvent,
+  SimKillEvent,
+  TradeKillEvent,
+  PlantStartEvent,
+  PlantInterruptEvent,
+  PlantCompleteEvent,
+  DefuseStartEvent,
+  DefuseInterruptEvent,
+  DefuseCompleteEvent,
+  SpikeDropEvent,
+  SpikePickupEvent,
+  SpikeDetonationEvent,
+  AbilityUseEvent,
+  HealEvent,
+  RoundEndEvent,
+  // Buy phase
+  AbilityPurchase,
+  BuyPhaseEntry,
+  BuyPhaseResult,
+  // Summary
+  SimWinCondition,
+  ClutchAttemptInfo,
+  DerivedRoundSummary,
+  // State
+  RoundState,
+  // Validation
+  ValidationError,
+  ValidationResult,
+  // Config
+  RoundSimulationConfig,
+} from './round-simulation';
+
+export { DEFAULT_ROUND_CONFIG } from './round-simulation';
+
 // VLR types
 export type {
   VlrPlayer,
