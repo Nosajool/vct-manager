@@ -328,8 +328,8 @@ function RoundDetails({
               className="flex items-center gap-2 text-sm bg-vct-red/20 hover:bg-vct-red/30 text-vct-red px-3 py-2 rounded transition-colors"
             >
               <span>🔫</span>
-              <span>{showDamageTimeline ? 'Hide' : 'Show'} Damage Timeline</span>
-              <span className="text-vct-gray">({round.damageEvents.events.length} events)</span>
+              <span>{showDamageTimeline ? 'Hide' : 'Show'} Timeline</span>
+              <span className="text-vct-gray">({round.damageEvents.allEvents?.length || 0} events)</span>
             </button>
           </div>
         )}
