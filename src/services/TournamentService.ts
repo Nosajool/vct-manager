@@ -150,6 +150,7 @@ export class TournamentService {
       if (champion) {
         state.setTournamentChampion(tournamentId, champion);
         this.distributePrizes(tournamentId);
+        this.awardTournamentWin(champion); // Award tournamentsWon to winning team's players
 
         // Handle Kickoff completion - extract qualifiers and trigger modal
         if (tournament.type === 'kickoff') {
@@ -351,6 +352,41 @@ export class TournamentService {
       console.log(
         `Awarded $${dist.amount.toLocaleString()} to ${team?.name || dist.teamId} (${dist.placement}${this.getPlacementSuffix(dist.placement)} place)`
       );
+    }
+  }
+
+  /**
+   * Award tournament win to all players on the winning team
+   * Increments tournamentsWon in both seasonStats and careerStats
+   */
+  awardTournamentWin(championTeamId: string): void {
+    const state = useGameStore.getState();
+    const team = state.teams[championTeamId];
+
+    if (!team) {
+      console.error(`Team not found for tournament win: ${championTeamId}`);
+      return;
+    }
+
+    // Get all players on the winning team
+    const players = team.playerIds.map((id) => state.players[id]).filter(Boolean);
+
+    for (const player of players) {
+      if (!player) continue;
+
+      // Update both career and season tournamentsWon
+      state.updatePlayer(player.id, {
+        careerStats: {
+          ...player.careerStats,
+          tournamentsWon: player.careerStats.tournamentsWon + 1,
+        },
+        seasonStats: {
+          ...player.seasonStats,
+          tournamentsWon: player.seasonStats.tournamentsWon + 1,
+        },
+      });
+
+      console.log(`Awarded tournament win to ${player.name}`);
     }
   }
 

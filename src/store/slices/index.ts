@@ -15,3 +15,4 @@ export {
   type CompetitionSlice,
   type StandingsEntry,
 } from './competitionSlice';
+export { createSeasonStatsSlice, type SeasonStatsSlice } from './seasonStatsSlice';

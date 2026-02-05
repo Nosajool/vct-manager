@@ -15,6 +15,7 @@ import { createCompetitionSlice, type CompetitionSlice } from './slices/competit
 import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
 import { createStrategySlice, type StrategySlice } from './slices/strategySlice';
 import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
+import { createSeasonStatsSlice, type SeasonStatsSlice } from './slices/seasonStatsSlice';
 import {
   saveManager,
   applyLoadedState,
@@ -23,7 +24,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice & SeasonStatsSlice;
 
 // Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -37,6 +38,7 @@ export const useGameStore = create<GameState>()(
     ...createScrimSlice(...args),
     ...createStrategySlice(...args),
     ...createRoundDataSlice(...args),
+    ...createSeasonStatsSlice(...args),
   })
 );
 
@@ -50,6 +52,7 @@ export type { CompetitionSlice, StandingsEntry, QualificationRecord } from './sl
 export type { ScrimSlice } from './slices/scrimSlice';
 export type { StrategySlice } from './slices/strategySlice';
 export type { RoundDataSlice, MatchRoundData } from './slices/roundDataSlice';
+export type { SeasonStatsSlice } from './slices/seasonStatsSlice';
 
 // ============================================
 // Save/Load API
@@ -343,6 +346,19 @@ export const usePlayerTeamStats = () =>
       mapPool: team.mapPool,
     };
   });
+
+// ============================================
+// Season Stats selector hooks
+// ============================================
+
+export const usePlayerSeasonStats = (playerId: string, season: number) =>
+  useGameStore((state) => state.getPlayerSeasonStats(playerId, season));
+
+export const usePlayerAllSeasons = (playerId: string) =>
+  useGameStore((state) => state.getPlayerAllSeasons(playerId));
+
+export const useAllPlayersSeasonStats = (season: number) =>
+  useGameStore((state) => state.getAllPlayersSeasonStats(season));
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';

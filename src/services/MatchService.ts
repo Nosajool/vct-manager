@@ -280,7 +280,7 @@ export class MatchService {
     players: Player[],
     result: MatchResult,
     teamId: string,
-    match: Match,
+    _match: Match,
     updatePlayer: (id: string, updates: Partial<Player>) => void
   ): void {
     const won = result.winnerId === teamId;
@@ -351,42 +351,81 @@ export class MatchService {
 
       // Update season stats
       const currentSeasonStats = player.seasonStats;
-      const currentSeason = useGameStore.getState().calendar.currentSeason;
-      const seasonMatchesPlayed = currentSeasonStats.matchesPlayed + 1;
+      const state = useGameStore.getState();
+      const currentSeason = state.calendar.currentSeason;
 
-      // Calculate new season averages
-      const seasonAvgKills =
-        (currentSeasonStats.avgKills * currentSeasonStats.matchesPlayed + avgKillsThisMatch) /
-        seasonMatchesPlayed;
-      const seasonAvgDeaths =
-        (currentSeasonStats.avgDeaths * currentSeasonStats.matchesPlayed + avgDeathsThisMatch) /
-        seasonMatchesPlayed;
-      const seasonAvgAssists =
-        (currentSeasonStats.avgAssists * currentSeasonStats.matchesPlayed + avgAssistsThisMatch) /
-        seasonMatchesPlayed;
+      // Check for season transition - if player's stats are from a different season,
+      // archive the old stats before starting fresh for the new season
+      if (currentSeasonStats.season !== currentSeason && currentSeasonStats.matchesPlayed > 0) {
+        // Archive the old season stats before resetting
+        state.archiveSeasonStats(player.id, currentSeasonStats);
+        console.log(
+          `Archived season ${currentSeasonStats.season} stats for ${player.name} before starting season ${currentSeason}`
+        );
 
-      updatePlayer(player.id, {
-        careerStats: {
-          ...currentStats,
-          matchesPlayed,
-          wins: currentStats.wins + (won ? 1 : 0),
-          losses: currentStats.losses + (won ? 0 : 1),
-          avgKills: Math.round(avgKills * 10) / 10,
-          avgDeaths: Math.round(avgDeaths * 10) / 10,
-          avgAssists: Math.round(avgAssists * 10) / 10,
-        },
-        seasonStats: {
-          season: currentSeason,
-          matchesPlayed: seasonMatchesPlayed,
-          wins: currentSeasonStats.wins + (won ? 1 : 0),
-          losses: currentSeasonStats.losses + (won ? 0 : 1),
-          avgKills: Math.round(seasonAvgKills * 10) / 10,
-          avgDeaths: Math.round(seasonAvgDeaths * 10) / 10,
-          avgAssists: Math.round(seasonAvgAssists * 10) / 10,
-          tournamentsWon: currentSeasonStats.tournamentsWon + (won && match.tournamentId ? 1 : 0),
-        },
-        form: newForm,
-      });
+        // Start fresh for the new season
+        updatePlayer(player.id, {
+          careerStats: {
+            ...currentStats,
+            matchesPlayed,
+            wins: currentStats.wins + (won ? 1 : 0),
+            losses: currentStats.losses + (won ? 0 : 1),
+            avgKills: Math.round(avgKills * 10) / 10,
+            avgDeaths: Math.round(avgDeaths * 10) / 10,
+            avgAssists: Math.round(avgAssists * 10) / 10,
+          },
+          seasonStats: {
+            season: currentSeason,
+            matchesPlayed: 1,
+            wins: won ? 1 : 0,
+            losses: won ? 0 : 1,
+            avgKills: Math.round(avgKillsThisMatch * 10) / 10,
+            avgDeaths: Math.round(avgDeathsThisMatch * 10) / 10,
+            avgAssists: Math.round(avgAssistsThisMatch * 10) / 10,
+            tournamentsWon: 0, // Reset for new season
+          },
+          form: newForm,
+        });
+      } else {
+        // Same season - update with weighted averages
+        const seasonMatchesPlayed = currentSeasonStats.matchesPlayed + 1;
+
+        // Calculate new season averages
+        const seasonAvgKills =
+          (currentSeasonStats.avgKills * currentSeasonStats.matchesPlayed + avgKillsThisMatch) /
+          seasonMatchesPlayed;
+        const seasonAvgDeaths =
+          (currentSeasonStats.avgDeaths * currentSeasonStats.matchesPlayed + avgDeathsThisMatch) /
+          seasonMatchesPlayed;
+        const seasonAvgAssists =
+          (currentSeasonStats.avgAssists * currentSeasonStats.matchesPlayed + avgAssistsThisMatch) /
+          seasonMatchesPlayed;
+
+        updatePlayer(player.id, {
+          careerStats: {
+            ...currentStats,
+            matchesPlayed,
+            wins: currentStats.wins + (won ? 1 : 0),
+            losses: currentStats.losses + (won ? 0 : 1),
+            avgKills: Math.round(avgKills * 10) / 10,
+            avgDeaths: Math.round(avgDeaths * 10) / 10,
+            avgAssists: Math.round(avgAssists * 10) / 10,
+          },
+          seasonStats: {
+            season: currentSeason,
+            matchesPlayed: seasonMatchesPlayed,
+            wins: currentSeasonStats.wins + (won ? 1 : 0),
+            losses: currentSeasonStats.losses + (won ? 0 : 1),
+            avgKills: Math.round(seasonAvgKills * 10) / 10,
+            avgDeaths: Math.round(seasonAvgDeaths * 10) / 10,
+            avgAssists: Math.round(seasonAvgAssists * 10) / 10,
+            // tournamentsWon is NOT incremented here - it's only incremented
+            // when a team wins a tournament in TournamentService.awardTournamentWin()
+            tournamentsWon: currentSeasonStats.tournamentsWon,
+          },
+          form: newForm,
+        });
+      }
     }
   }
 

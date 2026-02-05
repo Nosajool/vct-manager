@@ -6,6 +6,7 @@ export type {
   PlayerStats,
   PlayerContract,
   PlayerCareerStats,
+  PlayerSeasonStats,
   PlayerPreferences,
   Player,
   Coach,
