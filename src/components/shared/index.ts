@@ -1,3 +1,3 @@
 // Shared Components
 
-// No shared components currently
+export { RegionIndicator, RegionIndicatorCompact, RegionBadge } from './RegionIndicator';
