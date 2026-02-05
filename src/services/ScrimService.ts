@@ -562,6 +562,212 @@ export class ScrimService {
   }
 
   // ============================================
+  // Relationship Analytics
+  // ============================================
+
+  /**
+   * Get comprehensive relationship statistics
+   */
+  getRelationshipStats(): {
+    totalScrims: number;
+    weeklyScrimsUsed: number;
+    weeklyScrimsMax: number;
+    avgRelationshipScore: number;
+    t1Partners: number;
+    t2Partners: number;
+    t3Partners: number;
+    highVodRiskCount: number;
+    distribution: Record<string, number>;
+  } {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    const relationships = playerTeamId
+      ? Object.values(state.teams[playerTeamId]?.scrimRelationships || {})
+      : [];
+
+    const totalScrims = relationships.reduce((sum, r) => sum + r.totalScrims, 0);
+    const avgScore =
+      relationships.length > 0
+        ? relationships.reduce((sum, r) => sum + r.relationshipScore, 0) /
+          relationships.length
+        : 0;
+
+    const tierCounts = { T1: 0, T2: 0, T3: 0 };
+    const distribution: Record<string, number> = {
+      Excellent: 0,
+      Good: 0,
+      Neutral: 0,
+      Poor: 0,
+      Hostile: 0,
+    };
+
+    let highVodRiskCount = 0;
+
+    for (const rel of relationships) {
+      // Count by tier
+      tierCounts[rel.tier]++;
+
+      // Count by relationship status
+      if (rel.relationshipScore >= 80) distribution.Excellent++;
+      else if (rel.relationshipScore >= 60) distribution.Good++;
+      else if (rel.relationshipScore >= 40) distribution.Neutral++;
+      else if (rel.relationshipScore >= 20) distribution.Poor++;
+      else distribution.Hostile++;
+
+      // Count high VOD risks
+      if (rel.vodLeakRisk > 50) highVodRiskCount++;
+    }
+
+    const weeklyCheck = this.checkWeeklyLimit();
+
+    return {
+      totalScrims,
+      weeklyScrimsUsed: weeklyCheck.scrimsUsed,
+      weeklyScrimsMax: SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS,
+      avgRelationshipScore: Math.round(avgScore),
+      t1Partners: tierCounts.T1,
+      t2Partners: tierCounts.T2,
+      t3Partners: tierCounts.T3,
+      highVodRiskCount,
+      distribution,
+    };
+  }
+
+  /**
+   * Calculate scrim effectiveness score for a partner
+   * Effectiveness = base tier efficiency + relationship bonus
+   */
+  calculatePartnerEffectiveness(relationship: ScrimRelationship): number {
+    const tierEfficiency = SCRIM_CONSTANTS.TIER_EFFICIENCY[relationship.tier];
+    const relationshipBonus = (relationship.relationshipScore / 100) * 0.3; // Up to +30%
+    return tierEfficiency + relationshipBonus;
+  }
+
+  /**
+   * Get all relationships sorted by effectiveness
+   */
+  getRelationshipsByEffectiveness(): Array<ScrimRelationship & { effectiveness: number }> {
+    const relationships = this.getAllRelationships();
+    return relationships
+      .map((rel) => ({
+        ...rel,
+        effectiveness: this.calculatePartnerEffectiveness(rel),
+      }))
+      .sort((a, b) => b.effectiveness - a.effectiveness);
+  }
+
+  /**
+   * Get win/loss record against a specific partner
+   */
+  getWinLossRecord(partnerTeamId: string): { wins: number; losses: number } {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    if (!playerTeamId) return { wins: 0, losses: 0 };
+
+    const history = state.scrimHistory.filter((s) => s.partnerTeamId === partnerTeamId);
+    const wins = history.filter((s) => s.overallWinner === playerTeamId).length;
+    const losses = history.length - wins;
+
+    return { wins, losses };
+  }
+
+  /**
+   * Get recommendations based on current state
+   */
+  getRecommendations(): Array<{ type: string; message: string; priority: 'high' | 'medium' | 'low' }> {
+    const recommendations: Array<{ type: string; message: string; priority: 'high' | 'medium' | 'low' }> = [];
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+
+    if (!playerTeamId) return recommendations;
+
+    // Check 1: VOD Risk warnings
+    const relationships = this.getAllRelationships();
+    for (const rel of relationships) {
+      if (rel.vodLeakRisk > 50) {
+        const teamName = this.getPartnerName(rel.teamId);
+        recommendations.push({
+          type: 'vod_risk',
+          message: `Take a break from ${teamName} - VOD leak risk at ${rel.vodLeakRisk}%`,
+          priority: 'high',
+        });
+      }
+    }
+
+    // Check 2: Weekly limit
+    const weeklyCheck = this.checkWeeklyLimit();
+    if (weeklyCheck.scrimsUsed < SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS) {
+      const remaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - weeklyCheck.scrimsUsed;
+      recommendations.push({
+        type: 'weekly_limit',
+        message: `Schedule ${remaining} more scrim${remaining > 1 ? 's' : ''} this week for optimal practice`,
+        priority: 'medium',
+      });
+    }
+
+    // Check 3: Partner diversity
+    if (weeklyCheck.scrimsUsed > 0) {
+      const currentDate = state.calendar.currentDate;
+      const weekStart = this.getWeekStart(currentDate);
+      const tracker = this.weeklyTracker.get(weekStart);
+      if (tracker) {
+        const partnerCounts: Record<string, number> = {};
+        for (const partnerId of tracker.partnersUsedThisWeek) {
+          partnerCounts[partnerId] = (partnerCounts[partnerId] || 0) + 1;
+        }
+        for (const [partnerId, count] of Object.entries(partnerCounts)) {
+          if (count > weeklyCheck.scrimsUsed * 0.5) {
+            const teamName = this.getPartnerName(partnerId);
+            recommendations.push({
+              type: 'partner_diversity',
+              message: `Mix up your scrim partners - you've scrimmed ${teamName} ${count} times this week`,
+              priority: 'medium',
+            });
+          }
+        }
+      }
+    }
+
+    // Check 4: Tier balance
+    const tierCounts = { T1: 0, T2: 0, T3: 0 };
+    for (const rel of relationships) {
+      tierCounts[rel.tier]++;
+    }
+    if (tierCounts.T1 < 2 && relationships.length > 3) {
+      recommendations.push({
+        type: 'tier_balance',
+        message: 'Build more T1 relationships for competitive practice',
+        priority: 'low',
+      });
+    }
+
+    // Check 5: Map pool decay
+    const mapSummary = this.getMapPoolSummary();
+    if (mapSummary.needsPractice.length > 0) {
+      const maps = mapSummary.needsPractice.slice(0, 2).join(', ');
+      recommendations.push({
+        type: 'map_practice',
+        message: `${maps} need${mapSummary.needsPractice.length === 1 ? 's' : ''} practice (14+ days since last scrim)`,
+        priority: 'medium',
+      });
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * Get partner name by ID
+   */
+  private getPartnerName(teamId: string): string {
+    const state = useGameStore.getState();
+    const t1Team = state.teams[teamId];
+    if (t1Team) return t1Team.name;
+    const tierTeam = state.tierTeams[teamId];
+    if (tierTeam) return tierTeam.name;
+    return 'Unknown Team';
+  }
+
+  // ============================================
   // Relationship Management
   // ============================================
 

@@ -9,11 +9,12 @@ import { ContractNegotiationModal } from '../components/roster/ContractNegotiati
 import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
 import { TeamStrategy } from '../components/roster/TeamStrategy';
 import { TeamStatsView } from '../components/roster/TeamStatsView';
+import { ScrimOverview } from '../components/scrim';
 import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 
-type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy' | 'stats';
+type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy' | 'stats' | 'scrims';
 
 export function Roster() {
   const [activeTab, setActiveTab] = useState<TeamTab>('roster');
@@ -174,6 +175,16 @@ export function Roster() {
         >
           Stats
         </button>
+        <button
+          onClick={() => setActiveTab('scrims')}
+          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === 'scrims'
+              ? 'text-vct-red border-vct-red'
+              : 'text-vct-gray border-transparent hover:text-vct-light'
+          }`}
+        >
+          Scrims
+        </button>
       </div>
 
       {/* Content */}
@@ -191,6 +202,8 @@ export function Roster() {
         <TeamStrategy teamId={playerTeamId} />
       ) : activeTab === 'stats' && playerTeamId ? (
         <TeamStatsView teamId={playerTeamId} />
+      ) : activeTab === 'scrims' ? (
+        <ScrimOverview />
       ) : (
         <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-8 text-center">
           <p className="text-vct-gray">No team selected</p>
