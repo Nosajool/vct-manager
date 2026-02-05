@@ -4,6 +4,7 @@ import type { Tournament } from '../../types';
 import { useGameStore } from '../../store';
 import { tournamentEngine } from '../../engine/competition';
 import { bracketManager } from '../../engine/competition';
+import { RegionIndicator } from '../shared/RegionIndicator';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -83,7 +84,10 @@ export function TournamentCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="text-white font-medium">{tournament.name}</h3>
+          <h3 className="text-white font-medium flex items-center gap-2">
+            {tournament.name}
+            <RegionIndicator region={tournament.region} size="md" />
+          </h3>
           <p className="text-xs text-vct-gray">
             {tournamentEngine.getFormatName(tournament.format)} &middot;{' '}
             {tournament.teamIds.length} Teams
@@ -228,7 +232,10 @@ export function TournamentCardMini({ tournament, onClick }: TournamentCardMiniPr
     >
       <span className={`w-2 h-2 rounded-full ${getStatusDot()}`} />
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-white truncate">{tournament.name}</p>
+        <p className="text-sm text-white truncate flex items-center gap-2">
+          <RegionIndicator region={tournament.region} size="sm" />
+          {tournament.name}
+        </p>
         <p className="text-xs text-vct-gray">
           {formatDateLocal(tournament.startDate)}
         </p>
