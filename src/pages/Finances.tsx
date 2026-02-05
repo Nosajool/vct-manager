@@ -28,17 +28,17 @@ export function Finances() {
     } catch {
       return null;
     }
-  }, [playerTeamId, playerTeam?.finances]);
+  }, [playerTeamId]);
 
   // Get transactions
   const transactions = useMemo(() => {
     return economyService.getTransactionHistory(50, playerTeamId || undefined);
-  }, [playerTeamId, playerTeam?.finances.pendingTransactions]);
+  }, [playerTeamId]);
 
   // Get active loans
   const loans = useMemo(() => {
     return economyService.getActiveLoans(playerTeamId || undefined);
-  }, [playerTeamId, playerTeam?.finances.loans]);
+  }, [playerTeamId]);
 
   // Calculate roster costs
   const rosterCosts = useMemo(() => {

@@ -52,7 +52,7 @@ export function Dashboard() {
     } catch {
       return null;
     }
-  }, [playerTeamId, playerTeam?.finances]);
+  }, [playerTeamId]);
 
   // Handle training click
   const handleTrainingClick = () => {
@@ -150,7 +150,7 @@ export function Dashboard() {
               <StatRow label="Total Teams" value={teamCount} />
               <StatRow
                 label="Scheduled Events"
-                value={calendar.scheduledEvents.filter((e) => !e.processed).length}
+                value={calendar.scheduledEvents.filter((event) => !event.processed).length}
               />
             </div>
           </div>

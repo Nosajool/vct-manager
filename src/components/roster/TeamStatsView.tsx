@@ -48,7 +48,6 @@ export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
       <PlayerPerformanceSummary
         players={activePlayers}
         matchHistory={matchHistory}
-        teamId={targetTeamId}
       />
     </div>
   );
@@ -311,14 +310,12 @@ function MatchHistorySection({
 }
 
 // Player performance summary
-function PlayerPerformanceSummary({
+  function PlayerPerformanceSummary({
   players,
   matchHistory,
-  teamId,
 }: {
   players: Player[];
   matchHistory: MatchResult[];
-  teamId: string;
 }) {
   // Calculate average stats per player from match history
   const playerStats = useMemo(() => {
@@ -350,7 +347,7 @@ function PlayerPerformanceSummary({
     }
 
     return stats;
-  }, [matchHistory, players, teamId]);
+  }, [matchHistory, players]);
 
   if (players.length === 0) {
     return null;
