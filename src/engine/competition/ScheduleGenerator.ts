@@ -422,7 +422,7 @@ export class ScheduleGenerator {
   ): Date[] {
     const totalMatches = this.getMatchCountForRoundRobin(teamCount);
     const dates: Date[] = [];
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
 
     for (let i = 0; i < totalMatches; i++) {
       dates.push(new Date(currentDate));

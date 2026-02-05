@@ -188,12 +188,12 @@ export class WeaponEngine {
     currentHp: number
   ): DamageResult {
     const shieldAbsorption = SHIELD_DATA[shieldType].absorption;
-    let shieldDamage = Math.min(baseDamage, shieldAbsorption);
+    const shieldDamage = Math.min(baseDamage, shieldAbsorption);
     let hpDamage = Math.max(0, baseDamage - shieldAbsorption);
 
     // Apply damage to shield first
-    let remainingShield = Math.max(0, shieldHealth - shieldDamage);
-    let actualShieldDamage = shieldHealth - remainingShield;
+    const remainingShield = Math.max(0, shieldHealth - shieldDamage);
+    const actualShieldDamage = shieldHealth - remainingShield;
 
     // If shield is broken, excess damage goes to HP
     if (actualShieldDamage < shieldDamage) {
@@ -201,8 +201,8 @@ export class WeaponEngine {
     }
 
     // Apply damage to HP
-    let remainingHp = Math.max(0, currentHp - hpDamage);
-    let actualHpDamage = currentHp - remainingHp;
+    const remainingHp = Math.max(0, currentHp - hpDamage);
+    const actualHpDamage = currentHp - remainingHp;
 
     return {
       baseDamage,

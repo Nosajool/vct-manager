@@ -63,7 +63,7 @@ export class PlayerGenerator {
     const r2 = Math.random();
     const gaussianRandom = (r1 + r2) / 2;
 
-    let value = Math.floor(min + gaussianRandom * (max - min) + bias);
+    const value = Math.floor(min + gaussianRandom * (max - min) + bias);
     return Math.max(min, Math.min(max, value));
   }
 

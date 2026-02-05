@@ -186,8 +186,8 @@ export class MatchSimulator {
     strategyA: TeamStrategy,
     strategyB: TeamStrategy
   ): MapResult {
-    let adjustedStrengthA = teamAStrength;
-    let adjustedStrengthB = teamBStrength;
+    const adjustedStrengthA = teamAStrength;
+    const adjustedStrengthB = teamBStrength;
 
     // Select agents for each team
     const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
