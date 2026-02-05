@@ -123,6 +123,7 @@ export const createTeamSlice: StateCreator<
 
   removeTeam: (teamId) =>
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [teamId]: removed, ...remaining } = state.teams;
       return { teams: remaining };
     }),

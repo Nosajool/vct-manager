@@ -97,7 +97,9 @@ export const createMatchSlice: StateCreator<
 
   removeMatch: (matchId) =>
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [matchId]: removedMatch, ...remainingMatches } = state.matches;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [matchId]: removedResult, ...remainingResults } = state.results;
       return {
         matches: remainingMatches,

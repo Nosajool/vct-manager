@@ -67,6 +67,7 @@ export const createScrimSlice: StateCreator<ScrimSlice, [], [], ScrimSlice> = (
 
   removeTierTeam: (teamId) =>
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [teamId]: removed, ...remaining } = state.tierTeams;
       return { tierTeams: remaining };
     }),

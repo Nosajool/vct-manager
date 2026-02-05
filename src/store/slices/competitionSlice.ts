@@ -100,7 +100,9 @@ export const createCompetitionSlice: StateCreator<
 
   removeTournament: (id) =>
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [id]: removed, ...remaining } = state.tournaments;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [id]: removedStandings, ...remainingStandings } = state.standings;
       return {
         tournaments: remaining,

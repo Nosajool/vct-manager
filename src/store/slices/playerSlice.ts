@@ -59,6 +59,7 @@ export const createPlayerSlice: StateCreator<
 
   removePlayer: (playerId) =>
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [playerId]: removed, ...remaining } = state.players;
       return { players: remaining };
     }),
