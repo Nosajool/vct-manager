@@ -2,6 +2,7 @@
 
 import type { Player, PlayerStats } from '../../types';
 import { playerGenerator } from '../../engine/player';
+import { useState } from 'react';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -19,8 +20,6 @@ interface PlayerDetailModalProps {
 export function PlayerDetailModal({
   player,
   onClose,
-  onSign,
-  onRelease,
   isOnPlayerTeam = false,
   rosterPosition,
   canPromote = false,
@@ -28,6 +27,7 @@ export function PlayerDetailModal({
   onMoveToReserve,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
+  const [showCareerStats, setShowCareerStats] = useState(false);
 
   const formatSalary = (salary: number): string => {
     if (salary >= 1000000) {
@@ -199,34 +199,34 @@ export function PlayerDetailModal({
             )}
           </div>
 
-          {/* Career Stats */}
+          {/* Season Stats */}
           <div>
             <h3 className="text-lg font-semibold text-vct-light mb-3">
-              Career Stats
+              Season Stats
             </h3>
             <div className="bg-vct-dark rounded-lg p-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
                   <p className="text-2xl font-bold text-vct-light">
-                    {player.careerStats.matchesPlayed}
+                    {player.seasonStats.matchesPlayed}
                   </p>
                   <p className="text-vct-gray text-sm">Matches</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-green-400">
-                    {player.careerStats.wins}
+                    {player.seasonStats.wins}
                   </p>
                   <p className="text-vct-gray text-sm">Wins</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-red-400">
-                    {player.careerStats.losses}
+                    {player.seasonStats.losses}
                   </p>
                   <p className="text-vct-gray text-sm">Losses</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-yellow-400">
-                    {player.careerStats.tournamentsWon}
+                    {player.seasonStats.tournamentsWon}
                   </p>
                   <p className="text-vct-gray text-sm">Titles</p>
                 </div>
@@ -234,98 +234,91 @@ export function PlayerDetailModal({
               <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-vct-gray/20 text-center">
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {player.careerStats.avgKills.toFixed(1)}
+                    {player.seasonStats.avgKills.toFixed(1)}
                   </p>
                   <p className="text-vct-gray text-xs">Avg Kills</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {player.careerStats.avgDeaths.toFixed(1)}
+                    {player.seasonStats.avgDeaths.toFixed(1)}
                   </p>
                   <p className="text-vct-gray text-xs">Avg Deaths</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-vct-light">
-                    {(
-                      player.careerStats.avgKills / player.careerStats.avgDeaths
-                    ).toFixed(2)}
+                    {(player.seasonStats.avgKills / player.seasonStats.avgDeaths).toFixed(2)}
                   </p>
                   <p className="text-vct-gray text-xs">K/D Ratio</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="p-6 border-t border-vct-gray/20 flex items-center justify-between">
-          {/* Left side - Roster Actions */}
-          <div className="flex items-center gap-2">
-            {isOnPlayerTeam && rosterPosition && (onMoveToActive || onMoveToReserve) && (
-              <>
-                {rosterPosition === 'reserve' && onMoveToActive && (
-                  <button
-                    onClick={onMoveToActive}
-                    disabled={!canPromote}
-                    className={`
-                      flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
-                      ${canPromote
-                        ? 'bg-emerald-600 text-white hover:bg-emerald-500 hover:scale-[1.02]'
-                        : 'bg-vct-gray/20 text-vct-gray cursor-not-allowed'
-                      }
-                    `}
-                    title={canPromote ? 'Promote to active roster' : 'Active roster is full (5/5)'}
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                    Promote to Active
-                  </button>
-                )}
-                {rosterPosition === 'active' && onMoveToReserve && (
-                  <button
-                    onClick={onMoveToReserve}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
-                               bg-amber-600 text-white hover:bg-amber-500 hover:scale-[1.02] transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                    Move to Reserve
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Right side - Primary Actions */}
-          <div className="flex items-center gap-3">
-            {!player.teamId && onSign && (
-              <button
-                onClick={onSign}
-                className="px-5 py-2 bg-green-600 text-white text-sm font-medium rounded-lg
-                           hover:bg-green-500 hover:scale-[1.02] transition-all"
-              >
-                Sign Player
-              </button>
-            )}
-            {isOnPlayerTeam && onRelease && (
-              <button
-                onClick={onRelease}
-                className="px-5 py-2 bg-red-600/80 text-white text-sm font-medium rounded-lg
-                           hover:bg-red-500 transition-colors"
-              >
-                Release
-              </button>
-            )}
+          {/* Toggle for Career Stats */}
+          <div className="mt-4">
             <button
-              onClick={onClose}
-              className="px-5 py-2 bg-vct-dark border border-vct-gray/30 text-vct-light text-sm
-                         font-medium rounded-lg hover:bg-vct-gray/20 transition-colors"
+              onClick={() => setShowCareerStats(!showCareerStats)}
+              className="text-vct-gray hover:text-vct-light transition-colors flex items-center gap-1 text-sm"
             >
-              Close
+              {showCareerStats ? 'Hide' : 'Show'} Career Stats
             </button>
           </div>
+
+          {showCareerStats && (
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-vct-light mb-3">
+                Career Stats
+              </h3>
+              <div className="bg-vct-dark rounded-lg p-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-vct-light">
+                      {player.careerStats.matchesPlayed}
+                    </p>
+                    <p className="text-vct-gray text-sm">Matches</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-green-400">
+                      {player.careerStats.wins}
+                    </p>
+                    <p className="text-vct-gray text-sm">Wins</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-red-400">
+                      {player.careerStats.losses}
+                    </p>
+                    <p className="text-vct-gray text-sm">Losses</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {player.careerStats.tournamentsWon}
+                    </p>
+                    <p className="text-vct-gray text-sm">Titles</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-vct-gray/20 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-vct-light">
+                      {player.careerStats.avgKills.toFixed(1)}
+                    </p>
+                    <p className="text-vct-gray text-xs">Avg Kills</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-vct-light">
+                      {player.careerStats.avgDeaths.toFixed(1)}
+                    </p>
+                    <p className="text-vct-gray text-xs">Avg Deaths</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-vct-light">
+                      {(player.careerStats.avgKills / player.careerStats.avgDeaths).toFixed(2)}
+                    </p>
+                    <p className="text-vct-gray text-xs">K/D Ratio</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -32,6 +32,17 @@ export interface PlayerCareerStats {
   tournamentsWon: number;
 }
 
+export interface PlayerSeasonStats {
+  season: number;
+  matchesPlayed: number;
+  wins: number;
+  losses: number;
+  avgKills: number;
+  avgDeaths: number;
+  avgAssists: number;
+  tournamentsWon: number;
+}
+
 export interface PlayerPreferences {
   salaryImportance: number;      // 0-100
   teamQualityImportance: number; // 0-100
@@ -62,6 +73,9 @@ export interface Player {
 
   // Career stats
   careerStats: PlayerCareerStats;
+  
+  // Season stats - current season only
+  seasonStats: PlayerSeasonStats;
 
   // Preferences (for AI negotiations)
   preferences: PlayerPreferences;

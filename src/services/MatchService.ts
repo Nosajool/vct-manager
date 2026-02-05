@@ -164,8 +164,8 @@ export class MatchService {
     }
 
     // 6. Update player stats
-    this.updatePlayerStats(playersA, result, match.teamAId, updatePlayer);
-    this.updatePlayerStats(playersB, result, match.teamBId, updatePlayer);
+    this.updatePlayerStats(playersA, result, match.teamAId, match, updatePlayer);
+    this.updatePlayerStats(playersB, result, match.teamBId, match, updatePlayer);
   }
 
   /**
@@ -280,6 +280,7 @@ export class MatchService {
     players: Player[],
     result: MatchResult,
     teamId: string,
+    match: Match,
     updatePlayer: (id: string, updates: Partial<Player>) => void
   ): void {
     const won = result.winnerId === teamId;
@@ -348,6 +349,22 @@ export class MatchService {
       // Clamp form between 30 and 100
       const newForm = Math.max(30, Math.min(100, player.form + formDelta));
 
+      // Update season stats
+      const currentSeasonStats = player.seasonStats;
+      const currentSeason = useGameStore.getState().calendar.currentSeason;
+      const seasonMatchesPlayed = currentSeasonStats.matchesPlayed + 1;
+
+      // Calculate new season averages
+      const seasonAvgKills =
+        (currentSeasonStats.avgKills * currentSeasonStats.matchesPlayed + avgKillsThisMatch) /
+        seasonMatchesPlayed;
+      const seasonAvgDeaths =
+        (currentSeasonStats.avgDeaths * currentSeasonStats.matchesPlayed + avgDeathsThisMatch) /
+        seasonMatchesPlayed;
+      const seasonAvgAssists =
+        (currentSeasonStats.avgAssists * currentSeasonStats.matchesPlayed + avgAssistsThisMatch) /
+        seasonMatchesPlayed;
+
       updatePlayer(player.id, {
         careerStats: {
           ...currentStats,
@@ -357,6 +374,16 @@ export class MatchService {
           avgKills: Math.round(avgKills * 10) / 10,
           avgDeaths: Math.round(avgDeaths * 10) / 10,
           avgAssists: Math.round(avgAssists * 10) / 10,
+        },
+        seasonStats: {
+          season: currentSeason,
+          matchesPlayed: seasonMatchesPlayed,
+          wins: currentSeasonStats.wins + (won ? 1 : 0),
+          losses: currentSeasonStats.losses + (won ? 0 : 1),
+          avgKills: Math.round(seasonAvgKills * 10) / 10,
+          avgDeaths: Math.round(seasonAvgDeaths * 10) / 10,
+          avgAssists: Math.round(seasonAvgAssists * 10) / 10,
+          tournamentsWon: currentSeasonStats.tournamentsWon + (won && match.tournamentId ? 1 : 0),
         },
         form: newForm,
       });
