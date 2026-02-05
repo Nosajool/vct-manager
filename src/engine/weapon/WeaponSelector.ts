@@ -5,7 +5,7 @@ import type { Weapon } from '../../types/weapons';
 import type { Player } from '../../types/player';
 import { getAgentWeaponCategory, getAffordableWeapons } from './WeaponDatabase';
 
-export function selectWeapon(credits: number, agent: string, mechanics: number): Weapon | undefined {
+export function selectWeapon(credits: number, agent: string, _mechanics: number): Weapon | undefined {
   // Exclude melee from weapon selection - it's not a real combat weapon
   const affordableWeapons = getAffordableWeapons(credits).filter(w => w.category !== 'melee');
 
@@ -24,7 +24,7 @@ export function selectWeapon(credits: number, agent: string, mechanics: number):
   return affordableWeapons.sort((a, b) => b.baseHeadshotRate - a.baseHeadshotRate)[0];
 }
 
-export function calculateShotsAndHits(player: Player, weapon: Weapon, roundNumber: number): {
+export function calculateShotsAndHits(player: Player, weapon: Weapon, _roundNumber: number): {
   shotsFired: number; 
   totalHits: number; 
   headshotKills: number 

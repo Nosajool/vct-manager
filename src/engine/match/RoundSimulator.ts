@@ -772,7 +772,7 @@ export class RoundSimulator {
           const headshotChance = hitProbs.head;
           perf.headshotKills = Math.floor(perf.totalHits * headshotChance);
           
-          const damagePerHit = this.calculateAverageWeaponDamage(weapon, hitProbs);
+          this.calculateAverageWeaponDamage(weapon, hitProbs);
         }
       }
     });
@@ -806,7 +806,7 @@ export class RoundSimulator {
           const headshotChance = hitProbs.head;
           perf.headshotKills = Math.floor(perf.totalHits * headshotChance);
           
-          const damagePerHit = this.calculateAverageWeaponDamage(weapon, hitProbs);
+          this.calculateAverageWeaponDamage(weapon, hitProbs);
         }
         perf.damage = playerKillsB[i] * 130 + Math.round(Math.random() * 50);
       }

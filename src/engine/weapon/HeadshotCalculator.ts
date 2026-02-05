@@ -132,7 +132,7 @@ export class HeadshotCalculator {
   private static determineHitZone(headshotProb: number): HitZone {
     // Weighted random selection based on probabilities
     const bodyProb = (1 - headshotProb) * 0.7; // 70% of non-headshots hit body
-    const legsProb = 1 - headshotProb - bodyProb; // Remaining hit legs
+    // Remaining probability goes to legs (not needed for calculation)
     
     const random = Math.random();
     
