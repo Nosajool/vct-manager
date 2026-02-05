@@ -67,7 +67,13 @@ with rifles showing the highest consistency at the professional level.`;
     }>;
     tierLogic: string[];
   } {
-    const tiers: Record<HeadshotTier, any> = {
+    const tiers: Record<HeadshotTier, {
+      description: string;
+      baselineRate: number;
+      proRange: { min: number; max: number };
+      examples: string[];
+      characteristics: string[];
+    }> = {
       'S': {
         description: 'Sniper rifles - high precision, low volume',
         baselineRate: BASELINE_HEADSHOT_RATES['S'],
@@ -174,7 +180,7 @@ with rifles showing the highest consistency at the professional level.`;
     const mechanicsScale = [
       50, 60, 70, 80, 90, 100
     ].map(mechanics => {
-      const tierRates: Record<HeadshotTier, number> = {} as any;
+      const tierRates: Record<HeadshotTier, number> = {} as Record<HeadshotTier, number>;
       
       for (const tier of ['S', 'A', 'B', 'C', 'D', 'F'] as HeadshotTier[]) {
         tierRates[tier] = HeadshotCalculator.getExpectedHeadshotRate(mechanics, this.getExampleWeapon(tier));

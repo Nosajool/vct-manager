@@ -225,7 +225,7 @@ export class HeadshotCalculator {
    * Analyze weapon tier and recommend improvements
    */
   static analyzeWeaponTier(mechanics: number): Record<HeadshotTier, number> {
-    const analysis: Record<HeadshotTier, number> = {} as any;
+    const analysis: Record<HeadshotTier, number> = {} as Record<HeadshotTier, number>;
     
     for (const tier of ['S', 'A', 'B', 'C', 'D', 'F'] as HeadshotTier[]) {
       const baseline = BASELINE_HEADSHOT_RATES[tier];
