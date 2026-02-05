@@ -246,7 +246,7 @@ export class TournamentService {
     const readyMatches = bracketManager.getReadyMatches(tournament.bracket);
     const results: MatchResult[] = [];
 
-    for (const _bracketMatch of readyMatches) {
+    for (let i = 0; i < readyMatches.length; i++) {
       const result = this.simulateNextMatch(tournamentId);
       if (result) {
         results.push(result);

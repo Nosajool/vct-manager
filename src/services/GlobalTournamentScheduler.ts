@@ -828,7 +828,7 @@ export class GlobalTournamentScheduler {
     if (matchWeeks.length === 0) return;
 
     // For each group, organize matches into match weeks using circle method
-    for (const [_groupId, matches] of groupMatches) {
+    for (const [, matches] of groupMatches) {
       // Get unique team IDs from matches
       const teamIds = new Set<string>();
       for (const match of matches) {

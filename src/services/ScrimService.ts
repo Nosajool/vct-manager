@@ -70,8 +70,7 @@ export class ScrimService {
     // Get or create relationship
     const relationship = this.getOrCreateRelationship(
       playerTeam,
-      partnerTeam,
-      state.calendar.currentDate
+      partnerTeam
     );
 
     // Calculate team strengths
@@ -310,8 +309,7 @@ export class ScrimService {
    */
   private getOrCreateRelationship(
     playerTeam: Team,
-    partnerTeam: (Team & { tier: TeamTier }) | TierTeam,
-    _currentDate: string
+    partnerTeam: (Team & { tier: TeamTier }) | TierTeam
   ): ScrimRelationship {
     const state = useGameStore.getState();
     const existing = playerTeam.scrimRelationships?.[partnerTeam.id];

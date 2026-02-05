@@ -60,7 +60,7 @@ export class TournamentTransitionService {
     } else if (config.type === 'international_to_league') {
       return this.executeLeagueTransition(config);
     } else {
-      return this.executeInternationalTransition(config, playerRegion);
+      return this.executeInternationalTransition(config);
     }
   }
 
@@ -214,8 +214,7 @@ export class TournamentTransitionService {
    * Example: Kickoff → Masters Santiago, Stage 1 Playoffs → Masters London
    */
   private executeInternationalTransition(
-    config: TournamentTransitionConfig,
-    _playerRegion?: Region
+    config: TournamentTransitionConfig
   ): TransitionResult {
     const state = useGameStore.getState();
 
@@ -484,7 +483,7 @@ export class TournamentTransitionService {
    * Simulate other regions' tournaments (for international transitions)
    * This ensures all 4 regions have completed before creating international tournament
    */
-  simulateOtherRegions(playerRegion: Region, _qualificationSource: string): QualificationRecord[] {
+  simulateOtherRegions(playerRegion: Region): QualificationRecord[] {
     return regionalSimulationService.simulateOtherKickoffs(playerRegion);
   }
 
