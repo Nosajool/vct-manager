@@ -544,6 +544,7 @@ export interface Match {
   teamBId: string;
   scheduledDate: string;  // ISO date string for serialization
   status: MatchStatus;
+  season: number;  // Season number for filtering stats
 
   // Result
   result?: MatchResult;

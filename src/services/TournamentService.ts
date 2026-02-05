@@ -1582,6 +1582,7 @@ export class TournamentService {
             scheduledDate: swissMatch.scheduledDate,
             status: 'scheduled',
             tournamentId: tournament.id,
+            season: state.calendar.currentSeason,
           };
 
           state.addMatch(match);
@@ -1658,6 +1659,7 @@ export class TournamentService {
             scheduledDate: bracketMatch.scheduledDate || tournament.startDate,
             status: 'scheduled',
             tournamentId: tournament.id,
+            season: state.calendar.currentSeason,
           };
 
           state.addMatch(match);
@@ -1692,6 +1694,7 @@ export class TournamentService {
           scheduledDate: gf.scheduledDate || tournament.endDate,
           status: 'scheduled',
           tournamentId: tournament.id,
+          season: state.calendar.currentSeason,
         };
         state.addMatch(match);
       }

@@ -21,29 +21,29 @@ export interface MatchSlice {
   // Selectors
   getMatch: (matchId: string) => Match | undefined;
   getResult: (matchId: string) => MatchResult | undefined;
-  getMatchesByTeam: (teamId: string) => Match[];
-  getTeamMatchHistory: (teamId: string) => MatchResult[];
+  getMatchesByTeam: (teamId: string, season?: number) => Match[];
+  getTeamMatchHistory: (teamId: string, season?: number) => MatchResult[];
   getUpcomingMatches: (teamId: string) => Match[];
-  getCompletedMatches: (teamId: string) => Match[];
+  getCompletedMatches: (teamId: string, season?: number) => Match[];
   getAllMatches: () => Match[];
 
-  // Stats selectors
-  getTeamWinRate: (teamId: string) => number;
-  getTeamRecentForm: (teamId: string, count?: number) => ('W' | 'L')[];
-  getTeamMapStats: (teamId: string) => Record<string, { wins: number; losses: number; winRate: number }>;
-  getHeadToHead: (teamIdA: string, teamIdB: string) => {
+  // Stats selectors (all support optional season filtering)
+  getTeamWinRate: (teamId: string, season?: number) => number;
+  getTeamRecentForm: (teamId: string, count?: number, season?: number) => ('W' | 'L')[];
+  getTeamMapStats: (teamId: string, season?: number) => Record<string, { wins: number; losses: number; winRate: number }>;
+  getHeadToHead: (teamIdA: string, teamIdB: string, season?: number) => {
     teamAWins: number;
     teamBWins: number;
     matches: MatchResult[];
   };
-  getTeamAverageRoundDiff: (teamId: string) => number;
-  getTeamClutchStats: (teamId: string) => {
+  getTeamAverageRoundDiff: (teamId: string, season?: number) => number;
+  getTeamClutchStats: (teamId: string, season?: number) => {
     totalAttempts: number;
     wins: number;
     winRate: number;
     byPlayer: Record<string, { attempts: number; wins: number }>;
   };
-  getTeamPlayerAggregateStats: (teamId: string) => Record<string, {
+  getTeamPlayerAggregateStats: (teamId: string, season?: number) => Record<string, {
     playerId: string;
     maps: number;
     totalKills: number;
@@ -115,19 +115,25 @@ export const createMatchSlice: StateCreator<
 
   getResult: (matchId) => get().results[matchId],
 
-  getMatchesByTeam: (teamId) =>
-    Object.values(get().matches).filter(
+  getMatchesByTeam: (teamId, season) => {
+    const matches = Object.values(get().matches).filter(
       (match) => match.teamAId === teamId || match.teamBId === teamId
-    ),
+    );
+    if (season === undefined) return matches;
+    return matches.filter((match) => match.season === season);
+  },
 
-  getTeamMatchHistory: (teamId) => {
+  getTeamMatchHistory: (teamId, season) => {
     const { matches, results } = get();
-    return Object.values(matches)
-      .filter(
-        (match) =>
-          match.status === 'completed' &&
-          (match.teamAId === teamId || match.teamBId === teamId)
-      )
+    let filteredMatches = Object.values(matches).filter(
+      (match) =>
+        match.status === 'completed' &&
+        (match.teamAId === teamId || match.teamBId === teamId)
+    );
+    if (season !== undefined) {
+      filteredMatches = filteredMatches.filter((match) => match.season === season);
+    }
+    return filteredMatches
       .map((match) => results[match.id])
       .filter((result): result is MatchResult => result !== undefined);
   },
@@ -141,33 +147,39 @@ export const createMatchSlice: StateCreator<
       )
       .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate)),
 
-  getCompletedMatches: (teamId) =>
-    Object.values(get().matches)
-      .filter(
-        (match) =>
-          match.status === 'completed' &&
-          (match.teamAId === teamId || match.teamBId === teamId)
-      )
-      .sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate)),
+  getCompletedMatches: (teamId, season) => {
+    let matches = Object.values(get().matches).filter(
+      (match) =>
+        match.status === 'completed' &&
+        (match.teamAId === teamId || match.teamBId === teamId)
+    );
+    if (season !== undefined) {
+      matches = matches.filter((match) => match.season === season);
+    }
+    return matches.sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate));
+  },
 
   getAllMatches: () => Object.values(get().matches),
 
-  // Stats selectors
-  getTeamWinRate: (teamId) => {
-    const history = get().getTeamMatchHistory(teamId);
+  // Stats selectors (all support optional season filtering)
+  getTeamWinRate: (teamId, season) => {
+    const history = get().getTeamMatchHistory(teamId, season);
     if (history.length === 0) return 0;
     const wins = history.filter((r) => r.winnerId === teamId).length;
     return (wins / history.length) * 100;
   },
 
-  getTeamRecentForm: (teamId, count = 5) => {
-    const completedMatches = Object.values(get().matches)
+  getTeamRecentForm: (teamId, count = 5, season) => {
+    let completedMatches = Object.values(get().matches)
       .filter(
         (m) =>
           m.status === 'completed' &&
           (m.teamAId === teamId || m.teamBId === teamId)
-      )
-      .sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate));
+      );
+    if (season !== undefined) {
+      completedMatches = completedMatches.filter((m) => m.season === season);
+    }
+    completedMatches = completedMatches.sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate));
 
     return completedMatches.slice(0, count).map((match) => {
       const result = get().results[match.id];
@@ -175,8 +187,8 @@ export const createMatchSlice: StateCreator<
     });
   },
 
-  getTeamMapStats: (teamId) => {
-    const history = get().getTeamMatchHistory(teamId);
+  getTeamMapStats: (teamId, season) => {
+    const history = get().getTeamMatchHistory(teamId, season);
     const mapStats: Record<string, { wins: number; losses: number; winRate: number }> = {};
 
     for (const result of history) {
@@ -210,15 +222,18 @@ export const createMatchSlice: StateCreator<
     return mapStats;
   },
 
-  getHeadToHead: (teamIdA, teamIdB) => {
+  getHeadToHead: (teamIdA, teamIdB, season) => {
     const { matches, results } = get();
-    const h2hMatches = Object.values(matches)
-      .filter(
-        (m) =>
-          m.status === 'completed' &&
-          ((m.teamAId === teamIdA && m.teamBId === teamIdB) ||
-            (m.teamAId === teamIdB && m.teamBId === teamIdA))
-      )
+    let filteredMatches = Object.values(matches).filter(
+      (m) =>
+        m.status === 'completed' &&
+        ((m.teamAId === teamIdA && m.teamBId === teamIdB) ||
+          (m.teamAId === teamIdB && m.teamBId === teamIdA))
+    );
+    if (season !== undefined) {
+      filteredMatches = filteredMatches.filter((m) => m.season === season);
+    }
+    const h2hMatches = filteredMatches
       .map((m) => results[m.id])
       .filter((r): r is MatchResult => r !== undefined);
 
@@ -228,8 +243,8 @@ export const createMatchSlice: StateCreator<
     return { teamAWins, teamBWins, matches: h2hMatches };
   },
 
-  getTeamAverageRoundDiff: (teamId) => {
-    const history = get().getTeamMatchHistory(teamId);
+  getTeamAverageRoundDiff: (teamId, season) => {
+    const history = get().getTeamMatchHistory(teamId, season);
     if (history.length === 0) return 0;
 
     let totalRoundDiff = 0;
@@ -250,8 +265,8 @@ export const createMatchSlice: StateCreator<
     return mapCount > 0 ? totalRoundDiff / mapCount : 0;
   },
 
-  getTeamClutchStats: (teamId) => {
-    const history = get().getTeamMatchHistory(teamId);
+  getTeamClutchStats: (teamId, season) => {
+    const history = get().getTeamMatchHistory(teamId, season);
     const stats = {
       totalAttempts: 0,
       wins: 0,
@@ -288,8 +303,8 @@ export const createMatchSlice: StateCreator<
     return stats;
   },
 
-  getTeamPlayerAggregateStats: (teamId) => {
-    const history = get().getTeamMatchHistory(teamId);
+  getTeamPlayerAggregateStats: (teamId, season) => {
+    const history = get().getTeamMatchHistory(teamId, season);
     const playerStats: Record<string, {
       playerId: string;
       maps: number;

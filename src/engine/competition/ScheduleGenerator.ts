@@ -284,8 +284,9 @@ export class ScheduleGenerator {
 
   /**
    * Generate Match entities from tournament bracket
+   * @param season - Season number for the matches (defaults to 1)
    */
-  private generateMatchesFromTournament(tournament: Tournament): Match[] {
+  private generateMatchesFromTournament(tournament: Tournament, season: number = 1): Match[] {
     const matches: Match[] = [];
     let matchIndex = 0;
 
@@ -300,6 +301,7 @@ export class ScheduleGenerator {
               scheduledDate: bracketMatch.scheduledDate || tournament.startDate,
               status: 'scheduled',
               tournamentId: tournament.id,
+              season,
             });
           }
         }

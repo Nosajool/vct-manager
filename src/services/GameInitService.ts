@@ -163,6 +163,7 @@ export class GameInitService {
             scheduledDate: event.date,
             status: 'scheduled',
             tournamentId: data.tournamentId,
+            season: store.calendar.currentSeason,
           };
           store.addMatch(match);
           tournamentMatchCount++;

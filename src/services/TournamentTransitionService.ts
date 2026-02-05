@@ -384,6 +384,7 @@ export class TournamentTransitionService {
           scheduledDate: match.scheduledDate || tournament.startDate,
           status: 'scheduled',
           tournamentId: tournament.id,
+          season: state.calendar.currentSeason,
         };
 
         state.addMatch(matchEntity);
@@ -675,6 +676,7 @@ export class TournamentTransitionService {
             scheduledDate: bracketMatch.scheduledDate || tournament.startDate,
             status: 'scheduled',
             tournamentId: tournament.id,
+            season: state.calendar.currentSeason,
           };
 
           state.addMatch(match);
@@ -702,6 +704,7 @@ export class TournamentTransitionService {
           scheduledDate: gf.scheduledDate || tournament.endDate,
           status: 'scheduled',
           tournamentId: tournament.id,
+          season: state.calendar.currentSeason,
         };
         state.addMatch(match);
       }

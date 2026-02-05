@@ -159,6 +159,9 @@ export const useCurrentDate = () =>
 export const useCurrentPhase = () =>
   useGameStore((state) => state.calendar.currentPhase);
 
+export const useCurrentSeason = () =>
+  useGameStore((state) => state.calendar.currentSeason);
+
 export const useActiveView = () =>
   useGameStore((state) => state.activeView);
 
@@ -246,55 +249,56 @@ export const useMatchRoundData = (matchId: string) =>
   useGameStore((state) => state.getMatchRoundData(matchId));
 
 // ============================================
-// Team Stats selector hooks
+// Team Stats selector hooks (all support optional season filtering)
 // ============================================
 
-export const useTeamWinRate = (teamId: string) =>
-  useGameStore((state) => state.getTeamWinRate(teamId));
+export const useTeamWinRate = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamWinRate(teamId, season));
 
-export const useTeamRecentForm = (teamId: string, count = 5) =>
-  useGameStore((state) => state.getTeamRecentForm(teamId, count));
+export const useTeamRecentForm = (teamId: string, count = 5, season?: number) =>
+  useGameStore((state) => state.getTeamRecentForm(teamId, count, season));
 
-export const useTeamMapStats = (teamId: string) =>
-  useGameStore((state) => state.getTeamMapStats(teamId));
+export const useTeamMapStats = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamMapStats(teamId, season));
 
-export const useHeadToHead = (teamIdA: string, teamIdB: string) =>
-  useGameStore((state) => state.getHeadToHead(teamIdA, teamIdB));
+export const useHeadToHead = (teamIdA: string, teamIdB: string, season?: number) =>
+  useGameStore((state) => state.getHeadToHead(teamIdA, teamIdB, season));
 
-export const useTeamAverageRoundDiff = (teamId: string) =>
-  useGameStore((state) => state.getTeamAverageRoundDiff(teamId));
+export const useTeamAverageRoundDiff = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamAverageRoundDiff(teamId, season));
 
-export const useTeamClutchStats = (teamId: string) =>
-  useGameStore((state) => state.getTeamClutchStats(teamId));
+export const useTeamClutchStats = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamClutchStats(teamId, season));
 
-export const useTeamPlayerAggregateStats = (teamId: string) =>
-  useGameStore((state) => state.getTeamPlayerAggregateStats(teamId));
+export const useTeamPlayerAggregateStats = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamPlayerAggregateStats(teamId, season));
 
-export const useTeamMatchHistory = (teamId: string) =>
-  useGameStore((state) => state.getTeamMatchHistory(teamId));
+export const useTeamMatchHistory = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getTeamMatchHistory(teamId, season));
 
 export const useUpcomingMatches = (teamId: string) =>
   useGameStore((state) => state.getUpcomingMatches(teamId));
 
-export const useCompletedMatches = (teamId: string) =>
-  useGameStore((state) => state.getCompletedMatches(teamId));
+export const useCompletedMatches = (teamId: string, season?: number) =>
+  useGameStore((state) => state.getCompletedMatches(teamId, season));
 
 /**
  * Comprehensive team stats hook
  * Combines multiple stats into a single object for easy consumption
+ * @param season - Optional season number for filtering (undefined = all seasons)
  */
-export const useTeamStats = (teamId: string) =>
+export const useTeamStats = (teamId: string, season?: number) =>
   useGameStore((state) => {
     const team = state.teams[teamId];
     if (!team) return null;
 
-    const matchHistory = state.getTeamMatchHistory(teamId);
-    const winRate = state.getTeamWinRate(teamId);
-    const recentForm = state.getTeamRecentForm(teamId, 5);
-    const mapStats = state.getTeamMapStats(teamId);
-    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId);
-    const clutchStats = state.getTeamClutchStats(teamId);
-    const playerStats = state.getTeamPlayerAggregateStats(teamId);
+    const matchHistory = state.getTeamMatchHistory(teamId, season);
+    const winRate = state.getTeamWinRate(teamId, season);
+    const recentForm = state.getTeamRecentForm(teamId, 5, season);
+    const mapStats = state.getTeamMapStats(teamId, season);
+    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId, season);
+    const clutchStats = state.getTeamClutchStats(teamId, season);
+    const playerStats = state.getTeamPlayerAggregateStats(teamId, season);
 
     return {
       team,
@@ -314,8 +318,9 @@ export const useTeamStats = (teamId: string) =>
 
 /**
  * Player team stats hook - shorthand for useTeamStats with player's team
+ * @param season - Optional season number for filtering (undefined = all seasons)
  */
-export const usePlayerTeamStats = () =>
+export const usePlayerTeamStats = (season?: number) =>
   useGameStore((state) => {
     const teamId = state.playerTeamId;
     if (!teamId) return null;
@@ -323,13 +328,13 @@ export const usePlayerTeamStats = () =>
     const team = state.teams[teamId];
     if (!team) return null;
 
-    const matchHistory = state.getTeamMatchHistory(teamId);
-    const winRate = state.getTeamWinRate(teamId);
-    const recentForm = state.getTeamRecentForm(teamId, 5);
-    const mapStats = state.getTeamMapStats(teamId);
-    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId);
-    const clutchStats = state.getTeamClutchStats(teamId);
-    const playerStats = state.getTeamPlayerAggregateStats(teamId);
+    const matchHistory = state.getTeamMatchHistory(teamId, season);
+    const winRate = state.getTeamWinRate(teamId, season);
+    const recentForm = state.getTeamRecentForm(teamId, 5, season);
+    const mapStats = state.getTeamMapStats(teamId, season);
+    const avgRoundDiff = state.getTeamAverageRoundDiff(teamId, season);
+    const clutchStats = state.getTeamClutchStats(teamId, season);
+    const playerStats = state.getTeamPlayerAggregateStats(teamId, season);
 
     return {
       team,

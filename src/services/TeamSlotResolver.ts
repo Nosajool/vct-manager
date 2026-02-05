@@ -414,6 +414,7 @@ export class TeamSlotResolver {
           scheduledDate: match.scheduledDate,
           status: 'scheduled',
           tournamentId,
+          season: state.calendar.currentSeason,
         };
         state.addMatch(matchEntity);
       }
@@ -563,6 +564,7 @@ export class TeamSlotResolver {
             scheduledDate: match.scheduledDate || tournament.startDate,
             status: 'scheduled',
             tournamentId,
+            season: state.calendar.currentSeason,
           };
           state.addMatch(matchEntity);
         }

@@ -96,8 +96,12 @@ export class MatchService {
     teamAId: string,
     teamBId: string,
     scheduledDate: string,
-    tournamentId?: string
+    tournamentId?: string,
+    season?: number
   ): Match {
+    const state = useGameStore.getState();
+    const matchSeason = season ?? state.calendar.currentSeason;
+
     const match: Match = {
       id: `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       teamAId,
@@ -105,9 +109,10 @@ export class MatchService {
       scheduledDate,
       status: 'scheduled',
       tournamentId,
+      season: matchSeason,
     };
 
-    useGameStore.getState().addMatch(match);
+    state.addMatch(match);
     return match;
   }
 
