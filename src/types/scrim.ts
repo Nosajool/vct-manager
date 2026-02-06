@@ -171,6 +171,16 @@ export interface WeeklyScrimTracker {
   partnersUsedThisWeek: string[]; // Track variety
 }
 
+/**
+ * Result of scrim eligibility check
+ */
+export interface ScrimEligibilityCheck {
+  canScrim: boolean;
+  scrimsUsed: number;
+  reason?: string;
+  failedChecks: Array<'weekly_limit' | 'match_day' | 'player_count'>;
+}
+
 // ============================================
 // Scrim Constants
 // ============================================

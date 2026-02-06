@@ -12,6 +12,7 @@ import type {
   ScrimResult,
   ScrimRelationship,
   WeeklyScrimTracker,
+  ScrimEligibilityCheck,
 } from '../types';
 import { SCRIM_CONSTANTS } from '../types/scrim';
 
@@ -39,10 +40,10 @@ export class ScrimService {
       return { success: false, error: 'No player team found' };
     }
 
-    // Check weekly limit
-    const weeklyCheck = this.checkWeeklyLimit();
-    if (!weeklyCheck.canScrim) {
-      return { success: false, error: weeklyCheck.reason };
+    // Comprehensive eligibility check
+    const eligibilityCheck = this.checkScrimEligibility();
+    if (!eligibilityCheck.canScrim) {
+      return { success: false, error: eligibilityCheck.reason || 'Cannot schedule scrim' };
     }
 
     // Get player team and players
@@ -425,6 +426,78 @@ export class ScrimService {
     }
 
     return { canScrim: true, scrimsUsed };
+  }
+
+  /**
+   * Comprehensive eligibility check for scheduling scrims
+   * Checks weekly limit, match day restrictions, and player requirements
+   */
+  checkScrimEligibility(): ScrimEligibilityCheck {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    const failedChecks: Array<'weekly_limit' | 'match_day' | 'player_count'> = [];
+
+    // Check 1: Player team exists and has enough players
+    if (!playerTeamId) {
+      return {
+        canScrim: false,
+        scrimsUsed: 0,
+        reason: 'No player team found',
+        failedChecks: ['player_count'],
+      };
+    }
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) {
+      return {
+        canScrim: false,
+        scrimsUsed: 0,
+        reason: 'Player team not found',
+        failedChecks: ['player_count'],
+      };
+    }
+
+    const playerCount = playerTeam.playerIds.length;
+    if (playerCount < 5) {
+      failedChecks.push('player_count');
+    }
+
+    // Check 2: Match day restriction (can't scrim on match days)
+    const todaysActivities = state.getTodaysActivities();
+    const hasMatchToday = todaysActivities.some((e) => {
+      if (e.type !== 'match' || e.processed) return false;
+      const data = e.data as { homeTeamId?: string; awayTeamId?: string };
+      return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+    });
+
+    if (hasMatchToday) {
+      failedChecks.push('match_day');
+    }
+
+    // Check 3: Weekly limit
+    const weeklyCheck = this.checkWeeklyLimit();
+    if (!weeklyCheck.canScrim) {
+      failedChecks.push('weekly_limit');
+    }
+
+    // Determine primary reason for failure
+    let reason: string | undefined;
+    if (failedChecks.length > 0) {
+      if (failedChecks.includes('match_day')) {
+        reason = 'Cannot schedule scrims on match days';
+      } else if (failedChecks.includes('player_count')) {
+        reason = `Need at least 5 players on roster (current: ${playerCount})`;
+      } else if (failedChecks.includes('weekly_limit')) {
+        reason = weeklyCheck.reason;
+      }
+    }
+
+    return {
+      canScrim: failedChecks.length === 0,
+      scrimsUsed: weeklyCheck.scrimsUsed,
+      reason,
+      failedChecks,
+    };
   }
 
   /**

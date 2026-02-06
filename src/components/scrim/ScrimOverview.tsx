@@ -41,9 +41,9 @@ export function ScrimOverview() {
   const relationshipsWithEffectiveness = scrimService.getRelationshipsByEffectiveness();
   const recommendations = scrimService.getRecommendations();
 
-  // Get weekly scrim limit status
-  const weeklyStatus = scrimService.checkWeeklyLimit();
-  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - weeklyStatus.scrimsUsed;
+  // Get comprehensive eligibility status
+  const eligibility = scrimService.checkScrimEligibility();
+  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - eligibility.scrimsUsed;
 
   // Helper to get team name
   const getTeamName = (teamId: string): string => {
@@ -57,21 +57,26 @@ export function ScrimOverview() {
   return (
     <div className="space-y-6">
       {/* Schedule Scrim Button */}
-      <div className="flex justify-end">
+      <div className="flex flex-col items-end gap-2">
         <button
           onClick={() => setIsScrimModalOpen(true)}
-          disabled={!weeklyStatus.canScrim}
+          disabled={!eligibility.canScrim}
           className={`
             px-4 py-2 rounded-lg font-medium transition-all
-            ${weeklyStatus.canScrim
+            ${eligibility.canScrim
               ? 'bg-vct-red hover:bg-vct-red/80 text-white'
               : 'bg-vct-gray/20 text-vct-gray cursor-not-allowed'}
           `}
         >
-          {weeklyStatus.canScrim
+          {eligibility.canScrim
             ? `Schedule Scrim (${scrimsRemaining} of ${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} remaining)`
-            : `Weekly Limit Reached (${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS}/${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS})`}
+            : 'Schedule Scrim'}
         </button>
+        {!eligibility.canScrim && eligibility.reason && (
+          <p className="text-sm text-vct-gray italic">
+            {eligibility.reason}
+          </p>
+        )}
       </div>
 
       {/* Summary Stats Section */}

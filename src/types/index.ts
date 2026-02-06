@@ -198,6 +198,7 @@ export type {
   ScrimOptions,
   ScrimResult,
   WeeklyScrimTracker,
+  ScrimEligibilityCheck,
 } from './scrim';
 
 export { SCRIM_CONSTANTS } from './scrim';
