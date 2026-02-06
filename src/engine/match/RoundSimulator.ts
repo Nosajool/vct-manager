@@ -115,6 +115,16 @@ export class RoundSimulator {
 
   /**
    * Simulate a single round using the timeline-based system
+   *
+   * ARCHITECTURE:
+   * 1. Buy Phase: BuyPhaseGenerator determines equipment for all players
+   * 2. Combat Simulation: All state changes go through RoundStateMachine
+   * 3. Event Recording: Every action is recorded to the timeline
+   * 4. Validation: Timeline is validated before deriving summary
+   * 5. Summary Derivation: ALL summary data is derived from timeline (no generation)
+   *
+   * KEY PRINCIPLE: The timeline is the source of truth. Summary never generates
+   * data - it only reads and aggregates from timeline events.
    */
   simulateRound(
     roundNumber: number,
@@ -220,7 +230,17 @@ export class RoundSimulator {
       sm.forceEndRound(sm.getCurrentTimestamp(), 'defender', 'time_expired');
     }
 
-    // 10. Derive performance from timeline
+    // 10. Validate timeline before deriving summary
+    const validationResult = sm.validateTimeline();
+    if (!validationResult.isValid) {
+      console.warn('[RoundSimulator] Timeline validation errors:', validationResult.errors);
+    }
+    if (validationResult.warnings.length > 0) {
+      console.warn('[RoundSimulator] Timeline validation warnings:', validationResult.warnings);
+    }
+
+    // 11. Derive performance from timeline
+    // TODO: Replace with SummaryCalculator once implemented (vct-manager-jnl)
     const allPlayers = [...teamAContext.players, ...teamBContext.players];
     const playerPerformance = this.derivePerformance(sm, allPlayers, allLoadouts);
 
@@ -230,7 +250,8 @@ export class RoundSimulator {
       if (perf) perf.usedUlt = true;
     }
 
-    // 11. Build backward-compatible result
+    // 13. Build backward-compatible result from timeline
+    // All summary data is derived from timeline - no independent generation
     const timeline = sm.getTimeline();
     const winner = sm.getWinner();
     const teamAWins = (winner === 'attacker' && teamAContext.isAttacking) ||
@@ -239,7 +260,7 @@ export class RoundSimulator {
     const winCondition = this.mapWinCondition(sm.getWinCondition()!);
     const spikePlanted = sm.isSpikePlanted();
     const firstBlood = this.extractFirstBlood(timeline, teamAContext, teamBContext);
-    const clutchAttempt = this.deriveClutchInfo(sm, playerPerformance, timeline);
+    const clutchAttempt = this.deriveClutchInfo(sm, playerPerformance, timeline, teamAContext, teamBContext);
 
     // Extract planter/defuser IDs from timeline
     const plantEvent = timeline.find(e => e.type === 'plant_complete');
@@ -251,12 +272,12 @@ export class RoundSimulator {
     const playerKillsA = teamAContext.players.map(p => playerPerformance.get(p.id)?.kills || 0);
     const playerKillsB = teamBContext.players.map(p => playerPerformance.get(p.id)?.kills || 0);
 
-    // 12. Build legacy damage events
+    // 14. Build legacy damage events from timeline
     const damageEvents = this.buildLegacyDamageEvents(timeline, allPlayers);
     damageEvents.allEvents = this.buildLegacyRoundEvents(timeline, allPlayers, allLoadouts,
       spikePlanted, planterId, defuserId, winCondition);
 
-    // 13. Update economy
+    // 15. Update economy
     const updatedEconomyA = this.updateEconomy(
       teamAContext.economy, teamAWins, playerKillsA,
       spikePlanted && teamAContext.isAttacking,
@@ -270,7 +291,7 @@ export class RoundSimulator {
       buyTypeB
     );
 
-    // 14. Update ults
+    // 16. Update ults
     const updatedUltsA = this.updateUlts(
       teamAContext.ultState, playerKillsA,
       spikePlanted && teamAContext.isAttacking,
@@ -284,7 +305,7 @@ export class RoundSimulator {
       planterId, defuserId, ultDecisionB.ultsToUse
     );
 
-    // 15. Build round info
+    // 17. Build round info
     const roundInfo: EnhancedRoundInfo = {
       roundNumber,
       winner: teamAWins ? 'teamA' : 'teamB',
@@ -1181,68 +1202,78 @@ export class RoundSimulator {
 
   /**
    * Derive clutch info from timeline kill sequence
+   * Analyzes the actual kill timeline to detect 1vN situations
+   * PRINCIPLE: This method only reads from the timeline, never generates data
    */
   private deriveClutchInfo(
     sm: RoundStateMachine,
     performance: Map<string, RoundPlayerPerformance>,
-    timeline: TimelineEvent[]
+    timeline: TimelineEvent[],
+    teamAContext: TeamRoundContext,
+    teamBContext: TeamRoundContext
   ): ClutchAttempt | null {
-    // Look for 1vN situations in the kill sequence
+    // Get all kill events
     const kills = timeline.filter(e => e.type === 'kill') as SimKillEvent[];
-    if (kills.length < 3) return null;
+    if (kills.length < 2) return null;
 
-    // Track alive counts through the kill sequence
-    let aliveAttackers = sm.getAliveAttackers().length +
-      kills.filter(k => {
-        const state = sm.getPlayerState(k.victimId);
-        // count kills of attackers to reconstruct
-        return state === undefined; // already dead at end
-      }).length;
-    let aliveDefenders = sm.getAliveDefenders().length +
-      kills.filter(k => {
-        const state = sm.getPlayerState(k.victimId);
-        return state === undefined;
-      }).length;
+    // Reconstruct alive count after each kill to find 1vN situations
+    // Start with initial team sizes (5v5)
+    const teamAIds = new Set(teamAContext.players.map(p => p.id));
+    const teamBIds = new Set(teamBContext.players.map(p => p.id));
 
-    // Simplified: check if any player had a 1vN situation based on final performance
-    // Find a player who got multiple kills and whose team had many deaths
-    let clutchPlayer: string | null = null;
-    let clutchSituation: '1v1' | '1v2' | '1v3' | '1v4' | '1v5' = '1v1';
-    let clutchWon = false;
+    let aliveA = new Set(teamAIds);
+    let aliveB = new Set(teamBIds);
 
-    // Only ~15% of rounds have clutch attempts
-    if (Math.random() > 0.15) return null;
+    // Track if we ever entered a 1vN situation
+    let clutchPlayerId: string | null = null;
+    let clutchSituation: '1v1' | '1v2' | '1v3' | '1v4' | '1v5' | null = null;
 
-    // Find a player with kills who survived (potential clutcher)
-    const potentialClutchers: Array<{ id: string; kills: number }> = [];
-    performance.forEach((perf, id) => {
-      if (perf.kills >= 1 && perf.survivedRound) {
-        potentialClutchers.push({ id, kills: perf.kills });
+    // Scan through kills chronologically
+    for (let i = 0; i < kills.length; i++) {
+      const kill = kills[i];
+
+      // Remove victim from alive set
+      if (aliveA.has(kill.victimId)) {
+        aliveA.delete(kill.victimId);
+      } else if (aliveB.has(kill.victimId)) {
+        aliveB.delete(kill.victimId);
       }
-    });
 
-    if (potentialClutchers.length === 0) return null;
+      // After this kill, check for 1vN situation
+      const aCount = aliveA.size;
+      const bCount = aliveB.size;
 
-    // Pick the player with most kills as the clutcher
-    potentialClutchers.sort((a, b) => b.kills - a.kills);
-    clutchPlayer = potentialClutchers[0].id;
+      // 1vN situation detected - only record the first clutch situation
+      if (aCount === 1 && bCount >= 1 && bCount <= 5 && !clutchPlayerId) {
+        // Team A player in 1vN
+        const [playerId] = Array.from(aliveA);
+        clutchPlayerId = playerId;
+        clutchSituation = `1v${bCount}` as '1v1' | '1v2' | '1v3' | '1v4' | '1v5';
+      } else if (bCount === 1 && aCount >= 1 && aCount <= 5 && !clutchPlayerId) {
+        // Team B player in 1vN
+        const [playerId] = Array.from(aliveB);
+        clutchPlayerId = playerId;
+        clutchSituation = `1v${aCount}` as '1v1' | '1v2' | '1v3' | '1v4' | '1v5';
+      }
+    }
 
-    const situations: Array<'1v1' | '1v2' | '1v3' | '1v4' | '1v5'> = ['1v1', '1v2', '1v3', '1v4', '1v5'];
-    const situationWeights = [40, 30, 20, 8, 2];
-    clutchSituation = situations[this.weightedIndexSelect(situationWeights)];
+    // No clutch situation found
+    if (!clutchPlayerId || !clutchSituation) {
+      return null;
+    }
 
-    // Clutch success based on player stats
-    const clutcher = [...sm.getAllPlayerStates()].find(p => p.playerId === clutchPlayer);
-    clutchWon = performance.get(clutchPlayer)?.survivedRound || false;
+    // Determine if clutch was won (clutcher survived)
+    const clutchWon = sm.isPlayerAlive(clutchPlayerId);
 
-    const perf = performance.get(clutchPlayer);
+    // Update performance
+    const perf = performance.get(clutchPlayerId);
     if (perf) {
       perf.attemptedClutch = true;
       perf.wonClutch = clutchWon;
     }
 
     return {
-      playerId: clutchPlayer,
+      playerId: clutchPlayerId,
       situation: clutchSituation,
       won: clutchWon,
     };
@@ -1523,22 +1554,6 @@ export class RoundSimulator {
     return candidates[candidates.length - 1].id;
   }
 
-  /**
-   * Weighted index selection
-   */
-  private weightedIndexSelect(weights: number[]): number {
-    const total = weights.reduce((sum, w) => sum + w, 0);
-    let random = Math.random() * total;
-
-    for (let i = 0; i < weights.length; i++) {
-      random -= weights[i];
-      if (random <= 0) {
-        return i;
-      }
-    }
-
-    return weights.length - 1;
-  }
 }
 
 // Export singleton instance
