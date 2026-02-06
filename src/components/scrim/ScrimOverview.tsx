@@ -7,9 +7,12 @@ import { scrimService } from '../../services';
 import { ScrimStatsSummary } from './ScrimStatsSummary';
 import { RelationshipPartnerCard } from './RelationshipPartnerCard';
 import { ScrimRecommendations } from './ScrimRecommendations';
+import { ScrimModal } from './ScrimModal';
+import { SCRIM_CONSTANTS } from '../../types/scrim';
 
 export function ScrimOverview() {
   const [expandedPartner, setExpandedPartner] = useState<string | null>(null);
+  const [isScrimModalOpen, setIsScrimModalOpen] = useState(false);
 
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
@@ -38,6 +41,10 @@ export function ScrimOverview() {
   const relationshipsWithEffectiveness = scrimService.getRelationshipsByEffectiveness();
   const recommendations = scrimService.getRecommendations();
 
+  // Get weekly scrim limit status
+  const weeklyStatus = scrimService.checkWeeklyLimit();
+  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - weeklyStatus.scrimsUsed;
+
   // Helper to get team name
   const getTeamName = (teamId: string): string => {
     const t1Team = teams[teamId];
@@ -49,6 +56,24 @@ export function ScrimOverview() {
 
   return (
     <div className="space-y-6">
+      {/* Schedule Scrim Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setIsScrimModalOpen(true)}
+          disabled={!weeklyStatus.canScrim}
+          className={`
+            px-4 py-2 rounded-lg font-medium transition-all
+            ${weeklyStatus.canScrim
+              ? 'bg-vct-red hover:bg-vct-red/80 text-white'
+              : 'bg-vct-gray/20 text-vct-gray cursor-not-allowed'}
+          `}
+        >
+          {weeklyStatus.canScrim
+            ? `Schedule Scrim (${scrimsRemaining} of ${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} remaining)`
+            : `Weekly Limit Reached (${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS}/${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS})`}
+        </button>
+      </div>
+
       {/* Summary Stats Section */}
       <ScrimStatsSummary stats={stats} />
 
@@ -110,6 +135,16 @@ export function ScrimOverview() {
 
       {/* Recommendations */}
       <ScrimRecommendations recommendations={recommendations} />
+
+      {/* Scrim Modal */}
+      <ScrimModal
+        isOpen={isScrimModalOpen}
+        onClose={() => setIsScrimModalOpen(false)}
+        onScrimComplete={() => {
+          // Modal will close automatically and stats will refresh via store updates
+          setIsScrimModalOpen(false);
+        }}
+      />
     </div>
   );
 }
