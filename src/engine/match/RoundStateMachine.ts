@@ -17,6 +17,7 @@ import type {
   SpikeDropEvent,
   SpikePickupEvent,
   SpikeDetonationEvent,
+  AbilityUseEvent,
   RoundEndEvent,
   HealEvent,
   ValidationResult,
@@ -923,6 +924,65 @@ export class RoundStateMachine {
       ability,
       amount: actualHeal,
       targetHpAfter: target.hp,
+    };
+    this.timeline.push(event);
+
+    return { isValid: true, errors: [], warnings };
+  }
+
+  // ============================================
+  // STATE MUTATIONS - ABILITY USE
+  // ============================================
+
+  /** Record an ability use on the timeline */
+  recordAbilityUse(
+    playerId: string,
+    agentId: string,
+    abilityId: string,
+    abilityName: string,
+    slot: 'basic1' | 'basic2' | 'signature' | 'ultimate',
+    timestamp: number,
+    targets?: string[]
+  ): ValidationResult {
+    const errors: ValidationError[] = [];
+    const warnings: ValidationError[] = [];
+
+    if (!this.isPlayerAlive(playerId)) {
+      errors.push({
+        eventId: '',
+        eventType: 'ability_use',
+        timestamp,
+        rule: 'player_alive',
+        message: `Player ${playerId} is not alive`,
+        severity: 'error',
+      });
+      return { isValid: false, errors, warnings };
+    }
+
+    if (this.roundEnded) {
+      errors.push({
+        eventId: '',
+        eventType: 'ability_use',
+        timestamp,
+        rule: 'round_active',
+        message: 'Cannot use ability after round has ended',
+        severity: 'error',
+      });
+      return { isValid: false, errors, warnings };
+    }
+
+    this.currentTimestamp = timestamp;
+
+    const event: AbilityUseEvent = {
+      id: this.generateEventId('ability_use'),
+      type: 'ability_use',
+      timestamp,
+      playerId,
+      agentId,
+      abilityId,
+      abilityName,
+      slot,
+      targets,
     };
     this.timeline.push(event);
 

@@ -4,6 +4,7 @@
 import type { BuyType } from '../../types';
 import { WEAPON_PROFILES, type WeaponProfile, type HitLocation } from '../../types/match';
 import { SHIELDS } from '../../data/shields';
+import { WEAPONS } from '../../data/weapons';
 import type { PlayerRoundState, HitBreakdown } from '../../types/round-simulation';
 
 /**
@@ -397,6 +398,34 @@ export class WeaponEngine {
    */
   shouldMeleeAttack(): boolean {
     return Math.random() < 1 / 5000;
+  }
+
+  /**
+   * Bridge from WeaponId string to WeaponProfile.
+   * BuyPhaseGenerator outputs lowercase WeaponId strings (e.g. 'vandal'),
+   * while calculateSimDamage and old systems use WeaponProfile objects.
+   */
+  getWeaponProfileById(weaponId: string): WeaponProfile {
+    // Try new data first (lowercase keys)
+    const weaponData = WEAPONS[weaponId.toLowerCase()];
+    if (weaponData) {
+      return {
+        name: weaponData.name,
+        category: weaponData.category,
+        cost: weaponData.cost,
+        damageRanges: [...weaponData.damageRanges],
+      };
+    }
+
+    // Fall back to old WEAPON_PROFILES (PascalCase keys)
+    const profile = WEAPON_PROFILES[weaponId] ||
+                    WEAPON_PROFILES[weaponId.charAt(0).toUpperCase() + weaponId.slice(1)];
+    if (profile) {
+      return profile;
+    }
+
+    // Ultimate fallback: Classic
+    return WEAPON_PROFILES.Classic;
   }
 }
 
