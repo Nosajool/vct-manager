@@ -320,6 +320,8 @@ export class RoundSimulator {
       playerArmorStates: this.buildPlayerArmorStates(sm),
       teamAScore: currentScoreA + (teamAWins ? 1 : 0),
       teamBScore: currentScoreB + (teamAWins ? 0 : 1),
+      timeline,
+      buyPhase: buyResult,
     };
 
     return {

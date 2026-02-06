@@ -2,6 +2,7 @@
 // Based on VCT Manager Technical Specification
 
 import type { BuyType } from './strategy';
+import type { TimelineEvent, BuyPhaseResult } from './round-simulation';
 
 export type MatchStatus = 'scheduled' | 'in_progress' | 'completed';
 
@@ -253,6 +254,12 @@ export interface EnhancedRoundInfo {
   /** Running scores */
   teamAScore: number;
   teamBScore: number;
+
+  /** Full timeline of all events (new timeline system) */
+  timeline?: TimelineEvent[];
+
+  /** Buy phase details (new timeline system) */
+  buyPhase?: BuyPhaseResult;
 }
 
 export interface PlayerMapPerformance {
