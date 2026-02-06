@@ -302,13 +302,8 @@ export const ASSIST_CONSTANTS = {
   /** Multiplier for utility damage in assist calculation */
   UTILITY_DAMAGE_MULTIPLIER: 0.8,
 
-  /** Armor absorption values by shield type */
-  ARMOR_ABSORPTION: {
-    LIGHT_SHIELD: 25,
-    HEAVY_SHIELD: 50,
-    REGEN_SHIELD: 25,
-    REGEN_POOL: 25,
-  } as const,
+  // ARMOR_ABSORPTION has been moved to src/data/shields.ts
+  // Import SHIELDS from there instead: import { SHIELDS } from '../../data/shields';
 
   /** Probability of melee attack occurring in a round */
   MELEE_CHANCE: 1 / 5000,

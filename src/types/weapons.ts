@@ -48,50 +48,8 @@ export interface Weapon {
   headshotTier: HeadshotTier;
 }
 
-/**
- * Baseline headshot percentages from Radiant player data
- */
-export const BASELINE_HEADSHOT_RATES: Record<HeadshotTier, number> = {
-  'S': 0.271,  // Operator: 27.1%
-  'A': 0.325,  // Rifles average: (33.2 + 30.5) / 2 = 31.85%, adjusted to 32.5%
-  'B': 0.365,  // SMGs/Machine: 35-38% estimated
-  'C': 0.425,  // Shotguns: 40-45% at close range
-  'D': 0.332,  // Sidearms: 33.2% (Sheriff as baseline)
-  'F': 0.0,    // Melee: 0%
-};
-
-/**
- * Headshot rate modifiers based on player mechanics (0-100)
- */
-export const MECHANICS_MULTIPLIER = {
-  // Lower bound (15% at 50 mechanics for optimal weapons)
-  getLowMechanics: (tier: HeadshotTier): number => {
-    const baseline = BASELINE_HEADSHOT_RATES[tier];
-    return tier === 'F' ? 0 : 0.15 / baseline; // ~0.46x for tier A at 15%
-  },
-
-  // Upper bound (45% at 100 mechanics for optimal weapons)
-  getHighMechanics: (tier: HeadshotTier): number => {
-    const baseline = BASELINE_HEADSHOT_RATES[tier];
-    return tier === 'F' ? 0 : 0.45 / baseline; // ~1.38x for tier A at 45%
-  },
-
-  // Calculate multiplier based on mechanics stat
-  calculateMultiplier: (mechanics: number, tier: HeadshotTier): number => {
-    if (tier === 'F') return 0;
-
-    const lowMult = MECHANICS_MULTIPLIER.getLowMechanics(tier);
-    const highMult = MECHANICS_MULTIPLIER.getHighMechanics(tier);
-
-    // Linear interpolation from 50-100 mechanics
-    if (mechanics <= 50) {
-      return lowMult * (mechanics / 50);
-    } else {
-      const normalized = (mechanics - 50) / 50; // 0-1
-      return lowMult + (highMult - lowMult) * normalized;
-    }
-  }
-};
+// BASELINE_HEADSHOT_RATES and MECHANICS_MULTIPLIER have been moved to src/engine/weapon/WeaponDatabase.ts
+// Import from there instead: import { BASELINE_HEADSHOT_RATES, MECHANICS_MULTIPLIER } from '../../engine/weapon/WeaponDatabase';
 
 /**
  * Weapon usage statistics and proficiency

@@ -2,7 +2,8 @@
 // Pure class with no React/store dependencies
 
 import type { BuyType } from '../../types';
-import { WEAPON_PROFILES, type WeaponProfile, type HitLocation } from '../../types/match';
+import { WEAPON_PROFILES, type WeaponProfile } from '../../data/weapons';
+import type { HitLocation } from '../../types/match';
 import { SHIELDS } from '../../data/shields';
 import { WEAPONS } from '../../data/weapons';
 import type { PlayerRoundState, HitBreakdown } from '../../types/round-simulation';
@@ -73,16 +74,6 @@ const BUY_TYPE_WEAPON_PREFERENCES = {
   shield: 'none' | 'light' | 'heavy' | 'regen';
 }>;
 
-/**
- * Shield costs and absorption values
- */
-const SHIELD_DATA = {
-  none: { cost: 0, absorption: 0 },
-  light: { cost: 400, absorption: 25 },
-  heavy: { cost: 1000, absorption: 50 },
-  regen: { cost: 650, absorption: 25 },
-} as const;
-
 export class WeaponEngine {
   /**
    * Generate player loadout based on economy and buy type
@@ -118,8 +109,8 @@ export class WeaponEngine {
 
     // Select shield if budget allows
     let shield: 'none' | 'light' | 'heavy' | 'regen' = preferences.shield;
-    const shieldCost = SHIELD_DATA[shield].cost;
-    
+    const shieldCost = SHIELDS[shield].cost;
+
     if (totalCost + shieldCost > playerCredits) {
       // Can't afford preferred shield, downgrade
       if (shield === 'heavy') {
@@ -270,6 +261,7 @@ export class WeaponEngine {
 
   /**
    * Apply armor calculations and return final damage breakdown
+   * @deprecated Legacy method - uses old absorption model. Use calculateSimDamage for new code.
    */
   private applyArmorAndCalculate(
     baseDamage: number,
@@ -279,7 +271,8 @@ export class WeaponEngine {
     _regenPool: number,
     currentHp: number
   ): DamageResult {
-    const shieldAbsorption = SHIELD_DATA[shieldType].absorption;
+    // Legacy absorption: use maxHp as absorption value for backward compatibility
+    const shieldAbsorption = SHIELDS[shieldType].maxHp;
     const shieldDamage = Math.min(baseDamage, shieldAbsorption);
     let hpDamage = Math.max(0, baseDamage - shieldAbsorption);
 

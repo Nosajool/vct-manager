@@ -713,3 +713,41 @@ export function getAllWeaponIds(): string[] {
 export function getAllWeapons(): WeaponData[] {
   return Object.values(WEAPONS);
 }
+
+// ============================================
+// BACKWARD COMPATIBILITY
+// ============================================
+
+/**
+ * Legacy WeaponProfile interface for backward compatibility
+ */
+export interface WeaponProfile {
+  name: string;
+  category: 'rifle' | 'smg' | 'sniper' | 'shotgun' | 'heavy' | 'sidearm' | 'melee';
+  cost: number;
+  damageRanges: {
+    minDistance: number;
+    maxDistance: number;
+    head: number;
+    body: number;
+    leg: number;
+  }[];
+}
+
+/**
+ * Legacy WEAPON_PROFILES export for backward compatibility
+ * Maps WeaponData to the old WeaponProfile format with PascalCase keys
+ * @deprecated Use WEAPONS instead
+ */
+export const WEAPON_PROFILES: Record<string, WeaponProfile> = Object.entries(WEAPONS).reduce(
+  (acc, [_id, weapon]) => {
+    acc[weapon.name] = {
+      name: weapon.name,
+      category: weapon.category as WeaponProfile['category'],
+      cost: weapon.cost,
+      damageRanges: weapon.damageRanges,
+    };
+    return acc;
+  },
+  {} as Record<string, WeaponProfile>
+);
