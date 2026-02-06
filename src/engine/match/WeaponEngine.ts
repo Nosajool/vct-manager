@@ -3,6 +3,8 @@
 
 import type { BuyType } from '../../types';
 import { WEAPON_PROFILES, type WeaponProfile, type HitLocation } from '../../types/match';
+import { SHIELDS } from '../../data/shields';
+import type { PlayerRoundState, HitBreakdown } from '../../types/round-simulation';
 
 /**
  * Player weapon loadout for a round
@@ -138,6 +140,7 @@ export class WeaponEngine {
 
   /**
    * Calculate damage for a hit with distance-based damage falloff
+   * @deprecated Use calculateSimDamage for new round simulation system
    */
   calculateDamage(
     weapon: WeaponProfile,
@@ -174,6 +177,94 @@ export class WeaponEngine {
     }
 
     return this.applyArmorAndCalculate(baseDamage, hitLocation, targetShield, targetShieldHealth, targetRegenPool, targetHp);
+  }
+
+  /**
+   * Calculate damage for the new round simulation system.
+   * Processes multiple sequential shots against a target, applying proper
+   * shield absorption from shields.ts and returning per-hit breakdowns.
+   */
+  calculateSimDamage(params: {
+    weapon: WeaponProfile;
+    distance: number;
+    targetState: PlayerRoundState;
+    shotCount: number;
+    headshotProbability: number;
+  }): { hits: HitBreakdown[]; targetStateAfter: PlayerRoundState } {
+    const { weapon, distance, shotCount, headshotProbability } = params;
+
+    // Shallow-copy target state so we can mutate across shots
+    const state: PlayerRoundState = {
+      ...params.targetState,
+      abilities: { ...params.targetState.abilities },
+    };
+
+    const hits: HitBreakdown[] = [];
+
+    for (let i = 0; i < shotCount; i++) {
+      if (state.hp <= 0) break;
+
+      const location = this.rollHitLocation(headshotProbability);
+      const baseDamage = this.lookupBaseDamage(weapon, distance, location);
+
+      const shieldData = SHIELDS[state.shieldType];
+      const absorption = shieldData.absorption; // 0.66 for standard, 1.0 for regen, 0 for none
+
+      // Calculate how much the shield tries to absorb
+      const shieldPortion = Math.floor(baseDamage * absorption);
+      const bleedThrough = baseDamage - shieldPortion;
+
+      // Shield can only absorb up to its remaining HP
+      const shieldAbsorbed = Math.min(shieldPortion, state.shieldHp);
+      const shieldExcess = shieldPortion - shieldAbsorbed;
+      const penetrated = shieldAbsorbed > 0 && shieldAbsorbed < shieldPortion;
+
+      // HP damage = bleed-through + any excess the broken shield couldn't absorb
+      let hpDamage = bleedThrough + shieldExcess;
+      hpDamage = Math.min(hpDamage, state.hp);
+
+      // Update running state
+      state.shieldHp -= shieldAbsorbed;
+      state.hp -= hpDamage;
+      if (state.hp <= 0) {
+        state.hp = 0;
+        state.state = 'dead';
+      }
+
+      hits.push({
+        location,
+        baseDamage,
+        shieldAbsorbed,
+        hpDamage,
+        penetrated,
+      });
+    }
+
+    return { hits, targetStateAfter: state };
+  }
+
+  /**
+   * Roll a random hit location based on headshot probability.
+   * Remaining probability is split 85% body / 15% leg.
+   */
+  private rollHitLocation(headshotProbability: number): HitLocation {
+    const roll = Math.random();
+    if (roll < headshotProbability) return 'head';
+    const bodyThreshold = headshotProbability + (1 - headshotProbability) * 0.85;
+    return roll < bodyThreshold ? 'body' : 'leg';
+  }
+
+  /**
+   * Look up base damage for a weapon at a given distance and hit location.
+   * Falls back to the last damage range if distance exceeds all ranges.
+   */
+  private lookupBaseDamage(weapon: WeaponProfile, distance: number, location: HitLocation): number {
+    const damageRange = weapon.damageRanges.find(
+      range => distance >= range.minDistance && distance <= range.maxDistance
+    );
+
+    const range = damageRange ?? weapon.damageRanges[weapon.damageRanges.length - 1];
+    return range[location];
   }
 
   /**
