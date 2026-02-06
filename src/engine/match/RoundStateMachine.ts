@@ -29,6 +29,7 @@ import type {
 } from '../../types/round-simulation';
 
 import { DEFAULT_ROUND_CONFIG } from '../../types/round-simulation';
+import { timelineValidator } from './TimelineValidator';
 
 // ============================================
 // STATE MACHINE INITIALIZATION
@@ -1242,54 +1243,26 @@ export class RoundStateMachine {
     };
   }
 
-  /** Validate the entire timeline */
+  /** Validate the entire timeline using comprehensive TimelineValidator */
   validateTimeline(): ValidationResult {
-    const errors: ValidationError[] = [];
-    const warnings: ValidationError[] = [];
+    // Get initial player states snapshot (reconstruct from current states)
+    const initialStates = Array.from(this.playerStates.values()).map(state => ({
+      ...state,
+      // Reset to initial values for validation
+      state: 'alive' as const,
+      hp: 100,
+      shieldHp: state.shieldType === 'none' ? 0 : state.shieldType === 'light' ? 25 : 50,
+      killsThisRound: 0,
+      damageDealtThisRound: 0,
+      damageTakenThisRound: 0,
+    }));
 
-    // Check for exactly one round end event
-    const roundEndEvents = this.timeline.filter(e => e.type === 'round_end');
-    if (roundEndEvents.length === 0) {
-      warnings.push({
-        eventId: '',
-        eventType: 'round_end',
-        timestamp: this.currentTimestamp,
-        rule: 'has_round_end',
-        message: 'Timeline has no round end event',
-        severity: 'warning',
-      });
-    } else if (roundEndEvents.length > 1) {
-      errors.push({
-        eventId: '',
-        eventType: 'round_end',
-        timestamp: this.currentTimestamp,
-        rule: 'single_round_end',
-        message: `Timeline has ${roundEndEvents.length} round end events`,
-        severity: 'error',
-      });
-    }
-
-    // Check chronological order
-    let lastTimestamp = 0;
-    for (const event of this.timeline) {
-      if (event.timestamp < lastTimestamp) {
-        errors.push({
-          eventId: event.id,
-          eventType: event.type,
-          timestamp: event.timestamp,
-          rule: 'chronological',
-          message: `Event at ${event.timestamp} is before previous event at ${lastTimestamp}`,
-          severity: 'error',
-        });
-      }
-      lastTimestamp = event.timestamp;
-    }
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-      warnings,
-    };
+    // Use comprehensive TimelineValidator
+    return timelineValidator.validate(
+      this.timeline,
+      initialStates,
+      { postPlantTime: this.config.postPlantTime }
+    );
   }
 
   // ============================================
