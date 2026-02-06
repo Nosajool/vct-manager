@@ -1,8 +1,10 @@
 // TeamStatsView Component - Display team statistics and match history
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useGameStore } from '../../store';
-import type { Player, MatchResult, Team } from '../../types';
+import type { Player, MatchResult, Team, Match } from '../../types';
+import { MatchResult as MatchResultModal } from '../match/MatchResult';
+import { getMatchForResult } from '../../utils/matchResultUtils';
 
 interface TeamStatsViewProps {
   teamId?: string;
@@ -241,6 +243,24 @@ function MatchHistorySection({
   teamId: string;
   teams: Record<string, Team>;
 }) {
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleMatchClick = (result: MatchResult) => {
+    const store = useGameStore.getState();
+    const match = getMatchForResult(result, store);
+
+    if (match) {
+      setSelectedMatch(match);
+      setShowModal(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedMatch(null);
+  };
+
   if (matchHistory.length === 0) {
     return (
       <div className="bg-vct-dark border border-vct-gray/20 rounded-lg p-6 text-center">
@@ -250,62 +270,70 @@ function MatchHistorySection({
   }
 
   return (
-    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-vct-gray/20">
-        <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
-          Match History
-        </h3>
-      </div>
-      <div className="divide-y divide-vct-gray/10">
-        {matchHistory.slice(0, 10).map((result) => {
-          const isWin = result.winnerId === teamId;
-          const opponentId =
-            result.winnerId === teamId ? result.loserId : result.winnerId;
-          const opponent = teams[opponentId];
+    <>
+      <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-vct-gray/20">
+          <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+            Match History
+          </h3>
+        </div>
+        <div className="divide-y divide-vct-gray/10">
+          {matchHistory.slice(0, 10).map((result) => {
+            const isWin = result.winnerId === teamId;
+            const opponentId =
+              result.winnerId === teamId ? result.loserId : result.winnerId;
+            const opponent = teams[opponentId];
 
-          // Determine scores based on team position
-          const teamScore = isWin ? result.scoreTeamA : result.scoreTeamB;
-          const oppScore = isWin ? result.scoreTeamB : result.scoreTeamA;
+            // Determine scores based on team position
+            const teamScore = isWin ? result.scoreTeamA : result.scoreTeamB;
+            const oppScore = isWin ? result.scoreTeamB : result.scoreTeamA;
 
-          return (
-            <div
-              key={result.matchId}
-              className="px-4 py-3 flex items-center justify-between hover:bg-vct-darker/50 hover:border-l-2 hover:border-vct-accent/50 cursor-pointer transition-all duration-150 ease-in-out"
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
-                    isWin
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-red-500/20 text-red-400'
-                  }`}
-                >
-                  {isWin ? 'W' : 'L'}
-                </span>
-                <div>
-                  <div className="text-vct-light font-medium">
-                    vs {opponent?.name ?? 'Unknown'}
+            return (
+              <div
+                key={result.matchId}
+                onClick={() => handleMatchClick(result)}
+                className="px-4 py-3 flex items-center justify-between hover:bg-vct-darker/50 hover:border-l-2 hover:border-vct-accent/50 cursor-pointer transition-all duration-150 ease-in-out"
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
+                      isWin
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-red-500/20 text-red-400'
+                    }`}
+                  >
+                    {isWin ? 'W' : 'L'}
+                  </span>
+                  <div>
+                    <div className="text-vct-light font-medium">
+                      vs {opponent?.name ?? 'Unknown'}
+                    </div>
+                    <div className="text-xs text-vct-gray">
+                      {result.maps.length} map{result.maps.length !== 1 ? 's' : ''} •{' '}
+                      {result.maps.map((m) => m.map).join(', ')}
+                    </div>
                   </div>
-                  <div className="text-xs text-vct-gray">
-                    {result.maps.length} map{result.maps.length !== 1 ? 's' : ''} •{' '}
-                    {result.maps.map((m) => m.map).join(', ')}
+                </div>
+                <div className="text-right">
+                  <div
+                    className={`text-lg font-bold ${
+                      isWin ? 'text-green-400' : 'text-red-400'
+                    }`}
+                  >
+                    {teamScore}-{oppScore}
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div
-                  className={`text-lg font-bold ${
-                    isWin ? 'text-green-400' : 'text-red-400'
-                  }`}
-                >
-                  {teamScore}-{oppScore}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+
+      {/* Match Result Modal */}
+      {showModal && selectedMatch && (
+        <MatchResultModal match={selectedMatch} onClose={handleCloseModal} />
+      )}
+    </>
   );
 }
 
