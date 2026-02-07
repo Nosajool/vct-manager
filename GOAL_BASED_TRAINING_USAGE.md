@@ -160,16 +160,6 @@ if (result.success) {
 }
 ```
 
-## Testing
-
-Comprehensive tests are available in:
-- `/src/services/__tests__/TrainingService.goals.test.ts`
-
-Run tests with:
-```bash
-npm test -- TrainingService.goals.test.ts
-```
-
 ## Next Steps
 
 This update (vct-manager-eyd) completes the recommendation engine. Upcoming tasks:
