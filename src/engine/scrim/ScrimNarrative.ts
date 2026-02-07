@@ -74,7 +74,7 @@ function getMapPerformanceNarrative(result: ScrimResult): string | null {
 
       if (playerWins === mapResults.length) {
         const templates = [
-          `The team looked organized on ${mapResults[0].mapName}.`,
+          `The team looked organized on ${mapResults[0].map}.`,
           `Clean execution across all maps today.`,
           `Strong showing on every map in the series.`,
           `Dominant performance throughout the scrim.`,

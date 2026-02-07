@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useGameStore } from '../../store';
 import { scrimService } from '../../services';
+import { generateScrimNarrative } from '../../engine/scrim/ScrimNarrative';
 import type { TeamTier, ScrimIntensity, ScrimResult } from '../../types';
 import { MAPS } from '../../utils/constants';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
@@ -25,6 +26,27 @@ const TIER_LABELS: Record<TeamTier, { label: string; efficiency: string; color: 
   T2: { label: 'Academy Teams', efficiency: '70%', color: 'text-blue-400' },
   T3: { label: 'Amateur Teams', efficiency: '40%', color: 'text-vct-gray' },
 };
+
+// Helper: Determine sentiment of narrative text for color-coding
+function getNarrativeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
+  const positiveWords = [
+    'sharp', 'improved', 'excellent', 'great', 'good', 'solid', 'productive',
+    'dominant', 'strong', 'clean', 'organized', 'professional', 'valuable',
+    'synergy', 'rhythm', 'coordination', 'competitive', 'held their own',
+    'pushed', 'effective', 'crisp', 'sharper', 'better', 'perfectly',
+  ];
+  const negativeWords = [
+    'struggled', 'frustrated', 'friction', 'broke down', 'concerns', 'disappointing',
+    'unfocused', 'trouble', 'poor', 'weak', 'exposed', 'gaps', 'punished',
+    'concerning', 'unacceptable', 'wake-up', 'losing', 'limited', 'sloppy',
+  ];
+
+  const lowerText = text.toLowerCase();
+
+  if (positiveWords.some((word) => lowerText.includes(word))) return 'positive';
+  if (negativeWords.some((word) => lowerText.includes(word))) return 'negative';
+  return 'neutral';
+}
 
 export function ScrimModal({ isOpen, onClose, onScrimComplete, initialMaps }: ScrimModalProps) {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
@@ -195,6 +217,30 @@ export function ScrimModal({ isOpen, onClose, onScrimComplete, initialMaps }: Sc
                     <div className="text-sm text-vct-gray">
                       Efficiency: {Math.round(scrimResult.efficiencyMultiplier * 100)}%
                     </div>
+                  </div>
+                );
+              })()}
+
+              {/* Narrative Lines */}
+              {(() => {
+                const narratives = generateScrimNarrative(scrimResult);
+                return (
+                  <div className="mb-4 space-y-1">
+                    {narratives.map((narrative, idx) => {
+                      const sentiment = getNarrativeSentiment(narrative);
+                      const colorClass =
+                        sentiment === 'positive'
+                          ? 'text-green-400'
+                          : sentiment === 'negative'
+                          ? 'text-red-400'
+                          : 'text-vct-gray';
+
+                      return (
+                        <p key={idx} className={`text-sm italic ${colorClass}`}>
+                          {narrative}
+                        </p>
+                      );
+                    })}
                   </div>
                 );
               })()}
