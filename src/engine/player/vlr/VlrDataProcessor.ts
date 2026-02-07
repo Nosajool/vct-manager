@@ -162,6 +162,54 @@ export function processVlrSnapshot(
 }
 
 /**
+ * Rating adjustments for non-tier 1 players (free agents).
+ * These players are younger with lower current stats but higher potential.
+ */
+const NON_TIER1_ADJUSTMENTS = {
+  /** Multiplier for overall rating (reduces current ability) */
+  overallMultiplier: 0.85,
+  /** Multiplier for all stat attributes (aim, positioning, etc.) */
+  statMultiplier: 0.88,
+  /** Age reduction (makes players younger) */
+  ageDelta: -2,
+  /** Additional potential boost (better growth ceiling) */
+  potentialBoost: 8,
+  /** Form reduction (less consistent) */
+  formDelta: -5,
+} as const;
+
+/**
+ * Apply tier-based adjustments to player stats.
+ * Non-tier 1 players get nerfed stats but higher potential.
+ */
+function applyTierAdjustments(
+  stats: PlayerStats,
+  overall: number,
+  isTier1: boolean
+): { stats: PlayerStats; overall: number } {
+  if (isTier1) {
+    return { stats, overall };
+  }
+
+  // Apply multipliers to all stat attributes
+  const adjustedStats: PlayerStats = {
+    mechanics: Math.round(stats.mechanics * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    igl: Math.round(stats.igl * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    mental: Math.round(stats.mental * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    clutch: Math.round(stats.clutch * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    vibes: Math.round(stats.vibes * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    lurking: Math.round(stats.lurking * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    entry: Math.round(stats.entry * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    support: Math.round(stats.support * NON_TIER1_ADJUSTMENTS.statMultiplier),
+    stamina: Math.round(stats.stamina * NON_TIER1_ADJUSTMENTS.statMultiplier),
+  };
+
+  const adjustedOverall = Math.round(overall * NON_TIER1_ADJUSTMENTS.overallMultiplier);
+
+  return { stats: adjustedStats, overall: adjustedOverall };
+}
+
+/**
  * Convert a VlrProcessedPlayer to a full game Player entity.
  * Requires a teamId to be resolved externally (via team name lookup).
  */
@@ -169,10 +217,32 @@ export function createPlayerFromVlr(
   processed: VlrProcessedPlayer,
   teamId: string | null
 ): Player {
-  const age = estimateAge(processed.vlrRating);
+  // Determine if player is from a tier 1 org
+  const isTier1 = processed.teamName !== null;
+
+  // Apply tier-based stat adjustments
+  const { stats, overall } = applyTierAdjustments(
+    processed.stats,
+    processed.overall,
+    isTier1
+  );
+
+  // Adjust age for non-tier 1 players (make them younger)
+  const baseAge = estimateAge(processed.vlrRating);
+  const age = isTier1 ? baseAge : Math.max(18, baseAge + NON_TIER1_ADJUSTMENTS.ageDelta);
 
   // Use actual country from VLR if available, otherwise infer from region
   const nationality = processed.vlrStats.country || inferNationality(processed.region);
+
+  // Calculate potential (non-tier 1 get higher ceiling)
+  const basePotential = Math.min(99, overall + Math.floor(Math.random() * 15));
+  const potential = isTier1
+    ? basePotential
+    : Math.min(99, basePotential + NON_TIER1_ADJUSTMENTS.potentialBoost);
+
+  // Calculate form (non-tier 1 less consistent)
+  const baseForm = Math.round(50 + (processed.vlrRating - 1) * 30);
+  const form = isTier1 ? baseForm : Math.max(30, baseForm + NON_TIER1_ADJUSTMENTS.formDelta);
 
   return {
     id: `vlr-${processed.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
@@ -181,11 +251,11 @@ export function createPlayerFromVlr(
     nationality,
     region: processed.region,
     teamId,
-    stats: processed.stats,
-    form: Math.round(50 + (processed.vlrRating - 1) * 30),
+    stats,
+    form,
     morale: 70 + Math.floor(Math.random() * 20),
-    potential: Math.min(99, processed.overall + Math.floor(Math.random() * 15)),
-    contract: teamId ? generateContract(processed.overall) : null,
+    potential,
+    contract: teamId ? generateContract(overall) : null,
     careerStats: generateCareerStats(processed.vlrStats, age),
     seasonStats: {
       season: 1,
