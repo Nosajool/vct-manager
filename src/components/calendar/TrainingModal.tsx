@@ -416,9 +416,11 @@ function PlayerListColumn({
               player={player}
               isSelected={selectedPlayerId === player.id}
               isAssigned={trainingPlan.has(player.id)}
+              assignment={trainingPlan.get(player.id) ?? null}
               trainingStatus={getPlayerTrainingStatus(player.id)}
               onSelect={() => onSelectPlayer(player.id)}
               onToggle={() => onTogglePlayer(player.id)}
+              onClickRecommendation={() => onTogglePlayer(player.id)}
             />
           ))}
         </div>
@@ -440,9 +442,11 @@ function PlayerListColumn({
                   player={player}
                   isSelected={selectedPlayerId === player.id}
                   isAssigned={trainingPlan.has(player.id)}
+                  assignment={trainingPlan.get(player.id) ?? null}
                   trainingStatus={getPlayerTrainingStatus(player.id)}
                   onSelect={() => onSelectPlayer(player.id)}
                   onToggle={() => onTogglePlayer(player.id)}
+                  onClickRecommendation={() => onTogglePlayer(player.id)}
                 />
               ))}
           </div>
@@ -456,45 +460,112 @@ interface PlayerListItemProps {
   player: Player;
   isSelected: boolean;
   isAssigned: boolean;
+  assignment: { goal: TrainingGoal; intensity: TrainingIntensity; isAutoAssigned: boolean } | null;
   trainingStatus: { canTrain: boolean; sessionsUsed: number };
   onSelect: () => void;
   onToggle: () => void;
+  onClickRecommendation: () => void;
 }
 
 function PlayerListItem({
   player,
   isSelected,
   isAssigned,
+  assignment,
   trainingStatus,
   onSelect,
   onToggle,
+  onClickRecommendation,
 }: PlayerListItemProps) {
   const ovr = playerDevelopment.calculateOverall(player.stats);
   const canTrain = trainingStatus.canTrain;
 
+  // Get recommended goal for display
+  const recommendedGoal = trainingService.getRecommendedGoal(player.id);
+  const recommendedGoalInfo = recommendedGoal ? TRAINING_GOAL_MAPPINGS[recommendedGoal] : null;
+
+  // Get effectiveness for current assignment (or recommended if not assigned)
+  const effectivenessIntensity = assignment?.intensity ?? 'moderate';
+  const effectiveness = trainingService.previewTrainingEffectiveness(player.id, effectivenessIntensity);
+
+  // Extract role from recommended goal (e.g., "Entry" from "Entry Fragging Mastery")
+  const roleLabel = recommendedGoalInfo?.displayName.split(' ')[0] ?? 'N/A';
+
+  // Get sessions remaining
+  const sessionsRemaining = 2 - trainingStatus.sessionsUsed;
+
   return (
     <div
       className={`
-        flex items-center gap-2 p-2 rounded cursor-pointer transition-colors
-        ${isSelected ? 'bg-vct-red/20 border border-vct-red' : 'border border-transparent'}
-        ${!canTrain ? 'opacity-50' : 'hover:bg-vct-gray/10'}
+        p-2 rounded transition-colors border
+        ${isSelected ? 'bg-vct-red/20 border-vct-red' : 'border-transparent'}
+        ${!canTrain ? 'opacity-50' : ''}
       `}
-      onClick={onSelect}
     >
-      <input
-        type="checkbox"
-        checked={isAssigned}
-        onChange={(e) => {
-          e.stopPropagation();
-          if (canTrain) onToggle();
-        }}
-        disabled={!canTrain}
-        className="rounded border-vct-gray"
-      />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-vct-light truncate">{player.name}</div>
-        <div className="text-xs text-vct-gray">
-          OVR {ovr} • {trainingStatus.sessionsUsed}/2 sessions
+      {/* Main row: checkbox + name/age/ovr */}
+      <div
+        className="flex items-start gap-2 cursor-pointer"
+        onClick={onSelect}
+      >
+        <div className="pt-0.5">
+          <input
+            type="checkbox"
+            checked={isAssigned}
+            onChange={(e) => {
+              e.stopPropagation();
+              if (canTrain) onToggle();
+            }}
+            disabled={!canTrain}
+            className="rounded border-vct-gray"
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          {/* Name, Age, OVR */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-medium text-vct-light truncate">{player.name}</span>
+            <span className="text-xs text-vct-gray flex-shrink-0">({player.age})</span>
+            <span className="text-xs font-medium text-blue-400 flex-shrink-0">OVR {ovr}</span>
+          </div>
+
+          {/* Role badge + Sessions remaining */}
+          <div className="flex items-center gap-2 mb-1 text-xs">
+            <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 flex-shrink-0">
+              {roleLabel}
+            </span>
+            <span className="text-vct-gray">
+              {sessionsRemaining === 0 ? (
+                <span className="text-red-400">No sessions left</span>
+              ) : (
+                `${sessionsRemaining} session${sessionsRemaining > 1 ? 's' : ''} left`
+              )}
+            </span>
+          </div>
+
+          {/* Effectiveness % (if assigned) */}
+          {isAssigned && assignment && effectiveness !== null && (
+            <div className="text-xs mb-1">
+              <span className="text-vct-gray">Effectiveness: </span>
+              <span className="text-green-400 font-medium">{effectiveness}%</span>
+              {assignment.isAutoAssigned && (
+                <span className="ml-1 text-blue-400" title="Auto-assigned">🎯</span>
+              )}
+            </div>
+          )}
+
+          {/* Clickable recommendation chip */}
+          {!isAssigned && recommendedGoalInfo && effectiveness !== null && canTrain && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickRecommendation();
+              }}
+              className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/30 w-full text-left"
+            >
+              <span className="font-medium">Recommended: </span>
+              <span>{recommendedGoalInfo.displayName} ({effectiveness}%)</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
