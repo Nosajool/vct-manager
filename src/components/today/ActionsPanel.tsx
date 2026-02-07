@@ -32,6 +32,9 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
   const scrimStatus = scrimService.checkWeeklyLimit();
   const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - scrimStatus.scrimsUsed;
 
+  // Get map pool summary for scrim preview
+  const mapPoolSummary = scrimService.getMapPoolSummary();
+
   // Match day - show disabled state
   if (isMatchDay) {
     return (
@@ -107,7 +110,7 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
           </div>
           <p className="text-xs text-vct-gray mt-1">
             {trainingSummary.playersCanTrain > 0
-              ? 'Improve player stats through focused training'
+              ? `Train ${trainingSummary.playersCanTrain} player${trainingSummary.playersCanTrain > 1 ? 's' : ''} to improve stats`
               : 'All players have reached their weekly limit'}
           </p>
         </button>
@@ -151,7 +154,12 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
             {!scrimsUnlocked
               ? 'Build your team through training first'
               : scrimStatus.canScrim
-              ? 'Practice maps and build team chemistry'
+              ? (() => {
+                  const weakestMap = mapPoolSummary.weakestMaps[0];
+                  return weakestMap
+                    ? `Practice ${weakestMap.map} to boost strength`
+                    : 'Practice maps and build team chemistry';
+                })()
               : 'Weekly scrim limit reached'}
           </p>
         </button>
