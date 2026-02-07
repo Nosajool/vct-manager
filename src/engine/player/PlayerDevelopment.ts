@@ -433,6 +433,211 @@ export class PlayerDevelopment {
   }
 
   /**
+   * Preview stat changes before training (shows min/max ranges accounting for randomness)
+   * Returns ranges for each stat that will be affected
+   */
+  previewStatChanges(
+    player: Player,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity,
+    coachBonus: number = 0
+  ): Record<string, { min: number; max: number }> {
+    const focus = PlayerDevelopment.goalToFocus(goal);
+    const mapping = PlayerDevelopment.TRAINING_FOCUS_MAP[focus];
+    const effectiveness = this.calculateTrainingEffectiveness(player, intensity, coachBonus);
+    const effectivenessMultiplier = effectiveness / 100;
+
+    const ranges: Record<string, { min: number; max: number }> = {};
+
+    // Calculate ranges for primary stats
+    for (const stat of mapping.primary) {
+      const currentValue = player.stats[stat];
+      const baseImprovement = 2; // base improvement for primary
+
+      // Calculate with min randomness (0.5x)
+      const minImprovement = this.calculateStatImprovementDeterministic(
+        currentValue,
+        baseImprovement,
+        effectivenessMultiplier,
+        player.potential,
+        0.5
+      );
+
+      // Calculate with max randomness (1.5x)
+      const maxImprovement = this.calculateStatImprovementDeterministic(
+        currentValue,
+        baseImprovement,
+        effectivenessMultiplier,
+        player.potential,
+        1.5
+      );
+
+      if (maxImprovement > 0) {
+        ranges[stat] = { min: minImprovement, max: maxImprovement };
+      }
+    }
+
+    // Calculate ranges for secondary stats
+    for (const stat of mapping.secondary) {
+      const currentValue = player.stats[stat];
+      const baseImprovement = 1; // base improvement for secondary
+
+      // Calculate with min randomness (0.5x)
+      const minImprovement = this.calculateStatImprovementDeterministic(
+        currentValue,
+        baseImprovement,
+        effectivenessMultiplier,
+        player.potential,
+        0.5
+      );
+
+      // Calculate with max randomness (1.5x)
+      const maxImprovement = this.calculateStatImprovementDeterministic(
+        currentValue,
+        baseImprovement,
+        effectivenessMultiplier,
+        player.potential,
+        1.5
+      );
+
+      if (maxImprovement > 0) {
+        ranges[stat] = { min: minImprovement, max: maxImprovement };
+      }
+    }
+
+    return ranges;
+  }
+
+  /**
+   * Preview overall rating change before training
+   */
+  previewOvrChange(
+    player: Player,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity,
+    coachBonus: number = 0
+  ): { min: number; max: number } {
+    const statChanges = this.previewStatChanges(player, goal, intensity, coachBonus);
+    const currentOvr = this.calculateOverall(player.stats);
+
+    // Calculate min overall change (using min stat improvements)
+    const minStats = { ...player.stats };
+    for (const [stat, range] of Object.entries(statChanges)) {
+      const key = stat as keyof PlayerStats;
+      minStats[key] = Math.min(99, minStats[key] + range.min);
+    }
+    const minOvr = this.calculateOverall(minStats);
+
+    // Calculate max overall change (using max stat improvements)
+    const maxStats = { ...player.stats };
+    for (const [stat, range] of Object.entries(statChanges)) {
+      const key = stat as keyof PlayerStats;
+      maxStats[key] = Math.min(99, maxStats[key] + range.max);
+    }
+    const maxOvr = this.calculateOverall(maxStats);
+
+    return {
+      min: Math.round((minOvr - currentOvr) * 10) / 10, // Round to 1 decimal
+      max: Math.round((maxOvr - currentOvr) * 10) / 10,
+    };
+  }
+
+  /**
+   * Preview morale impact before training
+   */
+  previewMoraleImpact(
+    intensity: TrainingIntensity
+  ): { min: number; max: number; qualitative: string } {
+    const range = PlayerDevelopment.INTENSITY_MORALE_IMPACT[intensity];
+
+    // Determine qualitative description
+    let qualitative: string;
+    if (range.max > 0 && range.min >= 0) {
+      qualitative = 'Energizing';
+    } else if (range.min < 0 && range.max <= 0) {
+      qualitative = 'Draining';
+    } else {
+      qualitative = 'Neutral';
+    }
+
+    return {
+      min: range.min,
+      max: range.max,
+      qualitative,
+    };
+  }
+
+  /**
+   * Preview fatigue risk before training
+   */
+  previewFatigueRisk(
+    intensity: TrainingIntensity
+  ): { increase: number; resultLevel: string } {
+    // Calculate fatigue increase based on intensity
+    const increase = intensity === 'intense' ? 15 : intensity === 'moderate' ? 10 : 5;
+
+    // Determine resulting fatigue level (assuming player has a fatigue property)
+    // For now, we'll use a placeholder since fatigue tracking might be added later
+    // The UI can interpret this as a percentage or level
+    let resultLevel: string;
+    if (increase >= 15) {
+      resultLevel = 'High';
+    } else if (increase >= 10) {
+      resultLevel = 'Moderate';
+    } else {
+      resultLevel = 'Low';
+    }
+
+    return {
+      increase,
+      resultLevel,
+    };
+  }
+
+  /**
+   * Preview goal impact descriptors (human-readable impact descriptions)
+   */
+  previewGoalImpact(goal: TrainingGoal): string[] {
+    const mapping = TRAINING_GOAL_MAPPINGS[goal];
+    return mapping.previewDescriptors;
+  }
+
+  /**
+   * Deterministic version of calculateStatImprovement with explicit random factor
+   * Used for preview calculations
+   */
+  private calculateStatImprovementDeterministic(
+    currentValue: number,
+    baseImprovement: number,
+    effectivenessMultiplier: number,
+    potential: number,
+    randomFactor: number // Explicit random factor (0.5 to 1.5)
+  ): number {
+    // Diminishing returns: harder to improve high stats
+    let diminishingFactor = 1.0;
+    if (currentValue >= 90) {
+      diminishingFactor = 0.1; // Very hard to improve 90+ stats
+    } else if (currentValue >= 85) {
+      diminishingFactor = 0.3;
+    } else if (currentValue >= 80) {
+      diminishingFactor = 0.5;
+    } else if (currentValue >= 70) {
+      diminishingFactor = 0.8;
+    }
+
+    // Can't improve beyond potential
+    const headroomFactor = currentValue >= potential ? 0 : 1;
+
+    // Calculate final improvement
+    const improvement = baseImprovement * effectivenessMultiplier * diminishingFactor * headroomFactor;
+
+    // Apply the provided random factor
+    const finalImprovement = Math.round(improvement * randomFactor);
+
+    return Math.max(0, finalImprovement);
+  }
+
+  /**
    * Random number between min and max (inclusive)
    */
   private randomBetween(min: number, max: number): number {

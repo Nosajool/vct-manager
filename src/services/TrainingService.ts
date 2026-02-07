@@ -317,12 +317,10 @@ export class TrainingService {
   /**
    * Preview training effectiveness before committing
    * Note: Effectiveness is based on player attributes and intensity, not the specific goal/focus
-   * The goal parameter is included for API consistency and future extensibility
    */
   previewTrainingEffectiveness(
     playerId: string,
-    intensity: TrainingIntensity,
-    goal?: TrainingGoal
+    intensity: TrainingIntensity
   ): number | null {
     const state = useGameStore.getState();
     const player = state.players[playerId];
@@ -330,9 +328,71 @@ export class TrainingService {
     if (!player) return null;
 
     const coachBonus = this.getCoachBonus(player.teamId);
-    // Note: Currently effectiveness doesn't vary by goal, only by player attributes
-    // The goal parameter is reserved for future use (e.g., if certain goals have multipliers)
     return playerDevelopment.calculateTrainingEffectiveness(player, intensity, coachBonus);
+  }
+
+  /**
+   * Preview stat changes before training (shows min/max ranges accounting for randomness)
+   * Returns ranges for each stat that will be affected
+   */
+  previewStatChanges(
+    playerId: string,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity
+  ): Record<string, { min: number; max: number }> | null {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+
+    if (!player) return null;
+
+    const coachBonus = this.getCoachBonus(player.teamId);
+    return playerDevelopment.previewStatChanges(player, goal, intensity, coachBonus);
+  }
+
+  /**
+   * Preview overall rating change before training
+   * Returns projected OVR change as { min, max } range
+   */
+  previewOvrChange(
+    playerId: string,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity
+  ): { min: number; max: number } | null {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+
+    if (!player) return null;
+
+    const coachBonus = this.getCoachBonus(player.teamId);
+    return playerDevelopment.previewOvrChange(player, goal, intensity, coachBonus);
+  }
+
+  /**
+   * Preview morale impact before training
+   * Returns min/max morale change and qualitative description
+   */
+  previewMoraleImpact(
+    intensity: TrainingIntensity
+  ): { min: number; max: number; qualitative: string } {
+    return playerDevelopment.previewMoraleImpact(intensity);
+  }
+
+  /**
+   * Preview fatigue risk before training
+   * Returns fatigue increase and resulting fatigue level description
+   */
+  previewFatigueRisk(
+    intensity: TrainingIntensity
+  ): { increase: number; resultLevel: string } {
+    return playerDevelopment.previewFatigueRisk(intensity);
+  }
+
+  /**
+   * Preview goal impact descriptors
+   * Returns human-readable impact descriptions for a training goal
+   */
+  previewGoalImpact(goal: TrainingGoal): string[] {
+    return playerDevelopment.previewGoalImpact(goal);
   }
 
   /**
