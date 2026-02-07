@@ -38,6 +38,7 @@ export const VLR_TO_GAME_REGION: Record<VlrRegion, Region> = {
 export interface VlrPlayerStats {
   player: string; // IGN (e.g., "TenZ")
   org: string; // Team abbreviation (e.g., "SEN")
+  country?: string; // Country name (e.g., "United States"), extracted from flag
   agents: string[]; // Most played agents (array)
   rounds_played: string; // Total rounds
   rating: string; // VLR rating (e.g., "1.18")

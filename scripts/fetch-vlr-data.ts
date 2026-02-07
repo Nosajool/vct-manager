@@ -15,11 +15,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as cheerio from 'cheerio';
+import { getCountryFromVlrCode, extractCountryCodeFromClass } from '../src/utils/vlrCountryMapping';
 
 // VLR API types (duplicated here to avoid import issues with path aliases)
 interface VlrPlayerStats {
   player: string;
   org: string;
+  country?: string; // Country name extracted from flag
   agents: string[];
   rounds_played: string;
   rating: string;
@@ -172,19 +174,46 @@ function parsePlayerCell(playerText: string): { playerName: string; teamName: st
  */
 function parseAgentCell(agentHtml: string): string[] {
   const agents: string[] = [];
-  
+
   // Look for agent image sources
   const agentImageRegex = /\/img\/vlr\/game\/agents\/([a-z]+)\.png/g;
   let match;
-  
+
   while ((match = agentImageRegex.exec(agentHtml)) !== null) {
     const agentName = match[1];
     if (agentName && !agents.includes(agentName)) {
       agents.push(agentName);
     }
   }
-  
+
   return agents.length > 0 ? agents : ['Unknown'];
+}
+
+/**
+ * Extract country from player cell by finding flag element
+ * VLR uses <i class="flag mod-{countrycode}"></i> for country flags
+ * @param $playerCell - Cheerio element for the player cell
+ * @returns Full country name, or null if not found
+ */
+function extractCountryFromPlayerCell($playerCell: cheerio.Cheerio): string | null {
+  // Find flag element with class like "flag mod-us"
+  const flagElement = $playerCell.find('i.flag[class*="mod-"]');
+
+  if (flagElement.length === 0) {
+    return null;
+  }
+
+  const flagClass = flagElement.attr('class');
+  if (!flagClass) {
+    return null;
+  }
+
+  const countryCode = extractCountryCodeFromClass(flagClass);
+  if (!countryCode) {
+    return null;
+  }
+
+  return getCountryFromVlrCode(countryCode);
 }
 
 /**
@@ -235,18 +264,21 @@ async function fetchVlrStats(eventGroupId: number, region: string, minRating: nu
 
     playerRows.each((index: number, row: cheerio.Element) => {
       const $row = $(row);
-      
+
       try {
         // Extract player name and team from the first column
         const playerCell = $row.find('td').first();
         const playerLink = playerCell.find('a[href^="/player/"]');
         const playerText = playerLink.text();
-        
+
         const { playerName, teamName } = parsePlayerCell(playerText);
-        
+
         if (!playerName || playerName === 'Unknown') {
           return; // Skip rows without valid player names
         }
+
+        // Extract country from flag element in player cell
+        const country = extractCountryFromPlayerCell(playerCell);
 
         // Extract agent icons from the second cell
         const agentCell = $row.find('td').eq(1);
@@ -286,6 +318,7 @@ async function fetchVlrStats(eventGroupId: number, region: string, minRating: nu
         const playerStats: VlrPlayerStats = {
           player: playerName,
           org: teamName,
+          ...(country && { country }), // Only add country if extracted
           agents: agents,
           rounds_played: rounds,
           rating: rating,

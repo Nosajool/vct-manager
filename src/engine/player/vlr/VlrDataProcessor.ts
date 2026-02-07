@@ -31,12 +31,12 @@ export interface VlrProcessedPlayer {
 }
 
 /**
- * Infer nationality based on region (simplified).
- * In the future, could parse from VLR player profiles.
+ * Infer nationality based on region (fallback when country not available from VLR).
+ * Used only when VLR data doesn't include country information.
  */
 function inferNationality(region: Region): string {
   const nationalities: Record<Region, string[]> = {
-    Americas: ['USA', 'Canada', 'Brazil', 'Chile', 'Argentina', 'Mexico'],
+    Americas: ['United States', 'Canada', 'Brazil', 'Chile', 'Argentina', 'Mexico'],
     EMEA: ['Sweden', 'France', 'United Kingdom', 'Turkey', 'Russia', 'Germany', 'Spain'],
     Pacific: ['South Korea', 'Japan', 'Philippines', 'Indonesia', 'Thailand', 'Singapore'],
     China: ['China'],
@@ -171,11 +171,14 @@ export function createPlayerFromVlr(
 ): Player {
   const age = estimateAge(processed.vlrRating);
 
+  // Use actual country from VLR if available, otherwise infer from region
+  const nationality = processed.vlrStats.country || inferNationality(processed.region);
+
   return {
     id: `vlr-${processed.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
     name: processed.name,
     age,
-    nationality: inferNationality(processed.region),
+    nationality,
     region: processed.region,
     teamId,
     stats: processed.stats,
