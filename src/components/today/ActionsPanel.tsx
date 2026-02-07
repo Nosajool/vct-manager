@@ -4,7 +4,7 @@
 // Disabled on match days with explanatory message.
 
 import { useGameStore } from '../../store';
-import { useMatchDay } from '../../hooks';
+import { useMatchDay, useFeatureUnlocked } from '../../hooks';
 import { scrimService, trainingService } from '../../services';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
 
@@ -21,6 +21,9 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
   });
 
   const { isMatchDay, opponentName } = useMatchDay();
+
+  // Check feature gates
+  const scrimsUnlocked = useFeatureUnlocked('scrims');
 
   // Get training summary
   const trainingSummary = trainingService.getTeamTrainingSummary();
@@ -112,9 +115,9 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
         {/* Scrim Button */}
         <button
           onClick={onScrimClick}
-          disabled={!scrimStatus.canScrim}
+          disabled={!scrimsUnlocked || !scrimStatus.canScrim}
           className={`w-full p-3 border rounded-lg transition-colors text-left ${
-            scrimStatus.canScrim
+            scrimsUnlocked && scrimStatus.canScrim
               ? 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/30'
               : 'bg-vct-gray/5 border-vct-gray/10 opacity-60 cursor-not-allowed'
           }`}
@@ -124,7 +127,7 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
               <span className="text-lg">🤝</span>
               <span
                 className={
-                  scrimStatus.canScrim ? 'text-purple-400 font-medium' : 'text-vct-gray/60'
+                  scrimsUnlocked && scrimStatus.canScrim ? 'text-purple-400 font-medium' : 'text-vct-gray/60'
                 }
               >
                 Scrim
@@ -132,16 +135,22 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
             </div>
             <span
               className={`px-2 py-0.5 text-xs rounded font-medium ${
-                scrimStatus.canScrim
+                scrimsUnlocked && scrimStatus.canScrim
                   ? 'bg-purple-500/20 text-purple-400'
                   : 'bg-vct-gray/20 text-vct-gray'
               }`}
             >
-              {scrimsRemaining}/{SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} this week
+              {scrimsUnlocked ? (
+                <>{scrimsRemaining}/{SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} this week</>
+              ) : (
+                <>Unlocks Week 2</>
+              )}
             </span>
           </div>
           <p className="text-xs text-vct-gray mt-1">
-            {scrimStatus.canScrim
+            {!scrimsUnlocked
+              ? 'Build your team through training first'
+              : scrimStatus.canScrim
               ? 'Practice maps and build team chemistry'
               : 'Weekly scrim limit reached'}
           </p>
