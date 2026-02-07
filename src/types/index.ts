@@ -101,7 +101,19 @@ export type {
   SwissTeamRecord,
   SwissStage,
   LeagueStage,
-  TournamentTransitionConfig,
+  TeamSource,
+  Destination,
+  SwissRound,
+  PrizePool,
+  TeamSlot,
+  QualificationSource,
+  BracketFormat,
+  BracketMatchStatus,
+  BracketType,
+} from './competition';
+
+// Calendar types
+export type {
   GameCalendar,
   CalendarEvent,
   CalendarEventType,
@@ -110,12 +122,20 @@ export type {
   TournamentEventData,
   SalaryPaymentEventData,
   RestDayEventData,
-} from './competition';
+  CalendarEventData,
+} from './calendar';
+
+// Tournament transition types
+export type {
+  TournamentTransitionConfig,
+  TransitionResult,
+  TransitionType,
+} from './tournament-transition';
 
 // Economy types
 export type {
-  EconomyEngine,
   TeamEconomyState,
+  EconomyUpdate,
   TrainingFocus,
   TrainingGoal,
   TrainingIntensity,
@@ -130,7 +150,12 @@ export type {
   TrainingPlan,
 } from './economy';
 
-export { TRAINING_GOAL_MAPPINGS, DIFFICULTY_SETTINGS } from './economy';
+export {
+  TRAINING_GOAL_MAPPINGS,
+  DIFFICULTY_SETTINGS,
+  EconomyEngine,
+  economyEngine,
+} from './economy';
 
 // Round simulation types (revamped simulation system)
 export type {
@@ -190,12 +215,18 @@ export { DEFAULT_ROUND_CONFIG } from './round-simulation';
 
 // VLR types
 export type {
-  VlrPlayer,
-  VlrTeam,
-  VlrMatchStats,
-  VlrAgentStats,
-  VlrGameStats,
+  VlrPlayerStats,
+  VlrTeamRanking,
+  VlrTeamRoster,
+  VlrRosterData,
+  VlrRegion,
+  VlrStatsApiResponse,
+  VlrRankingsApiResponse,
+  VlrCacheData,
+  VlrCacheEntry,
 } from './vlr';
+
+export { VLR_TO_GAME_REGION } from './vlr';
 
 // Scrim types
 export type {

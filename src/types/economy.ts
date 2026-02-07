@@ -11,6 +11,10 @@ export type {
   MonthlyExpenses,
 } from './team';
 
+// Re-export match economy engine types
+export type { TeamEconomyState, EconomyUpdate } from '../engine/match/EconomyEngine';
+export { EconomyEngine, economyEngine } from '../engine/match/EconomyEngine';
+
 // Training-related types (affects economy via time investment)
 
 // Legacy stat-based training focus (kept for backward compatibility)
