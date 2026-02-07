@@ -62,6 +62,9 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
                     {team.name}
                   </h3>
                 </div>
+                <p className="text-xs text-vct-gray/80 italic mt-0.5 truncate">
+                  "{team.expectation}"
+                </p>
                 <div className="flex items-center gap-4 mt-1 text-sm">
                   <span className="text-yellow-400">
                     {'★'.repeat(stars)}
@@ -69,6 +72,9 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
                   </span>
                   <span className="text-vct-gray">
                     {formatOrgValue(team.orgValue)}
+                  </span>
+                  <span title="Pressure">
+                    {'🔥'.repeat(team.pressure)}
                   </span>
                 </div>
               </div>
