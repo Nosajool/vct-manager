@@ -5,6 +5,7 @@ import { useState, useMemo } from 'react';
 import { useGameStore } from '../../store';
 import { trainingService } from '../../services';
 import { playerDevelopment } from '../../engine/player';
+import { generateTrainingNarrative } from '../../engine/player/TrainingNarrative';
 import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
 import type {
   Player,
@@ -33,6 +34,27 @@ const TRAINING_INTENSITIES: {
 
 // LocalStorage key for storing last-used intensity per player
 const STORAGE_KEY_PREFIX = 'vct-training-intensity-';
+
+// Helper: Determine sentiment of narrative text for color-coding
+function getNarrativeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
+  const positiveWords = [
+    'sharp', 'improved', 'confident', 'energized', 'outstanding', 'excellent',
+    'smile', 'motivated', 'impressed', 'potential', 'dominated', 'winning',
+    'better', 'great', 'good', 'solid', 'productive', 'steady', 'dialing',
+    'comfortable', 'composure', 'effective', 'mastering', 'creative',
+  ];
+  const negativeWords = [
+    'struggled', 'frustrated', 'burned', 'fatigue', 'drained', 'rough',
+    'unfocused', 'difficulty', 'off', 'average', 'mixed', 'trouble',
+    'couldn\'t', 'poor', 'weak',
+  ];
+
+  const lowerText = text.toLowerCase();
+
+  if (positiveWords.some((word) => lowerText.includes(word))) return 'positive';
+  if (negativeWords.some((word) => lowerText.includes(word))) return 'negative';
+  return 'neutral';
+}
 
 // Helper: Get last used intensity for a player from localStorage
 function getLastUsedIntensity(playerId: string): TrainingIntensity | null {
@@ -313,6 +335,29 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
                         {TRAINING_GOAL_MAPPINGS[result.goal].displayName}
                       </p>
                     )}
+                    {/* Narrative Lines */}
+                    {(() => {
+                      const narratives = generateTrainingNarrative(player, result);
+                      return (
+                        <div className="mb-3 space-y-1">
+                          {narratives.map((narrative, idx) => {
+                            const sentiment = getNarrativeSentiment(narrative);
+                            const colorClass =
+                              sentiment === 'positive'
+                                ? 'text-green-400'
+                                : sentiment === 'negative'
+                                ? 'text-red-400'
+                                : 'text-vct-gray';
+
+                            return (
+                              <p key={idx} className={`text-sm italic ${colorClass}`}>
+                                {narrative}
+                              </p>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       {result.statsBefore ? (
                         Object.entries(result.statsBefore).map(([stat, beforeValue]) => {
