@@ -1,6 +1,7 @@
 // DifficultySelectStep - Step 3: Select game difficulty
 
 import type { Region } from '../../types';
+import { VCT_TEAMS } from '../../utils/constants';
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 
@@ -53,6 +54,14 @@ export function DifficultySelectStep({
   onBack,
   onCancel,
 }: DifficultySelectStepProps) {
+  // Look up team data from VCT_TEAMS
+  const teamData = VCT_TEAMS[region]?.find((team) => team.name === teamName);
+
+  // Render fire icons based on pressure level
+  const renderPressureIndicator = (pressure: number) => {
+    return '🔥'.repeat(pressure);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -115,6 +124,17 @@ export function DifficultySelectStep({
             <p className="text-vct-light font-medium">{teamName}</p>
           </div>
         </div>
+        {teamData && (
+          <div className="mt-4 pt-4 border-t border-vct-gray/20">
+            <p className="text-vct-gray text-sm mb-1">Your Objective</p>
+            <div className="flex items-center justify-between">
+              <p className="text-vct-light font-medium">{teamData.expectation}</p>
+              <span className="text-xl" title={`Pressure: ${teamData.pressure}/5`}>
+                {renderPressureIndicator(teamData.pressure)}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
