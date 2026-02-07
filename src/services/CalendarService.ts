@@ -7,7 +7,9 @@ import { economyService } from './EconomyService';
 import { matchService } from './MatchService';
 import { tournamentService } from './TournamentService';
 import { teamSlotResolver } from './TeamSlotResolver';
+import { featureGateService } from './FeatureGateService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
+import type { FeatureUnlock } from '../data/featureUnlocks';
 import { isLeagueToPlayoffTournament } from '../types';
 
 /**
@@ -22,6 +24,7 @@ export interface TimeAdvanceResult {
   needsAttention: CalendarEvent[]; // Events that require player action (matches)
   simulatedMatches: MatchResult[]; // Matches that were auto-simulated
   autoSaveTriggered: boolean;
+  newlyUnlockedFeatures: FeatureUnlock[]; // Features that unlocked as a result of this advance
 }
 
 /**
@@ -119,8 +122,26 @@ export class CalendarService {
     // Check tournament completion for ALL regions
     this.checkAllTournamentCompletion(state.calendar.currentPhase);
 
+    // Capture unlocked features BEFORE advancing (for comparison)
+    const unlockedFeaturesBefore = featureGateService.getUnlockedFeatures();
+
     // Now advance the date to tomorrow
     state.advanceDay();
+
+    // Capture unlocked features AFTER advancing
+    const unlockedFeaturesAfter = featureGateService.getUnlockedFeatures();
+
+    // Find newly unlocked features
+    const newlyUnlocked: FeatureUnlock[] = [];
+    for (const feature of unlockedFeaturesAfter) {
+      if (!unlockedFeaturesBefore.includes(feature)) {
+        // This feature was just unlocked!
+        const unlock = featureGateService.getFeatureUnlock(feature);
+        if (unlock) {
+          newlyUnlocked.push(unlock);
+        }
+      }
+    }
 
     // Check if auto-save should trigger
     const autoSaveTriggered = timeProgression.shouldAutoSave(
@@ -141,6 +162,7 @@ export class CalendarService {
       needsAttention: [], // Nothing needs attention - we're now at start of new day
       simulatedMatches,
       autoSaveTriggered,
+      newlyUnlockedFeatures: newlyUnlocked,
     };
   }
 

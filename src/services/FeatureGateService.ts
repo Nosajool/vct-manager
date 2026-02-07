@@ -166,6 +166,16 @@ export class FeatureGateService {
 
     return Math.max(0, unlockDay - currentDay);
   }
+
+  /**
+   * Get the FeatureUnlock definition for a specific feature
+   *
+   * @param featureId - The feature to look up
+   * @returns The feature unlock definition, or null if not found
+   */
+  getFeatureUnlock(featureId: FeatureType): FeatureUnlock | null {
+    return FEATURE_UNLOCKS.find((u) => u.feature === featureId) ?? null;
+  }
 }
 
 // Export singleton instance

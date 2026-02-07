@@ -20,11 +20,14 @@ import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
+import { UnlockNotification } from '../today/UnlockNotification';
+import type { FeatureUnlock } from '../../data/featureUnlocks';
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -48,6 +51,11 @@ export function TimeBar() {
     try {
       const result = advanceFn();
 
+      // Show newly unlocked features
+      if (result.newlyUnlockedFeatures.length > 0) {
+        setUnlockedFeatures(result.newlyUnlockedFeatures);
+      }
+
       // Always show results modal if matches were simulated
       if (result.simulatedMatches.length > 0) {
         setSimulationResult(result);
@@ -65,6 +73,10 @@ export function TimeBar() {
   const handleCloseModal = () => {
     setShowResultsModal(false);
     setSimulationResult(null);
+  };
+
+  const handleDismissUnlock = (index: number) => {
+    setUnlockedFeatures((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Format date for display
@@ -167,6 +179,16 @@ export function TimeBar() {
           onClose={closeModal}
         />
       )}
+
+      {/* Unlock Notifications - show newly unlocked features */}
+      {unlockedFeatures.map((unlock, index) => (
+        <UnlockNotification
+          key={`${unlock.feature}-${index}`}
+          feature={unlock.feature}
+          description={unlock.description}
+          onDismiss={() => handleDismissUnlock(index)}
+        />
+      ))}
     </>
   );
 }
