@@ -11,11 +11,16 @@ interface TeamStatsViewProps {
   compact?: boolean;
 }
 
+type TimePeriod = 'last5' | 'last10' | 'last20' | 'all';
+
 export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);
   const getTeamMatchHistory = useGameStore((state) => state.getTeamMatchHistory);
+
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('all');
+  const [comparisonTeamId, setComparisonTeamId] = useState<string | null>(null);
 
   const targetTeamId = teamId ?? playerTeamId;
   if (!targetTeamId) return null;
@@ -23,7 +28,21 @@ export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
   const team = teams[targetTeamId];
   if (!team) return null;
 
-  const matchHistory = getTeamMatchHistory(targetTeamId);
+  const allMatchHistory = getTeamMatchHistory(targetTeamId);
+
+  // Filter match history based on selected time period
+  const matchHistory = useMemo(() => {
+    switch (timePeriod) {
+      case 'last5':
+        return allMatchHistory.slice(0, 5);
+      case 'last10':
+        return allMatchHistory.slice(0, 10);
+      case 'last20':
+        return allMatchHistory.slice(0, 20);
+      default:
+        return allMatchHistory;
+    }
+  }, [allMatchHistory, timePeriod]);
 
   // Get active players
   const activePlayers = team.playerIds
@@ -36,8 +55,26 @@ export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
 
   return (
     <div className="space-y-6">
+      {/* Time Period Filter */}
+      <TimePeriodFilter selected={timePeriod} onChange={setTimePeriod} totalMatches={allMatchHistory.length} />
+
       {/* Overview Cards */}
       <OverviewCards team={team} matchHistory={matchHistory} />
+
+      {/* League Comparison */}
+      <LeagueComparisonSection team={team} matchHistory={matchHistory} teams={teams} />
+
+      {/* Team Comparison (optional) */}
+      <TeamComparisonSection
+        team={team}
+        matchHistory={matchHistory}
+        comparisonTeamId={comparisonTeamId}
+        onComparisonTeamChange={setComparisonTeamId}
+        teams={teams}
+      />
+
+      {/* Historical Trends */}
+      <HistoricalTrendsSection team={team} allMatchHistory={allMatchHistory} />
 
       {/* Match History */}
       <MatchHistorySection
@@ -470,4 +507,511 @@ function KdBadge({ kd, show }: { kd: number; show: boolean }) {
   };
 
   return <span className={getColor(kd)}>{kd.toFixed(2)}</span>;
+}
+
+// Time Period Filter Component
+function TimePeriodFilter({
+  selected,
+  onChange,
+  totalMatches,
+}: {
+  selected: TimePeriod;
+  onChange: (period: TimePeriod) => void;
+  totalMatches: number;
+}) {
+  const options: { value: TimePeriod; label: string }[] = [
+    { value: 'last5', label: 'Last 5' },
+    { value: 'last10', label: 'Last 10' },
+    { value: 'last20', label: 'Last 20' },
+    { value: 'all', label: 'All Time' },
+  ];
+
+  return (
+    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg p-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+            Time Period
+          </h3>
+          <p className="text-xs text-vct-gray mt-1">
+            {totalMatches} total match{totalMatches !== 1 ? 'es' : ''} played
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => onChange(option.value)}
+              className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                selected === option.value
+                  ? 'bg-vct-accent text-white'
+                  : 'bg-vct-darker text-vct-gray hover:text-vct-light hover:bg-vct-darker/80'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// League Comparison Section
+function LeagueComparisonSection({
+  team,
+  matchHistory,
+  teams,
+}: {
+  team: Team;
+  matchHistory: MatchResult[];
+  teams: Record<string, Team>;
+}) {
+  const leagueStats = useMemo(() => {
+    const allTeams = Object.values(teams);
+    const getTeamMatchHistory = useGameStore.getState().getTeamMatchHistory;
+
+    let totalWinRate = 0;
+    let totalRoundDiff = 0;
+    let totalChemistry = 0;
+    let teamCount = 0;
+
+    for (const t of allTeams) {
+      const history = getTeamMatchHistory(t.id);
+      if (history.length > 0) {
+        const wins = history.filter((r) => r.winnerId === t.id).length;
+        const winRate = (wins / history.length) * 100;
+        totalWinRate += winRate;
+        totalRoundDiff += t.standings.roundDiff / (t.standings.wins + t.standings.losses || 1);
+        totalChemistry += t.chemistry.overall;
+        teamCount++;
+      }
+    }
+
+    return {
+      avgWinRate: teamCount > 0 ? totalWinRate / teamCount : 0,
+      avgRoundDiff: teamCount > 0 ? totalRoundDiff / teamCount : 0,
+      avgChemistry: teamCount > 0 ? totalChemistry / teamCount : 0,
+    };
+  }, [teams]);
+
+  const teamStats = useMemo(() => {
+    const wins = matchHistory.filter((r) => r.winnerId === team.id).length;
+    const totalMatches = matchHistory.length;
+    const winRate = totalMatches > 0 ? (wins / totalMatches) * 100 : 0;
+    const roundDiff = totalMatches > 0 ? team.standings.roundDiff / totalMatches : 0;
+
+    return {
+      winRate,
+      roundDiff,
+      chemistry: team.chemistry.overall,
+    };
+  }, [matchHistory, team]);
+
+  const comparisons = [
+    {
+      label: 'Win Rate',
+      team: `${teamStats.winRate.toFixed(1)}%`,
+      league: `${leagueStats.avgWinRate.toFixed(1)}%`,
+      diff: teamStats.winRate - leagueStats.avgWinRate,
+    },
+    {
+      label: 'Avg Round Diff',
+      team: teamStats.roundDiff.toFixed(1),
+      league: leagueStats.avgRoundDiff.toFixed(1),
+      diff: teamStats.roundDiff - leagueStats.avgRoundDiff,
+    },
+    {
+      label: 'Team Chemistry',
+      team: `${teamStats.chemistry}%`,
+      league: `${leagueStats.avgChemistry.toFixed(0)}%`,
+      diff: teamStats.chemistry - leagueStats.avgChemistry,
+    },
+  ];
+
+  return (
+    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b border-vct-gray/20">
+        <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+          League Comparison
+        </h3>
+      </div>
+      <div className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {comparisons.map((comp) => (
+            <div key={comp.label} className="bg-vct-darker rounded-lg p-4">
+              <div className="text-xs text-vct-gray uppercase mb-2">{comp.label}</div>
+              <div className="flex items-baseline justify-between mb-1">
+                <span className="text-sm text-vct-gray">Your Team:</span>
+                <span className="text-lg font-bold text-vct-light">{comp.team}</span>
+              </div>
+              <div className="flex items-baseline justify-between mb-2">
+                <span className="text-sm text-vct-gray">League Avg:</span>
+                <span className="text-lg font-bold text-vct-gray">{comp.league}</span>
+              </div>
+              <div className="flex items-center gap-2 pt-2 border-t border-vct-gray/20">
+                <span className="text-xs text-vct-gray">Difference:</span>
+                <span
+                  className={`text-sm font-bold ${
+                    comp.diff > 0 ? 'text-green-400' : comp.diff < 0 ? 'text-red-400' : 'text-vct-gray'
+                  }`}
+                >
+                  {comp.diff > 0 ? '+' : ''}
+                  {comp.diff.toFixed(1)}
+                  {comp.diff > 0 ? ' ↑' : comp.diff < 0 ? ' ↓' : ''}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Team Comparison Section
+function TeamComparisonSection({
+  team,
+  matchHistory,
+  comparisonTeamId,
+  onComparisonTeamChange,
+  teams,
+}: {
+  team: Team;
+  matchHistory: MatchResult[];
+  comparisonTeamId: string | null;
+  onComparisonTeamChange: (teamId: string | null) => void;
+  teams: Record<string, Team>;
+}) {
+  const getTeamMatchHistory = useGameStore((state) => state.getTeamMatchHistory);
+  const getHeadToHead = useGameStore((state) => state.getHeadToHead);
+
+  const otherTeams = useMemo(() => {
+    return Object.values(teams).filter((t) => t.id !== team.id);
+  }, [teams, team.id]);
+
+  if (!comparisonTeamId) {
+    return (
+      <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-vct-gray/20">
+          <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+            Team Comparison
+          </h3>
+        </div>
+        <div className="p-4">
+          <p className="text-sm text-vct-gray mb-3">Compare with another team:</p>
+          <select
+            value=""
+            onChange={(e) => onComparisonTeamChange(e.target.value || null)}
+            className="w-full bg-vct-darker border border-vct-gray/20 rounded px-3 py-2 text-vct-light text-sm"
+          >
+            <option value="">Select a team...</option>
+            {otherTeams.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name} ({t.region})
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    );
+  }
+
+  const comparisonTeam = teams[comparisonTeamId];
+  if (!comparisonTeam) return null;
+
+  const comparisonHistory = getTeamMatchHistory(comparisonTeamId);
+  const headToHead = getHeadToHead(team.id, comparisonTeamId);
+
+  const teamStats = useMemo(() => {
+    const wins = matchHistory.filter((r) => r.winnerId === team.id).length;
+    const totalMatches = matchHistory.length;
+    return {
+      winRate: totalMatches > 0 ? (wins / totalMatches) * 100 : 0,
+      roundDiff: team.standings.roundDiff,
+      chemistry: team.chemistry.overall,
+      recentForm: matchHistory.slice(0, 5).map((r) => (r.winnerId === team.id ? 'W' : 'L')),
+    };
+  }, [matchHistory, team]);
+
+  const compStats = useMemo(() => {
+    const wins = comparisonHistory.filter((r) => r.winnerId === comparisonTeamId).length;
+    const totalMatches = comparisonHistory.length;
+    return {
+      winRate: totalMatches > 0 ? (wins / totalMatches) * 100 : 0,
+      roundDiff: comparisonTeam.standings.roundDiff,
+      chemistry: comparisonTeam.chemistry.overall,
+      recentForm: comparisonHistory.slice(0, 5).map((r) => (r.winnerId === comparisonTeamId ? 'W' : 'L')),
+    };
+  }, [comparisonHistory, comparisonTeam, comparisonTeamId]);
+
+  return (
+    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b border-vct-gray/20 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+          Team Comparison
+        </h3>
+        <button
+          onClick={() => onComparisonTeamChange(null)}
+          className="text-xs text-vct-gray hover:text-vct-light"
+        >
+          Clear
+        </button>
+      </div>
+      <div className="p-4 space-y-4">
+        {/* Team selector */}
+        <select
+          value={comparisonTeamId}
+          onChange={(e) => onComparisonTeamChange(e.target.value || null)}
+          className="w-full bg-vct-darker border border-vct-gray/20 rounded px-3 py-2 text-vct-light text-sm"
+        >
+          {otherTeams.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name} ({t.region})
+            </option>
+          ))}
+        </select>
+
+        {/* Head to head record */}
+        {headToHead.matches.length > 0 && (
+          <div className="bg-vct-darker rounded-lg p-4">
+            <div className="text-xs text-vct-gray uppercase mb-2">Head to Head</div>
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-vct-light">{headToHead.teamAWins}</div>
+                <div className="text-xs text-vct-gray">{team.name}</div>
+              </div>
+              <div className="text-vct-gray">-</div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-vct-light">{headToHead.teamBWins}</div>
+                <div className="text-xs text-vct-gray">{comparisonTeam.name}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Stats comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ComparisonStat
+            label="Win Rate"
+            teamValue={`${teamStats.winRate.toFixed(1)}%`}
+            compValue={`${compStats.winRate.toFixed(1)}%`}
+            teamName={team.name}
+            compName={comparisonTeam.name}
+          />
+          <ComparisonStat
+            label="Round Diff"
+            teamValue={teamStats.roundDiff >= 0 ? `+${teamStats.roundDiff}` : `${teamStats.roundDiff}`}
+            compValue={compStats.roundDiff >= 0 ? `+${compStats.roundDiff}` : `${compStats.roundDiff}`}
+            teamName={team.name}
+            compName={comparisonTeam.name}
+          />
+          <ComparisonStat
+            label="Chemistry"
+            teamValue={`${teamStats.chemistry}%`}
+            compValue={`${compStats.chemistry}%`}
+            teamName={team.name}
+            compName={comparisonTeam.name}
+          />
+        </div>
+
+        {/* Recent form comparison */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-vct-darker rounded-lg p-4">
+            <div className="text-xs text-vct-gray uppercase mb-2">
+              {team.name} Recent Form
+            </div>
+            <div className="flex gap-1">
+              {teamStats.recentForm.map((result, idx) => (
+                <span
+                  key={idx}
+                  className={`w-6 h-6 rounded flex items-center justify-center font-bold text-xs ${
+                    result === 'W' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  }`}
+                >
+                  {result}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="bg-vct-darker rounded-lg p-4">
+            <div className="text-xs text-vct-gray uppercase mb-2">
+              {comparisonTeam.name} Recent Form
+            </div>
+            <div className="flex gap-1">
+              {compStats.recentForm.map((result, idx) => (
+                <span
+                  key={idx}
+                  className={`w-6 h-6 rounded flex items-center justify-center font-bold text-xs ${
+                    result === 'W' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  }`}
+                >
+                  {result}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonStat({
+  label,
+  teamValue,
+  compValue,
+  teamName,
+  compName,
+}: {
+  label: string;
+  teamValue: string;
+  compValue: string;
+  teamName: string;
+  compName: string;
+}) {
+  return (
+    <div className="bg-vct-darker rounded-lg p-4">
+      <div className="text-xs text-vct-gray uppercase mb-2">{label}</div>
+      <div className="space-y-1">
+        <div className="flex items-baseline justify-between">
+          <span className="text-xs text-vct-gray truncate mr-2">{teamName}:</span>
+          <span className="text-sm font-bold text-vct-light">{teamValue}</span>
+        </div>
+        <div className="flex items-baseline justify-between">
+          <span className="text-xs text-vct-gray truncate mr-2">{compName}:</span>
+          <span className="text-sm font-bold text-vct-gray">{compValue}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Historical Trends Section
+function HistoricalTrendsSection({
+  team,
+  allMatchHistory,
+}: {
+  team: Team;
+  allMatchHistory: MatchResult[];
+}) {
+  const trends = useMemo(() => {
+    if (allMatchHistory.length === 0) return null;
+
+    // Split matches into buckets of 5
+    const bucketSize = 5;
+    const buckets: MatchResult[][] = [];
+    for (let i = 0; i < allMatchHistory.length; i += bucketSize) {
+      buckets.push(allMatchHistory.slice(i, i + bucketSize));
+    }
+
+    // Calculate stats for each bucket (reverse to show oldest first)
+    const bucketStats = buckets.reverse().map((bucket, idx) => {
+      const wins = bucket.filter((r) => r.winnerId === team.id).length;
+      const winRate = (wins / bucket.length) * 100;
+
+      let totalRoundDiff = 0;
+      for (const result of bucket) {
+        const isWin = result.winnerId === team.id;
+        const teamScore = isWin ? result.scoreTeamA : result.scoreTeamB;
+        const oppScore = isWin ? result.scoreTeamB : result.scoreTeamA;
+        totalRoundDiff += teamScore - oppScore;
+      }
+      const avgRoundDiff = totalRoundDiff / bucket.length;
+
+      return {
+        label: `Matches ${idx * bucketSize + 1}-${idx * bucketSize + bucket.length}`,
+        winRate,
+        avgRoundDiff,
+        matchCount: bucket.length,
+      };
+    });
+
+    return bucketStats;
+  }, [allMatchHistory, team.id]);
+
+  if (!trends || trends.length < 2) {
+    return null; // Need at least 2 buckets to show trends
+  }
+
+  return (
+    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b border-vct-gray/20">
+        <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+          Historical Trends
+        </h3>
+        <p className="text-xs text-vct-gray mt-1">Performance over time (grouped by 5 matches)</p>
+      </div>
+      <div className="p-4">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-vct-darker text-xs text-vct-gray">
+                <th className="px-4 py-2 text-left font-medium">Period</th>
+                <th className="px-2 py-2 text-center font-medium">Matches</th>
+                <th className="px-2 py-2 text-center font-medium">Win Rate</th>
+                <th className="px-2 py-2 text-center font-medium">Trend</th>
+                <th className="px-2 py-2 text-center font-medium">Avg Round Diff</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trends.map((bucket, idx) => {
+                const prevBucket = idx > 0 ? trends[idx - 1] : null;
+                const winRateTrend = prevBucket
+                  ? bucket.winRate - prevBucket.winRate
+                  : 0;
+
+                return (
+                  <tr
+                    key={bucket.label}
+                    className={`border-t border-vct-gray/10 text-sm ${
+                      idx % 2 === 0 ? 'bg-vct-darker' : 'bg-vct-dark'
+                    }`}
+                  >
+                    <td className="px-4 py-2 text-vct-light font-medium">{bucket.label}</td>
+                    <td className="px-2 py-2 text-center text-vct-gray">{bucket.matchCount}</td>
+                    <td className="px-2 py-2 text-center text-vct-light">
+                      {bucket.winRate.toFixed(0)}%
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      {prevBucket ? (
+                        <span
+                          className={`text-xs font-bold ${
+                            winRateTrend > 0
+                              ? 'text-green-400'
+                              : winRateTrend < 0
+                              ? 'text-red-400'
+                              : 'text-vct-gray'
+                          }`}
+                        >
+                          {winRateTrend > 0 ? '↑' : winRateTrend < 0 ? '↓' : '→'}{' '}
+                          {Math.abs(winRateTrend).toFixed(0)}%
+                        </span>
+                      ) : (
+                        <span className="text-vct-gray text-xs">-</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span
+                        className={
+                          bucket.avgRoundDiff > 0
+                            ? 'text-green-400'
+                            : bucket.avgRoundDiff < 0
+                            ? 'text-red-400'
+                            : 'text-vct-gray'
+                        }
+                      >
+                        {bucket.avgRoundDiff > 0 ? '+' : ''}
+                        {bucket.avgRoundDiff.toFixed(1)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 }
