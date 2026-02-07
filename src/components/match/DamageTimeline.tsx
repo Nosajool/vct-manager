@@ -890,7 +890,7 @@ export function DamageTimeline({
             <div className="text-white font-semibold">
               {allEvents
                 .filter((e): e is SimDamageEvent => e.type === 'damage')
-                .reduce((sum, e) => sum + e.totalDamage, 0)}
+                .reduce((sum, e) => sum + (e as SimDamageEvent).totalDamage, 0)}
             </div>
           </div>
           <div>

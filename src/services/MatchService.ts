@@ -48,18 +48,12 @@ export class MatchService {
     const strategyA = state.getTeamStrategy(match.teamAId);
     const strategyB = state.getTeamStrategy(match.teamBId);
 
-    // Get map pools if available
-    const mapPoolA = teamA.mapPool;
-    const mapPoolB = teamB.mapPool;
-
     // Run simulation with strategies
     const result = matchSimulator.simulate(
       teamA,
       teamB,
       playersA,
       playersB,
-      mapPoolA,
-      mapPoolB,
       strategyA,
       strategyB
     );

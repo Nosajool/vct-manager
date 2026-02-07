@@ -248,7 +248,7 @@ export class StrategyService {
   /**
    * Get role for an agent
    */
-  getAgentRole(agent: string): AgentRole {
+  getAgentRole(agent: string): AgentRole | undefined {
     return compositionEngine.getAgentRole(agent);
   }
 }

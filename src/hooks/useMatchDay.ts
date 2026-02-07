@@ -96,7 +96,7 @@ export function useMatchDay(): MatchDayInfo {
     bracketMatch = findInRounds(tournament.bracket.upper || [])
       || findInRounds(tournament.bracket.middle || [])
       || findInRounds(tournament.bracket.lower || [])
-      || (tournament.bracket.grandfinal?.matchId === eventData.matchId
+      || (tournament.bracket.grandfinal?.matchId === eventData.matchId && tournament.bracket.grandfinal
           ? tournament.bracket.grandfinal
           : null);
   }
