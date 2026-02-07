@@ -16,3 +16,5 @@ export {
 } from './ContractNegotiator';
 
 export { PlayerDevelopment, playerDevelopment } from './PlayerDevelopment';
+
+export { generateTrainingNarrative } from './TrainingNarrative';
