@@ -17,7 +17,7 @@ import { STAT_FORMULAS } from './constants';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
 import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
-import { type DamageEvent, type RoundDamageEvents, type PlayerArmorState, type RoundEvent, type KillEvent, type PlantEvent, type DefuseEvent } from '../../types/match';
+import { type DamageEvent, type RoundDamageEvents, type PlayerArmorState } from '../../types/match';
 import { RoundStateMachine } from './RoundStateMachine';
 import { buyPhaseGenerator, type BuyPhaseTeamInput, type BuyPhasePlayerInfo } from './BuyPhaseGenerator';
 import { WEAPONS } from '../../data/weapons';
@@ -1358,7 +1358,7 @@ export class RoundSimulator {
   }
 
   /**
-   * Build legacy RoundEvent[] for timeline display
+   * Build timeline events for display (returns all timeline events except round_end)
    */
   private buildLegacyRoundEvents(
     timeline: TimelineEvent[],
@@ -1368,94 +1368,11 @@ export class RoundSimulator {
     planterId: string | undefined,
     defuserId: string | undefined,
     winCondition: WinCondition
-  ): RoundEvent[] {
-    const allEvents: RoundEvent[] = [];
-
-    for (const event of timeline) {
-      switch (event.type) {
-        case 'damage': {
-          const primaryHit = event.hits[0];
-          const totalFinal = event.hits.reduce((sum, h) => sum + h.shieldAbsorbed + h.hpDamage, 0);
-          const totalShieldDmg = event.hits.reduce((sum, h) => sum + h.shieldAbsorbed, 0);
-          const totalHpDmg = event.hits.reduce((sum, h) => sum + h.hpDamage, 0);
-
-          allEvents.push({
-            type: 'damage' as const,
-            id: event.id,
-            dealerId: event.attackerId,
-            victimId: event.defenderId,
-            baseDamage: event.hits.reduce((sum, h) => sum + h.baseDamage, 0),
-            finalDamage: totalFinal,
-            hitLocation: primaryHit?.location || 'body',
-            source: event.source as any,
-            weapon: event.weapon,
-            ability: event.ability,
-            distance: event.distance,
-            timestamp: event.timestamp,
-            armorBreakdown: {
-              shieldDamage: totalShieldDmg,
-              hpDamage: totalHpDmg,
-              remainingShield: event.defenderShieldAfter,
-              remainingHp: event.defenderHpAfter,
-            },
-          });
-          break;
-        }
-
-        case 'kill': {
-          const loadout = allLoadouts.get(event.killerId);
-          const weapon = event.weapon || loadout?.primary?.name || loadout?.secondary?.name || 'Vandal';
-
-          // Estimate damage from timeline damage events for this kill
-          const killDamage = timeline
-            .filter(e => e.type === 'damage' && e.attackerId === event.killerId && e.defenderId === event.victimId)
-            .reduce((sum, e) => {
-              if (e.type !== 'damage') return sum;
-              return sum + e.totalDamage;
-            }, 0) || 150;
-
-          const killEvent: KillEvent = {
-            id: event.id,
-            type: 'kill',
-            killerId: event.killerId,
-            victimId: event.victimId,
-            weapon,
-            isHeadshot: event.isHeadshot,
-            timestamp: event.timestamp,
-            damage: killDamage,
-          };
-          allEvents.push(killEvent);
-          break;
-        }
-
-        case 'plant_complete': {
-          const plantEvent: PlantEvent = {
-            id: event.id,
-            type: 'plant',
-            planterId: event.planterId,
-            site: event.site,
-            timestamp: event.timestamp,
-          };
-          allEvents.push(plantEvent);
-          break;
-        }
-
-        case 'defuse_complete': {
-          const defuseEvent: DefuseEvent = {
-            id: event.id,
-            type: 'defuse',
-            defuserId: event.defuserId,
-            timestamp: event.timestamp,
-          };
-          allEvents.push(defuseEvent);
-          break;
-        }
-      }
-    }
-
-    // Sort by timestamp
-    allEvents.sort((a, b) => a.timestamp - b.timestamp);
-    return allEvents;
+  ): TimelineEvent[] {
+    // Return all timeline events except round_end, sorted by timestamp
+    return timeline
+      .filter(event => event.type !== 'round_end')
+      .sort((a, b) => a.timestamp - b.timestamp);
   }
 
   /**

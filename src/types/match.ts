@@ -70,7 +70,24 @@ export interface UltUsage {
 /**
  * Round event type discriminator
  */
-export type RoundEventType = 'damage' | 'kill' | 'plant' | 'defuse';
+export type RoundEventType =
+  | 'damage'
+  | 'kill'
+  | 'plant'
+  | 'defuse'
+  | 'trade_kill'
+  | 'plant_start'
+  | 'plant_interrupt'
+  | 'plant_complete'
+  | 'defuse_start'
+  | 'defuse_interrupt'
+  | 'defuse_complete'
+  | 'spike_drop'
+  | 'spike_pickup'
+  | 'spike_detonation'
+  | 'ability_use'
+  | 'heal'
+  | 'round_end';
 
 /**
  * Kill event for timeline display
@@ -110,8 +127,13 @@ export interface DefuseEvent {
 
 /**
  * Union type for all round events
+ * Includes both legacy events and new timeline events from round-simulation
  */
-export type RoundEvent = (DamageEvent & { type: 'damage' }) | KillEvent | PlantEvent | DefuseEvent;
+export type RoundEvent =
+  | (DamageEvent & { type: 'damage' })
+  | KillEvent
+  | PlantEvent
+  | DefuseEvent;
 
 // ============================================
 // DAMAGE EVENT TRACKING TYPES
@@ -193,7 +215,7 @@ export interface RoundDamageEvents {
   /** All damage events in chronological order */
   events: DamageEvent[];
   /** All round events including kills, plants, defuses (for timeline display) */
-  allEvents?: RoundEvent[];
+  allEvents?: import('./round-simulation').TimelineEvent[];
   /** Total damage dealt by each player */
   totalDamageByPlayer: Record<string, number>;
   /** Total damage received by each player */

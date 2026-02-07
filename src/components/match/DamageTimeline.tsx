@@ -1,10 +1,6 @@
 import { useState, useMemo } from 'react';
 import type {
   RoundDamageEvents,
-  RoundEvent,
-  KillEvent,
-  PlantEvent,
-  DefuseEvent,
   TimelineEvent,
   SimDamageEvent,
   SimKillEvent,
@@ -19,10 +15,8 @@ import type {
   SpikePickupEvent,
   SpikeDetonationEvent,
   AbilityUseEvent,
-  HealEvent,
-  HitBreakdown
+  HealEvent
 } from '../../types';
-import { DamageEventCard } from './DamageEventCard';
 
 interface DamageTimelineProps {
   damageEvents: RoundDamageEvents;
@@ -32,97 +26,6 @@ interface DamageTimelineProps {
     teamA: { players: string[]; name: string };
     teamB: { players: string[]; name: string };
   };
-}
-
-// Kill Event Card Component
-function KillEventCard({
-  event,
-  killerName,
-  victimName,
-  killerAgent,
-  victimAgent,
-}: {
-  event: KillEvent;
-  killerName: string;
-  victimName: string;
-  killerAgent?: string;
-  victimAgent?: string;
-}) {
-  return (
-    <div className="bg-red-900/30 p-2 rounded border border-red-500/30 hover:border-red-500/50 transition-colors">
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-lg">💀</span>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-green-400 font-medium">{killerName}</span>
-            {killerAgent && <span className="text-vct-gray text-xs">({killerAgent})</span>}
-            <span className="text-red-400 font-bold">KILLED</span>
-            <span className="text-red-300 font-medium">{victimName}</span>
-            {victimAgent && <span className="text-vct-gray text-xs">({victimAgent})</span>}
-          </div>
-          <div className="flex items-center gap-3 text-xs text-vct-gray mt-1">
-            <span>{event.weapon}</span>
-            <span className="text-red-300">{event.damage} damage</span>
-            {event.isHeadshot && (
-              <span className="text-yellow-400 font-semibold">HEADSHOT</span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Plant Event Card Component
-function PlantEventCard({
-  event,
-  planterName,
-  planterAgent,
-}: {
-  event: PlantEvent;
-  planterName: string;
-  planterAgent?: string;
-}) {
-  return (
-    <div className="bg-orange-900/30 p-2 rounded border border-orange-500/30 hover:border-orange-500/50 transition-colors">
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-lg">💣</span>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-orange-400 font-medium">{planterName}</span>
-            {planterAgent && <span className="text-vct-gray text-xs">({planterAgent})</span>}
-            <span className="text-orange-300 font-bold">PLANTED SPIKE</span>
-            <span className="text-orange-200">Site {event.site}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Defuse Event Card Component
-function DefuseEventCard({
-  defuserName,
-  defuserAgent,
-}: {
-  event: DefuseEvent;
-  defuserName: string;
-  defuserAgent?: string;
-}) {
-  return (
-    <div className="bg-blue-900/30 p-2 rounded border border-blue-500/30 hover:border-blue-500/50 transition-colors">
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-lg">🛡️</span>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-blue-400 font-medium">{defuserName}</span>
-            {defuserAgent && <span className="text-vct-gray text-xs">({defuserAgent})</span>}
-            <span className="text-blue-300 font-bold">DEFUSED SPIKE</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // Enhanced Damage Event Card Component (with hit breakdown)
@@ -615,84 +518,45 @@ function RoundEventCard({
   playerNames,
   playerAgents,
 }: {
-  event: RoundEvent | TimelineEvent;
+  event: TimelineEvent;
   playerNames: Record<string, string>;
   playerAgents: Record<string, string>;
 }) {
   switch (event.type) {
     case 'damage':
-      // Check if it's a SimDamageEvent (has hits array) or legacy DamageEvent
-      if ('hits' in event) {
-        return (
-          <SimDamageEventCard
-            event={event as SimDamageEvent}
-            attackerName={playerNames[event.attackerId] || event.attackerId}
-            defenderName={playerNames[event.defenderId] || event.defenderId}
-            attackerAgent={playerAgents[event.attackerId]}
-            defenderAgent={playerAgents[event.defenderId]}
-          />
-        );
-      } else {
-        // Legacy damage event
-        return (
-          <DamageEventCard
-            event={event as any}
-            sourcePlayerName={playerNames[(event as any).dealerId] || (event as any).dealerId}
-            targetPlayerName={playerNames[(event as any).victimId] || (event as any).victimId}
-            sourceAgent={playerAgents[(event as any).dealerId]}
-            targetAgent={playerAgents[(event as any).victimId]}
-          />
-        );
-      }
-    case 'kill':
-      // Check if it's a SimKillEvent (has assisters array) or legacy KillEvent
-      if ('assisters' in event) {
-        return (
-          <SimKillEventCard
-            event={event as SimKillEvent}
-            killerName={playerNames[event.killerId] || event.killerId}
-            victimName={playerNames[event.victimId] || event.victimId}
-            killerAgent={playerAgents[event.killerId]}
-            victimAgent={playerAgents[event.victimId]}
-          />
-        );
-      } else {
-        return (
-          <KillEventCard
-            event={event as KillEvent}
-            killerName={playerNames[event.killerId] || event.killerId}
-            victimName={playerNames[event.victimId] || event.victimId}
-            killerAgent={playerAgents[event.killerId]}
-            victimAgent={playerAgents[event.victimId]}
-          />
-        );
-      }
-    case 'trade_kill':
       return (
-        <TradeKillEventCard
-          event={event as TradeKillEvent}
+        <SimDamageEventCard
+          event={event}
+          attackerName={playerNames[event.attackerId] || event.attackerId}
+          defenderName={playerNames[event.defenderId] || event.defenderId}
+          attackerAgent={playerAgents[event.attackerId]}
+          defenderAgent={playerAgents[event.defenderId]}
+        />
+      );
+    case 'kill':
+      return (
+        <SimKillEventCard
+          event={event}
           killerName={playerNames[event.killerId] || event.killerId}
           victimName={playerNames[event.victimId] || event.victimId}
           killerAgent={playerAgents[event.killerId]}
           victimAgent={playerAgents[event.victimId]}
         />
       );
-    case 'plant':
-      // Legacy plant event
-      if ('planterId' in event) {
-        return (
-          <PlantEventCard
-            event={event as PlantEvent}
-            planterName={playerNames[event.planterId] || event.planterId}
-            planterAgent={playerAgents[event.planterId]}
-          />
-        );
-      }
-      return null;
+    case 'trade_kill':
+      return (
+        <TradeKillEventCard
+          event={event}
+          killerName={playerNames[event.killerId] || event.killerId}
+          victimName={playerNames[event.victimId] || event.victimId}
+          killerAgent={playerAgents[event.killerId]}
+          victimAgent={playerAgents[event.victimId]}
+        />
+      );
     case 'plant_start':
       return (
         <PlantStartEventCard
-          event={event as PlantStartEvent}
+          event={event}
           planterName={playerNames[event.planterId] || event.planterId}
           planterAgent={playerAgents[event.planterId]}
         />
@@ -700,7 +564,7 @@ function RoundEventCard({
     case 'plant_interrupt':
       return (
         <PlantInterruptEventCard
-          event={event as PlantInterruptEvent}
+          event={event}
           planterName={playerNames[event.planterId] || event.planterId}
           planterAgent={playerAgents[event.planterId]}
         />
@@ -708,27 +572,15 @@ function RoundEventCard({
     case 'plant_complete':
       return (
         <PlantCompleteEventCard
-          event={event as PlantCompleteEvent}
+          event={event}
           planterName={playerNames[event.planterId] || event.planterId}
           planterAgent={playerAgents[event.planterId]}
         />
       );
-    case 'defuse':
-      // Legacy defuse event
-      if ('defuserId' in event && !('reason' in event)) {
-        return (
-          <DefuseEventCard
-            event={event as DefuseEvent}
-            defuserName={playerNames[event.defuserId] || event.defuserId}
-            defuserAgent={playerAgents[event.defuserId]}
-          />
-        );
-      }
-      return null;
     case 'defuse_start':
       return (
         <DefuseStartEventCard
-          event={event as DefuseStartEvent}
+          event={event}
           defuserName={playerNames[event.defuserId] || event.defuserId}
           defuserAgent={playerAgents[event.defuserId]}
         />
@@ -736,7 +588,7 @@ function RoundEventCard({
     case 'defuse_interrupt':
       return (
         <DefuseInterruptEventCard
-          event={event as DefuseInterruptEvent}
+          event={event}
           defuserName={playerNames[event.defuserId] || event.defuserId}
           defuserAgent={playerAgents[event.defuserId]}
         />
@@ -744,7 +596,7 @@ function RoundEventCard({
     case 'defuse_complete':
       return (
         <DefuseCompleteEventCard
-          event={event as DefuseCompleteEvent}
+          event={event}
           defuserName={playerNames[event.defuserId] || event.defuserId}
           defuserAgent={playerAgents[event.defuserId]}
         />
@@ -752,7 +604,7 @@ function RoundEventCard({
     case 'spike_drop':
       return (
         <SpikeDropEventCard
-          event={event as SpikeDropEvent}
+          event={event}
           dropperName={playerNames[event.dropperId] || event.dropperId}
           dropperAgent={playerAgents[event.dropperId]}
         />
@@ -760,7 +612,7 @@ function RoundEventCard({
     case 'spike_pickup':
       return (
         <SpikePickupEventCard
-          event={event as SpikePickupEvent}
+          event={event}
           pickerName={playerNames[event.pickerId] || event.pickerId}
           pickerAgent={playerAgents[event.pickerId]}
         />
@@ -768,13 +620,13 @@ function RoundEventCard({
     case 'spike_detonation':
       return (
         <SpikeDetonationEventCard
-          event={event as SpikeDetonationEvent}
+          event={event}
         />
       );
     case 'ability_use':
       return (
         <AbilityUseEventCard
-          event={event as AbilityUseEvent}
+          event={event}
           playerName={playerNames[event.playerId] || event.playerId}
           playerAgent={playerAgents[event.playerId]}
         />
@@ -782,7 +634,7 @@ function RoundEventCard({
     case 'heal':
       return (
         <HealEventCard
-          event={event as HealEvent}
+          event={event}
           healerName={playerNames[event.healerId] || event.healerId}
           targetName={playerNames[event.targetId] || event.targetId}
           healerAgent={playerAgents[event.healerId]}
@@ -790,7 +642,6 @@ function RoundEventCard({
         />
       );
     case 'round_end':
-      // Round end events are typically not shown in timeline
       return null;
     default:
       return null;
@@ -806,18 +657,14 @@ export function DamageTimeline({
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [selectedEventType, setSelectedEventType] = useState<string>('all');
 
-  // Use allEvents if available, otherwise fall back to damage events only
+  // Use timeline events from allEvents
   const allEvents = useMemo(() => {
-    if (damageEvents.allEvents && damageEvents.allEvents.length > 0) {
-      return damageEvents.allEvents;
-    }
-    // Fall back to damage events with type discriminator
-    return damageEvents.events.map(e => ({ ...e, type: 'damage' as const }));
+    return damageEvents.allEvents || [];
   }, [damageEvents]);
 
   // Group events by time for better visualization
   const eventsByTime = useMemo(() => {
-    const grouped = new Map<number, (RoundEvent | TimelineEvent)[]>();
+    const grouped = new Map<number, TimelineEvent[]>();
 
     // Filter events based on current filters
     let filteredEvents = [...allEvents];
@@ -826,22 +673,14 @@ export function DamageTimeline({
       filteredEvents = filteredEvents.filter(event => {
         switch (event.type) {
           case 'damage':
-            if ('attackerId' in event) {
-              return event.attackerId === selectedPlayer || event.defenderId === selectedPlayer;
-            } else if ('dealerId' in event) {
-              return (event as any).dealerId === selectedPlayer || (event as any).victimId === selectedPlayer;
-            }
-            return false;
+            return event.attackerId === selectedPlayer || event.defenderId === selectedPlayer;
           case 'kill':
           case 'trade_kill':
             return event.killerId === selectedPlayer || event.victimId === selectedPlayer;
-          case 'plant':
-            return event.planterId === selectedPlayer;
           case 'plant_start':
           case 'plant_interrupt':
           case 'plant_complete':
             return event.planterId === selectedPlayer;
-          case 'defuse':
           case 'defuse_start':
           case 'defuse_interrupt':
           case 'defuse_complete':
@@ -864,11 +703,11 @@ export function DamageTimeline({
       // Handle grouped event types
       if (selectedEventType === 'plant_events') {
         filteredEvents = filteredEvents.filter(e =>
-          e.type === 'plant' || e.type === 'plant_start' || e.type === 'plant_interrupt' || e.type === 'plant_complete'
+          e.type === 'plant_start' || e.type === 'plant_interrupt' || e.type === 'plant_complete'
         );
       } else if (selectedEventType === 'defuse_events') {
         filteredEvents = filteredEvents.filter(e =>
-          e.type === 'defuse' || e.type === 'defuse_start' || e.type === 'defuse_interrupt' || e.type === 'defuse_complete'
+          e.type === 'defuse_start' || e.type === 'defuse_interrupt' || e.type === 'defuse_complete'
         );
       } else if (selectedEventType === 'spike_events') {
         filteredEvents = filteredEvents.filter(e =>
@@ -925,13 +764,11 @@ export function DamageTimeline({
         case 'trade_kill':
           counts.trade_kill++;
           break;
-        case 'plant':
         case 'plant_start':
         case 'plant_interrupt':
         case 'plant_complete':
           counts.plant_events++;
           break;
-        case 'defuse':
         case 'defuse_start':
         case 'defuse_interrupt':
         case 'defuse_complete':
@@ -1052,12 +889,8 @@ export function DamageTimeline({
             <div className="text-vct-gray">Total Damage</div>
             <div className="text-white font-semibold">
               {allEvents
-                .filter(e => e.type === 'damage')
-                .reduce((sum, e) => {
-                  if ('totalDamage' in e) return sum + e.totalDamage;
-                  if ('finalDamage' in e) return sum + (e as any).finalDamage;
-                  return sum;
-                }, 0)}
+                .filter((e): e is SimDamageEvent => e.type === 'damage')
+                .reduce((sum, e) => sum + e.totalDamage, 0)}
             </div>
           </div>
           <div>
