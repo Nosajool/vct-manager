@@ -11,7 +11,7 @@ import type {
   BuyPhaseResult,
   AbilityPurchase,
 } from '../../types/round-simulation';
-import { WEAPONS, type WeaponData } from '../../data/weapons';
+import { WEAPONS } from '../../data/weapons';
 import { SHIELDS, type ShieldType } from '../../data/shields';
 import {
   AGENT_ABILITIES,

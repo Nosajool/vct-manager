@@ -233,15 +233,6 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
             rosterPosition={
               team.playerIds.includes(selectedPlayer.id) ? 'active' : 'reserve'
             }
-            canPromote={canPromote}
-            onMoveToActive={() => {
-              handleMoveToActive(selectedPlayer.id);
-              setSelectedPlayer(null);
-            }}
-            onMoveToReserve={() => {
-              handleMoveToReserve(selectedPlayer.id);
-              setSelectedPlayer(null);
-            }}
           />
         )}
       </div>

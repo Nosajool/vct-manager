@@ -13,7 +13,6 @@ import type {
   EnhancedPlayerMapPerformance,
   BuyType,
 } from '../../types';
-import { STAT_FORMULAS } from './constants';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
 import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
@@ -26,14 +25,11 @@ import { AGENT_ABILITIES } from '../../data/abilities';
 import type {
   PlayerRoundState,
   TimelineEvent,
-  SimDamageEvent,
   SimKillEvent,
-  AbilityUseEvent,
   TeamSide,
   SimWinCondition,
   BuyPhaseEntry,
 } from '../../types/round-simulation';
-import { COMPOSITION_CONSTANTS } from './constants';
 
 export interface RoundResult {
   /** Enhanced round info for storage */
@@ -564,8 +560,8 @@ export class RoundSimulator {
     attackerCtx: TeamRoundContext,
     defenderCtx: TeamRoundContext,
     strengthRatio: number,
-    ultDecisionA: { ultsToUse: UltUsage[]; impactModifier: number },
-    ultDecisionB: { ultsToUse: UltUsage[]; impactModifier: number }
+    _ultDecisionA: { ultsToUse: UltUsage[]; impactModifier: number },
+    _ultDecisionB: { ultsToUse: UltUsage[]; impactModifier: number }
   ): void {
     let time = 0;
     let iteration = 0;
@@ -665,7 +661,6 @@ export class RoundSimulator {
     const targetPlayer = this.findPlayer(targetId, attackerCtx, defenderCtx);
 
     // Combat rating determines shot count — better players fire more effectively
-    const aggressorMechanics = aggressorPlayer?.stats.mechanics || 0.5;
     const hsProb = this.calculateHeadshotProbability(aggressorPlayer, weaponId);
 
     // Determine shot count from weapon data
@@ -683,7 +678,6 @@ export class RoundSimulator {
     if (sm.isPlayerAlive(targetId) && !sm.isRoundEnded()) {
       const targetWeaponId = targetState.weapon || targetState.sidearm || 'classic';
       const targetWeaponProfile = weaponEngine.getWeaponProfileById(targetWeaponId);
-      const targetMechanics = targetPlayer?.stats.mechanics || 0.5;
       const targetHsProb = this.calculateHeadshotProbability(targetPlayer, targetWeaponId);
 
       // Target gets slightly fewer shots (reacting)
@@ -881,8 +875,8 @@ export class RoundSimulator {
   private maybeUseAbility(
     sm: RoundStateMachine,
     time: number,
-    attackerCtx: TeamRoundContext,
-    defenderCtx: TeamRoundContext
+    _attackerCtx: TeamRoundContext,
+    _defenderCtx: TeamRoundContext
   ): void {
     if (sm.isRoundEnded()) return;
 
@@ -926,7 +920,6 @@ export class RoundSimulator {
 
       // If it's a heal ability, apply healing to self or teammate
       if (ability.effectType === 'heal') {
-        const ctx = sm.getAliveAttackers().includes(playerId) ? attackerCtx : defenderCtx;
         const teamAlive = sm.getAliveAttackers().includes(playerId)
           ? sm.getAliveAttackers()
           : sm.getAliveDefenders();
@@ -1188,7 +1181,7 @@ export class RoundSimulator {
   private extractFirstBlood(
     timeline: TimelineEvent[],
     teamAContext: TeamRoundContext,
-    teamBContext: TeamRoundContext
+    _teamBContext: TeamRoundContext
   ): FirstBlood | null {
     const firstKill = timeline.find(e => e.type === 'kill') as SimKillEvent | undefined;
     if (!firstKill) return null;
@@ -1362,12 +1355,12 @@ export class RoundSimulator {
    */
   private buildLegacyRoundEvents(
     timeline: TimelineEvent[],
-    allPlayers: Player[],
-    allLoadouts: Map<string, PlayerLoadout>,
-    spikePlanted: boolean,
-    planterId: string | undefined,
-    defuserId: string | undefined,
-    winCondition: WinCondition
+    _allPlayers: Player[],
+    _allLoadouts: Map<string, PlayerLoadout>,
+    _spikePlanted: boolean,
+    _planterId: string | undefined,
+    _defuserId: string | undefined,
+    _winCondition: WinCondition
   ): TimelineEvent[] {
     // Return all timeline events except round_end, sorted by timestamp
     return timeline
@@ -1440,23 +1433,6 @@ export class RoundSimulator {
   // ============================================
   // UTILITY METHODS (kept)
   // ============================================
-
-  /**
-   * Weighted random selection
-   */
-  private weightedSelect<T extends { chance: number }>(items: Array<T & { player: Player }>): Player {
-    const totalWeight = items.reduce((sum, i) => sum + i.chance, 0);
-    let random = Math.random() * totalWeight;
-
-    for (const item of items) {
-      random -= item.chance;
-      if (random <= 0) {
-        return item.player;
-      }
-    }
-
-    return items[items.length - 1].player;
-  }
 
   /**
    * Weighted selection by ID

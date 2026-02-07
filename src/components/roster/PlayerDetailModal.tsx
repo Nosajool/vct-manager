@@ -12,9 +12,6 @@ interface PlayerDetailModalProps {
   isOnPlayerTeam?: boolean;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
-  canPromote?: boolean;
-  onMoveToActive?: () => void;
-  onMoveToReserve?: () => void;
 }
 
 export function PlayerDetailModal({
@@ -22,9 +19,6 @@ export function PlayerDetailModal({
   onClose,
   isOnPlayerTeam = false,
   rosterPosition,
-  canPromote = false,
-  onMoveToActive,
-  onMoveToReserve,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
