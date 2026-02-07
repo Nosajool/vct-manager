@@ -423,6 +423,76 @@ export class TrainingService {
   }
 
   /**
+   * Auto-assign training for the starting 5 players
+   * Generates a training plan with optimal assignments based on recommendations
+   *
+   * Algorithm:
+   * 1. Selects starting 5 players only (skips reserves)
+   * 2. Skips players at their weekly training limit
+   * 3. For each player:
+   *    - Uses getRecommendedGoal() to select optimal training goal
+   *    - Defaults to Moderate intensity
+   *    - Downgrades to Light if morale < 50 (avoids further morale penalties)
+   * 4. Returns TrainingPlan for user review (does NOT execute training)
+   *
+   * @returns TrainingPlan - Map of playerId to PlayerTrainingAssignment
+   */
+  autoAssignTraining(): TrainingPlan {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+
+    if (!playerTeamId) {
+      return new Map();
+    }
+
+    const team = state.teams[playerTeamId];
+    if (!team) {
+      return new Map();
+    }
+
+    const plan: TrainingPlan = new Map();
+
+    // Get starting 5 players only (not reserves)
+    const starting5Ids = team.playerIds;
+
+    for (const playerId of starting5Ids) {
+      const player = state.players[playerId];
+      if (!player) continue;
+
+      // Skip players at their weekly training limit
+      const weeklyCheck = this.checkWeeklyLimit(playerId);
+      if (!weeklyCheck.canTrain) {
+        continue;
+      }
+
+      // Get recommended goal based on player's weakest stats
+      const goal = this.getRecommendedGoal(playerId);
+      if (!goal) continue;
+
+      // Default to Moderate intensity
+      let intensity: TrainingIntensity = 'moderate';
+
+      // Check morale: if < 50, downgrade to Light to avoid morale penalties
+      if (player.morale < 50) {
+        intensity = 'light';
+      }
+
+      // Note: Fatigue checking would be implemented here when fatigue tracking is added
+      // Current system relies on weekly limits and morale as proxies for player readiness
+
+      // Add assignment to the plan
+      plan.set(playerId, {
+        playerId,
+        goal,
+        intensity,
+        isAutoAssigned: true,
+      });
+    }
+
+    return plan;
+  }
+
+  /**
    * Reset weekly tracker (called at week start or game load)
    */
   resetWeeklyTracker(): void {
