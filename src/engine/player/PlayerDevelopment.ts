@@ -1,7 +1,15 @@
 // PlayerDevelopment - Pure engine class for player training and development
 // No React or store dependencies - pure functions only
 
-import type { Player, PlayerStats, TrainingFocus, TrainingIntensity, TrainingResult } from '../../types';
+import type {
+  Player,
+  PlayerStats,
+  TrainingFocus,
+  TrainingGoal,
+  TrainingIntensity,
+  TrainingResult
+} from '../../types';
+import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
 
 /**
  * Stat mapping for focused training
@@ -68,6 +76,83 @@ export class PlayerDevelopment {
     moderate: { min: -1, max: 1 }, // Neutral
     intense: { min: -3, max: 0 }, // Can be draining
   };
+
+  /**
+   * Convert a TrainingGoal to its underlying TrainingFocus
+   * Enables backward compatibility with existing training system
+   */
+  static goalToFocus(goal: TrainingGoal): TrainingFocus {
+    return TRAINING_GOAL_MAPPINGS[goal].underlyingFocus;
+  }
+
+  /**
+   * Get training goal information
+   */
+  static getGoalInfo(goal: TrainingGoal) {
+    return TRAINING_GOAL_MAPPINGS[goal];
+  }
+
+  /**
+   * Get all available training goals
+   */
+  static getAllGoals(): TrainingGoal[] {
+    return Object.keys(TRAINING_GOAL_MAPPINGS) as TrainingGoal[];
+  }
+
+  /**
+   * Train a player using a TrainingGoal
+   * This delegates to the existing trainPlayer method using the underlying focus
+   */
+  trainPlayerWithGoal(
+    player: Player,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity,
+    coachBonus: number = 0
+  ): TrainingResult {
+    const focus = PlayerDevelopment.goalToFocus(goal);
+    const result = this.trainPlayer(player, focus, intensity, coachBonus);
+
+    // Add the goal to the result for tracking
+    return {
+      ...result,
+      goal,
+    };
+  }
+
+  /**
+   * Get recommended training goal based on player's weakest stats and role
+   */
+  getRecommendedGoal(player: Player): TrainingGoal {
+    const stats = player.stats;
+
+    // Identify weakest area
+    const statValues = {
+      mechanics: stats.mechanics,
+      igl: stats.igl,
+      mental: stats.mental,
+      clutch: stats.clutch,
+      lurking: stats.lurking,
+      entry: stats.entry,
+      support: stats.support,
+    };
+
+    // Find the lowest stat
+    const weakestStat = Object.entries(statValues)
+      .sort((a, b) => a[1] - b[1])[0][0];
+
+    // Map stat to recommended goal
+    const statToGoal: Record<string, TrainingGoal> = {
+      mechanics: 'mechanical_ceiling',
+      igl: 'leadership_comms',
+      mental: 'decision_making',
+      clutch: 'decision_making',
+      lurking: 'role_mastery_lurk',
+      entry: 'role_mastery_entry',
+      support: 'role_mastery_support',
+    };
+
+    return statToGoal[weakestStat] || 'all_round_growth';
+  }
 
   /**
    * Calculate training effectiveness based on player attributes

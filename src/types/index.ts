@@ -116,7 +116,19 @@ export type {
 export type {
   EconomyEngine,
   TeamEconomyState,
+  TrainingFocus,
+  TrainingGoal,
+  TrainingIntensity,
+  TrainingSession,
+  TrainingFactors,
+  TrainingResult,
+  GoalMapping,
+  PlayerFatigue,
+  Difficulty,
+  DifficultySettings,
 } from './economy';
+
+export { TRAINING_GOAL_MAPPINGS, DIFFICULTY_SETTINGS } from './economy';
 
 // Round simulation types (revamped simulation system)
 export type {
