@@ -129,6 +129,18 @@ export interface TrainingSession {
   date: string;             // ISO date string
 }
 
+// Per-player training assignment (for single-modal UX)
+export interface PlayerTrainingAssignment {
+  playerId: string;
+  goal: TrainingGoal;
+  intensity: TrainingIntensity;
+  isAutoAssigned: boolean;  // Whether this was auto-assigned by recommendation engine
+}
+
+// Training plan represents the full training session plan for multiple players
+// Key is playerId, value is the assignment for that player
+export type TrainingPlan = Map<string, PlayerTrainingAssignment>;
+
 export interface TrainingFactors {
   coachBonus: number;
   playerMorale: number;

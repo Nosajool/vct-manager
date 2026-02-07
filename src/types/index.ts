@@ -126,6 +126,8 @@ export type {
   PlayerFatigue,
   Difficulty,
   DifficultySettings,
+  PlayerTrainingAssignment,
+  TrainingPlan,
 } from './economy';
 
 export { TRAINING_GOAL_MAPPINGS, DIFFICULTY_SETTINGS } from './economy';

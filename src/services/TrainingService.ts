@@ -3,7 +3,7 @@
 
 import { useGameStore } from '../store';
 import { playerDevelopment, PlayerDevelopment } from '../engine/player';
-import type { Player, TrainingFocus, TrainingGoal, TrainingIntensity, TrainingResult } from '../types';
+import type { Player, TrainingFocus, TrainingGoal, TrainingIntensity, TrainingResult, TrainingPlan } from '../types';
 
 /**
  * Training session tracking for weekly limits
@@ -146,7 +146,34 @@ export class TrainingService {
   }
 
   /**
-   * Train multiple players in a batch session
+   * Execute a training plan with per-player assignments
+   * This is the preferred method for the new single-modal UX
+   */
+  executeTrainingPlan(
+    plan: TrainingPlan
+  ): { results: { playerId: string; success: boolean; result?: TrainingResult; error?: string }[] } {
+    const results: { playerId: string; success: boolean; result?: TrainingResult; error?: string }[] = [];
+
+    // Execute training for each player assignment
+    for (const [playerId, assignment] of plan.entries()) {
+      const trainResult = this.trainPlayerWithGoal(
+        playerId,
+        assignment.goal,
+        assignment.intensity
+      );
+
+      results.push({
+        playerId,
+        ...trainResult,
+      });
+    }
+
+    return { results };
+  }
+
+  /**
+   * Train multiple players in a batch session (legacy method)
+   * All players receive the same focus and intensity
    */
   batchTrain(
     playerIds: string[],
