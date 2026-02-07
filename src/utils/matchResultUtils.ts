@@ -1,7 +1,7 @@
 // Match Result Utilities - Helper functions for working with match results and modals
 
 import type { Match, MatchResult } from '../types';
-import type { GameStore } from '../store';
+import type { GameState } from '../store';
 
 /**
  * Converts a MatchResult to its corresponding Match object for modal display
@@ -27,7 +27,7 @@ import type { GameStore } from '../store';
  */
 export function getMatchForResult(
   result: MatchResult,
-  store: GameStore
+  store: GameState
 ): Match | null {
   const match = store.matches[result.matchId];
 
@@ -48,7 +48,7 @@ export function getMatchForResult(
  */
 export function canDisplayMatchResult(
   result: MatchResult,
-  store: GameStore
+  store: GameState
 ): boolean {
   const match = store.matches[result.matchId];
 
@@ -73,7 +73,7 @@ export function canDisplayMatchResult(
  */
 export function getMatchDisplayData(
   result: MatchResult,
-  store: GameStore
+  store: GameState
 ): {
   match: Match;
   teamAName: string;
