@@ -158,6 +158,7 @@ export class MatchService {
    npm run lint
    npm run build
    ```
+   No need to create or run unit tests. We won't be creating them until more of the game design is finalized. We are still in pre-release.
 3. **Update issue status** - Close finished work, update in-progress items
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
