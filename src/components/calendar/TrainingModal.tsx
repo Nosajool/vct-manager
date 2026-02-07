@@ -70,6 +70,43 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
 
+  // Get current assignment for selected player (if any)
+  const currentAssignment = selectedPlayerId ? trainingPlan.get(selectedPlayerId) : null;
+
+  // Get preview data for selected player (must be before early returns to satisfy Rules of Hooks)
+  const selectedPlayerPreview = useMemo(() => {
+    if (!selectedPlayerId || !currentAssignment) return null;
+
+    const player = players[selectedPlayerId];
+    if (!player) return null;
+
+    const { goal, intensity } = currentAssignment;
+    const ovrChange = trainingService.previewOvrChange(selectedPlayerId, goal, intensity);
+    const statChanges = trainingService.previewStatChanges(selectedPlayerId, goal, intensity);
+    const moraleImpact = trainingService.previewMoraleImpact(intensity);
+    const fatigueRisk = trainingService.previewFatigueRisk(intensity);
+    const trainingStatus = trainingService.checkWeeklyLimit(selectedPlayerId);
+
+    // Check if intensity should be auto-overridden
+    const shouldOverrideIntensity = player.morale < 50;
+    const overrideReason = shouldOverrideIntensity
+      ? `Low morale (${player.morale}) - intensity auto-set to Light`
+      : null;
+
+    return {
+      player,
+      goal,
+      intensity,
+      ovrChange,
+      statChanges,
+      moraleImpact,
+      fatigueRisk,
+      trainingStatus,
+      shouldOverrideIntensity,
+      overrideReason,
+    };
+  }, [selectedPlayerId, currentAssignment, players]);
+
   if (!isOpen) return null;
 
   const team = playerTeamId ? teams[playerTeamId] : null;
@@ -82,9 +119,6 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
   const benchPlayers = team.reservePlayerIds
     .map((id) => players[id])
     .filter((p): p is Player => p !== undefined);
-
-  // Get current assignment for selected player (if any)
-  const currentAssignment = selectedPlayerId ? trainingPlan.get(selectedPlayerId) : null;
 
   // Helper: Check if player can train
   const getPlayerTrainingStatus = (playerId: string) => {
@@ -222,39 +256,6 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     }
   };
 
-  // Get preview data for selected player
-  const selectedPlayerPreview = useMemo(() => {
-    if (!selectedPlayerId || !currentAssignment) return null;
-
-    const player = players[selectedPlayerId];
-    if (!player) return null;
-
-    const { goal, intensity } = currentAssignment;
-    const ovrChange = trainingService.previewOvrChange(selectedPlayerId, goal, intensity);
-    const statChanges = trainingService.previewStatChanges(selectedPlayerId, goal, intensity);
-    const moraleImpact = trainingService.previewMoraleImpact(intensity);
-    const fatigueRisk = trainingService.previewFatigueRisk(intensity);
-    const trainingStatus = getPlayerTrainingStatus(selectedPlayerId);
-
-    // Check if intensity should be auto-overridden
-    const shouldOverrideIntensity = player.morale < 50;
-    const overrideReason = shouldOverrideIntensity
-      ? `Low morale (${player.morale}) - intensity auto-set to Light`
-      : null;
-
-    return {
-      player,
-      goal,
-      intensity,
-      ovrChange,
-      statChanges,
-      moraleImpact,
-      fatigueRisk,
-      trainingStatus,
-      shouldOverrideIntensity,
-      overrideReason,
-    };
-  }, [selectedPlayerId, currentAssignment, players]);
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
