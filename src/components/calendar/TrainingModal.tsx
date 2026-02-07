@@ -505,6 +505,17 @@ function PlayerListItem({
    GOAL SELECTOR COLUMN
    ======================================== */
 
+// Icon mapping for each training goal
+const GOAL_ICONS: Record<TrainingGoal, string> = {
+  role_mastery_entry: '🎯',
+  role_mastery_lurk: '🕵️',
+  role_mastery_support: '🛡️',
+  mechanical_ceiling: '⚙️',
+  decision_making: '🧠',
+  leadership_comms: '📢',
+  all_round_growth: '🌟',
+};
+
 interface GoalSelectorColumnProps {
   selectedPlayer: Player | null;
   currentGoal: TrainingGoal | null;
@@ -555,11 +566,14 @@ function GoalSelectorColumn({
               `}
             >
               <div className="flex items-start justify-between gap-2 mb-1">
-                <span className="font-medium text-vct-light text-sm">
-                  {goalInfo.displayName}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{GOAL_ICONS[goal]}</span>
+                  <span className="font-medium text-vct-light text-sm">
+                    {goalInfo.displayName}
+                  </span>
+                </div>
                 {isRecommended && (
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded flex-shrink-0">
                     Recommended
                   </span>
                 )}
