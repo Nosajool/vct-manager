@@ -2,8 +2,8 @@
 // Connects PlayerDevelopment engine with the Zustand store
 
 import { useGameStore } from '../store';
-import { playerDevelopment } from '../engine/player';
-import type { Player, TrainingFocus, TrainingIntensity, TrainingResult } from '../types';
+import { playerDevelopment, PlayerDevelopment } from '../engine/player';
+import type { Player, TrainingFocus, TrainingGoal, TrainingIntensity, TrainingResult } from '../types';
 
 /**
  * Training session tracking for weekly limits
@@ -84,6 +84,63 @@ export class TrainingService {
     // - The event should remain visible until all players reach their limit
     // - This is consistent with how Schedule tab allows training any day
     // - Capacity checking is done per-player in the TrainingModal
+
+    return { success: true, result };
+  }
+
+  /**
+   * Train a player with a goal-based training approach
+   * This is the preferred method for the new training UX
+   */
+  trainPlayerWithGoal(
+    playerId: string,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity
+  ): { success: boolean; result?: TrainingResult; error?: string } {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+
+    if (!player) {
+      return { success: false, error: 'Player not found' };
+    }
+
+    // Check if player is on the user's team
+    const playerTeamId = state.playerTeamId;
+    if (player.teamId !== playerTeamId) {
+      return { success: false, error: 'Can only train players on your team' };
+    }
+
+    // Check weekly training limit
+    const weeklyCheck = this.checkWeeklyLimit(playerId);
+    if (!weeklyCheck.canTrain) {
+      return { success: false, error: weeklyCheck.reason };
+    }
+
+    // Get coach bonus (future: lookup actual coach)
+    const coachBonus = this.getCoachBonus(player.teamId);
+
+    // Capture "before" snapshot for display
+    const statsBefore = { ...player.stats };
+    const moraleBefore = player.morale;
+
+    // Run the training through the engine using the goal-based method
+    const result = playerDevelopment.trainPlayerWithGoal(player, goal, intensity, coachBonus);
+
+    // Add "before" values to result for "old → new" display
+    result.statsBefore = statsBefore;
+    result.moraleBefore = moraleBefore;
+
+    // Apply the training result to the player
+    const updatedPlayer = playerDevelopment.updatePlayerAfterTraining(player, result);
+
+    // Update the player in the store
+    state.updatePlayer(playerId, {
+      stats: updatedPlayer.stats,
+      morale: updatedPlayer.morale,
+    });
+
+    // Track the training session
+    this.recordTrainingSession(playerId);
 
     return { success: true, result };
   }
@@ -224,6 +281,19 @@ export class TrainingService {
   }
 
   /**
+   * Get recommended training goal for a player (goal-based system)
+   * Analyzes player stats, role, and weaknesses to suggest the most beneficial goal
+   */
+  getRecommendedGoal(playerId: string): TrainingGoal | null {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+
+    if (!player) return null;
+
+    return playerDevelopment.getRecommendedGoal(player);
+  }
+
+  /**
    * Get training focus description
    */
   getFocusDescription(focus: TrainingFocus): string {
@@ -231,11 +301,28 @@ export class TrainingService {
   }
 
   /**
+   * Get training goal information (display name, description, affected stats, etc.)
+   */
+  getGoalInfo(goal: TrainingGoal) {
+    return PlayerDevelopment.getGoalInfo(goal);
+  }
+
+  /**
+   * Get all available training goals
+   */
+  getAllGoals(): TrainingGoal[] {
+    return PlayerDevelopment.getAllGoals();
+  }
+
+  /**
    * Preview training effectiveness before committing
+   * Note: Effectiveness is based on player attributes and intensity, not the specific goal/focus
+   * The goal parameter is included for API consistency and future extensibility
    */
   previewTrainingEffectiveness(
     playerId: string,
-    intensity: TrainingIntensity
+    intensity: TrainingIntensity,
+    goal?: TrainingGoal
   ): number | null {
     const state = useGameStore.getState();
     const player = state.players[playerId];
@@ -243,6 +330,8 @@ export class TrainingService {
     if (!player) return null;
 
     const coachBonus = this.getCoachBonus(player.teamId);
+    // Note: Currently effectiveness doesn't vary by goal, only by player attributes
+    // The goal parameter is reserved for future use (e.g., if certain goals have multipliers)
     return playerDevelopment.calculateTrainingEffectiveness(player, intensity, coachBonus);
   }
 
