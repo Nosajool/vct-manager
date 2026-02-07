@@ -203,6 +203,25 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     onClose();
   };
 
+  // Auto-assign optimal training for starting 5
+  const handleAutoAssign = () => {
+    const autoAssignedPlan = trainingService.autoAssignTraining();
+
+    if (autoAssignedPlan.size === 0) {
+      // No players available to auto-assign (all at limit or team not found)
+      return;
+    }
+
+    // Update the training plan
+    setTrainingPlan(autoAssignedPlan);
+
+    // Auto-select the first player for viewing/editing
+    const firstPlayerId = Array.from(autoAssignedPlan.keys())[0];
+    if (firstPlayerId) {
+      setSelectedPlayerId(firstPlayerId);
+    }
+  };
+
   // Get preview data for selected player
   const selectedPlayerPreview = useMemo(() => {
     if (!selectedPlayerId || !currentAssignment) return null;
@@ -250,6 +269,23 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
             Close
           </button>
         </div>
+
+        {/* Auto-Assign Button (only shown in configuration view) */}
+        {!showResults && (
+          <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
+            <button
+              onClick={handleAutoAssign}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              title="Starting 5 assigned with role-based recommendations at safe intensity"
+            >
+              <span className="text-lg">🎯</span>
+              <span>Auto-Assign Optimal Training</span>
+            </button>
+            <p className="text-xs text-vct-gray mt-2 text-center">
+              Assigns recommended training goals to Starting 5 at safe intensity
+            </p>
+          </div>
+        )}
 
         {showResults ? (
           /* Training Results View */
@@ -547,8 +583,14 @@ function PlayerListItem({
             <div className="text-xs mb-1">
               <span className="text-vct-gray">Effectiveness: </span>
               <span className="text-green-400 font-medium">{effectiveness}%</span>
-              {assignment.isAutoAssigned && (
-                <span className="ml-1 text-blue-400" title="Auto-assigned">🎯</span>
+              {assignment.isAutoAssigned ? (
+                <span className="ml-1 px-1.5 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400" title="Auto-assigned">
+                  auto
+                </span>
+              ) : (
+                <span className="ml-1 px-1.5 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400" title="Custom assignment">
+                  custom
+                </span>
               )}
             </div>
           )}
