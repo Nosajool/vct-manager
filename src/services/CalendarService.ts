@@ -9,8 +9,10 @@ import { tournamentService } from './TournamentService';
 import { teamSlotResolver } from './TeamSlotResolver';
 import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
+import { dramaService } from './DramaService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { FeatureUnlock } from '../data/featureUnlocks';
+import type { DramaEventInstance } from '../types/drama';
 import { isLeagueToPlayoffTournament } from '../types';
 
 /**
@@ -26,6 +28,7 @@ export interface TimeAdvanceResult {
   simulatedMatches: MatchResult[]; // Matches that were auto-simulated
   autoSaveTriggered: boolean;
   newlyUnlockedFeatures: FeatureUnlock[]; // Features that unlocked as a result of this advance
+  dramaEvents: DramaEventInstance[]; // Drama events that triggered today
 }
 
 /**
@@ -172,6 +175,9 @@ export class CalendarService {
       }
     }
 
+    // Evaluate drama events for today
+    const dramaEvents = dramaService.evaluateDay();
+
     // Check if auto-save should trigger
     const autoSaveTriggered = timeProgression.shouldAutoSave(
       newDate,
@@ -192,6 +198,7 @@ export class CalendarService {
       simulatedMatches,
       autoSaveTriggered,
       newlyUnlockedFeatures: newlyUnlocked,
+      dramaEvents,
     };
   }
 

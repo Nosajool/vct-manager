@@ -2,7 +2,6 @@
 // Translates abstract DramaEffect descriptors into concrete game state mutations
 
 import type { DramaEffect, DramaGameStateSnapshot } from '../../types/drama';
-import type { PlayerStats } from '../../types/player';
 
 // ============================================================================
 // Types

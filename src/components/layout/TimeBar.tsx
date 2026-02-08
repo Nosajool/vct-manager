@@ -23,7 +23,11 @@ import { QualificationModal, type QualificationModalData } from '../tournament/Q
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
 import { UnlockNotification } from '../today/UnlockNotification';
+import { DramaEventToast, DramaEventModal } from '../drama';
+import { dramaService } from '../../services/DramaService';
+import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
+import type { DramaEventInstance, DramaChoice } from '../../types/drama';
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
@@ -32,6 +36,9 @@ export function TimeBar() {
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [showDayRecapModal, setShowDayRecapModal] = useState(false);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
+  const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
+  const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
+  const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
 
   // Get simulation progress from store
 
@@ -67,6 +74,15 @@ export function TimeBar() {
         setUnlockedFeatures(result.newlyUnlockedFeatures);
       }
 
+      // Process drama events - split into minor and major
+      if (result.dramaEvents && result.dramaEvents.length > 0) {
+        const minorEvents = result.dramaEvents.filter(e => e.severity === 'minor');
+        const majorEvents = result.dramaEvents.filter(e => e.severity === 'major');
+
+        setDramaToasts(minorEvents);
+        setMajorEventQueue(majorEvents);
+      }
+
       // Show results modal if matches were simulated
       if (result.simulatedMatches.length > 0) {
         setSimulationResult(result);
@@ -90,15 +106,58 @@ export function TimeBar() {
      setShowResultsModal(false);
      setSimulationResult(null);
      progressTrackingService.clearProgress();
+
+     // Check if there are major drama events to show
+     if (majorEventQueue.length > 0) {
+       const [firstEvent, ...rest] = majorEventQueue;
+       setCurrentMajorEvent(firstEvent);
+       setMajorEventQueue(rest);
+     }
    };
 
   const handleCloseDayRecap = () => {
     setShowDayRecapModal(false);
     setSimulationResult(null);
+
+    // Check if there are major drama events to show
+    if (majorEventQueue.length > 0) {
+      const [firstEvent, ...rest] = majorEventQueue;
+      setCurrentMajorEvent(firstEvent);
+      setMajorEventQueue(rest);
+    }
   };
 
   const handleDismissUnlock = (index: number) => {
     setUnlockedFeatures((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDramaChoice = (choiceId: string) => {
+    if (!currentMajorEvent) return;
+
+    // Resolve the event through the drama service
+    dramaService.resolveEvent(currentMajorEvent.id, choiceId);
+
+    // After a brief delay to show the outcome, close and check queue
+    setTimeout(() => {
+      setCurrentMajorEvent(null);
+
+      // Check if there are more major events to show
+      if (majorEventQueue.length > 0) {
+        const [nextEvent, ...rest] = majorEventQueue;
+        setCurrentMajorEvent(nextEvent);
+        setMajorEventQueue(rest);
+      }
+    }, 2000); // Give user time to read the outcome
+  };
+
+  const handleDismissDramaToast = (index: number) => {
+    setDramaToasts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Helper: Get choices for an event from its template
+  const getChoicesForEvent = (event: DramaEventInstance): DramaChoice[] => {
+    const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
+    return template?.choices || [];
   };
 
   // Format date for display
@@ -225,6 +284,47 @@ export function TimeBar() {
           onDismiss={() => handleDismissUnlock(index)}
         />
       ))}
+
+      {/* Drama Event Toasts - show minor events */}
+      {dramaToasts.map((event, index) => {
+        // Enrich event with template data for the toast
+        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
+        if (!template) return null;
+
+        const enrichedEvent = {
+          ...event,
+          title: template.title,
+          narrative: template.description,
+        };
+
+        return (
+          <DramaEventToast
+            key={event.id}
+            event={enrichedEvent}
+            onDismiss={() => handleDismissDramaToast(index)}
+          />
+        );
+      })}
+
+      {/* Drama Event Modal - show major events */}
+      {currentMajorEvent && (() => {
+        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === currentMajorEvent.templateId);
+        if (!template) return null;
+
+        const enrichedEvent = {
+          ...currentMajorEvent,
+          narrative: template.description,
+        };
+
+        return (
+          <DramaEventModal
+            event={enrichedEvent}
+            choices={getChoicesForEvent(currentMajorEvent)}
+            onChoose={handleDramaChoice}
+            isOpen={true}
+          />
+        );
+      })()}
     </>
   );
 }
