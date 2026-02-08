@@ -1,0 +1,187 @@
+// DramaEventToast - Slide-in notification for minor drama events
+//
+// Appears for minor severity drama events with auto-dismiss
+// Shows event narrative and effect summary with category-based styling
+
+import { useEffect, useState } from 'react';
+import type { DramaCategory, DramaEventInstance } from '../../types/drama';
+
+// NOTE: This component expects DramaEventInstance to be enriched with
+// template data (title, narrative) before being passed as props.
+// The narrative field should have player names already substituted.
+interface DramaEventToastProps {
+  /** The drama event to display (enriched with title/narrative from template) */
+  event: DramaEventInstance & {
+    title: string;
+    narrative: string;
+  };
+  /** Called when notification is dismissed */
+  onDismiss: () => void;
+  /** Auto-dismiss after this many milliseconds (default: 5000) */
+  autoCloseMs?: number;
+}
+
+/** Category display metadata */
+const CATEGORY_METADATA: Record<
+  DramaCategory,
+  { label: string; color: string; icon: string }
+> = {
+  player_ego: {
+    label: 'Player Update',
+    color: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
+    icon: '👤',
+  },
+  team_synergy: {
+    label: 'Team Update',
+    color: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30',
+    icon: '🤝',
+  },
+  external_pressure: {
+    label: 'External',
+    color: 'from-red-500/20 to-red-600/20 border-red-500/30',
+    icon: '⚠️',
+  },
+  practice_burnout: {
+    label: 'Staff Report',
+    color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
+    icon: '📋',
+  },
+  breakthrough: {
+    label: 'Breakthrough!',
+    color: 'from-green-500/20 to-green-600/20 border-green-500/30',
+    icon: '⭐',
+  },
+  meta_rumors: {
+    label: 'Intel Report',
+    color: 'from-purple-500/20 to-purple-600/20 border-purple-500/30',
+    icon: '📰',
+  },
+};
+
+/**
+ * Format effect summary from applied effects
+ * Returns a formatted string like "-3 Morale, +2 Chemistry"
+ */
+function formatEffectSummary(effects: DramaEventInstance['appliedEffects']): string {
+  const summaries: string[] = [];
+
+  for (const effect of effects) {
+    if (effect.delta) {
+      const sign = effect.delta > 0 ? '+' : '';
+      const stat = effect.stat || effect.target.replace('_', ' ');
+      const displayStat = stat.charAt(0).toUpperCase() + stat.slice(1);
+      summaries.push(`${sign}${effect.delta} ${displayStat}`);
+    }
+  }
+
+  return summaries.join(', ') || 'No immediate effects';
+}
+
+/**
+ * Get color class for effect delta (red for negative, green for positive)
+ */
+function getEffectColor(effects: DramaEventInstance['appliedEffects']): string {
+  const totalDelta = effects.reduce((sum, e) => sum + (e.delta || 0), 0);
+  if (totalDelta > 0) return 'text-green-400';
+  if (totalDelta < 0) return 'text-red-400';
+  return 'text-vct-gray';
+}
+
+export function DramaEventToast({
+  event,
+  onDismiss,
+  autoCloseMs = 5000,
+}: DramaEventToastProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  const metadata = CATEGORY_METADATA[event.category];
+  const effectSummary = formatEffectSummary(event.appliedEffects);
+  const effectColor = getEffectColor(event.appliedEffects);
+
+  useEffect(() => {
+    // Slide in after a brief delay
+    const showTimer = setTimeout(() => setIsVisible(true), 100);
+
+    // Auto-dismiss after specified time
+    const dismissTimer = setTimeout(() => {
+      setIsVisible(false);
+      // Wait for slide-out animation before calling onDismiss
+      setTimeout(onDismiss, 300);
+    }, autoCloseMs);
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(dismissTimer);
+    };
+  }, [autoCloseMs, onDismiss]);
+
+  const handleManualDismiss = () => {
+    setIsVisible(false);
+    setTimeout(onDismiss, 300);
+  };
+
+  return (
+    <div
+      className={`
+        fixed top-20 right-6 z-50
+        max-w-md
+        transition-all duration-300 ease-out
+        ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0'}
+      `}
+    >
+      <div
+        className={`
+          bg-gradient-to-r ${metadata.color}
+          bg-vct-darker
+          border rounded-lg p-4
+          shadow-lg backdrop-blur-sm
+        `}
+      >
+        <div className="flex items-start gap-3">
+          {/* Category Icon */}
+          <div className="flex-shrink-0">
+            <div className="text-2xl mb-1">{metadata.icon}</div>
+            <span className="text-xs font-medium text-vct-gray">
+              {metadata.label}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-bold text-vct-light mb-1">
+              {event.title}
+            </h3>
+            <p className="text-sm text-vct-gray mb-2 line-clamp-2">
+              {event.narrative}
+            </p>
+            {/* Effect Summary */}
+            <div className={`text-xs font-medium ${effectColor}`}>
+              {effectSummary}
+            </div>
+          </div>
+
+          {/* Close Button */}
+          <button
+            onClick={handleManualDismiss}
+            className="flex-shrink-0 text-vct-gray hover:text-vct-light transition-colors"
+            aria-label="Dismiss notification"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
