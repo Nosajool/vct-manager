@@ -54,6 +54,17 @@ export interface SerializedGameState {
     scheduledEvents: unknown[];
   };
 
+  // Drama slice (optional for backwards compatibility)
+  drama?: {
+    activeEvents: unknown[];
+    eventHistory: unknown[];
+    activeFlags: Record<string, string>;
+    cooldowns: Record<string, string>;
+    lastEventByCategory: Record<string, string>;
+    totalEventsTriggered: number;
+    totalMajorDecisions: number;
+  };
+
   // UI slice is NOT persisted (transient state)
 }
 

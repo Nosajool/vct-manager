@@ -30,6 +30,15 @@ interface MinimalGameState {
     currentPhase: string;
     scheduledEvents: unknown[];
   };
+  drama?: {
+    activeEvents: unknown[];
+    eventHistory: unknown[];
+    activeFlags: Record<string, string>;
+    cooldowns: Record<string, string>;
+    lastEventByCategory: Record<string, string>;
+    totalEventsTriggered: number;
+    totalMajorDecisions: number;
+  };
 }
 
 /**
@@ -71,6 +80,7 @@ function serializeGameState(state: MinimalGameState): SerializedGameState {
       currentPhase: state.calendar.currentPhase,
       scheduledEvents: state.calendar.scheduledEvents,
     },
+    drama: state.drama,
   };
 }
 
@@ -329,6 +339,17 @@ export function applyLoadedState<T extends MinimalGameState>(
   setState: (state: Partial<T>) => void,
   loadedState: SerializedGameState
 ): void {
+  // Backwards compatibility: initialize empty drama state if missing
+  const dramaState = loadedState.drama || {
+    activeEvents: [],
+    eventHistory: [],
+    activeFlags: {},
+    cooldowns: {},
+    lastEventByCategory: {},
+    totalEventsTriggered: 0,
+    totalMajorDecisions: 0,
+  };
+
   setState({
     players: loadedState.players,
     teams: loadedState.teams,
@@ -336,5 +357,6 @@ export function applyLoadedState<T extends MinimalGameState>(
     initialized: loadedState.initialized,
     gameStarted: loadedState.gameStarted,
     calendar: loadedState.calendar,
+    drama: dramaState,
   } as Partial<T>);
 }

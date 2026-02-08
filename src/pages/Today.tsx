@@ -12,6 +12,7 @@ import { economyService } from '../services';
 import { TournamentContextPanel, ActionsPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
 import { TrainingModal } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
+import { DramaHistoryPanel } from '../components/drama';
 
 export function Today() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
@@ -113,6 +114,9 @@ export function Today() {
           <AlertsPanel onOpenScrimModal={handleOpenScrimModal} />
         </div>
       </div>
+
+      {/* Recent Events Section */}
+      <DramaHistoryPanel limit={20} />
 
       {/* Training Modal */}
       <TrainingModal isOpen={trainingModalOpen} onClose={() => setTrainingModalOpen(false)} />
