@@ -37,3 +37,4 @@ export {
   ProgressTrackingService,
   progressTrackingService,
 } from './ProgressTrackingService';
+export { DramaService, dramaService } from './DramaService';
