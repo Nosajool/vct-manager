@@ -17,7 +17,7 @@ import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { SimulationResultsModal, DayRecapModal } from '../calendar';
-import { SimulationProgressModal } from '../calendar/SimulationProgressModal';
+import { LoadingOverlay } from '../shared/LoadingSpinner';
 import { progressTrackingService } from '../../services';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
@@ -27,13 +27,13 @@ import type { FeatureUnlock } from '../../data/featureUnlocks';
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
+  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [showDayRecapModal, setShowDayRecapModal] = useState(false);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
 
   // Get simulation progress from store
-  const simulationProgress = useGameStore((state) => state.simulationProgress);
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -54,6 +54,7 @@ export function TimeBar() {
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => TimeAdvanceResult) => {
     setIsAdvancing(true);
+    setShowLoadingOverlay(true);
     try {
       const result = await advanceFn(true); // Pass true for withProgress
 
@@ -73,6 +74,7 @@ export function TimeBar() {
       }
     } finally {
       setIsAdvancing(false);
+      setShowLoadingOverlay(false);
     }
   };
 
@@ -165,11 +167,11 @@ export function TimeBar() {
         </div>
       </div>
 
-      {/* Simulation Progress Modal - shown during simulation */}
-      <SimulationProgressModal
-        isOpen={simulationProgress !== null}
-        onClose={handleCloseModal}
-        result={simulationResult}
+      {/* Loading Overlay - shown during simulation */}
+      <LoadingOverlay
+        isVisible={showLoadingOverlay}
+        text="Simulating matches..."
+        size="md"
       />
 
       {/* Simulation Results Modal */}
