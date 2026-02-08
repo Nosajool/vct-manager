@@ -76,6 +76,12 @@ export class CalendarService {
       progressTrackingService.startCalendarSimulation(unprocessedEvents.length);
     }
 
+    // Artificial delay to ensure loading overlay renders before blocking work
+    // See docs/tech-debt/async_match_simulation.md
+    if (withProgress && unprocessedEvents.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+
     // Process each event for TODAY
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
@@ -174,13 +180,6 @@ export class CalendarService {
 
     if (autoSaveTriggered) {
       state.setLastSaveDate(newDate);
-    }
-
-    // Artificial delay to ensure loading overlay is visible on match days
-    // TODO: Remove when implementing true async simulation via Web Worker
-    // See: docs/tech-debt/async_match_simulation.md
-    if (withProgress && simulatedMatches.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 800));
     }
 
     return {

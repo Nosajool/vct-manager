@@ -55,6 +55,10 @@ export function TimeBar() {
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
     setShowLoadingOverlay(true);
+
+    // Yield to event loop to allow React to render the loading overlay
+    await new Promise(resolve => setTimeout(resolve, 0));
+
     try {
       const result = await advanceFn(true); // Pass true for withProgress
 

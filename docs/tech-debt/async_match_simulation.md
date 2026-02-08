@@ -14,16 +14,25 @@ Scalable Architecture Match Simulation (Web Worker)
      because CalendarService.advanceDay() was synchronous. The function completed so fast
      that React didn't have time to render the overlay before the loading state was cleared.
 
-     Solution: Added artificial 800ms delay in advanceDay() when simulatedMatches > 0
-     (i.e., on match days only). This ensures the loading overlay is visible for a
-     minimum duration, matching expected UX patterns.
-
-     Implementation: src/services/CalendarService.ts
-     ```typescript
-     if (withProgress && simulatedMatches.length > 0) {
-       await new Promise(resolve => setTimeout(resolve, 800));
-     }
-     ```
+     Solution: Two-part fix to ensure overlay renders before blocking work:
+     
+     1. TimeBar.tsx: Yield to event loop before calling advanceDay()
+        ```typescript
+        await new Promise(resolve => setTimeout(resolve, 0));
+        const result = await advanceFn(true);
+        ```
+     
+     2. CalendarService.ts: Artificial delay at START of advanceDay()
+        ```typescript
+        if (withProgress && unprocessedEvents.length > 0) {
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+        ```
+     
+     This ensures:
+     - Loading overlay renders immediately (event loop yields)
+     - 0ms delay is imperceptible
+     - Blocking simulation work happens after overlay is visible
 
      This is a TEMPORARY fix. The delay should be removed when:
      1. Web Worker infrastructure is implemented (Phases 1-6 below)
