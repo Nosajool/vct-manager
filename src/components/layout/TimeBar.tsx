@@ -16,7 +16,7 @@ import { calendarService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
-import { SimulationResultsModal } from '../calendar/SimulationResultsModal';
+import { SimulationResultsModal, DayRecapModal } from '../calendar';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -27,6 +27,7 @@ export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showDayRecapModal, setShowDayRecapModal] = useState(false);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
 
   const calendar = useGameStore((state) => state.calendar);
@@ -56,10 +57,14 @@ export function TimeBar() {
         setUnlockedFeatures(result.newlyUnlockedFeatures);
       }
 
-      // Always show results modal if matches were simulated
+      // Show results modal if matches were simulated
       if (result.simulatedMatches.length > 0) {
         setSimulationResult(result);
         setShowResultsModal(true);
+      } else {
+        // Show day recap for non-match days
+        setSimulationResult(result);
+        setShowDayRecapModal(true);
       }
     } finally {
       setIsAdvancing(false);
@@ -72,6 +77,11 @@ export function TimeBar() {
 
   const handleCloseModal = () => {
     setShowResultsModal(false);
+    setSimulationResult(null);
+  };
+
+  const handleCloseDayRecap = () => {
+    setShowDayRecapModal(false);
     setSimulationResult(null);
   };
 
@@ -153,6 +163,13 @@ export function TimeBar() {
       <SimulationResultsModal
         isOpen={showResultsModal}
         onClose={handleCloseModal}
+        result={simulationResult}
+      />
+
+      {/* Day Recap Modal - shown on non-match days */}
+      <DayRecapModal
+        isOpen={showDayRecapModal}
+        onClose={handleCloseDayRecap}
         result={simulationResult}
       />
 
