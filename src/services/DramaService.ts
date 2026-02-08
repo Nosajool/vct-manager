@@ -58,6 +58,29 @@ export class DramaService {
           eventInstance.appliedEffects = template.effects;
         }
 
+        // Build context for narrative substitution
+        const context: Record<string, string> = {};
+
+        // Add player name if event has affected players
+        if (eventInstance.affectedPlayerIds && eventInstance.affectedPlayerIds.length > 0) {
+          const playerId = eventInstance.affectedPlayerIds[0];
+          const player = state.players[playerId];
+          if (player) {
+            context.playerName = player.name;
+          }
+        }
+
+        // Add team name
+        if (eventInstance.teamId) {
+          const team = state.teams[eventInstance.teamId];
+          if (team) {
+            context.teamName = team.name;
+          }
+        }
+
+        // Substitute placeholders in description for minor events
+        eventInstance.outcomeText = dramaEngine.substituteNarrative(template.description, context);
+
         // Add to store
         state.addDramaEvent(eventInstance);
 

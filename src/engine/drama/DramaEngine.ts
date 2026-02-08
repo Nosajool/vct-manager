@@ -466,7 +466,7 @@ export function createEventInstance(
 // ============================================================================
 
 /**
- * Selects an involved player based on template conditions
+ * Selects an involved player based on template conditions and effects
  * Returns null if no player is involved or selection fails
  */
 export function selectInvolvedPlayer(
@@ -478,18 +478,30 @@ export function selectInvolvedPlayer(
     c.playerSelector !== undefined && c.playerSelector !== 'all'
   );
 
-  if (playerConditions.length === 0) {
+  // Check template effects for player selector hints
+  const playerEffects = (template.effects || []).filter(e =>
+    e.playerSelector !== undefined && e.playerSelector !== 'all'
+  );
+
+  // Combine both sources
+  const hasPlayerTarget = playerConditions.length > 0 || playerEffects.length > 0;
+
+  if (!hasPlayerTarget) {
     // No specific player targeting - event affects team generally
     return null;
   }
 
-  // Use the first player condition to select a player
+  // Use the first player condition or effect to select a player
+  const selector = playerConditions[0]?.playerSelector || playerEffects[0]?.playerSelector;
   const condition = playerConditions[0];
-  const selector = condition.playerSelector;
 
-  if (selector === 'specific' && condition.playerId) {
-    const player = snapshot.players.find(p => p.id === condition.playerId);
-    return player ? { id: player.id, name: player.name } : null;
+  if (selector === 'specific') {
+    const playerId = condition?.playerId;
+    if (playerId) {
+      const player = snapshot.players.find(p => p.id === playerId);
+      return player ? { id: player.id, name: player.name } : null;
+    }
+    // If no specific playerId provided, fall through to team selection
   }
 
   const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
