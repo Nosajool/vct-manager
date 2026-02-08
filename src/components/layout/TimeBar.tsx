@@ -52,7 +52,7 @@ export function TimeBar() {
     return null;
   }
 
-  const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => TimeAdvanceResult) => {
+  const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
     setShowLoadingOverlay(true);
     try {

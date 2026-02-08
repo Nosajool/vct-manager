@@ -6,6 +6,32 @@ Scalable Architecture Match Simulation (Web Worker)
      - Clean separation of concerns
      - Foundation for future features (cancel, pause, real-time updates)
 
+     ─────────────────────────────────────────────────────────────────────────────────────
+     TEMPORARY UX FIX (LoadingOverlay Visibility)
+     ─────────────────────────────────────────────────────────────────────────────────────
+
+     Issue: LoadingOverlay wasn't appearing when clicking "Advance Day" or "Play Match"
+     because CalendarService.advanceDay() was synchronous. The function completed so fast
+     that React didn't have time to render the overlay before the loading state was cleared.
+
+     Solution: Added artificial 800ms delay in advanceDay() when simulatedMatches > 0
+     (i.e., on match days only). This ensures the loading overlay is visible for a
+     minimum duration, matching expected UX patterns.
+
+     Implementation: src/services/CalendarService.ts
+     ```typescript
+     if (withProgress && simulatedMatches.length > 0) {
+       await new Promise(resolve => setTimeout(resolve, 800));
+     }
+     ```
+
+     This is a TEMPORARY fix. The delay should be removed when:
+     1. Web Worker infrastructure is implemented (Phases 1-6 below)
+     2. Match simulation runs truly asynchronously
+     3. Progress updates come from the worker in real-time
+
+     ─────────────────────────────────────────────────────────────────────────────────────
+
      Architecture Diagram
 
      ┌─────────────────────────────────────────────────────────┐

@@ -32,17 +32,20 @@ export interface TimeAdvanceResult {
  * CalendarService - Handles all time progression logic
  */
 export class CalendarService {
-  /**
-   * Advance time by one day
-   *
-   * Game loop flow:
-   * 1. User starts at beginning of Day X
-   * 2. User does activities (training, roster changes, etc.)
-   * 3. User clicks "Advance Day"
-   * 4. TODAY's matches (Day X) are simulated
-   * 5. User is now at beginning of Day X+1
-   */
-   advanceDay(withProgress?: boolean): TimeAdvanceResult {
+   /**
+    * Advance time by one day
+    *
+    * Game loop flow:
+    * 1. User starts at beginning of Day X
+    * 2. User does activities (training, roster changes, etc.)
+    * 3. User clicks "Advance Day"
+    * 4. TODAY's matches (Day X) are simulated
+    * 5. User is now at beginning of Day X+1
+    *
+    * @param withProgress - Whether to track and report progress
+    * @returns Promise resolving to the time advance result
+    */
+   async advanceDay(withProgress?: boolean): Promise<TimeAdvanceResult> {
     const state = useGameStore.getState();
     const currentDate = state.calendar.currentDate;
     const newDate = timeProgression.addDays(currentDate, 1);
@@ -171,6 +174,13 @@ export class CalendarService {
 
     if (autoSaveTriggered) {
       state.setLastSaveDate(newDate);
+    }
+
+    // Artificial delay to ensure loading overlay is visible on match days
+    // TODO: Remove when implementing true async simulation via Web Worker
+    // See: docs/tech-debt/async_match_simulation.md
+    if (withProgress && simulatedMatches.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 800));
     }
 
     return {
