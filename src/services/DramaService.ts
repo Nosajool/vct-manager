@@ -161,11 +161,34 @@ export class DramaService {
     // Apply effects to store
     this.applyResolvedEffects(resolvedEffects);
 
+    // Build context for narrative substitution
+    const context: Record<string, string> = {};
+
+    // Add player name if event has affected players
+    if (event.affectedPlayerIds && event.affectedPlayerIds.length > 0) {
+      const playerId = event.affectedPlayerIds[0];
+      const player = state.players[playerId];
+      if (player) {
+        context.playerName = player.name;
+      }
+    }
+
+    // Add team name
+    if (event.teamId) {
+      const team = state.teams[event.teamId];
+      if (team) {
+        context.teamName = team.name;
+      }
+    }
+
+    // Substitute placeholders in outcome text
+    const substitutedOutcomeText = dramaEngine.substituteNarrative(choice.outcomeText, context);
+
     // Update event in store
     state.resolveDramaEvent(
       eventId,
       choiceId,
-      choice.outcomeText,
+      substitutedOutcomeText,
       choice.effects
     );
 

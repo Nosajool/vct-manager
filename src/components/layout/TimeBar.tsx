@@ -26,8 +26,48 @@ import { UnlockNotification } from '../today/UnlockNotification';
 import { DramaEventToast, DramaEventModal } from '../drama';
 import { dramaService } from '../../services/DramaService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
+import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
 import type { DramaEventInstance, DramaChoice } from '../../types/drama';
+
+/**
+ * Helper to enrich drama event with template data and substitute narrative placeholders
+ */
+function enrichEventWithNarrative(
+  event: DramaEventInstance,
+  template: { title: string; description: string }
+) {
+  const state = useGameStore.getState();
+
+  // Build context for narrative substitution
+  const context: Record<string, string> = {};
+
+  // Add player name if event has affected players
+  if (event.affectedPlayerIds && event.affectedPlayerIds.length > 0) {
+    const playerId = event.affectedPlayerIds[0];
+    const player = state.players[playerId];
+    if (player) {
+      context.playerName = player.name;
+    }
+  }
+
+  // Add team name
+  if (event.teamId) {
+    const team = state.teams[event.teamId];
+    if (team) {
+      context.teamName = team.name;
+    }
+  }
+
+  // Substitute placeholders in the narrative
+  const narrative = substituteNarrative(template.description, context);
+
+  return {
+    ...event,
+    title: template.title,
+    narrative,
+  };
+}
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
@@ -154,10 +194,38 @@ export function TimeBar() {
     setDramaToasts((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Helper: Get choices for an event from its template
+  // Helper: Get choices for an event from its template with substituted outcome texts
   const getChoicesForEvent = (event: DramaEventInstance): DramaChoice[] => {
     const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
-    return template?.choices || [];
+    if (!template?.choices) return [];
+
+    const state = useGameStore.getState();
+
+    // Build context for narrative substitution
+    const context: Record<string, string> = {};
+
+    // Add player name if event has affected players
+    if (event.affectedPlayerIds && event.affectedPlayerIds.length > 0) {
+      const playerId = event.affectedPlayerIds[0];
+      const player = state.players[playerId];
+      if (player) {
+        context.playerName = player.name;
+      }
+    }
+
+    // Add team name
+    if (event.teamId) {
+      const team = state.teams[event.teamId];
+      if (team) {
+        context.teamName = team.name;
+      }
+    }
+
+    // Substitute placeholders in outcome texts
+    return template.choices.map(choice => ({
+      ...choice,
+      outcomeText: substituteNarrative(choice.outcomeText, context),
+    }));
   };
 
   // Format date for display
@@ -291,11 +359,7 @@ export function TimeBar() {
         const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
         if (!template) return null;
 
-        const enrichedEvent = {
-          ...event,
-          title: template.title,
-          narrative: template.description,
-        };
+        const enrichedEvent = enrichEventWithNarrative(event, template);
 
         return (
           <DramaEventToast
@@ -311,10 +375,7 @@ export function TimeBar() {
         const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === currentMajorEvent.templateId);
         if (!template) return null;
 
-        const enrichedEvent = {
-          ...currentMajorEvent,
-          narrative: template.description,
-        };
+        const enrichedEvent = enrichEventWithNarrative(currentMajorEvent, template);
 
         return (
           <DramaEventModal
