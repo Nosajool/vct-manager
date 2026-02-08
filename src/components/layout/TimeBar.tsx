@@ -18,6 +18,7 @@ import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { SimulationResultsModal, DayRecapModal } from '../calendar';
 import { SimulationProgressModal } from '../calendar/SimulationProgressModal';
+import { progressTrackingService } from '../../services';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -29,8 +30,10 @@ export function TimeBar() {
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [showDayRecapModal, setShowDayRecapModal] = useState(false);
-  const [showProgressModal, setShowProgressModal] = useState(false);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
+
+  // Get simulation progress from store
+  const simulationProgress = useGameStore((state) => state.simulationProgress);
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -51,7 +54,6 @@ export function TimeBar() {
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => TimeAdvanceResult) => {
     setIsAdvancing(true);
-    setShowProgressModal(true);
     try {
       const result = await advanceFn(true); // Pass true for withProgress
 
@@ -71,7 +73,6 @@ export function TimeBar() {
       }
     } finally {
       setIsAdvancing(false);
-      setShowProgressModal(false);
     }
   };
 
@@ -79,10 +80,11 @@ export function TimeBar() {
     handleTimeAdvance(() => calendarService.advanceDay(true));
   };
 
-  const handleCloseModal = () => {
-    setShowResultsModal(false);
-    setSimulationResult(null);
-  };
+   const handleCloseModal = () => {
+     setShowResultsModal(false);
+     setSimulationResult(null);
+     progressTrackingService.clearProgress();
+   };
 
   const handleCloseDayRecap = () => {
     setShowDayRecapModal(false);
@@ -165,7 +167,7 @@ export function TimeBar() {
 
       {/* Simulation Progress Modal - shown during simulation */}
       <SimulationProgressModal
-        isOpen={showProgressModal}
+        isOpen={simulationProgress !== null}
         onClose={handleCloseModal}
         result={simulationResult}
       />
