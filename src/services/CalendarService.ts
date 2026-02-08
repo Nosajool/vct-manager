@@ -8,6 +8,7 @@ import { matchService } from './MatchService';
 import { tournamentService } from './TournamentService';
 import { teamSlotResolver } from './TeamSlotResolver';
 import { featureGateService } from './FeatureGateService';
+import { progressTrackingService } from './ProgressTrackingService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { FeatureUnlock } from '../data/featureUnlocks';
 import { isLeagueToPlayoffTournament } from '../types';
@@ -41,7 +42,7 @@ export class CalendarService {
    * 4. TODAY's matches (Day X) are simulated
    * 5. User is now at beginning of Day X+1
    */
-  advanceDay(): TimeAdvanceResult {
+   advanceDay(withProgress?: boolean): TimeAdvanceResult {
     const state = useGameStore.getState();
     const currentDate = state.calendar.currentDate;
     const newDate = timeProgression.addDays(currentDate, 1);
@@ -67,11 +68,25 @@ export class CalendarService {
     const skippedEvents: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
 
+    // Setup progress tracking if requested
+    if (withProgress && unprocessedEvents.length > 0) {
+      progressTrackingService.startCalendarSimulation(unprocessedEvents.length);
+    }
+
     // Process each event for TODAY
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
 
-    for (const event of unprocessedEvents) {
+    for (let i = 0; i < unprocessedEvents.length; i++) {
+      const event = unprocessedEvents[i];
+
+      // Update progress
+      if (withProgress) {
+        progressTrackingService.updateProgress(
+          i + 1,
+          `Processing event ${i + 1}/${unprocessedEvents.length}: ${event.type}`
+        );
+      }
       if (event.type === 'salary_payment') {
         // Auto-process salary payments
         this.processSalaryPayment(event);
@@ -111,6 +126,11 @@ export class CalendarService {
         state.markEventProcessed(event.id);
         skippedEvents.push(event);
       }
+    }
+
+    // Mark progress as complete
+    if (withProgress) {
+      progressTrackingService.completeSimulation('Day processing complete');
     }
 
     // Check if a league stage has completed (all matches played)

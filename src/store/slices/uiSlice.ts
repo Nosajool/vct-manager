@@ -9,11 +9,22 @@ export type ActiveView =
   | 'tournament'
   | 'finances';
 
-export interface BulkSimulationProgress {
+export interface SimulationProgress {
   current: number;
   total: number;
   status: string;
   canCancel: boolean;
+  type: 'bulk' | 'tournament' | 'calendar' | 'matches';
+  details?: {
+    tournamentId?: string;
+    tournamentName?: string;
+    currentMatch?: string;
+    totalMatches?: number;
+  };
+}
+
+export interface BulkSimulationProgress extends SimulationProgress {
+  type: 'bulk';
 }
 
 export interface UISlice {
@@ -31,6 +42,7 @@ export interface UISlice {
   // Loading states
   isSimulating: boolean;
   bulkSimulation: BulkSimulationProgress | null;
+  simulationProgress: SimulationProgress | null;
 
   // Modal states
   isModalOpen: boolean;
@@ -54,6 +66,8 @@ export interface UISlice {
   setSimulating: (isSimulating: boolean) => void;
   setBulkSimulation: (progress: BulkSimulationProgress | null) => void;
   updateBulkSimulationProgress: (current: number, status?: string) => void;
+  setSimulationProgress: (progress: SimulationProgress | null) => void;
+  updateSimulationProgress: (current: number, status?: string) => void;
 
   // Modal actions
   openModal: (type: string, data?: unknown) => void;
@@ -74,6 +88,7 @@ export const createUISlice: StateCreator<
   error: null,
   isSimulating: false,
   bulkSimulation: null,
+  simulationProgress: null,
   isModalOpen: false,
   modalType: null,
   modalData: null,
@@ -120,6 +135,22 @@ export const createUISlice: StateCreator<
       return {
         bulkSimulation: {
           ...state.bulkSimulation,
+          current,
+          ...(status !== undefined ? { status } : {}),
+        },
+      };
+    }),
+
+  setSimulationProgress: (progress) =>
+    set({ simulationProgress: progress }),
+
+  updateSimulationProgress: (current, status) =>
+    set((state) => {
+      if (!state.simulationProgress) return state;
+
+      return {
+        simulationProgress: {
+          ...state.simulationProgress,
           current,
           ...(status !== undefined ? { status } : {}),
         },

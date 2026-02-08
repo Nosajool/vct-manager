@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import { matchSimulator } from '../engine/match';
 import { tournamentService } from './TournamentService';
+import { progressTrackingService } from './ProgressTrackingService';
 import type { Match, MatchResult, Player, Team } from '../types';
 import { isLeagueToPlayoffTournament } from '../types';
 import type { TournamentStandingsEntry, LeagueStage } from '../types/competition';
@@ -440,6 +441,44 @@ export class MatchService {
    */
   getMatchHistory(teamId: string): MatchResult[] {
     return useGameStore.getState().getTeamMatchHistory(teamId);
+  }
+
+  /**
+   * Simulate multiple matches with progress tracking
+   */
+  async simulateMatches(matchIds: string[], withProgress?: boolean): Promise<MatchResult[]> {
+    const results: MatchResult[] = [];
+
+    if (matchIds.length === 0) return results;
+
+    // Setup progress tracking if requested
+    if (withProgress) {
+      progressTrackingService.startMatchSimulation(matchIds.length);
+    }
+
+    for (let i = 0; i < matchIds.length; i++) {
+      const matchId = matchIds[i];
+
+      // Update progress
+      if (withProgress) {
+        progressTrackingService.updateProgress(
+          i + 1,
+          `Simulating match ${i + 1}/${matchIds.length}...`
+        );
+      }
+
+      const result = this.simulateMatch(matchId);
+      if (result) {
+        results.push(result);
+      }
+    }
+
+    // Mark progress as complete
+    if (withProgress) {
+      progressTrackingService.completeSimulation('Match simulation complete');
+    }
+
+    return results;
   }
 }
 

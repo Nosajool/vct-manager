@@ -33,3 +33,7 @@ export {
   type DailyObjective,
   type ObjectiveAction,
 } from './ObjectivesService';
+export {
+  ProgressTrackingService,
+  progressTrackingService,
+} from './ProgressTrackingService';

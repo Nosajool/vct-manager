@@ -2,6 +2,7 @@
 // Connects the pure competition engines with Zustand store
 
 import { useGameStore } from '../store';
+import { progressTrackingService } from './ProgressTrackingService';
 import { bracketManager, tournamentEngine } from '../engine/competition';
 import { matchService } from './MatchService';
 import { economyService } from './EconomyService';
@@ -228,7 +229,7 @@ export class TournamentService {
   /**
    * Simulate an entire tournament round
    */
-  simulateTournamentRound(tournamentId: string): MatchResult[] {
+  simulateTournamentRound(tournamentId: string, withProgress?: boolean): MatchResult[] {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
@@ -246,11 +247,37 @@ export class TournamentService {
     const readyMatches = bracketManager.getReadyMatches(tournament.bracket);
     const results: MatchResult[] = [];
 
+    // Setup progress tracking if requested
+    if (withProgress && readyMatches.length > 0) {
+      progressTrackingService.startTournamentSimulation(
+        tournament.id,
+        tournament.name,
+        tournament.teamIds
+      );
+    }
+
     for (let i = 0; i < readyMatches.length; i++) {
+      // Update progress
+      if (withProgress) {
+        progressTrackingService.updateProgress(
+          i + 1,
+          `Simulating match ${i + 1}/${readyMatches.length}...`,
+          {
+            currentMatch: `Match ${i + 1}`,
+            totalMatches: readyMatches.length,
+          }
+        );
+      }
+
       const result = this.simulateNextMatch(tournamentId);
       if (result) {
         results.push(result);
       }
+    }
+
+    // Mark progress as complete
+    if (withProgress) {
+      progressTrackingService.completeSimulation('Round simulation complete');
     }
 
     return results;
@@ -259,27 +286,52 @@ export class TournamentService {
   /**
    * Simulate entire tournament to completion
    */
-  simulateTournament(tournamentId: string): {
+  simulateTournament(tournamentId: string, withProgress?: boolean): {
     results: MatchResult[];
     champion: string | null;
   } {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+    
+    if (!tournament) {
+      console.error(`Tournament not found: ${tournamentId}`);
+      return { results: [], champion: null };
+    }
+
     const allResults: MatchResult[] = [];
     let champion: string | null = null;
 
     // Ensure tournament is in progress
     this.startTournament(tournamentId);
 
+    // Setup progress tracking if requested
+    if (withProgress) {
+      progressTrackingService.startTournamentSimulation(
+        tournament.id,
+        tournament.name,
+        tournament.teamIds
+      );
+    }
+
     // Keep simulating until tournament is complete
     let safetyCounter = 0;
     const maxIterations = 100;
 
     while (safetyCounter < maxIterations) {
-      const state = useGameStore.getState();
-      const tournament = state.tournaments[tournamentId];
+      const currentState = useGameStore.getState();
+      const currentTournament = currentState.tournaments[tournamentId];
 
-      if (!tournament || tournament.status === 'completed') {
-        champion = tournament?.championId || null;
+      if (!currentTournament || currentTournament.status === 'completed') {
+        champion = currentTournament?.championId || null;
         break;
+      }
+
+      // Update progress
+      if (withProgress) {
+        progressTrackingService.updateProgress(
+          allResults.length,
+          `Simulating match ${allResults.length + 1}...`
+        );
       }
 
       const result = this.simulateNextMatch(tournamentId);
@@ -291,6 +343,11 @@ export class TournamentService {
       }
 
       safetyCounter++;
+    }
+
+    // Mark progress as complete
+    if (withProgress) {
+      progressTrackingService.completeSimulation('Tournament simulation complete');
     }
 
     return { results: allResults, champion };
