@@ -50,10 +50,6 @@ export class FeatureGateService {
     const locked = this.getLockedFeatures();
     if (locked.length === 0) return null;
 
-    const store = useGameStore.getState();
-    const currentDay = this.getCurrentDayCount();
-    const currentPhase = store.calendar.currentPhase;
-
     // Sort locked features by proximity to unlock
     // Day-based features sort by day difference, phase-based come after all day unlocks
     const sorted = locked.sort((a, b) => {

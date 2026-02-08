@@ -25,8 +25,8 @@ import type { FeatureType, FeatureUnlock } from '../data/featureUnlocks';
  */
 export function useFeatureUnlocked(featureId: FeatureType): boolean {
   // Subscribe to calendar state for reactive updates
-  const currentDate = useGameStore((state) => state.calendar.currentDate);
-  const currentPhase = useGameStore((state) => state.calendar.currentPhase);
+  void useGameStore((state) => state.calendar.currentDate);
+  void useGameStore((state) => state.calendar.currentPhase);
 
   // Re-compute when date or phase changes
   return featureGateService.isFeatureUnlocked(featureId);
@@ -52,8 +52,8 @@ export function useFeatureUnlocked(featureId: FeatureType): boolean {
  */
 export function useNextUnlock(): FeatureUnlock | null {
   // Subscribe to calendar state for reactive updates
-  const currentDate = useGameStore((state) => state.calendar.currentDate);
-  const currentPhase = useGameStore((state) => state.calendar.currentPhase);
+  void useGameStore((state) => state.calendar.currentDate);
+  void useGameStore((state) => state.calendar.currentPhase);
 
   // Re-compute when date or phase changes
   return featureGateService.getNextUnlock();

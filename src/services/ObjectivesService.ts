@@ -2,7 +2,7 @@
 // Pure function that analyzes game state and returns actionable objectives
 
 import type { GameState } from '../store';
-import type { CalendarEvent, MatchEventData } from '../types';
+import type { MatchEventData } from '../types';
 
 /**
  * Navigation action for an objective
@@ -263,7 +263,7 @@ function getSecondaryTasks(state: GameState): DailyObjective[] {
   // Check tournament standings
   const activeTournament = Object.values(state.tournaments).find(
     t => t.status === 'in_progress' &&
-    (t.teams?.includes(state.playerTeamId!) || false)
+    (t.teamIds?.includes(state.playerTeamId!) || false)
   );
 
   if (activeTournament) {
