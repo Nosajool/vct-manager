@@ -254,3 +254,23 @@ export {
   isLeagueToPlayoffTournament,
   isSwissToPlayoffTournament,
 } from './competition';
+
+// Drama types
+export type {
+  DramaCategory,
+  DramaSeverity,
+  DramaEventStatus,
+  DramaConditionType,
+  PlayerSelector,
+  DramaCondition,
+  DramaEffectTarget,
+  DramaEffect,
+  DramaChoice,
+  DramaEventTemplate,
+  DramaEventInstance,
+  DramaState,
+  DramaGameStateSnapshot,
+  DramaEvaluationResult,
+} from './drama';
+
+export { DRAMA_CONSTANTS } from './drama';
