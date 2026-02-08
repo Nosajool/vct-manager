@@ -16,6 +16,7 @@ import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
 import { createStrategySlice, type StrategySlice } from './slices/strategySlice';
 import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
 import { createSeasonStatsSlice, type SeasonStatsSlice } from './slices/seasonStatsSlice';
+import { createDramaSlice, type DramaSlice } from './slices/dramaSlice';
 import {
   saveManager,
   applyLoadedState,
@@ -24,7 +25,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice & SeasonStatsSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice;
 
 // Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -39,6 +40,7 @@ export const useGameStore = create<GameState>()(
     ...createStrategySlice(...args),
     ...createRoundDataSlice(...args),
     ...createSeasonStatsSlice(...args),
+    ...createDramaSlice(...args),
   })
 );
 
@@ -53,6 +55,7 @@ export type { ScrimSlice } from './slices/scrimSlice';
 export type { StrategySlice } from './slices/strategySlice';
 export type { RoundDataSlice, MatchRoundData } from './slices/roundDataSlice';
 export type { SeasonStatsSlice } from './slices/seasonStatsSlice';
+export type { DramaSlice } from './slices/dramaSlice';
 
 // ============================================
 // Save/Load API
@@ -364,6 +367,19 @@ export const usePlayerAllSeasons = (playerId: string) =>
 
 export const useAllPlayersSeasonStats = (season: number) =>
   useGameStore((state) => state.getAllPlayersSeasonStats(season));
+
+// ============================================
+// Drama selector hooks
+// ============================================
+
+export const useDramaActiveEvents = () =>
+  useGameStore((state) => state.getActiveEvents());
+
+export const useDramaHistory = (limit?: number) =>
+  useGameStore((state) => state.getEventHistory(limit));
+
+export const usePendingMajorEvents = () =>
+  useGameStore((state) => state.getPendingMajorEvents());
 
 // Re-export persistence types
 export type { SaveSlotInfo } from './middleware/persistence';
