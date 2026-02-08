@@ -17,6 +17,7 @@ import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { SimulationResultsModal, DayRecapModal } from '../calendar';
+import { SimulationProgressModal } from '../calendar/SimulationProgressModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -28,6 +29,7 @@ export function TimeBar() {
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [showDayRecapModal, setShowDayRecapModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
 
   const calendar = useGameStore((state) => state.calendar);
@@ -47,10 +49,11 @@ export function TimeBar() {
     return null;
   }
 
-  const handleTimeAdvance = (advanceFn: () => TimeAdvanceResult) => {
+  const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => TimeAdvanceResult) => {
     setIsAdvancing(true);
+    setShowProgressModal(true);
     try {
-      const result = advanceFn();
+      const result = await advanceFn(true); // Pass true for withProgress
 
       // Show newly unlocked features
       if (result.newlyUnlockedFeatures.length > 0) {
@@ -68,11 +71,12 @@ export function TimeBar() {
       }
     } finally {
       setIsAdvancing(false);
+      setShowProgressModal(false);
     }
   };
 
   const handleAdvanceDay = () => {
-    handleTimeAdvance(() => calendarService.advanceDay());
+    handleTimeAdvance(() => calendarService.advanceDay(true));
   };
 
   const handleCloseModal = () => {
@@ -158,6 +162,13 @@ export function TimeBar() {
           </div>
         </div>
       </div>
+
+      {/* Simulation Progress Modal - shown during simulation */}
+      <SimulationProgressModal
+        isOpen={showProgressModal}
+        onClose={handleCloseModal}
+        result={simulationResult}
+      />
 
       {/* Simulation Results Modal */}
       <SimulationResultsModal
