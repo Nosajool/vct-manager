@@ -70,6 +70,7 @@ export interface RoundPlayerPerformance {
   shotsFired: number;
   totalHits: number;
   weaponUsed: string;
+  wasTraded: boolean;
 }
 
 /**
@@ -417,12 +418,6 @@ export class RoundSimulator {
       const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
       const adr = totalRounds > 0 ? totalDamage / totalRounds : 0;
 
-      // Calculate total hits across all rounds for this player
-      const totalHits = roundPerformances.reduce((sum, roundPerf) => {
-        const playerPerf = roundPerf.get(player.id);
-        return sum + (playerPerf?.totalHits || 0);
-      }, 0);
-
       // Headshot percentage formula: (headshot kills/total kills) × 100
       const hsPercent = totalKills > 0 ? (headshotKills / totalKills) * 100 : 0;
       const kast = totalRounds > 0 ? (kastRounds / totalRounds) * 100 : 0;
@@ -669,7 +664,7 @@ export class RoundSimulator {
     const maxShots = weaponData?.shotsPerRound.max || 6;
     const baseShotCount = Math.floor(minShots + Math.random() * (maxShots - minShots));
     // In a single encounter, fire a fraction of round total
-    const shotCount = Math.max(1, Math.floor(baseShotCount * (0.2 + Math.random() * 0.2)));
+    const shotCount = Math.max(3, Math.floor(baseShotCount * (0.5 + Math.random() * 0.3)));
 
     // Aggressor fires
     this.fireShots(sm, aggressorId, targetId, distance, shotCount, hsProb, timestamp, weaponId, weaponProfile);
@@ -686,7 +681,7 @@ export class RoundSimulator {
       // Strength ratio affects whether target wins — if target's team is stronger, they're more likely to return fire effectively
       const targetIsAttacker = aliveAttackers.includes(targetId);
       const targetFavored = targetIsAttacker ? strengthRatio > 0.5 : strengthRatio < 0.5;
-      if (targetFavored || Math.random() < 0.5) {
+      if (targetFavored || Math.random() < 0.8) {
         this.fireShots(sm, targetId, aggressorId, distance, targetShotCount, targetHsProb, timestamp + 100, targetWeaponId, targetWeaponProfile);
       }
     }
@@ -1102,6 +1097,7 @@ export class RoundSimulator {
         shotsFired: 0,
         totalHits: 0,
         weaponUsed: loadout?.primary?.name || loadout?.secondary?.name || 'Classic',
+        wasTraded: false,
       });
     }
 
