@@ -20,8 +20,14 @@ export interface TeamEconomyState {
  * Result of a round's economic impact
  */
 export interface EconomyUpdate {
-  /** Credits earned this round */
-  creditsEarned: number;
+  /** Base credits per player (win/loss bonus) */
+  baseCreditsPerPlayer: number;
+  /** Kill credits for each player */
+  playerKillCredits: number[];
+  /** Plant credits per player */
+  plantCreditsPerPlayer: number;
+  /** Defuse credits per player */
+  defuseCreditsPerPlayer: number;
   /** New loss streak count */
   newLossStreak: number;
   /** Whether this was a save round */
@@ -134,26 +140,28 @@ export class EconomyEngine {
     const { ROUND_WIN_CREDITS, ROUND_LOSS_BASE, LOSS_STREAK_BONUS, KILL_CREDIT, PLANT_CREDIT, DEFUSE_CREDIT } =
       ECONOMY_CONSTANTS;
 
-    let baseCredits = won ? ROUND_WIN_CREDITS : ROUND_LOSS_BASE;
+    // Calculate base credits per player (win/loss + streak bonus)
+    let baseCreditsPerPlayer = won ? ROUND_WIN_CREDITS : ROUND_LOSS_BASE;
 
     // Loss bonus
     const newLossStreak = won ? 0 : currentState.lossStreak + 1;
     if (!won) {
       const bonusIndex = Math.min(newLossStreak - 1, LOSS_STREAK_BONUS.length - 1);
-      baseCredits += LOSS_STREAK_BONUS[bonusIndex];
+      baseCreditsPerPlayer += LOSS_STREAK_BONUS[bonusIndex];
     }
 
-    // Kill credits (sum of all player kills * credit per kill)
-    const totalKillCredits = kills.reduce((sum, k) => sum + k, 0) * KILL_CREDIT;
+    // Calculate kill credits for each player
+    const playerKillCredits = kills.map(k => k * KILL_CREDIT);
 
-    // Plant/defuse credits (shared among team)
-    const plantCredits = planted ? PLANT_CREDIT : 0;
-    const defuseCredits = defused && won ? DEFUSE_CREDIT : 0;
-
-    const totalCredits = baseCredits + totalKillCredits + plantCredits + defuseCredits;
+    // Plant/defuse credits (per player)
+    const plantCreditsPerPlayer = planted ? PLANT_CREDIT : 0;
+    const defuseCreditsPerPlayer = defused && won ? DEFUSE_CREDIT : 0;
 
     return {
-      creditsEarned: totalCredits,
+      baseCreditsPerPlayer,
+      playerKillCredits,
+      plantCreditsPerPlayer,
+      defuseCreditsPerPlayer,
       newLossStreak,
       wasSaveRound: currentState.lastBuyType === 'eco',
     };
@@ -166,22 +174,24 @@ export class EconomyEngine {
     currentState: TeamEconomyState,
     update: EconomyUpdate,
     buyType: BuyType,
-    playerKills: number[]
+    actualBuyCosts?: number[]
   ): TeamEconomyState {
-    const { MAX_CREDITS, KILL_CREDIT } = ECONOMY_CONSTANTS;
+    const { MAX_CREDITS } = ECONOMY_CONSTANTS;
 
     // Calculate individual player credits
-    // Each player gets base + their individual kills
-    const basePerPlayer = Math.floor(update.creditsEarned / 5);
-
     const newPlayerCredits = currentState.playerCredits.map((current, i) => {
-      // If they bought, subtract cost based on buy type
-      const buyCost = this.getBuyCost(buyType);
+      // Subtract buy cost (use actual if provided, otherwise estimate)
+      const buyCost = actualBuyCosts?.[i] ?? this.getBuyCost(buyType);
       const remaining = Math.max(0, current - buyCost);
 
-      // Add round earnings + individual kill bonus
-      const killBonus = (playerKills[i] || 0) * KILL_CREDIT;
-      const total = remaining + basePerPlayer + killBonus;
+      // Add round earnings (base + kills + plant + defuse)
+      const roundEarnings =
+        update.baseCreditsPerPlayer +
+        update.playerKillCredits[i] +
+        update.plantCreditsPerPlayer +
+        update.defuseCreditsPerPlayer;
+
+      const total = remaining + roundEarnings;
 
       return Math.min(total, MAX_CREDITS);
     });
