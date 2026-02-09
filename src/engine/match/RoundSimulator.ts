@@ -85,6 +85,8 @@ export interface TeamRoundContext {
   baseStrength: number;
   compositionBonus: number;
   isAttacking: boolean;
+  previousRoundLoadouts: Map<string, PlayerLoadout> | null;
+  previousRoundSurvival: boolean[];
 }
 
 // ============================================
@@ -269,23 +271,31 @@ export class RoundSimulator {
     const playerKillsA = teamAContext.players.map(p => playerPerformance.get(p.id)?.kills || 0);
     const playerKillsB = teamBContext.players.map(p => playerPerformance.get(p.id)?.kills || 0);
 
+    // Extract actual buy costs from buy phase results
+    const actualBuyCostsA = (teamAContext.isAttacking ? buyResult.attackerEntries : buyResult.defenderEntries)
+      .map(entry => entry.creditsSpent);
+    const actualBuyCostsB = (teamBContext.isAttacking ? buyResult.defenderEntries : buyResult.attackerEntries)
+      .map(entry => entry.creditsSpent);
+
     // 14. Build legacy damage events from timeline
     const damageEvents = this.buildLegacyDamageEvents(timeline, allPlayers);
     damageEvents.allEvents = this.buildLegacyRoundEvents(timeline, allPlayers, allLoadouts,
       spikePlanted, planterId, defuserId, winCondition);
 
-    // 15. Update economy
+    // 15. Update economy with actual buy costs
     const updatedEconomyA = this.updateEconomy(
       teamAContext.economy, teamAWins, playerKillsA,
       spikePlanted && teamAContext.isAttacking,
       winCondition === 'spike_defused' && !teamAContext.isAttacking,
-      buyTypeA
+      buyTypeA,
+      actualBuyCostsA
     );
     const updatedEconomyB = this.updateEconomy(
       teamBContext.economy, !teamAWins, playerKillsB,
       spikePlanted && teamBContext.isAttacking,
       winCondition === 'spike_defused' && !teamBContext.isAttacking,
-      buyTypeB
+      buyTypeB,
+      actualBuyCostsB
     );
 
     // 16. Update ults
@@ -464,15 +474,22 @@ export class RoundSimulator {
     roundNumber: number,
     buyType: BuyType
   ): BuyPhaseTeamInput {
-    const players: BuyPhasePlayerInfo[] = context.players.map((player, i) => ({
-      playerId: player.id,
-      playerName: player.name,
-      agentId: context.agents[i],
-      teamSide: context.isAttacking ? 'attacker' as const : 'defender' as const,
-      credits: context.economy.playerCredits[i],
-      previousWeapon: null,
-      survivedPreviousRound: false,
-    }));
+    const players: BuyPhasePlayerInfo[] = context.players.map((player, i) => {
+      // Derive carryover from previous round
+      const survived = context.previousRoundSurvival[i] || false;
+      const previousLoadout = context.previousRoundLoadouts?.get(player.id) || null;
+      const previousWeapon = survived && previousLoadout?.primary ? previousLoadout.primary.name : null;
+
+      return {
+        playerId: player.id,
+        playerName: player.name,
+        agentId: context.agents[i],
+        teamSide: context.isAttacking ? 'attacker' as const : 'defender' as const,
+        credits: context.economy.playerCredits[i],
+        previousWeapon,
+        survivedPreviousRound: survived,
+      };
+    });
 
     return {
       players,
@@ -1420,12 +1437,13 @@ export class RoundSimulator {
     playerKills: number[],
     planted: boolean,
     defused: boolean,
-    buyType: BuyType
+    buyType: BuyType,
+    actualBuyCosts?: number[]
   ): TeamEconomyState {
     const update = this.economyEngine.calculateRoundCredits(
       won, playerKills, planted, defused, economy
     );
-    return this.economyEngine.updateEconomyState(economy, update, buyType, playerKills);
+    return this.economyEngine.updateEconomyState(economy, update, buyType, actualBuyCosts);
   }
 
   private updateUlts(

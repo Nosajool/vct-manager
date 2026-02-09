@@ -216,6 +216,12 @@ export class MatchSimulator {
     let scoreB = 0;
     let roundsPlayed = 0;
 
+    // Track previous round state for weapon carryover
+    let previousLoadoutsA: Map<string, any> | null = null;
+    let previousLoadoutsB: Map<string, any> | null = null;
+    let previousSurvivalA: boolean[] = Array(5).fill(false);
+    let previousSurvivalB: boolean[] = Array(5).fill(false);
+
     // Team A attacks first half (rounds 1-12)
     // Team B attacks second half (rounds 13-24)
     // After 12 rounds, sides switch and economy resets
@@ -229,6 +235,11 @@ export class MatchSimulator {
         economyA = this.economyEngine.initializeHalf();
         economyB = this.economyEngine.initializeHalf();
         // Ults persist through half (this is realistic)
+        // Reset carryover state on half switch
+        previousLoadoutsA = null;
+        previousLoadoutsB = null;
+        previousSurvivalA = Array(5).fill(false);
+        previousSurvivalB = Array(5).fill(false);
       }
 
       // Determine which side is attacking
@@ -245,6 +256,8 @@ export class MatchSimulator {
         baseStrength: adjustedStrengthA,
         compositionBonus: agentSelectionA.bonus.modifier,
         isAttacking: teamAAttacking,
+        previousRoundLoadouts: previousLoadoutsA,
+        previousRoundSurvival: previousSurvivalA,
       };
 
       const contextB: TeamRoundContext = {
@@ -256,6 +269,8 @@ export class MatchSimulator {
         baseStrength: adjustedStrengthB,
         compositionBonus: agentSelectionB.bonus.modifier,
         isAttacking: !teamAAttacking,
+        previousRoundLoadouts: previousLoadoutsB,
+        previousRoundSurvival: previousSurvivalB,
       };
 
       // Simulate the round
@@ -272,6 +287,18 @@ export class MatchSimulator {
       economyB = roundResult.teamBEconomy;
       ultsA = roundResult.teamAUlts;
       ultsB = roundResult.teamBUlts;
+
+      // Track loadouts and survival for next round carryover
+      previousLoadoutsA = roundResult.playerLoadouts;
+      previousLoadoutsB = roundResult.playerLoadouts;
+      previousSurvivalA = playersA.map(p => {
+        const perf = roundResult.playerPerformance.get(p.id);
+        return perf?.survivedRound || false;
+      });
+      previousSurvivalB = playersB.map(p => {
+        const perf = roundResult.playerPerformance.get(p.id);
+        return perf?.survivedRound || false;
+      });
 
       // Update scores
       if (roundResult.roundInfo.winner === 'teamA') {
