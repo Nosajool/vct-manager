@@ -410,7 +410,7 @@ export class RoundSimulator {
         headshotKills += perf.headshotKills;
 
         // KAST: Kills/Assists/Survived/Traded
-        if (perf.kills > 0 || perf.assists > 0 || perf.survivedRound) {
+        if (perf.kills > 0 || perf.assists > 0 || perf.survivedRound || perf.wasTraded) {
           kastRounds++;
         }
       }
@@ -1162,6 +1162,33 @@ export class RoundSimulator {
           if (event.slot === 'ultimate') {
             const userPerf = perf.get(event.playerId);
             if (userPerf) userPerf.usedUlt = true;
+          }
+          break;
+        }
+      }
+    }
+
+    // Trade detection: scan kill events chronologically
+    // A player was traded if they died and their killer was killed within 5000ms by their teammate
+    const killEvents = timeline.filter(e => e.type === 'kill') as SimKillEvent[];
+    for (let i = 0; i < killEvents.length; i++) {
+      const originalKill = killEvents[i];
+      const originalVictimId = originalKill.victimId;
+      const originalKillerId = originalKill.killerId;
+
+      // Check subsequent kills within 5000ms
+      for (let j = i + 1; j < killEvents.length; j++) {
+        const subsequentKill = killEvents[j];
+        const timeDiff = subsequentKill.timestamp - originalKill.timestamp;
+
+        // Stop checking if outside trade window
+        if (timeDiff > 5000) break;
+
+        // If the original killer is now the victim, the original victim was traded
+        if (subsequentKill.victimId === originalKillerId) {
+          const victimPerf = perf.get(originalVictimId);
+          if (victimPerf) {
+            victimPerf.wasTraded = true;
           }
           break;
         }
