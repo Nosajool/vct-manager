@@ -423,13 +423,13 @@ export class RoundSimulator {
         return sum + (playerPerf?.totalHits || 0);
       }, 0);
 
-      // Headshot percentage formula: (headshots/hits) × 100
-      const hsPercent = totalHits > 0 ? (headshotKills / totalHits) * 100 : 0;
+      // Headshot percentage formula: (headshot kills/total kills) × 100
+      const hsPercent = totalKills > 0 ? (headshotKills / totalKills) * 100 : 0;
       const kast = totalRounds > 0 ? (kastRounds / totalRounds) * 100 : 0;
 
       // Calculate ACS with proper Valorant formula
       const acs = Math.round(
-        (totalKills * 150 + totalAssists * 50 + totalDamage / 100) /
+        (totalDamage + totalKills * 90 + totalAssists * 25) /
           Math.max(1, totalRounds)
       );
 
