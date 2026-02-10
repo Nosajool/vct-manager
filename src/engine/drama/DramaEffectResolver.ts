@@ -31,7 +31,8 @@ type EffectPlayerSelector =
   | 'triggering'      // First player in involvedPlayerIds
   | 'all_team'        // All players in snapshot
   | 'random_teammate' // Random player excluding triggering player
-  | 'specific';       // Specific player by ID
+  | 'specific'        // Specific player by ID
+  | 'any';            // Random player (resolved from involvedPlayerIds)
 
 // ============================================================================
 // Constants
@@ -217,6 +218,7 @@ function resolvePlayerSelector(
   }
 
   switch (selector) {
+    case 'any':
     case 'triggering':
       return involvedPlayerIds.length > 0 ? [involvedPlayerIds[0]] : [];
 

@@ -527,6 +527,7 @@ export function selectInvolvedPlayer(
       return { id: lowestMoralePlayer.id, name: lowestMoralePlayer.name };
     }
 
+    case 'any':
     case 'newest':
     case 'random': {
       const randomIndex = Math.floor(Math.random() * teamPlayers.length);
