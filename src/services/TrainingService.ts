@@ -146,6 +146,91 @@ export class TrainingService {
   }
 
   /**
+   * Train a player with a goal-based approach and apply an efficiency modifier
+   * Used for auto-configured training sessions which receive reduced effectiveness
+   *
+   * @param modifier - Efficiency multiplier (e.g., 0.8 for 80% effectiveness on auto-configured training)
+   */
+  trainPlayerWithModifier(
+    playerId: string,
+    goal: TrainingGoal,
+    intensity: TrainingIntensity,
+    modifier: number
+  ): { success: boolean; result?: TrainingResult; error?: string } {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+
+    if (!player) {
+      return { success: false, error: 'Player not found' };
+    }
+
+    // Check if player is on the user's team
+    const playerTeamId = state.playerTeamId;
+    if (player.teamId !== playerTeamId) {
+      return { success: false, error: 'Can only train players on your team' };
+    }
+
+    // Check weekly training limit
+    const weeklyCheck = this.checkWeeklyLimit(playerId);
+    if (!weeklyCheck.canTrain) {
+      return { success: false, error: weeklyCheck.reason };
+    }
+
+    // Get coach bonus (future: lookup actual coach)
+    const coachBonus = this.getCoachBonus(player.teamId);
+
+    // Capture "before" snapshot for display
+    const statsBefore = { ...player.stats };
+    const moraleBefore = player.morale;
+
+    // Run the training through the engine using the goal-based method
+    const result = playerDevelopment.trainPlayerWithGoal(player, goal, intensity, coachBonus);
+
+    // Add "before" values to result for "old → new" display
+    result.statsBefore = statsBefore;
+    result.moraleBefore = moraleBefore;
+
+    // Apply the efficiency modifier to stat improvements
+    const scaledStatImprovements: Record<string, number> = {};
+    for (const [stat, improvement] of Object.entries(result.statImprovements)) {
+      scaledStatImprovements[stat] = improvement * modifier;
+    }
+
+    // Create a modified result with scaled improvements
+    const modifiedResult = {
+      ...result,
+      statImprovements: scaledStatImprovements,
+    };
+
+    // Manually apply the scaled improvements to the player
+    const updatedStats = { ...player.stats };
+    for (const [stat, improvement] of Object.entries(scaledStatImprovements)) {
+      if (stat in updatedStats) {
+        (updatedStats as any)[stat] = Math.min(
+          100,
+          Math.max(0, ((updatedStats as any)[stat] || 0) + improvement)
+        );
+      }
+    }
+
+    const updatedMorale = Math.min(
+      100,
+      Math.max(0, player.morale + result.moraleChange)
+    );
+
+    // Update the player in the store with scaled values
+    state.updatePlayer(playerId, {
+      stats: updatedStats,
+      morale: updatedMorale,
+    });
+
+    // Track the training session
+    this.recordTrainingSession(playerId);
+
+    return { success: true, result: modifiedResult };
+  }
+
+  /**
    * Execute a training plan with per-player assignments
    * This is the preferred method for the new single-modal UX
    */
