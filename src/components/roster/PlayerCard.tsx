@@ -254,6 +254,20 @@ export function PlayerCard({
             style={{ width: `${player.potential}%` }}
           />
         </div>
+
+        {/* Morale Bar */}
+        <div className="mt-2">
+          <div className="flex items-center justify-between text-xs mb-1">
+            <span className="text-vct-gray">Morale</span>
+            <span className="text-vct-light">{player.morale}</span>
+          </div>
+          <div className="h-1.5 bg-vct-dark rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-purple-600 to-pink-400 rounded-full"
+              style={{ width: `${player.morale}%` }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
