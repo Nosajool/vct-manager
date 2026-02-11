@@ -2,6 +2,8 @@
 
 import type { Region } from '../../types';
 import { VCT_TEAMS } from '../../utils/constants';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface TeamSelectStepProps {
   region: Region;
@@ -47,13 +49,12 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
                          hover:border-vct-red/50 hover:bg-vct-dark/80
                          transition-all duration-200 text-left flex items-center gap-4"
             >
-              {/* Team Icon Placeholder */}
-              <div className="w-12 h-12 bg-vct-darker rounded-lg flex items-center justify-center
-                              border border-vct-gray/20 flex-shrink-0">
-                <span className="text-xl font-bold text-vct-gray group-hover:text-vct-red transition-colors">
-                  {team.name.charAt(0)}
-                </span>
-              </div>
+              {/* Team Logo */}
+              <GameImage
+                src={getTeamLogoUrl(team.name)}
+                alt={`${team.name} logo`}
+                className="w-12 h-12 rounded-lg flex-shrink-0"
+              />
 
               {/* Team Info */}
               <div className="flex-1 min-w-0">
