@@ -6,10 +6,14 @@
  * from vlr.gg team pages. Generates a static snapshot file for the game.
  *
  * Usage:
- *   npx tsx scripts/fetch-vlr-data.ts
+ *   npx tsx scripts/fetch-vlr-data.ts              # Data only
+ *   npx tsx scripts/fetch-vlr-data.ts --with-images # Data + images
  *
  * Or add to package.json scripts:
  *   "fetch-vlr": "tsx scripts/fetch-vlr-data.ts"
+ *
+ * Flags:
+ *   --with-images: Download team logos and player photos to public/images/
  */
 
 import * as fs from 'fs';
@@ -46,6 +50,59 @@ interface VlrTeamRoster {
 }
 
 type Region = 'Americas' | 'EMEA' | 'Pacific' | 'China';
+
+// Image download configuration
+const DOWNLOAD_IMAGES = process.argv.includes('--with-images');
+const IMAGES_DIR = path.join(process.cwd(), 'public', 'images');
+const TEAMS_DIR = path.join(IMAGES_DIR, 'teams');
+const PLAYERS_DIR = path.join(IMAGES_DIR, 'players');
+
+/**
+ * Normalize entity name to filename-safe slug
+ * (duplicated from imageAssets.ts to avoid import issues)
+ */
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[/.]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Ensure a directory exists
+ */
+function ensureDir(dir: string): void {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+/**
+ * Download an image from a URL and save it to disk
+ * @returns true if downloaded, false if skipped
+ */
+async function downloadImage(url: string, outputPath: string): Promise<boolean> {
+  if (fs.existsSync(outputPath)) {
+    return false; // Already exists
+  }
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return false;
+    }
+
+    const buffer = await response.arrayBuffer();
+    fs.writeFileSync(outputPath, Buffer.from(buffer));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 // VLR Team ID mapping (duplicated from vlrTeamIds.ts to avoid path alias issues)
 const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
@@ -395,7 +452,28 @@ async function scrapeTeamRoster(teamName: string, teamId: number): Promise<VlrTe
     }
 
     const html = await response.text();
+    const $ = cheerio.load(html);
     const players: string[] = [];
+
+    // Download team logo if --with-images is enabled
+    if (DOWNLOAD_IMAGES) {
+      ensureDir(TEAMS_DIR);
+
+      // Find team logo (typically in .wf-avatar or team header)
+      const teamLogo = $('.wf-avatar img, .team-header-logo img').first();
+      const logoUrl = teamLogo.attr('src');
+
+      if (logoUrl) {
+        const absoluteUrl = logoUrl.startsWith('http') ? logoUrl : `https:${logoUrl}`;
+        const teamSlug = slugify(teamName);
+        const logoPath = path.join(TEAMS_DIR, `${teamSlug}.png`);
+
+        const downloaded = await downloadImage(absoluteUrl, logoPath);
+        if (downloaded) {
+          log(`    ✓ Downloaded logo: ${teamName}`, 'green');
+        }
+      }
+    }
 
     // Strategy 1: Find player links with /player/ URLs and extract names from them
     // This is the most reliable since player URLs contain the IGN
@@ -458,6 +536,41 @@ async function scrapeTeamRoster(teamName: string, teamId: number): Promise<VlrTe
     if (startingFive.length === 0) {
       log(`    Warning: No players found for ${teamName}`, 'yellow');
       return null;
+    }
+
+    // Download player photos if --with-images is enabled
+    if (DOWNLOAD_IMAGES) {
+      ensureDir(PLAYERS_DIR);
+
+      // Find player photo URLs from the roster
+      const rosterItems = $('.team-roster-item, .wf-module-item');
+
+      for (const playerSlug of startingFive) {
+        // Find the roster item that contains this player's link
+        const playerItem = rosterItems.filter((_, el) => {
+          const links = $(el).find('a[href*="/player/"]');
+          return links.toArray().some(link => {
+            const href = $(link).attr('href') || '';
+            return href.includes(`/${playerSlug}`);
+          });
+        }).first();
+
+        if (playerItem.length > 0) {
+          // Find the player photo within this roster item
+          const playerImg = $(playerItem).find('img').first();
+          const imgUrl = playerImg.attr('src');
+
+          if (imgUrl && !imgUrl.includes('/img/base/ph/sil.png')) {
+            // Skip VLR's placeholder silhouette image
+            const absoluteUrl = imgUrl.startsWith('http') ? imgUrl : `https:${imgUrl}`;
+            const photoPath = path.join(PLAYERS_DIR, `${playerSlug}.png`);
+
+            await downloadImage(absoluteUrl, photoPath);
+            // Add small delay between player photo downloads
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
+        }
+      }
     }
 
     return {
@@ -583,6 +696,14 @@ export function isPlayerOnRoster(playerName: string, teamName: string): boolean 
 async function main() {
   log('\n🎮 VLR Data Fetcher', 'cyan');
   log('==================\n', 'cyan');
+
+  if (DOWNLOAD_IMAGES) {
+    log('📷 Image downloading: ENABLED', 'cyan');
+    log('   Team logos → public/images/teams/', 'cyan');
+    log('   Player photos → public/images/players/\n', 'cyan');
+  } else {
+    log('📷 Image downloading: DISABLED (use --with-images to enable)\n', 'cyan');
+  }
 
   // Phase 1: Fetch player statistics from VLR for each region
   log('Phase 1: Fetching player statistics for all regions...', 'cyan');
