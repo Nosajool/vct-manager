@@ -13,6 +13,7 @@ import type {
   ScrimRelationship,
   WeeklyScrimTracker,
   ScrimEligibilityCheck,
+  MapStrengthAttributes,
 } from '../types';
 import { SCRIM_CONSTANTS } from '../types/scrim';
 
@@ -26,6 +27,143 @@ export class ScrimService {
   // ============================================
   // Scrim Scheduling
   // ============================================
+
+  /**
+   * Generate auto-configuration for a scrim
+   * Used when user wants quick setup (at 80% efficiency)
+   * Picks partner from existing relationships, team's strongest maps, moderate intensity
+   */
+  generateAutoConfig(): ScrimOptions | null {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+
+    if (!playerTeamId) {
+      return null;
+    }
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) {
+      return null;
+    }
+
+    // 1. Pick partner from existing relationships (prefer best relationship)
+    let partnerTeamId: string | null = null;
+    const relationships = Object.values(playerTeam.scrimRelationships || {});
+
+    if (relationships.length > 0) {
+      // Sort by relationship score, pick the best one
+      const sortedRelationships = [...relationships].sort(
+        (a, b) => b.relationshipScore - a.relationshipScore
+      );
+      partnerTeamId = sortedRelationships[0].teamId;
+    } else {
+      // No relationships yet, pick a T2 team from available partners
+      const availablePartners = this.getAvailablePartners();
+      if (availablePartners.t2Teams.length > 0) {
+        partnerTeamId = availablePartners.t2Teams[0].id;
+      } else if (availablePartners.t3Teams.length > 0) {
+        partnerTeamId = availablePartners.t3Teams[0].id;
+      } else if (availablePartners.t1Teams.length > 0) {
+        partnerTeamId = availablePartners.t1Teams[0].id;
+      }
+    }
+
+    if (!partnerTeamId) {
+      return null;
+    }
+
+    // 2. Pick team's strongest maps
+    const mapPool = playerTeam.mapPool;
+    const strongestMaps = mapPool?.strongestMaps || [];
+
+    // 3. Create config with moderate intensity
+    return {
+      partnerTeamId,
+      format: 'best_of_3',
+      focusMaps: strongestMaps.length > 0 ? strongestMaps.slice(0, 3) : undefined,
+      intensity: 'moderate',
+    };
+  }
+
+  /**
+   * Schedule scrim with efficiency modifier
+   * Used for auto-configured scrims (0.8 modifier) or other efficiency adjustments
+   *
+   * NOTE: Only map improvements are scaled by the modifier.
+   * Chemistry, relationship changes, and VOD leak risk are NOT scaled.
+   */
+  scheduleScrimWithModifier(
+    options: ScrimOptions,
+    modifier: number
+  ): { success: boolean; result?: ScrimResult; error?: string } {
+    // If modifier is 1.0, just use regular scheduleScrim
+    if (modifier === 1.0) {
+      return this.scheduleScrim(options);
+    }
+
+    // Execute the base scrim
+    const scrimResult = this.scheduleScrim(options);
+
+    // If scrim failed or no result, return as-is
+    if (!scrimResult.success || !scrimResult.result) {
+      return scrimResult;
+    }
+
+    const result = scrimResult.result;
+    const state = useGameStore.getState();
+
+    // Apply efficiency modifier to map improvements only
+    const scaledMapImprovements: Record<string, Partial<MapStrengthAttributes>> = {};
+    for (const [mapName, improvements] of Object.entries(result.mapImprovements)) {
+      scaledMapImprovements[mapName] = {};
+      for (const [attr, value] of Object.entries(improvements)) {
+        scaledMapImprovements[mapName][attr as keyof MapStrengthAttributes] = value * modifier;
+      }
+    }
+
+    // Reverse the original map improvements that were already applied
+    const reverseImprovements: Record<string, Partial<MapStrengthAttributes>> = {};
+    for (const [mapName, improvements] of Object.entries(result.mapImprovements)) {
+      reverseImprovements[mapName] = {};
+      for (const [attr, value] of Object.entries(improvements)) {
+        reverseImprovements[mapName][attr as keyof MapStrengthAttributes] = -value;
+      }
+    }
+
+    // Apply reverse to undo original improvements
+    state.applyMapPoolImprovements(
+      result.playerTeamId,
+      reverseImprovements,
+      result.date
+    );
+
+    // Apply scaled improvements
+    state.applyMapPoolImprovements(
+      result.playerTeamId,
+      scaledMapImprovements,
+      result.date
+    );
+
+    // Create modified result with scaled values
+    const modifiedResult: ScrimResult = {
+      ...result,
+      mapImprovements: scaledMapImprovements,
+      efficiencyMultiplier: result.efficiencyMultiplier * modifier,
+    };
+
+    // Update the stored result in scrim history
+    // Remove the original result and add the modified one
+    const scrimHistory = state.scrimHistory;
+    const updatedHistory = scrimHistory.map(s =>
+      s.id === result.id ? modifiedResult : s
+    );
+
+    // Use Zustand's internal set mechanism (via a direct store update)
+    // Since we can't access 'set' here, we'll use the store's setState
+    useGameStore.setState({ scrimHistory: updatedHistory });
+
+    return { success: true, result: modifiedResult };
+  }
 
   /**
    * Schedule and execute a scrim session
