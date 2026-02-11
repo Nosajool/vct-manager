@@ -125,6 +125,16 @@ export type {
   CalendarEventData,
 } from './calendar';
 
+// Activity plan types
+export type {
+  ActivityConfigStatus,
+  TrainingPlayerAssignment,
+  TrainingActivityConfig,
+  ScrimActivityConfig,
+  ActivityConfig,
+  ActivityResolutionResult,
+} from './activityPlan';
+
 // Tournament transition types
 export type {
   TournamentTransitionConfig,
