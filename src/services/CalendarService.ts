@@ -10,10 +10,11 @@ import { teamSlotResolver } from './TeamSlotResolver';
 import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
+import { activityResolutionService } from './ActivityResolutionService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { FeatureUnlock } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
-import type { ActivityResolutionResult } from '../types/activityPlan';
+import type { ActivityResolutionResult, ActivityConfig } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
 
 /**
@@ -91,8 +92,27 @@ export class CalendarService {
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
 
-    for (let i = 0; i < unprocessedEvents.length; i++) {
-      const event = unprocessedEvents[i];
+    // Separate events into required and optional
+    const requiredEvents: CalendarEvent[] = [];
+    const optionalEvents: CalendarEvent[] = []; // training_available, scrim_available
+
+    for (const event of unprocessedEvents) {
+      if (
+        event.type === 'training_available' ||
+        event.type === 'scrim_available'
+      ) {
+        optionalEvents.push(event);
+      } else {
+        requiredEvents.push(event);
+      }
+    }
+
+    // Initialize activity resolution result
+    let activityResults: ActivityResolutionResult | undefined;
+
+    // Process required events (matches, salary payments, tournaments)
+    for (let i = 0; i < requiredEvents.length; i++) {
+      const event = requiredEvents[i];
 
       // Update progress
       if (withProgress) {
@@ -136,10 +156,45 @@ export class CalendarService {
         state.markEventProcessed(event.id);
         processedEvents.push(event);
       } else {
-        // Skip optional events that weren't taken (training, scrims, etc.)
+        // Fallback for other required events
         state.markEventProcessed(event.id);
-        skippedEvents.push(event);
+        processedEvents.push(event);
       }
+    }
+
+    // Process optional events (training, scrim) using activity configs
+    if (optionalEvents.length > 0) {
+      const activityConfigs: ActivityConfig[] = [];
+
+      for (const event of optionalEvents) {
+        const config = state.getActivityConfig(event.id);
+
+        if (config && config.status === 'configured') {
+          // Collect configured activities
+          activityConfigs.push(config);
+
+          // Mark event as processed
+          state.markEventProcessed(event.id);
+          processedEvents.push(event);
+
+          console.log(`  Processing configured activity: ${event.type} (${event.id})`);
+        } else {
+          // No config or not configured - skip the activity
+          state.markEventProcessed(event.id);
+          skippedEvents.push(event);
+
+          console.log(`  Skipping unconfigured activity: ${event.type} (${event.id})`);
+        }
+      }
+
+      // Resolve all configured activities
+      if (activityConfigs.length > 0) {
+        console.log(`  Resolving ${activityConfigs.length} configured activities`);
+        activityResults = activityResolutionService.resolveAllActivities(activityConfigs);
+      }
+
+      // Clear today's configs from slice
+      state.clearConfigsForDate(currentDate);
     }
 
     // Mark progress as complete
@@ -201,6 +256,7 @@ export class CalendarService {
       autoSaveTriggered,
       newlyUnlockedFeatures: newlyUnlocked,
       dramaEvents,
+      activityResults,
     };
   }
 
