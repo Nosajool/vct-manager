@@ -8,6 +8,8 @@
 import type { BracketMatch as BracketMatchType, Team } from '../../types';
 import type { TeamSlot } from '../../types/competition';
 import { useGameStore } from '../../store';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface BracketMatchProps {
   match: BracketMatchType;
@@ -95,11 +97,13 @@ export function BracketMatch({
     display,
     isWinner,
     score,
+    isCompact = false,
   }: {
     team: typeof teamA;
     display: { name: string; isTbd: boolean; description?: string };
     isWinner: boolean;
     score?: number;
+    isCompact?: boolean;
   }) => {
     const isPlayerTeam = team?.id === playerTeamId;
 
@@ -111,7 +115,7 @@ export function BracketMatch({
       >
         <div className="flex flex-col min-w-0 flex-1">
           <span
-            className={`text-sm truncate ${
+            className={`flex items-center gap-1.5 text-sm truncate ${
               display.isTbd
                 ? 'text-vct-gray/60 italic'
                 : isWinner
@@ -119,6 +123,13 @@ export function BracketMatch({
                   : 'text-vct-gray'
             } ${isPlayerTeam ? 'text-vct-red' : ''}`}
           >
+            {!display.isTbd && (
+              <GameImage
+                src={getTeamLogoUrl(display.name)}
+                alt={display.name}
+                className={`${isCompact ? 'w-4 h-4' : 'w-5 h-5'} object-contain flex-shrink-0`}
+              />
+            )}
             {display.name}
           </span>
           {display.isTbd && display.description && (
@@ -195,6 +206,7 @@ export function BracketMatch({
           display={teamADisplay}
           isWinner={match.winnerId === match.teamAId}
           score={match.result?.scoreTeamA}
+          isCompact={true}
         />
         <div className="border-t border-vct-gray/20" />
         <TeamRow
@@ -202,6 +214,7 @@ export function BracketMatch({
           display={teamBDisplay}
           isWinner={match.winnerId === match.teamBId}
           score={match.result?.scoreTeamB}
+          isCompact={true}
         />
       </div>
     );
@@ -241,6 +254,7 @@ export function BracketMatch({
           display={teamADisplay}
           isWinner={match.winnerId === match.teamAId}
           score={match.result?.scoreTeamA}
+          isCompact={false}
         />
         <div className="text-center text-xs text-vct-gray">vs</div>
         <TeamRow
@@ -248,6 +262,7 @@ export function BracketMatch({
           display={teamBDisplay}
           isWinner={match.winnerId === match.teamBId}
           score={match.result?.scoreTeamB}
+          isCompact={false}
         />
       </div>
     </div>

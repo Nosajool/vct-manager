@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import type { PlayerMapPerformance } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getAgentImageUrl } from '../../utils/imageAssets';
 
 type SortKey = 'acs' | 'kills' | 'deaths' | 'assists' | 'kd' | 'adr' | 'kast' | 'firstKills';
 type SortDirection = 'asc' | 'desc';
@@ -77,7 +79,6 @@ export function PlayerStatsTable({
           <thead>
             <tr className="bg-vct-dark text-xs text-vct-gray">
               <th className="px-4 py-2 text-left font-medium">Player</th>
-              <th className="px-2 py-2 text-left font-medium">Agent</th>
               <th
                 className="px-2 py-2 text-center font-medium cursor-pointer hover:text-vct-light"
                 onClick={() => handleSort('acs')}
@@ -154,9 +155,15 @@ export function PlayerStatsTable({
                 `}
               >
                 <td className="px-4 py-2 text-vct-light font-medium">
-                  {perf.playerName}
+                  <div className="flex items-center gap-2">
+                    <GameImage
+                      src={getAgentImageUrl(perf.agent)}
+                      alt={perf.agent}
+                      className="w-5 h-5 object-contain"
+                    />
+                    {perf.playerName}
+                  </div>
                 </td>
-                <td className="px-2 py-2 text-vct-gray">{perf.agent}</td>
                 <td className="px-2 py-2 text-center">
                   <AcsBadge acs={perf.acs} />
                 </td>

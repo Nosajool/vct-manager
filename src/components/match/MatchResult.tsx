@@ -3,6 +3,8 @@
 import { useGameStore } from '../../store';
 import type { Match } from '../../types';
 import { Scoreboard } from './Scoreboard';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface MatchResultProps {
   match: Match;
@@ -61,15 +63,22 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
           {/* Match Score */}
           <div className="flex items-center justify-between">
             {/* Team A */}
-            <div className="flex-1 text-left">
-              <p
-                className={`text-2xl font-bold ${
-                  result.winnerId === teamA.id ? 'text-green-400' : 'text-vct-light'
-                }`}
-              >
-                {teamA.name}
-              </p>
-              <p className="text-sm text-vct-gray">{teamA.region}</p>
+            <div className="flex-1 text-left flex items-center gap-3">
+              <GameImage
+                src={getTeamLogoUrl(teamA.name)}
+                alt={teamA.name}
+                className="w-10 h-10"
+              />
+              <div>
+                <p
+                  className={`text-2xl font-bold ${
+                    result.winnerId === teamA.id ? 'text-green-400' : 'text-vct-light'
+                  }`}
+                >
+                  {teamA.name}
+                </p>
+                <p className="text-sm text-vct-gray">{teamA.region}</p>
+              </div>
             </div>
 
             {/* Score */}
@@ -92,15 +101,22 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
             </div>
 
             {/* Team B */}
-            <div className="flex-1 text-right">
-              <p
-                className={`text-2xl font-bold ${
-                  result.winnerId === teamB.id ? 'text-green-400' : 'text-vct-light'
-                }`}
-              >
-                {teamB.name}
-              </p>
-              <p className="text-sm text-vct-gray">{teamB.region}</p>
+            <div className="flex-1 text-right flex items-center justify-end gap-3">
+              <div>
+                <p
+                  className={`text-2xl font-bold ${
+                    result.winnerId === teamB.id ? 'text-green-400' : 'text-vct-light'
+                  }`}
+                >
+                  {teamB.name}
+                </p>
+                <p className="text-sm text-vct-gray">{teamB.region}</p>
+              </div>
+              <GameImage
+                src={getTeamLogoUrl(teamB.name)}
+                alt={teamB.name}
+                className="w-10 h-10"
+              />
             </div>
           </div>
 

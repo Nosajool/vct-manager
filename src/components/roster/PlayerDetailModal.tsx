@@ -3,6 +3,8 @@
 import type { Player, PlayerStats } from '../../types';
 import { playerGenerator } from '../../engine/player';
 import { useState } from 'react';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -68,6 +70,13 @@ export function PlayerDetailModal({
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
           <div className="flex items-center gap-4">
+            {/* Player Photo */}
+            <GameImage
+              src={getPlayerImageUrl(player.name)}
+              alt={player.name}
+              className="w-20 h-20 rounded-lg object-cover"
+            />
+
             {/* Overall */}
             <div
               className={`

@@ -2,6 +2,8 @@
 
 import type { Player } from '../../types';
 import { playerGenerator } from '../../engine/player';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface PlayerCardProps {
   player: Player;
@@ -66,6 +68,13 @@ export function PlayerCard({
           ${selected ? 'bg-vct-red/20 border border-vct-red/50' : 'bg-vct-dark hover:bg-vct-gray/10'}
         `}
       >
+        {/* Player Photo */}
+        <GameImage
+          src={getPlayerImageUrl(player.name)}
+          alt={player.name}
+          className="w-8 h-8 rounded-full object-cover"
+        />
+
         {/* Overall */}
         <div
           className={`w-10 h-10 rounded flex items-center justify-center font-bold ${getOverallColor(overall)} bg-vct-darker`}
@@ -167,6 +176,13 @@ export function PlayerCard({
       )}
 
       <div className="flex items-start gap-4">
+        {/* Player Photo */}
+        <GameImage
+          src={getPlayerImageUrl(player.name)}
+          alt={player.name}
+          className="w-14 h-14 rounded-full object-cover"
+        />
+
         {/* Overall Rating */}
         <div
           className={`

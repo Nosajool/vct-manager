@@ -2,6 +2,8 @@
 
 import { useGameStore } from '../../store';
 import type { Match, MatchResult } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface MatchCardProps {
   match: Match;
@@ -146,20 +148,27 @@ function TeamDisplay({
   isWinner,
   align,
 }: {
-  team: { name: string; region: string };
+  team: { id: string; name: string; region: string };
   isWinner?: boolean;
   align: 'left' | 'right';
 }) {
   return (
-    <div className={`flex-1 ${align === 'right' ? 'text-right' : 'text-left'}`}>
-      <p
-        className={`font-semibold truncate ${
-          isWinner ? 'text-green-400' : 'text-vct-light'
-        }`}
-      >
-        {team.name}
-      </p>
-      <p className="text-xs text-vct-gray">{team.region}</p>
+    <div className={`flex-1 flex items-center gap-2 ${align === 'right' ? 'flex-row-reverse text-right' : 'text-left'}`}>
+      <GameImage
+        src={getTeamLogoUrl(team.id)}
+        alt={`${team.name} logo`}
+        className="w-6 h-6"
+      />
+      <div className="flex-1 min-w-0">
+        <p
+          className={`font-semibold truncate ${
+            isWinner ? 'text-green-400' : 'text-vct-light'
+          }`}
+        >
+          {team.name}
+        </p>
+        <p className="text-xs text-vct-gray">{team.region}</p>
+      </div>
     </div>
   );
 }

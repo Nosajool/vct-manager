@@ -2,6 +2,8 @@
 
 import { useGameStore } from '../../store';
 import type { StandingsEntry } from '../../store/slices/competitionSlice';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface StandingsTableProps {
   standings: StandingsEntry[];
@@ -44,10 +46,15 @@ export function StandingsTable({
                 {index + 1}.
               </span>
               <span
-                className={`flex-1 text-sm truncate ${
+                className={`flex-1 flex items-center gap-1.5 text-sm truncate ${
                   isPlayerTeam ? 'text-vct-red font-medium' : 'text-white'
                 }`}
               >
+                <GameImage
+                  src={getTeamLogoUrl(entry.teamName)}
+                  alt={entry.teamName}
+                  className="w-4 h-4 object-contain flex-shrink-0"
+                />
                 {entry.teamName}
               </span>
               <span className="text-xs text-vct-gray">
@@ -96,13 +103,18 @@ export function StandingsTable({
                   </span>
                 </td>
                 <td className="py-2 px-2">
-                  <span
-                    className={`text-sm ${
+                  <div
+                    className={`flex items-center gap-2 text-sm ${
                       isPlayerTeam ? 'text-vct-red font-medium' : 'text-white'
                     }`}
                   >
+                    <GameImage
+                      src={getTeamLogoUrl(entry.teamName)}
+                      alt={entry.teamName}
+                      className="w-5 h-5 object-contain"
+                    />
                     {entry.teamName}
-                  </span>
+                  </div>
                 </td>
                 <td className="py-2 px-2 text-center">
                   <span className="text-sm text-green-400">{entry.wins}</span>
