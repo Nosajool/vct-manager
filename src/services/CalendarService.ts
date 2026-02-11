@@ -13,6 +13,7 @@ import { dramaService } from './DramaService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { FeatureUnlock } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
+import type { ActivityResolutionResult } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
 
 /**
@@ -29,6 +30,7 @@ export interface TimeAdvanceResult {
   autoSaveTriggered: boolean;
   newlyUnlockedFeatures: FeatureUnlock[]; // Features that unlocked as a result of this advance
   dramaEvents: DramaEventInstance[]; // Drama events that triggered today
+  activityResults?: ActivityResolutionResult; // Results from resolved training/scrim activities
 }
 
 /**
