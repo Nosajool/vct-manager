@@ -5,6 +5,8 @@ import { useGameStore } from '../../store';
 import { PlayerCard } from './PlayerCard';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import type { Player, Region, Team } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 type RegionFilter = Region | 'all';
 
@@ -133,6 +135,13 @@ export function AllTeamsView() {
                   >
                     {teamOverall}
                   </div>
+
+                  {/* Team Logo */}
+                  <GameImage
+                    src={getTeamLogoUrl(team.name)}
+                    alt={team.name}
+                    className="w-10 h-10"
+                  />
 
                   {/* Team Info */}
                   <div>

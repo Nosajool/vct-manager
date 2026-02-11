@@ -6,6 +6,8 @@ import { PlayerCard } from './PlayerCard';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import { useGameStore } from '../../store';
 import { contractService } from '../../services/ContractService';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface RosterListProps {
   team: Team;
@@ -125,11 +127,18 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
       <div className="space-y-8">
         {/* Team Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-vct-light">{team.name}</h2>
-            <p className="text-sm text-vct-gray">
-              {team.region} • {activePlayers.length}/5 Active • {reservePlayers.length} Reserve
-            </p>
+          <div className="flex items-center gap-3">
+            <GameImage
+              src={getTeamLogoUrl(team.name)}
+              alt={team.name}
+              className="w-12 h-12"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-vct-light">{team.name}</h2>
+              <p className="text-sm text-vct-gray">
+                {team.region} • {activePlayers.length}/5 Active • {reservePlayers.length} Reserve
+              </p>
+            </div>
           </div>
           {isPlayerTeam && (
             <span className="px-3 py-1 bg-vct-red/20 border border-vct-red/50 rounded text-vct-red text-sm font-medium">
