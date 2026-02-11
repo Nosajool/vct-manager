@@ -4,6 +4,8 @@ import { useState } from 'react';
 import type { MatchResult, MapResult } from '../../types';
 import { PlayerStatsTable } from './PlayerStatsTable';
 import { RoundTimeline } from './RoundTimeline';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface ScoreboardProps {
   result: MatchResult;
@@ -173,7 +175,12 @@ function MapScoreHeader({
     <div className="bg-vct-darker rounded-lg p-4 border border-vct-gray/20">
       <div className="flex items-center justify-between">
         {/* Team A */}
-        <div className="flex-1 text-left">
+        <div className="flex-1 text-left flex items-center gap-2">
+          <GameImage
+            src={getTeamLogoUrl(teamAName)}
+            alt={teamAName}
+            className="w-8 h-8"
+          />
           <p
             className={`text-xl font-bold ${
               map.winner === 'teamA' ? 'text-green-400' : 'text-vct-light'
@@ -203,7 +210,7 @@ function MapScoreHeader({
         </div>
 
         {/* Team B */}
-        <div className="flex-1 text-right">
+        <div className="flex-1 text-right flex items-center justify-end gap-2">
           <p
             className={`text-xl font-bold ${
               map.winner === 'teamB' ? 'text-green-400' : 'text-vct-light'
@@ -211,6 +218,11 @@ function MapScoreHeader({
           >
             {teamBName}
           </p>
+          <GameImage
+            src={getTeamLogoUrl(teamBName)}
+            alt={teamBName}
+            className="w-8 h-8"
+          />
         </div>
       </div>
 
