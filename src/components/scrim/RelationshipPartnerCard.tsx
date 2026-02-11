@@ -1,6 +1,8 @@
 // RelationshipPartnerCard - Expandable partner detail card
 
 import type { ScrimRelationship, ScrimResult, TeamTier } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface RelationshipPartnerCardProps {
   relationship: ScrimRelationship & { effectiveness: number };
@@ -69,6 +71,11 @@ export function RelationshipPartnerCard({
         className="w-full p-4 flex items-center justify-between hover:bg-vct-darker/50 transition-colors"
       >
         <div className="flex items-center gap-3">
+          <GameImage
+            src={getTeamLogoUrl(teamName)}
+            alt={teamName}
+            className="w-10 h-10"
+          />
           <div className="text-left">
             <span className="font-medium text-vct-light text-lg">{teamName}</span>
             <span className={`ml-2 text-xs px-2 py-1 rounded bg-vct-darker ${TIER_COLORS[relationship.tier]}`}>
