@@ -9,6 +9,8 @@ import { useGameStore } from '../../store';
 import { MatchResult as MatchResultComponent } from '../match/MatchResult';
 import type { MatchResult, Match, Tournament, BracketStructure, BracketMatch } from '../../types';
 import type { TimeAdvanceResult } from '../../services';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -415,14 +417,21 @@ function MatchCard({
         {/* Teams and Score */}
         <div className="flex items-center gap-4 flex-1">
           {/* Team A */}
-          <div className="flex-1 text-right">
-            <span
-              className={`font-medium ${
-                teamAWon ? 'text-green-400' : 'text-vct-light'
-              }`}
-            >
-              {teamAName}
-            </span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 justify-end">
+              <span
+                className={`font-medium ${
+                  teamAWon ? 'text-green-400' : 'text-vct-light'
+                }`}
+              >
+                {teamAName}
+              </span>
+              <GameImage
+                src={getTeamLogoUrl(teamAName)}
+                alt={teamAName}
+                className="w-8 h-8"
+              />
+            </div>
           </div>
 
           {/* Score */}
@@ -445,14 +454,21 @@ function MatchCard({
           </div>
 
           {/* Team B */}
-          <div className="flex-1 text-left">
-            <span
-              className={`font-medium ${
-                teamBWon ? 'text-green-400' : 'text-vct-light'
-              }`}
-            >
-              {teamBName}
-            </span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <GameImage
+                src={getTeamLogoUrl(teamBName)}
+                alt={teamBName}
+                className="w-8 h-8"
+              />
+              <span
+                className={`font-medium ${
+                  teamBWon ? 'text-green-400' : 'text-vct-light'
+                }`}
+              >
+                {teamBName}
+              </span>
+            </div>
           </div>
         </div>
 

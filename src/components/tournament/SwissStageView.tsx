@@ -2,6 +2,8 @@
 
 import { useGameStore } from '../../store';
 import type { SwissStage, SwissTeamRecord, BracketMatch } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getTeamLogoUrl } from '../../utils/imageAssets';
 
 interface SwissStageViewProps {
   swissStage: SwissStage;
@@ -257,22 +259,31 @@ function SwissMatchCard({
       <div className="flex items-center justify-between">
         {/* Team A */}
         <div className="flex-1">
-          <div
-            className={`text-sm ${
-              isCompleted && match.winnerId === match.teamAId
-                ? 'text-green-400 font-medium'
-                : match.teamAId === playerTeamId
-                  ? 'text-vct-red'
-                  : 'text-white'
-            }`}
-          >
-            {teamA?.name || 'TBD'}
-          </div>
-          {recordA && (
-            <div className="text-xs text-vct-gray">
-              {recordA.wins}-{recordA.losses}
+          <div className="flex items-center gap-2">
+            <GameImage
+              src={getTeamLogoUrl(teamA?.name || 'TBD')}
+              alt={teamA?.name || 'TBD'}
+              className="w-6 h-6"
+            />
+            <div>
+              <div
+                className={`text-sm ${
+                  isCompleted && match.winnerId === match.teamAId
+                    ? 'text-green-400 font-medium'
+                    : match.teamAId === playerTeamId
+                      ? 'text-vct-red'
+                      : 'text-white'
+                }`}
+              >
+                {teamA?.name || 'TBD'}
+              </div>
+              {recordA && (
+                <div className="text-xs text-vct-gray">
+                  {recordA.wins}-{recordA.losses}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Score / VS */}
@@ -305,23 +316,32 @@ function SwissMatchCard({
         </div>
 
         {/* Team B */}
-        <div className="flex-1 text-right">
-          <div
-            className={`text-sm ${
-              isCompleted && match.winnerId === match.teamBId
-                ? 'text-green-400 font-medium'
-                : match.teamBId === playerTeamId
-                  ? 'text-vct-red'
-                  : 'text-white'
-            }`}
-          >
-            {teamB?.name || 'TBD'}
-          </div>
-          {recordB && (
-            <div className="text-xs text-vct-gray">
-              {recordB.wins}-{recordB.losses}
+        <div className="flex-1">
+          <div className="flex items-center gap-2 justify-end">
+            <div className="text-right">
+              <div
+                className={`text-sm ${
+                  isCompleted && match.winnerId === match.teamBId
+                    ? 'text-green-400 font-medium'
+                    : match.teamBId === playerTeamId
+                      ? 'text-vct-red'
+                      : 'text-white'
+                }`}
+              >
+                {teamB?.name || 'TBD'}
+              </div>
+              {recordB && (
+                <div className="text-xs text-vct-gray">
+                  {recordB.wins}-{recordB.losses}
+                </div>
+              )}
             </div>
-          )}
+            <GameImage
+              src={getTeamLogoUrl(teamB?.name || 'TBD')}
+              alt={teamB?.name || 'TBD'}
+              className="w-6 h-6"
+            />
+          </div>
         </div>
       </div>
 
