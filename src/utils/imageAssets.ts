@@ -70,18 +70,20 @@ export function getTeamLogoUrl(teamName: string): string {
 
 /**
  * Get the URL for a player photo
- * @param playerSlug - Player slug (already normalized)
+ * @param playerName - Player name (e.g., "TenZ", "Verno")
  * @returns URL path to the player photo
  */
-export function getPlayerImageUrl(playerSlug: string): string {
-  return `${import.meta.env.BASE_URL}images/players/${playerSlug}.png`;
+export function getPlayerImageUrl(playerName: string): string {
+  const slug = slugify(playerName);
+  return `${import.meta.env.BASE_URL}images/players/${slug}.png`;
 }
 
 /**
  * Get the URL for an event logo
- * @param eventSlug - Event slug (already normalized)
+ * @param eventName - Event name (e.g., "VCT Masters", "Champions")
  * @returns URL path to the event logo
  */
-export function getEventLogoUrl(eventSlug: string): string {
-  return `${import.meta.env.BASE_URL}images/events/${eventSlug}.png`;
+export function getEventLogoUrl(eventName: string): string {
+  const slug = slugify(eventName);
+  return `${import.meta.env.BASE_URL}images/events/${slug}.png`;
 }
