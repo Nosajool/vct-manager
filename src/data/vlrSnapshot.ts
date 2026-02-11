@@ -8,7 +8,7 @@ import type { VlrPlayerStats, VlrTeamRoster, VlrRosterData } from '@/types/vlr';
  * Metadata about when this snapshot was taken
  */
 export const VLR_SNAPSHOT_META = {
-  fetchedAt: '2026-02-11T01:47:12.803Z',
+  fetchedAt: '2026-02-11T01:54:55.650Z',
   regions: ["na","eu","br","ap","kr","cn"],
   totalPlayers: 817,
   totalRosters: 48,
@@ -17419,7 +17419,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "kyu",
       "cortezia"
     ],
-    "scrapedAt": "2026-02-11T01:45:08.545Z"
+    "scrapedAt": "2026-02-11T01:52:54.853Z"
   },
   "Cloud9": {
     "teamName": "Cloud9",
@@ -17431,7 +17431,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "penny",
       "oxy"
     ],
-    "scrapedAt": "2026-02-11T01:45:11.378Z"
+    "scrapedAt": "2026-02-11T01:52:57.653Z"
   },
   "100 Thieves": {
     "teamName": "100 Thieves",
@@ -17443,7 +17443,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "timotino",
       "bang"
     ],
-    "scrapedAt": "2026-02-11T01:45:14.250Z"
+    "scrapedAt": "2026-02-11T01:53:00.325Z"
   },
   "NRG": {
     "teamName": "NRG",
@@ -17455,7 +17455,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "mada",
       "skuba"
     ],
-    "scrapedAt": "2026-02-11T01:45:17.105Z"
+    "scrapedAt": "2026-02-11T01:53:02.938Z"
   },
   "Evil Geniuses": {
     "teamName": "Evil Geniuses",
@@ -17467,7 +17467,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "okeanos",
       "dgzin"
     ],
-    "scrapedAt": "2026-02-11T01:45:19.584Z"
+    "scrapedAt": "2026-02-11T01:53:05.349Z"
   },
   "LOUD": {
     "teamName": "LOUD",
@@ -17479,7 +17479,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "pancada",
       "cauanzin"
     ],
-    "scrapedAt": "2026-02-11T01:45:22.348Z"
+    "scrapedAt": "2026-02-11T01:53:07.934Z"
   },
   "FURIA": {
     "teamName": "FURIA",
@@ -17491,7 +17491,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "koalanoob",
       "alym"
     ],
-    "scrapedAt": "2026-02-11T01:45:25.073Z"
+    "scrapedAt": "2026-02-11T01:53:10.542Z"
   },
   "MIBR": {
     "teamName": "MIBR",
@@ -17503,7 +17503,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "verno",
       "aspas"
     ],
-    "scrapedAt": "2026-02-11T01:45:27.868Z"
+    "scrapedAt": "2026-02-11T01:53:13.146Z"
   },
   "Leviatán": {
     "teamName": "Leviatán",
@@ -17515,7 +17515,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "neon",
       "sato"
     ],
-    "scrapedAt": "2026-02-11T01:45:30.655Z"
+    "scrapedAt": "2026-02-11T01:53:15.765Z"
   },
   "KRÜ Esports": {
     "teamName": "KRÜ Esports",
@@ -17527,7 +17527,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "less",
       "dantedeu5"
     ],
-    "scrapedAt": "2026-02-11T01:45:33.365Z"
+    "scrapedAt": "2026-02-11T01:53:18.464Z"
   },
   "G2 Esports": {
     "teamName": "G2 Esports",
@@ -17539,7 +17539,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "trent",
       "leaf"
     ],
-    "scrapedAt": "2026-02-11T01:45:36.069Z"
+    "scrapedAt": "2026-02-11T01:53:21.150Z"
   },
   "ENVY": {
     "teamName": "ENVY",
@@ -17551,7 +17551,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "rossy",
       "keznit"
     ],
-    "scrapedAt": "2026-02-11T01:45:38.105Z"
+    "scrapedAt": "2026-02-11T01:53:23.138Z"
   },
   "Fnatic": {
     "teamName": "Fnatic",
@@ -17563,7 +17563,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "veqaj",
       "alfajer"
     ],
-    "scrapedAt": "2026-02-11T01:45:40.803Z"
+    "scrapedAt": "2026-02-11T01:53:25.730Z"
   },
   "Team Liquid": {
     "teamName": "Team Liquid",
@@ -17575,7 +17575,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "miniboo",
       "kamo"
     ],
-    "scrapedAt": "2026-02-11T01:45:43.630Z"
+    "scrapedAt": "2026-02-11T01:53:28.445Z"
   },
   "Team Vitality": {
     "teamName": "Team Vitality",
@@ -17587,7 +17587,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "chronicle",
       "sayonara"
     ],
-    "scrapedAt": "2026-02-11T01:45:46.436Z"
+    "scrapedAt": "2026-02-11T01:53:31.161Z"
   },
   "Karmine Corp": {
     "teamName": "Karmine Corp",
@@ -17599,7 +17599,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "avez",
       "suygetsu"
     ],
-    "scrapedAt": "2026-02-11T01:45:49.200Z"
+    "scrapedAt": "2026-02-11T01:53:33.866Z"
   },
   "Team Heretics": {
     "teamName": "Team Heretics",
@@ -17611,7 +17611,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "benjyfishy",
       "comeback"
     ],
-    "scrapedAt": "2026-02-11T01:45:52.035Z"
+    "scrapedAt": "2026-02-11T01:53:36.516Z"
   },
   "NAVI": {
     "teamName": "NAVI",
@@ -17623,7 +17623,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ruxic",
       "hiro"
     ],
-    "scrapedAt": "2026-02-11T01:45:54.752Z"
+    "scrapedAt": "2026-02-11T01:53:39.226Z"
   },
   "FUT Esports": {
     "teamName": "FUT Esports",
@@ -17635,7 +17635,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "krostaly",
       "baha"
     ],
-    "scrapedAt": "2026-02-11T01:45:57.452Z"
+    "scrapedAt": "2026-02-11T01:53:41.932Z"
   },
   "BBL Esports": {
     "teamName": "BBL Esports",
@@ -17647,7 +17647,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ros",
       "lovers-rock"
     ],
-    "scrapedAt": "2026-02-11T01:46:00.271Z"
+    "scrapedAt": "2026-02-11T01:53:44.694Z"
   },
   "Giants Gaming": {
     "teamName": "Giants Gaming",
@@ -17659,7 +17659,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "flickless",
       "ara"
     ],
-    "scrapedAt": "2026-02-11T01:46:02.801Z"
+    "scrapedAt": "2026-02-11T01:53:47.150Z"
   },
   "PCIFIC Esports": {
     "teamName": "PCIFIC Esports",
@@ -17671,7 +17671,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ninja",
       "seven"
     ],
-    "scrapedAt": "2026-02-11T01:46:05.576Z"
+    "scrapedAt": "2026-02-11T01:53:49.817Z"
   },
   "Gentle Mates": {
     "teamName": "Gentle Mates",
@@ -17683,7 +17683,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "glyph",
       "minny"
     ],
-    "scrapedAt": "2026-02-11T01:46:08.270Z"
+    "scrapedAt": "2026-02-11T01:53:52.464Z"
   },
   "ULF Esports": {
     "teamName": "ULF Esports",
@@ -17695,7 +17695,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sturnn",
       "favian"
     ],
-    "scrapedAt": "2026-02-11T01:46:10.785Z"
+    "scrapedAt": "2026-02-11T01:53:54.895Z"
   },
   "Paper Rex": {
     "teamName": "Paper Rex",
@@ -17707,7 +17707,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "d4v41",
       "something"
     ],
-    "scrapedAt": "2026-02-11T01:46:13.479Z"
+    "scrapedAt": "2026-02-11T01:53:57.622Z"
   },
   "DRX": {
     "teamName": "DRX",
@@ -17719,7 +17719,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "hyunmin",
       "beyn"
     ],
-    "scrapedAt": "2026-02-11T01:46:16.082Z"
+    "scrapedAt": "2026-02-11T01:54:00.128Z"
   },
   "T1": {
     "teamName": "T1",
@@ -17731,7 +17731,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "buzz",
       "izu"
     ],
-    "scrapedAt": "2026-02-11T01:46:18.795Z"
+    "scrapedAt": "2026-02-11T01:54:02.921Z"
   },
   "Gen.G": {
     "teamName": "Gen.G",
@@ -17743,7 +17743,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "karon",
       "t3xture"
     ],
-    "scrapedAt": "2026-02-11T01:46:21.063Z"
+    "scrapedAt": "2026-02-11T01:54:05.144Z"
   },
   "ZETA DIVISION": {
     "teamName": "ZETA DIVISION",
@@ -17755,7 +17755,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "eko",
       "xdll"
     ],
-    "scrapedAt": "2026-02-11T01:46:23.894Z"
+    "scrapedAt": "2026-02-11T01:54:07.901Z"
   },
   "DetonatioN Gaming": {
     "teamName": "DetonatioN Gaming",
@@ -17767,7 +17767,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "caedye",
       "akame"
     ],
-    "scrapedAt": "2026-02-11T01:46:26.601Z"
+    "scrapedAt": "2026-02-11T01:54:10.620Z"
   },
   "Global Esports": {
     "teamName": "Global Esports",
@@ -17779,7 +17779,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "xavi8k",
       "autumn"
     ],
-    "scrapedAt": "2026-02-11T01:46:29.423Z"
+    "scrapedAt": "2026-02-11T01:54:13.334Z"
   },
   "Team Secret": {
     "teamName": "Team Secret",
@@ -17791,7 +17791,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sylvan",
       "berserx"
     ],
-    "scrapedAt": "2026-02-11T01:46:32.198Z"
+    "scrapedAt": "2026-02-11T01:54:16.000Z"
   },
   "FULL SENSE": {
     "teamName": "FULL SENSE",
@@ -17803,7 +17803,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "primmie",
       "jitboys"
     ],
-    "scrapedAt": "2026-02-11T01:46:35.146Z"
+    "scrapedAt": "2026-02-11T01:54:18.830Z"
   },
   "Rex Regum Qeon": {
     "teamName": "Rex Regum Qeon",
@@ -17815,7 +17815,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "jemkin",
       "kushy"
     ],
-    "scrapedAt": "2026-02-11T01:46:37.926Z"
+    "scrapedAt": "2026-02-11T01:54:21.512Z"
   },
   "VARREL": {
     "teamName": "VARREL",
@@ -17827,7 +17827,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "oonzmlp",
       "zexy"
     ],
-    "scrapedAt": "2026-02-11T01:46:39.784Z"
+    "scrapedAt": "2026-02-11T01:54:23.304Z"
   },
   "Nongshim RedForce": {
     "teamName": "Nongshim RedForce",
@@ -17839,7 +17839,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "dambi",
       "ivy"
     ],
-    "scrapedAt": "2026-02-11T01:46:42.571Z"
+    "scrapedAt": "2026-02-11T01:54:26.030Z"
   },
   "EDward Gaming": {
     "teamName": "EDward Gaming",
@@ -17851,7 +17851,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "cb",
       "smoggy"
     ],
-    "scrapedAt": "2026-02-11T01:46:45.277Z"
+    "scrapedAt": "2026-02-11T01:54:28.742Z"
   },
   "Bilibili Gaming": {
     "teamName": "Bilibili Gaming",
@@ -17863,7 +17863,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "knight",
       "bud"
     ],
-    "scrapedAt": "2026-02-11T01:46:47.753Z"
+    "scrapedAt": "2026-02-11T01:54:31.220Z"
   },
   "FunPlus Phoenix": {
     "teamName": "FunPlus Phoenix",
@@ -17875,7 +17875,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sscary",
       "setrod"
     ],
-    "scrapedAt": "2026-02-11T01:46:50.293Z"
+    "scrapedAt": "2026-02-11T01:54:33.687Z"
   },
   "JD Gaming": {
     "teamName": "JD Gaming",
@@ -17887,7 +17887,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "yuicaw",
       "coconut"
     ],
-    "scrapedAt": "2026-02-11T01:46:53.039Z"
+    "scrapedAt": "2026-02-11T01:54:36.378Z"
   },
   "Nova Esports": {
     "teamName": "Nova Esports",
@@ -17899,7 +17899,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "heybay",
       "guang"
     ],
-    "scrapedAt": "2026-02-11T01:46:55.779Z"
+    "scrapedAt": "2026-02-11T01:54:39.033Z"
   },
   "All Gamers": {
     "teamName": "All Gamers",
@@ -17911,7 +17911,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "f4ngeer",
       "iamgrq"
     ],
-    "scrapedAt": "2026-02-11T01:46:57.879Z"
+    "scrapedAt": "2026-02-11T01:54:41.104Z"
   },
   "Dragon Ranger Gaming": {
     "teamName": "Dragon Ranger Gaming",
@@ -17923,7 +17923,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "akeman",
       "spiritz1"
     ],
-    "scrapedAt": "2026-02-11T01:47:00.354Z"
+    "scrapedAt": "2026-02-11T01:54:43.569Z"
   },
   "Wolves Esports": {
     "teamName": "Wolves Esports",
@@ -17935,7 +17935,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "spring",
       "qiutian"
     ],
-    "scrapedAt": "2026-02-11T01:47:02.681Z"
+    "scrapedAt": "2026-02-11T01:54:45.844Z"
   },
   "Titan Esports Club": {
     "teamName": "Titan Esports Club",
@@ -17947,7 +17947,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "abo",
       "coco"
     ],
-    "scrapedAt": "2026-02-11T01:47:05.190Z"
+    "scrapedAt": "2026-02-11T01:54:48.277Z"
   },
   "TYLOO": {
     "teamName": "TYLOO",
@@ -17959,7 +17959,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sword9",
       "slowly"
     ],
-    "scrapedAt": "2026-02-11T01:47:07.512Z"
+    "scrapedAt": "2026-02-11T01:54:50.536Z"
   },
   "Trace Esports": {
     "teamName": "Trace Esports",
@@ -17971,7 +17971,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "viva",
       "delb"
     ],
-    "scrapedAt": "2026-02-11T01:47:10.288Z"
+    "scrapedAt": "2026-02-11T01:54:53.202Z"
   },
   "Xi Lai Gaming": {
     "teamName": "Xi Lai Gaming",
@@ -17983,7 +17983,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "rarga",
       "happywei"
     ],
-    "scrapedAt": "2026-02-11T01:47:12.802Z"
+    "scrapedAt": "2026-02-11T01:54:55.650Z"
   }
 };
 

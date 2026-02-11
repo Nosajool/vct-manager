@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "fetch-vlr": "tsx scripts/fetch-vlr-data.ts",
+    "fetch-vlr-with-images": "tsx scripts/fetch-vlr-data.ts -- --with-images",
     "fetch-assets": "tsx scripts/fetch-game-assets.ts"
   },
   "dependencies": {
