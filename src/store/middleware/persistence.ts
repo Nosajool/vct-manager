@@ -39,6 +39,7 @@ interface MinimalGameState {
     totalEventsTriggered: number;
     totalMajorDecisions: number;
   };
+  activityConfigs?: Record<string, unknown>;
 }
 
 /**
@@ -81,6 +82,7 @@ function serializeGameState(state: MinimalGameState): SerializedGameState {
       scheduledEvents: state.calendar.scheduledEvents,
     },
     drama: state.drama,
+    activityConfigs: state.activityConfigs,
   };
 }
 
@@ -350,6 +352,9 @@ export function applyLoadedState<T extends MinimalGameState>(
     totalMajorDecisions: 0,
   };
 
+  // Backwards compatibility: initialize empty activity configs if missing
+  const activityConfigs = loadedState.activityConfigs || {};
+
   setState({
     players: loadedState.players,
     teams: loadedState.teams,
@@ -358,5 +363,6 @@ export function applyLoadedState<T extends MinimalGameState>(
     gameStarted: loadedState.gameStarted,
     calendar: loadedState.calendar,
     drama: dramaState,
+    activityConfigs: activityConfigs,
   } as Partial<T>);
 }

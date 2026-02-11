@@ -65,6 +65,9 @@ export interface SerializedGameState {
     totalMajorDecisions: number;
   };
 
+  // Activity Plan slice (optional for backwards compatibility)
+  activityConfigs?: Record<string, unknown>;
+
   // UI slice is NOT persisted (transient state)
 }
 
