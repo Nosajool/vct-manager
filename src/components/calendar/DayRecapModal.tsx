@@ -5,17 +5,20 @@
 // "quiet day" message if nothing significant occurred.
 
 import type { TimeAdvanceResult } from '../../services';
+import type { ActivityResolutionResult } from '../../types/activityPlan';
 
 interface DayRecapModalProps {
   isOpen: boolean;
   onClose: () => void;
   result: TimeAdvanceResult | null;
+  activityResults?: ActivityResolutionResult;
 }
 
 export function DayRecapModal({
   isOpen,
   onClose,
   result,
+  activityResults: _activityResults, // TODO: Display activity results (task vct-manager-1bj5)
 }: DayRecapModalProps) {
   if (!isOpen || !result) return null;
 

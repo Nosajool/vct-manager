@@ -29,6 +29,11 @@ import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
 import type { DramaEventInstance, DramaChoice } from '../../types/drama';
+import { PreAdvanceValidationModal } from '../today/PreAdvanceValidationModal';
+import { trainingService } from '../../services/TrainingService';
+import { scrimService } from '../../services/ScrimService';
+import type { CalendarEvent } from '../../types/calendar';
+import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
 
 /**
  * Helper to enrich drama event with template data and substitute narrative placeholders
@@ -79,6 +84,8 @@ export function TimeBar() {
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
   const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
 
   // Get simulation progress from store
 
@@ -139,7 +146,25 @@ export function TimeBar() {
   };
 
   const handleAdvanceDay = () => {
-    handleTimeAdvance(() => calendarService.advanceDay(true));
+    // Check for unconfigured activities before advancing
+    const state = useGameStore.getState();
+    const hasUnconfigured = state.hasUnconfiguredActivities();
+
+    if (hasUnconfigured) {
+      // Get unconfigured event IDs
+      const unconfiguredEventIds = state.getUnconfiguredActivities();
+
+      // Map to full CalendarEvent objects
+      const events = calendar.scheduledEvents.filter(event =>
+        unconfiguredEventIds.includes(event.id)
+      );
+
+      setUnconfiguredEvents(events);
+      setShowValidationModal(true);
+    } else {
+      // All configured - proceed normally
+      handleTimeAdvance(() => calendarService.advanceDay(true));
+    }
   };
 
    const handleCloseModal = () => {
@@ -192,6 +217,82 @@ export function TimeBar() {
 
   const handleDismissDramaToast = (index: number) => {
     setDramaToasts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAutoConfigAll = () => {
+    // Generate auto-configs for all unconfigured events
+    const state = useGameStore.getState();
+
+    for (const event of unconfiguredEvents) {
+      if (event.type === 'training_available') {
+        // Auto-configure training
+        const trainingPlan = trainingService.autoAssignTraining();
+
+        // Convert TrainingPlan to TrainingActivityConfig
+        const assignments = Array.from(trainingPlan.values()).map(assignment => ({
+          playerId: assignment.playerId,
+          action: 'train' as const,
+          goal: assignment.goal,
+          intensity: assignment.intensity,
+        }));
+
+        const config: TrainingActivityConfig = {
+          type: 'training',
+          eventId: event.id,
+          status: 'configured',
+          assignments,
+          autoConfigured: true,
+        };
+
+        state.setActivityConfig(event.id, config);
+      } else if (event.type === 'scrim_available') {
+        // Auto-configure scrim
+        const scrimOptions = scrimService.generateAutoConfig();
+
+        if (scrimOptions) {
+          const config: ScrimActivityConfig = {
+            type: 'scrim',
+            eventId: event.id,
+            status: 'configured',
+            action: 'play',
+            partnerTeamId: scrimOptions.partnerTeamId,
+            maps: scrimOptions.focusMaps || [],
+            intensity: scrimOptions.intensity || 'moderate',
+            autoConfigured: true,
+          };
+
+          state.setActivityConfig(event.id, config);
+        } else {
+          // If auto-config fails, skip the scrim
+          const config: ScrimActivityConfig = {
+            type: 'scrim',
+            eventId: event.id,
+            status: 'configured',
+            action: 'skip',
+            autoConfigured: true,
+          };
+
+          state.setActivityConfig(event.id, config);
+        }
+      }
+    }
+
+    // Close modal and proceed with day advancement
+    setShowValidationModal(false);
+    setUnconfiguredEvents([]);
+    handleTimeAdvance(() => calendarService.advanceDay(true));
+  };
+
+  const handleReviewEvents = () => {
+    // Close modal and return to Today page (user can configure manually)
+    setShowValidationModal(false);
+    setUnconfiguredEvents([]);
+  };
+
+  const handleCancelValidation = () => {
+    // Just close the modal
+    setShowValidationModal(false);
+    setUnconfiguredEvents([]);
   };
 
   // Helper: Get choices for an event from its template with substituted outcome texts
@@ -317,6 +418,16 @@ export function TimeBar() {
         isOpen={showDayRecapModal}
         onClose={handleCloseDayRecap}
         result={simulationResult}
+        activityResults={simulationResult?.activityResults}
+      />
+
+      {/* Pre-Advance Validation Modal - shown when unconfigured activities exist */}
+      <PreAdvanceValidationModal
+        isOpen={showValidationModal}
+        unconfiguredEvents={unconfiguredEvents}
+        onAutoConfigAll={handleAutoConfigAll}
+        onReview={handleReviewEvents}
+        onCancel={handleCancelValidation}
       />
 
       {/* Qualification Modal - triggered by TournamentService after Kickoff completion */}
