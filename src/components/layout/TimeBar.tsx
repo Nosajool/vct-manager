@@ -137,8 +137,8 @@ export function TimeBar() {
       } else {
         // Show day recap for non-match days
         setSimulationResult(result);
-        setShowDayRecapModal(true);
       }
+      setShowDayRecapModal(true);
     } finally {
       setIsAdvancing(false);
       setShowLoadingOverlay(false);
