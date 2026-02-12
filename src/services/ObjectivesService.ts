@@ -3,6 +3,7 @@
 
 import type { GameState } from '../store';
 import type { MatchEventData } from '../types';
+import { featureGateService } from './FeatureGateService';
 
 /**
  * Navigation action for an objective
@@ -14,6 +15,8 @@ export interface ObjectiveAction {
     tournamentId?: string;
     playerId?: string;
   };
+  openModal?: 'training' | 'scrim';
+  eventId?: string;
 }
 
 /**
@@ -26,6 +29,7 @@ export interface DailyObjective {
   priority: number; // Higher = more important
   completed: boolean;
   action?: ObjectiveAction;
+  activityType?: 'training' | 'scrim' | 'strategy';
 }
 
 /**
@@ -194,13 +198,18 @@ function getUrgentAlerts(state: GameState): DailyObjective[] {
  * Check if training is available today
  */
 function getTrainingObjective(state: GameState, currentDate: string): DailyObjective | null {
+  // Feature gate check
+  if (!featureGateService.isFeatureUnlocked('training')) {
+    return null;
+  }
+
   // Check for training_available event today
   const todaysEvents = state.getEventsOnDate(currentDate);
-  const hasTrainingEvent = todaysEvents.some(
+  const trainingEvent = todaysEvents.find(
     e => e.type === 'training_available' && !e.processed
   );
 
-  if (!hasTrainingEvent) return null;
+  if (!trainingEvent) return null;
 
   if (!state.playerTeamId) return null;
 
@@ -215,13 +224,22 @@ function getTrainingObjective(state: GameState, currentDate: string): DailyObjec
 
   if (players.length === 0) return null;
 
+  // Check if training is configured
+  const activityConfig = state.getActivityConfig?.(trainingEvent.id);
+  const isConfigured = activityConfig && activityConfig.status !== 'needs_setup';
+
   return {
     id: 'training-available',
     label: 'Training Available',
     description: `Schedule training sessions for your players to improve their skills.`,
     priority: PRIORITY.MEDIUM,
-    completed: false,
-    action: { view: 'team' },
+    completed: isConfigured,
+    activityType: 'training',
+    action: {
+      view: 'team',
+      openModal: 'training',
+      eventId: trainingEvent.id,
+    },
   };
 }
 
@@ -229,23 +247,37 @@ function getTrainingObjective(state: GameState, currentDate: string): DailyObjec
  * Check if scrims are available today
  */
 function getScrimObjective(state: GameState, currentDate: string): DailyObjective | null {
+  // Feature gate check
+  if (!featureGateService.isFeatureUnlocked('scrims')) {
+    return null;
+  }
+
   // Check for scrim_available event today
   const todaysEvents = state.getEventsOnDate(currentDate);
-  const hasScrimEvent = todaysEvents.some(
+  const scrimEvent = todaysEvents.find(
     e => e.type === 'scrim_available' && !e.processed
   );
 
-  if (!hasScrimEvent) return null;
+  if (!scrimEvent) return null;
 
   if (!state.playerTeamId) return null;
+
+  // Check if scrim is configured
+  const activityConfig = state.getActivityConfig?.(scrimEvent.id);
+  const isConfigured = activityConfig && activityConfig.status !== 'needs_setup';
 
   return {
     id: 'scrim-available',
     label: 'Scrim Available',
     description: 'Practice match available against another team. Build synergy and test strategies.',
     priority: PRIORITY.MEDIUM,
-    completed: false,
-    action: { view: 'team' },
+    completed: isConfigured,
+    activityType: 'scrim',
+    action: {
+      view: 'team',
+      openModal: 'scrim',
+      eventId: scrimEvent.id,
+    },
   };
 }
 
@@ -292,15 +324,18 @@ function getSecondaryTasks(state: GameState): DailyObjective[] {
     });
   }
 
-  // Suggest reviewing tactics if no recent updates
-  tasks.push({
-    id: 'review-tactics',
-    label: 'Review Strategy',
-    description: 'Review and adjust your team strategy and agent compositions.',
-    priority: PRIORITY.LOW - 10, // Lowest priority
-    completed: false,
-    action: { view: 'team' },
-  });
+  // Suggest reviewing tactics if no recent updates (feature gated)
+  if (featureGateService.isFeatureUnlocked('strategy')) {
+    tasks.push({
+      id: 'review-tactics',
+      label: 'Review Strategy',
+      description: 'Review and adjust your team strategy and agent compositions.',
+      priority: PRIORITY.LOW - 10, // Lowest priority
+      completed: false,
+      activityType: 'strategy',
+      action: { view: 'team' },
+    });
+  }
 
   return tasks.slice(0, 2); // Only return top 2 secondary tasks
 }
