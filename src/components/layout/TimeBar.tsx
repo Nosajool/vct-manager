@@ -182,14 +182,6 @@ export function TimeBar() {
 
   const handleCloseDayRecap = () => {
     setShowDayRecapModal(false);
-    setSimulationResult(null);
-
-    // Check if there are major drama events to show
-    if (majorEventQueue.length > 0) {
-      const [firstEvent, ...rest] = majorEventQueue;
-      setCurrentMajorEvent(firstEvent);
-      setMajorEventQueue(rest);
-    }
   };
 
   const handleDismissUnlock = (index: number) => {
