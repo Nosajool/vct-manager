@@ -355,6 +355,13 @@ export function applyLoadedState<T extends MinimalGameState>(
   // Backwards compatibility: initialize empty activity configs if missing
   const activityConfigs = loadedState.activityConfigs || {};
 
+  // Prune activity configs for past dates (edge case handling)
+  // Only keep configs for current date or future dates
+  const prunedActivityConfigs = pruneOldActivityConfigs(
+    activityConfigs,
+    loadedState.calendar
+  );
+
   setState({
     players: loadedState.players,
     teams: loadedState.teams,
@@ -363,6 +370,47 @@ export function applyLoadedState<T extends MinimalGameState>(
     gameStarted: loadedState.gameStarted,
     calendar: loadedState.calendar,
     drama: dramaState,
-    activityConfigs: activityConfigs,
+    activityConfigs: prunedActivityConfigs,
   } as Partial<T>);
+}
+
+/**
+ * Prune activity configs for dates in the past
+ * This prevents accumulation of old configs after save/load cycles
+ */
+function pruneOldActivityConfigs(
+  activityConfigs: Record<string, unknown>,
+  calendar: { currentDate: string; scheduledEvents: unknown[] }
+): Record<string, unknown> {
+  const currentDate = new Date(calendar.currentDate);
+  const pruned: Record<string, unknown> = {};
+
+  // Get all event IDs grouped by date
+  const eventsByDate = new Map<string, Set<string>>();
+  for (const event of calendar.scheduledEvents as Array<{ id: string; date: string }>) {
+    if (!eventsByDate.has(event.date)) {
+      eventsByDate.set(event.date, new Set());
+    }
+    eventsByDate.get(event.date)!.add(event.id);
+  }
+
+  // Only keep configs for events on current date or future dates
+  for (const [eventId, config] of Object.entries(activityConfigs)) {
+    // Find which date this event belongs to
+    let eventDate: Date | null = null;
+    for (const [dateStr, eventIds] of eventsByDate.entries()) {
+      if (eventIds.has(eventId)) {
+        eventDate = new Date(dateStr);
+        break;
+      }
+    }
+
+    // If event date is current or future, keep the config
+    if (eventDate && eventDate >= currentDate) {
+      pruned[eventId] = config;
+    }
+    // Otherwise, skip (prune) this config
+  }
+
+  return pruned;
 }

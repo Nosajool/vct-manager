@@ -46,6 +46,13 @@ export class ScrimService {
       return null;
     }
 
+    // Check weekly limit before generating config (edge case handling)
+    const weeklyCheck = this.checkWeeklyLimit();
+    if (!weeklyCheck.canScrim) {
+      console.log('Auto-config skipped: weekly scrim limit reached');
+      return null;
+    }
+
     // 1. Pick partner from existing relationships (prefer best relationship)
     let partnerTeamId: string | null = null;
     const relationships = Object.values(playerTeam.scrimRelationships || {});
