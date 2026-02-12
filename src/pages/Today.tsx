@@ -2,24 +2,22 @@
 //
 // Shows:
 // - Tournament context (position, standings, next match)
-// - Training/Scrim actions (disabled on match days)
+// - Day plan panel (configure training/scrims before advancing)
 // - Alerts (contracts, morale, map practice, finances)
 
 import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
-import { TournamentContextPanel, ActionsPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
-import { TrainingModal } from '../components/calendar';
+import { TournamentContextPanel, DayPlanPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
 import { ScrimModal } from '../components/scrim';
 import { DramaHistoryPanel } from '../components/drama';
 
 export function Today() {
-  const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [scrimInitialMaps, setScrimInitialMaps] = useState<string[] | undefined>(undefined);
 
-  // Handler for opening scrim modal from alerts
+  // Handler for opening scrim modal from alerts (with pre-selected maps)
   const handleOpenScrimModal = (initialMaps?: string[]) => {
     setScrimInitialMaps(initialMaps);
     setScrimModalOpen(true);
@@ -105,12 +103,9 @@ export function Today() {
           <TournamentContextPanel />
         </div>
 
-        {/* Right Column - Actions & Alerts */}
+        {/* Right Column - Day Plan & Alerts */}
         <div className="space-y-6">
-          <ActionsPanel
-            onTrainingClick={() => setTrainingModalOpen(true)}
-            onScrimClick={() => setScrimModalOpen(true)}
-          />
+          <DayPlanPanel />
           <AlertsPanel onOpenScrimModal={handleOpenScrimModal} />
         </div>
       </div>
@@ -118,10 +113,7 @@ export function Today() {
       {/* Recent Events Section */}
       <DramaHistoryPanel limit={20} />
 
-      {/* Training Modal */}
-      <TrainingModal isOpen={trainingModalOpen} onClose={() => setTrainingModalOpen(false)} />
-
-      {/* Scrim Modal */}
+      {/* Scrim Modal for Alerts (DayPlanPanel has its own modals for event cards) */}
       <ScrimModal
         isOpen={scrimModalOpen}
         onClose={handleCloseScrimModal}
