@@ -1,24 +1,23 @@
 // TrainingModal Component - Single-modal 3-column training layout
 // Replaces multi-step wizard with per-player assignment system
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGameStore } from '../../store';
 import { trainingService } from '../../services';
 import { playerDevelopment } from '../../engine/player';
-import { generateTrainingNarrative } from '../../engine/player/TrainingNarrative';
 import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
 import type {
   Player,
   TrainingGoal,
   TrainingIntensity,
-  TrainingResult,
-  TrainingPlan,
 } from '../../types';
+import type { TrainingActivityConfig, TrainingPlayerAssignment } from '../../types/activityPlan';
 
 interface TrainingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onTrainingComplete?: (results: TrainingResult[]) => void;
+  eventId?: string; // Optional for backwards compatibility - will be required once all pages are updated
+  existingConfig?: TrainingActivityConfig;
 }
 
 const TRAINING_INTENSITIES: {
@@ -34,27 +33,6 @@ const TRAINING_INTENSITIES: {
 
 // LocalStorage key for storing last-used intensity per player
 const STORAGE_KEY_PREFIX = 'vct-training-intensity-';
-
-// Helper: Determine sentiment of narrative text for color-coding
-function getNarrativeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
-  const positiveWords = [
-    'sharp', 'improved', 'confident', 'energized', 'outstanding', 'excellent',
-    'smile', 'motivated', 'impressed', 'potential', 'dominated', 'winning',
-    'better', 'great', 'good', 'solid', 'productive', 'steady', 'dialing',
-    'comfortable', 'composure', 'effective', 'mastering', 'creative',
-  ];
-  const negativeWords = [
-    'struggled', 'frustrated', 'burned', 'fatigue', 'drained', 'rough',
-    'unfocused', 'difficulty', 'off', 'average', 'mixed', 'trouble',
-    'couldn\'t', 'poor', 'weak',
-  ];
-
-  const lowerText = text.toLowerCase();
-
-  if (positiveWords.some((word) => lowerText.includes(word))) return 'positive';
-  if (negativeWords.some((word) => lowerText.includes(word))) return 'negative';
-  return 'neutral';
-}
 
 // Helper: Get last used intensity for a player from localStorage
 function getLastUsedIntensity(playerId: string): TrainingIntensity | null {
@@ -78,19 +56,31 @@ function saveLastUsedIntensity(playerId: string, intensity: TrainingIntensity): 
   }
 }
 
-export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingModalProps) {
-  // State: Training plan (Map of playerId -> assignment)
-  const [trainingPlan, setTrainingPlan] = useState<TrainingPlan>(new Map());
+export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: TrainingModalProps) {
+  // State: Training plan (Map of playerId -> assignment with skip support)
+  const [trainingPlan, setTrainingPlan] = useState<Map<string, TrainingPlayerAssignment>>(new Map());
   // State: Currently selected player (for editing assignment in middle/right columns)
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
-  // State: Training results after execution
-  const [trainingResults, setTrainingResults] = useState<TrainingResult[]>([]);
-  const [isTraining, setIsTraining] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
   const players = useGameStore((state) => state.players);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+  const setActivityConfig = useGameStore((state) => state.setActivityConfig);
+
+  // Load existing config when modal opens
+  useEffect(() => {
+    if (isOpen && existingConfig) {
+      const planMap = new Map<string, TrainingPlayerAssignment>();
+      existingConfig.assignments.forEach((assignment) => {
+        planMap.set(assignment.playerId, assignment);
+      });
+      setTrainingPlan(planMap);
+      // Auto-select first player
+      if (existingConfig.assignments.length > 0) {
+        setSelectedPlayerId(existingConfig.assignments[0].playerId);
+      }
+    }
+  }, [isOpen, existingConfig]);
 
   // Get current assignment for selected player (if any)
   const currentAssignment = selectedPlayerId ? trainingPlan.get(selectedPlayerId) : null;
@@ -102,7 +92,26 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     const player = players[selectedPlayerId];
     if (!player) return null;
 
+    // If player is set to skip, show skip preview
+    if (currentAssignment.action === 'skip') {
+      return {
+        player,
+        isSkipping: true,
+        goal: null,
+        intensity: null,
+        ovrChange: null,
+        statChanges: null,
+        moraleImpact: { min: 1, max: 2, qualitative: 'Small boost' },
+        fatigueRisk: { increase: 0, resultLevel: 'None' },
+        trainingStatus: trainingService.checkWeeklyLimit(selectedPlayerId),
+        shouldOverrideIntensity: false,
+        overrideReason: null,
+      };
+    }
+
     const { goal, intensity } = currentAssignment;
+    if (!goal || !intensity) return null;
+
     const ovrChange = trainingService.previewOvrChange(selectedPlayerId, goal, intensity);
     const statChanges = trainingService.previewStatChanges(selectedPlayerId, goal, intensity);
     const moraleImpact = trainingService.previewMoraleImpact(intensity);
@@ -117,6 +126,7 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
 
     return {
       player,
+      isSkipping: false,
       goal,
       intensity,
       ovrChange,
@@ -179,13 +189,42 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
       if (recommendedGoal) {
         newPlan.set(playerId, {
           playerId,
+          action: 'train',
           goal: recommendedGoal,
           intensity: getRecommendedIntensity(playerId),
-          isAutoAssigned: true,
         });
         // Auto-select this player for editing
         setSelectedPlayerId(playerId);
       }
+    }
+
+    setTrainingPlan(newPlan);
+  };
+
+  // Helper: Toggle skip for a player
+  const togglePlayerSkip = (playerId: string) => {
+    const newPlan = new Map(trainingPlan);
+    const existing = newPlan.get(playerId);
+
+    if (!existing) return;
+
+    if (existing.action === 'skip') {
+      // Switch from skip to train with recommended settings
+      const recommendedGoal = trainingService.getRecommendedGoal(playerId);
+      if (recommendedGoal) {
+        newPlan.set(playerId, {
+          playerId,
+          action: 'train',
+          goal: recommendedGoal,
+          intensity: getRecommendedIntensity(playerId),
+        });
+      }
+    } else {
+      // Switch from train to skip
+      newPlan.set(playerId, {
+        playerId,
+        action: 'skip',
+      });
     }
 
     setTrainingPlan(newPlan);
@@ -198,11 +237,12 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     const newPlan = new Map(trainingPlan);
     const existing = newPlan.get(selectedPlayerId);
 
-    if (existing) {
+    if (existing && existing.action === 'train') {
       newPlan.set(selectedPlayerId, {
         ...existing,
+        action: 'train',
         goal,
-        isAutoAssigned: false, // User manually changed it
+        intensity: existing.intensity,
       });
       setTrainingPlan(newPlan);
     }
@@ -215,9 +255,11 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     const newPlan = new Map(trainingPlan);
     const existing = newPlan.get(selectedPlayerId);
 
-    if (existing) {
+    if (existing && existing.action === 'train') {
       newPlan.set(selectedPlayerId, {
         ...existing,
+        action: 'train',
+        goal: existing.goal,
         intensity,
       });
       setTrainingPlan(newPlan);
@@ -232,30 +274,45 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
     setSelectedPlayerId(playerId);
   };
 
-  // Execute training plan
-  const handleTrain = () => {
-    if (trainingPlan.size === 0) return;
+  // Confirm plan - save config to store instead of executing
+  const handleConfirmPlan = () => {
+    // Backwards compatibility check - eventId is required for plan-confirm workflow
+    if (!eventId) {
+      console.warn('TrainingModal: eventId is required for plan-confirm workflow');
+      return;
+    }
 
-    setIsTraining(true);
-    const result = trainingService.executeTrainingPlan(trainingPlan);
+    // Validation: all players in plan must have complete config
+    const allValid = Array.from(trainingPlan.values()).every((assignment) => {
+      if (assignment.action === 'skip') return true;
+      return assignment.goal !== undefined && assignment.intensity !== undefined;
+    });
 
-    // Extract successful results
-    const successfulResults = result.results
-      .filter((r) => r.success && r.result)
-      .map((r) => r.result!);
+    if (!allValid) {
+      // Should not happen due to UI constraints, but safety check
+      return;
+    }
 
-    setTrainingResults(successfulResults);
-    setShowResults(true);
-    setIsTraining(false);
-    onTrainingComplete?.(successfulResults);
+    // Create config object
+    const config: TrainingActivityConfig = {
+      type: 'training',
+      eventId,
+      status: 'configured',
+      assignments: Array.from(trainingPlan.values()),
+      autoConfigured: false, // User manually configured
+    };
+
+    // Save to store
+    setActivityConfig(eventId, config);
+
+    // Close modal
+    handleClose();
   };
 
   // Reset and close
   const handleClose = () => {
     setTrainingPlan(new Map());
     setSelectedPlayerId(null);
-    setTrainingResults([]);
-    setShowResults(false);
     onClose();
   };
 
@@ -268,11 +325,22 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
       return;
     }
 
+    // Convert to TrainingPlayerAssignment format
+    const newPlan = new Map<string, TrainingPlayerAssignment>();
+    autoAssignedPlan.forEach((assignment, playerId) => {
+      newPlan.set(playerId, {
+        playerId,
+        action: 'train',
+        goal: assignment.goal,
+        intensity: assignment.intensity,
+      });
+    });
+
     // Update the training plan
-    setTrainingPlan(autoAssignedPlan);
+    setTrainingPlan(newPlan);
 
     // Auto-select the first player for viewing/editing
-    const firstPlayerId = Array.from(autoAssignedPlan.keys())[0];
+    const firstPlayerId = Array.from(newPlan.keys())[0];
     if (firstPlayerId) {
       setSelectedPlayerId(firstPlayerId);
     }
@@ -293,165 +361,53 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
           </button>
         </div>
 
-        {/* Auto-Assign Button (only shown in configuration view) */}
-        {!showResults && (
-          <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
-            <button
-              onClick={handleAutoAssign}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              title="Starting 5 assigned with role-based recommendations at safe intensity"
-            >
-              <span className="text-lg">🎯</span>
-              <span>Auto-Assign Optimal Training</span>
-            </button>
-            <p className="text-xs text-vct-gray mt-2 text-center">
-              Assigns recommended training goals to Starting 5 at safe intensity
-            </p>
-          </div>
-        )}
+        {/* Auto-Assign Button */}
+        <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
+          <button
+            onClick={handleAutoAssign}
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            title="Starting 5 assigned with role-based recommendations at safe intensity"
+          >
+            <span className="text-lg">🎯</span>
+            <span>Auto-Assign Optimal Training</span>
+          </button>
+          <p className="text-xs text-vct-gray mt-2 text-center">
+            Assigns recommended training goals to Starting 5 at safe intensity
+          </p>
+        </div>
 
-        {showResults ? (
-          /* Training Results View */
-          <div className="overflow-y-auto flex-1 p-4">
-            <h3 className="text-lg font-semibold text-vct-light mb-4">Training Complete!</h3>
-            <div className="space-y-3">
-              {trainingResults.map((result) => {
-                const player = players[result.playerId];
-                if (!player) return null;
+        {/* 3-Column Training Configuration View */}
+        <div className="flex-1 overflow-hidden grid grid-cols-[280px_1fr_320px] gap-4 p-4">
+          {/* LEFT COLUMN: Player List */}
+          <PlayerListColumn
+            startingPlayers={startingPlayers}
+            benchPlayers={benchPlayers}
+            trainingPlan={trainingPlan}
+            selectedPlayerId={selectedPlayerId}
+            onSelectPlayer={selectPlayer}
+            onTogglePlayer={togglePlayerAssignment}
+            onToggleSkip={togglePlayerSkip}
+            getPlayerTrainingStatus={getPlayerTrainingStatus}
+          />
 
-                return (
-                  <div
-                    key={result.playerId}
-                    className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-vct-light">{player.name}</span>
-                      <span className="text-sm text-vct-gray">
-                        Effectiveness: {result.effectiveness}%
-                      </span>
-                    </div>
-                    {result.goal && (
-                      <p className="text-sm text-blue-400 mb-2">
-                        {TRAINING_GOAL_MAPPINGS[result.goal].displayName}
-                      </p>
-                    )}
-                    {/* Narrative Lines */}
-                    {(() => {
-                      const narratives = generateTrainingNarrative(player, result);
-                      return (
-                        <div className="mb-3 space-y-1">
-                          {narratives.map((narrative, idx) => {
-                            const sentiment = getNarrativeSentiment(narrative);
-                            const colorClass =
-                              sentiment === 'positive'
-                                ? 'text-green-400'
-                                : sentiment === 'negative'
-                                ? 'text-red-400'
-                                : 'text-vct-gray';
+          {/* MIDDLE COLUMN: Goal Selector */}
+          <GoalSelectorColumn
+            selectedPlayer={selectedPlayerId ? players[selectedPlayerId] : null}
+            currentGoal={currentAssignment?.action === 'train' ? currentAssignment.goal : null}
+            onSelectGoal={updateSelectedGoal}
+            isSkipping={currentAssignment?.action === 'skip'}
+          />
 
-                            return (
-                              <p key={idx} className={`text-sm italic ${colorClass}`}>
-                                {narrative}
-                              </p>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      {result.statsBefore ? (
-                        Object.entries(result.statsBefore).map(([stat, beforeValue]) => {
-                          const improvement = result.statImprovements[stat] || 0;
-                          const afterValue = beforeValue + improvement;
-                          const hasChange = improvement !== 0;
-                          return (
-                            <div key={stat} className="flex items-center justify-between">
-                              <span className="text-vct-gray capitalize">{stat}</span>
-                              <span
-                                className={
-                                  hasChange ? 'text-green-400 font-medium' : 'text-vct-gray'
-                                }
-                              >
-                                {beforeValue} → {afterValue}
-                              </span>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        Object.entries(result.statImprovements).map(([stat, improvement]) => (
-                          <div key={stat} className="flex items-center justify-between">
-                            <span className="text-vct-gray capitalize">{stat}</span>
-                            <span className="text-green-400 font-medium">+{improvement}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    <div className="mt-2 text-sm">
-                      <span className="text-vct-gray">Morale: </span>
-                      {result.moraleBefore !== undefined ? (
-                        <span
-                          className={
-                            result.moraleChange > 0
-                              ? 'text-green-400'
-                              : result.moraleChange < 0
-                              ? 'text-red-400'
-                              : 'text-vct-gray'
-                          }
-                        >
-                          {result.moraleBefore} → {result.moraleBefore + result.moraleChange}
-                        </span>
-                      ) : (
-                        <span
-                          className={result.moraleChange > 0 ? 'text-green-400' : 'text-red-400'}
-                        >
-                          {result.moraleChange > 0 ? '+' : ''}
-                          {result.moraleChange}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <button
-              onClick={handleClose}
-              className="mt-4 w-full py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
-            >
-              Done
-            </button>
-          </div>
-        ) : (
-          /* 3-Column Training Configuration View */
-          <div className="flex-1 overflow-hidden grid grid-cols-[280px_1fr_320px] gap-4 p-4">
-            {/* LEFT COLUMN: Player List */}
-            <PlayerListColumn
-              startingPlayers={startingPlayers}
-              benchPlayers={benchPlayers}
-              trainingPlan={trainingPlan}
-              selectedPlayerId={selectedPlayerId}
-              onSelectPlayer={selectPlayer}
-              onTogglePlayer={togglePlayerAssignment}
-              getPlayerTrainingStatus={getPlayerTrainingStatus}
-            />
-
-            {/* MIDDLE COLUMN: Goal Selector */}
-            <GoalSelectorColumn
-              selectedPlayer={selectedPlayerId ? players[selectedPlayerId] : null}
-              currentGoal={currentAssignment?.goal ?? null}
-              onSelectGoal={updateSelectedGoal}
-            />
-
-            {/* RIGHT COLUMN: Intensity & Preview */}
-            <IntensityPreviewColumn
-              selectedPlayerPreview={selectedPlayerPreview}
-              currentIntensity={currentAssignment?.intensity ?? 'moderate'}
-              onSelectIntensity={updateSelectedIntensity}
-              trainingPlan={trainingPlan}
-              isTraining={isTraining}
-              onTrain={handleTrain}
-            />
-          </div>
-        )}
+          {/* RIGHT COLUMN: Intensity & Preview */}
+          <IntensityPreviewColumn
+            selectedPlayerPreview={selectedPlayerPreview}
+            currentIntensity={currentAssignment?.action === 'train' ? currentAssignment.intensity : 'moderate'}
+            onSelectIntensity={updateSelectedIntensity}
+            trainingPlan={trainingPlan}
+            onConfirmPlan={handleConfirmPlan}
+            eventId={eventId}
+          />
+        </div>
       </div>
     </div>
   );
@@ -464,10 +420,11 @@ export function TrainingModal({ isOpen, onClose, onTrainingComplete }: TrainingM
 interface PlayerListColumnProps {
   startingPlayers: Player[];
   benchPlayers: Player[];
-  trainingPlan: TrainingPlan;
+  trainingPlan: Map<string, TrainingPlayerAssignment>;
   selectedPlayerId: string | null;
   onSelectPlayer: (playerId: string) => void;
   onTogglePlayer: (playerId: string) => void;
+  onToggleSkip: (playerId: string) => void;
   getPlayerTrainingStatus: (playerId: string) => { canTrain: boolean; sessionsUsed: number };
 }
 
@@ -478,6 +435,7 @@ function PlayerListColumn({
   selectedPlayerId,
   onSelectPlayer,
   onTogglePlayer,
+  onToggleSkip,
   getPlayerTrainingStatus,
 }: PlayerListColumnProps) {
   const [showBench, setShowBench] = useState(false);
@@ -502,6 +460,7 @@ function PlayerListColumn({
               trainingStatus={getPlayerTrainingStatus(player.id)}
               onSelect={() => onSelectPlayer(player.id)}
               onToggle={() => onTogglePlayer(player.id)}
+              onToggleSkip={() => onToggleSkip(player.id)}
               onClickRecommendation={() => onTogglePlayer(player.id)}
             />
           ))}
@@ -528,6 +487,7 @@ function PlayerListColumn({
                   trainingStatus={getPlayerTrainingStatus(player.id)}
                   onSelect={() => onSelectPlayer(player.id)}
                   onToggle={() => onTogglePlayer(player.id)}
+                  onToggleSkip={() => onToggleSkip(player.id)}
                   onClickRecommendation={() => onTogglePlayer(player.id)}
                 />
               ))}
@@ -542,10 +502,11 @@ interface PlayerListItemProps {
   player: Player;
   isSelected: boolean;
   isAssigned: boolean;
-  assignment: { goal: TrainingGoal; intensity: TrainingIntensity; isAutoAssigned: boolean } | null;
+  assignment: TrainingPlayerAssignment | null;
   trainingStatus: { canTrain: boolean; sessionsUsed: number };
   onSelect: () => void;
   onToggle: () => void;
+  onToggleSkip: () => void;
   onClickRecommendation: () => void;
 }
 
@@ -557,6 +518,7 @@ function PlayerListItem({
   trainingStatus,
   onSelect,
   onToggle,
+  onToggleSkip,
   onClickRecommendation,
 }: PlayerListItemProps) {
   const ovr = playerDevelopment.calculateOverall(player.stats);
@@ -566,9 +528,12 @@ function PlayerListItem({
   const recommendedGoal = trainingService.getRecommendedGoal(player.id);
   const recommendedGoalInfo = recommendedGoal ? TRAINING_GOAL_MAPPINGS[recommendedGoal] : null;
 
+  // Check if player is set to skip
+  const isSkipping = assignment?.action === 'skip';
+
   // Get effectiveness for current assignment (or recommended if not assigned)
-  const effectivenessIntensity = assignment?.intensity ?? 'moderate';
-  const effectiveness = trainingService.previewTrainingEffectiveness(player.id, effectivenessIntensity);
+  const effectivenessIntensity = assignment?.action === 'train' ? assignment.intensity : 'moderate';
+  const effectiveness = !isSkipping ? trainingService.previewTrainingEffectiveness(player.id, effectivenessIntensity ?? 'moderate') : null;
 
   // Extract role from recommended goal (e.g., "Entry" from "Entry Fragging Mastery")
   const roleLabel = recommendedGoalInfo?.displayName.split(' ')[0] ?? 'N/A';
@@ -624,25 +589,37 @@ function PlayerListItem({
             </span>
           </div>
 
-          {/* Effectiveness % (if assigned) */}
-          {isAssigned && assignment && effectiveness !== null && (
+          {/* Skip status or effectiveness % */}
+          {isAssigned && isSkipping && (
             <div className="text-xs mb-1">
-              <span className="text-vct-gray">Effectiveness: </span>
-              <span className="text-green-400 font-medium">{effectiveness}%</span>
-              {assignment.isAutoAssigned ? (
-                <span className="ml-1 px-1.5 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400" title="Auto-assigned">
-                  auto
-                </span>
-              ) : (
-                <span className="ml-1 px-1.5 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400" title="Custom assignment">
-                  custom
-                </span>
-              )}
+              <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-400">
+                Skipping (Rest)
+              </span>
             </div>
           )}
 
+          {isAssigned && !isSkipping && assignment && effectiveness !== null && (
+            <div className="text-xs mb-1">
+              <span className="text-vct-gray">Effectiveness: </span>
+              <span className="text-green-400 font-medium">{effectiveness}%</span>
+            </div>
+          )}
+
+          {/* Skip toggle button (if assigned) */}
+          {isAssigned && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSkip();
+              }}
+              className="text-xs px-2 py-1 rounded bg-vct-gray/10 text-vct-gray hover:bg-vct-gray/20 transition-colors border border-vct-gray/30 w-full text-center mb-1"
+            >
+              {isSkipping ? 'Resume Training' : 'Skip (Rest)'}
+            </button>
+          )}
+
           {/* Clickable recommendation chip */}
-          {!isAssigned && recommendedGoalInfo && effectiveness !== null && canTrain && (
+          {!isAssigned && recommendedGoalInfo && canTrain && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -651,7 +628,7 @@ function PlayerListItem({
               className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors border border-blue-500/30 w-full text-left"
             >
               <span className="font-medium">Recommended: </span>
-              <span>{recommendedGoalInfo.displayName} ({effectiveness}%)</span>
+              <span>{recommendedGoalInfo.displayName}</span>
             </button>
           )}
         </div>
@@ -677,14 +654,16 @@ const GOAL_ICONS: Record<TrainingGoal, string> = {
 
 interface GoalSelectorColumnProps {
   selectedPlayer: Player | null;
-  currentGoal: TrainingGoal | null;
+  currentGoal: TrainingGoal | null | undefined;
   onSelectGoal: (goal: TrainingGoal) => void;
+  isSkipping?: boolean;
 }
 
 function GoalSelectorColumn({
   selectedPlayer,
   currentGoal,
   onSelectGoal,
+  isSkipping,
 }: GoalSelectorColumnProps) {
   const allGoals = trainingService.getAllGoals();
 
@@ -692,6 +671,16 @@ function GoalSelectorColumn({
     return (
       <div className="flex flex-col h-full bg-vct-dark rounded-lg border border-vct-gray/20 items-center justify-center">
         <p className="text-vct-gray text-sm">Select a player to assign training</p>
+      </div>
+    );
+  }
+
+  if (isSkipping) {
+    return (
+      <div className="flex flex-col h-full bg-vct-dark rounded-lg border border-vct-gray/20 items-center justify-center">
+        <p className="text-amber-400 text-lg mb-2">😴</p>
+        <p className="text-vct-light text-sm font-medium">Player Resting</p>
+        <p className="text-vct-gray text-xs mt-2">Training skipped for morale boost</p>
       </div>
     );
   }
@@ -763,8 +752,9 @@ function GoalSelectorColumn({
 interface IntensityPreviewColumnProps {
   selectedPlayerPreview: {
     player: Player;
-    goal: TrainingGoal;
-    intensity: TrainingIntensity;
+    isSkipping?: boolean;
+    goal: TrainingGoal | null | undefined;
+    intensity: TrainingIntensity | null | undefined;
     ovrChange: { min: number; max: number } | null;
     statChanges: Record<string, { min: number; max: number }> | null;
     moraleImpact: { min: number; max: number; qualitative: string };
@@ -773,11 +763,11 @@ interface IntensityPreviewColumnProps {
     shouldOverrideIntensity: boolean;
     overrideReason: string | null;
   } | null;
-  currentIntensity: TrainingIntensity;
+  currentIntensity: TrainingIntensity | undefined;
   onSelectIntensity: (intensity: TrainingIntensity) => void;
-  trainingPlan: TrainingPlan;
-  isTraining: boolean;
-  onTrain: () => void;
+  trainingPlan: Map<string, TrainingPlayerAssignment>;
+  onConfirmPlan: () => void;
+  eventId?: string;
 }
 
 function IntensityPreviewColumn({
@@ -785,8 +775,8 @@ function IntensityPreviewColumn({
   currentIntensity,
   onSelectIntensity,
   trainingPlan,
-  isTraining,
-  onTrain,
+  onConfirmPlan,
+  eventId,
 }: IntensityPreviewColumnProps) {
   // Calculate aggregate warnings across all assigned players
   const players = useGameStore((state) => state.players);
@@ -796,6 +786,8 @@ function IntensityPreviewColumn({
     let highFatigueCount = 0;
 
     for (const assignment of trainingPlan.values()) {
+      if (assignment.action === 'skip') continue; // Skip warnings for resting players
+
       const player = players[assignment.playerId];
       if (!player) continue;
 
@@ -803,9 +795,11 @@ function IntensityPreviewColumn({
         lowMoraleCount++;
       }
 
-      const fatigueRisk = trainingService.previewFatigueRisk(assignment.intensity);
-      if (fatigueRisk.resultLevel === 'High') {
-        highFatigueCount++;
+      if (assignment.intensity) {
+        const fatigueRisk = trainingService.previewFatigueRisk(assignment.intensity);
+        if (fatigueRisk.resultLevel === 'High') {
+          highFatigueCount++;
+        }
       }
     }
 
@@ -872,103 +866,123 @@ function IntensityPreviewColumn({
           <div className="space-y-3 p-3 bg-vct-darker rounded-lg border border-vct-gray/20">
             <h4 className="text-xs font-semibold text-vct-gray">Consequence Preview</h4>
 
-            {/* OVR Change */}
-            {selectedPlayerPreview.ovrChange && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-vct-gray">OVR Change</span>
-                <span className="text-green-400 font-medium">
-                  +{selectedPlayerPreview.ovrChange.min} to +
-                  {selectedPlayerPreview.ovrChange.max}
-                </span>
-              </div>
-            )}
-
-            {/* Stat Changes Preview */}
-            {selectedPlayerPreview.statChanges && (
-              <div className="space-y-1">
-                <p className="text-xs text-vct-gray">Stat Improvements</p>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-                  {Object.entries(selectedPlayerPreview.statChanges)
-                    .slice(0, 6)
-                    .map(([stat, range]) => (
-                      <div key={stat} className="flex items-center justify-between">
-                        <span className="text-vct-gray capitalize">{stat}</span>
-                        <span className="text-green-400">
-                          +{range.min}-{range.max}
-                        </span>
-                      </div>
-                    ))}
+            {/* Skip preview */}
+            {selectedPlayerPreview.isSkipping ? (
+              <div className="space-y-2">
+                <div className="text-center py-4">
+                  <p className="text-4xl mb-2">😴</p>
+                  <p className="text-vct-light font-medium">Player Resting</p>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-vct-gray">Morale Impact</span>
+                  <span className="text-green-400">Small boost (+1-2)</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-vct-gray">Stat Changes</span>
+                  <span className="text-vct-gray">None</span>
                 </div>
               </div>
-            )}
-
-            {/* Morale Impact */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-vct-gray">Morale Impact</span>
-              <div className="flex items-center gap-2">
-                <span
-                  className={
-                    selectedPlayerPreview.moraleImpact.min >= 0
-                      ? 'text-green-400'
-                      : selectedPlayerPreview.moraleImpact.max <= -2
-                      ? 'text-red-400'
-                      : 'text-yellow-400'
-                  }
-                >
-                  {selectedPlayerPreview.moraleImpact.qualitative}
-                </span>
-                {selectedPlayerPreview.player.morale < 50 && (
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
-                    ⚠
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Fatigue Risk */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-vct-gray">Fatigue Risk</span>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={
-                      selectedPlayerPreview.fatigueRisk.resultLevel === 'Low'
-                        ? 'text-green-400'
-                        : selectedPlayerPreview.fatigueRisk.resultLevel === 'Moderate'
-                        ? 'text-yellow-400'
-                        : 'text-red-400'
-                    }
-                  >
-                    {selectedPlayerPreview.fatigueRisk.resultLevel}
-                  </span>
-                  {selectedPlayerPreview.fatigueRisk.resultLevel === 'High' && (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
-                      ⚠
+            ) : (
+              <>
+                {/* OVR Change */}
+                {selectedPlayerPreview.ovrChange && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-vct-gray">OVR Change</span>
+                    <span className="text-green-400 font-medium">
+                      +{selectedPlayerPreview.ovrChange.min} to +
+                      {selectedPlayerPreview.ovrChange.max}
                     </span>
-                  )}
+                  </div>
+                )}
+
+                {/* Stat Changes Preview */}
+                {selectedPlayerPreview.statChanges && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-vct-gray">Stat Improvements</p>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                      {Object.entries(selectedPlayerPreview.statChanges)
+                        .slice(0, 6)
+                        .map(([stat, range]) => (
+                          <div key={stat} className="flex items-center justify-between">
+                            <span className="text-vct-gray capitalize">{stat}</span>
+                            <span className="text-green-400">
+                              +{range.min}-{range.max}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Morale Impact */}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-vct-gray">Morale Impact</span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        selectedPlayerPreview.moraleImpact.min >= 0
+                          ? 'text-green-400'
+                          : selectedPlayerPreview.moraleImpact.max <= -2
+                          ? 'text-red-400'
+                          : 'text-yellow-400'
+                      }
+                    >
+                      {selectedPlayerPreview.moraleImpact.qualitative}
+                    </span>
+                    {selectedPlayerPreview.player.morale < 50 && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
+                        ⚠
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              {/* Current training sessions indicator */}
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-vct-gray">
-                  Sessions used: {selectedPlayerPreview.trainingStatus.sessionsUsed}/2
-                </span>
-                <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full transition-all ${
-                      selectedPlayerPreview.trainingStatus.sessionsUsed >= 2
-                        ? 'bg-red-500'
-                        : selectedPlayerPreview.trainingStatus.sessionsUsed >= 1
-                        ? 'bg-yellow-500'
-                        : 'bg-green-500'
-                    }`}
-                    style={{
-                      width: `${(selectedPlayerPreview.trainingStatus.sessionsUsed / 2) * 100}%`,
-                    }}
-                  />
+
+                {/* Fatigue Risk */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-vct-gray">Fatigue Risk</span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={
+                          selectedPlayerPreview.fatigueRisk.resultLevel === 'Low' || selectedPlayerPreview.fatigueRisk.resultLevel === 'None'
+                            ? 'text-green-400'
+                            : selectedPlayerPreview.fatigueRisk.resultLevel === 'Moderate'
+                            ? 'text-yellow-400'
+                            : 'text-red-400'
+                        }
+                      >
+                        {selectedPlayerPreview.fatigueRisk.resultLevel}
+                      </span>
+                      {selectedPlayerPreview.fatigueRisk.resultLevel === 'High' && (
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
+                          ⚠
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {/* Current training sessions indicator */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-vct-gray">
+                      Sessions used: {selectedPlayerPreview.trainingStatus.sessionsUsed}/2
+                    </span>
+                    <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all ${
+                          selectedPlayerPreview.trainingStatus.sessionsUsed >= 2
+                            ? 'bg-red-500'
+                            : selectedPlayerPreview.trainingStatus.sessionsUsed >= 1
+                            ? 'bg-yellow-500'
+                            : 'bg-green-500'
+                        }`}
+                        style={{
+                          width: `${(selectedPlayerPreview.trainingStatus.sessionsUsed / 2) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         )}
 
@@ -999,10 +1013,19 @@ function IntensityPreviewColumn({
             <div className="space-y-1 text-xs">
               {Array.from(trainingPlan.values()).map((assignment) => (
                 <div key={assignment.playerId} className="flex items-center justify-between">
-                  <span className="text-vct-gray">
-                    {TRAINING_GOAL_MAPPINGS[assignment.goal].displayName}
-                  </span>
-                  <span className="text-vct-light capitalize">{assignment.intensity}</span>
+                  {assignment.action === 'skip' ? (
+                    <>
+                      <span className="text-amber-400">Resting</span>
+                      <span className="text-vct-gray">+Morale</span>
+                    </>
+                  ) : assignment.goal ? (
+                    <>
+                      <span className="text-vct-gray">
+                        {TRAINING_GOAL_MAPPINGS[assignment.goal].displayName}
+                      </span>
+                      <span className="text-vct-light capitalize">{assignment.intensity}</span>
+                    </>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -1010,18 +1033,23 @@ function IntensityPreviewColumn({
         )}
       </div>
 
-      {/* Train Button */}
+      {/* Confirm Plan Button */}
       <div className="p-3 border-t border-vct-gray/20">
+        {!eventId && (
+          <p className="text-xs text-yellow-400 mb-2 text-center">
+            ⚠️ Missing eventId - modal opened in legacy mode
+          </p>
+        )}
         <button
-          onClick={onTrain}
-          disabled={trainingPlan.size === 0 || isTraining}
+          onClick={onConfirmPlan}
+          disabled={trainingPlan.size === 0 || !eventId}
           className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
         >
-          {isTraining
-            ? 'Training...'
+          {!eventId
+            ? 'Legacy mode (not supported)'
             : trainingPlan.size === 0
-            ? 'Assign players to train'
-            : `Train ${trainingPlan.size} Player${trainingPlan.size > 1 ? 's' : ''}`}
+            ? 'Assign players first'
+            : `Confirm Plan (${trainingPlan.size} player${trainingPlan.size > 1 ? 's' : ''})`}
         </button>
       </div>
     </div>
