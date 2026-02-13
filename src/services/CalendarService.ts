@@ -12,7 +12,7 @@ import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
 import { activityResolutionService } from './ActivityResolutionService';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
-import type { FeatureUnlock } from '../data/featureUnlocks';
+import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
 import type { ActivityResolutionResult, ActivityConfig } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
@@ -168,7 +168,7 @@ export class CalendarService {
 
       for (const event of optionalEvents) {
         // Feature gate check - map event type to feature name
-        const featureMap: Record<string, string> = {
+        const featureMap: Record<string, FeatureType> = {
           'training_available': 'training',
           'scrim_available': 'scrims'
         };
