@@ -11,7 +11,7 @@
 // 5. SimulationResultsModal shows what happened
 // 6. User is now at beginning of Day X+1
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { calendarService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
@@ -86,6 +86,24 @@ export function TimeBar() {
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
+
+  // Compute valid enriched drama toasts
+  const validDramaToasts = useMemo(() => {
+    return dramaToasts
+      .map(event => {
+        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
+        return template ? enrichEventWithNarrative(event, template) : null;
+      })
+      .filter((e): e is ReturnType<typeof enrichEventWithNarrative> => e !== null);
+  }, [dramaToasts]);
+
+  // Compute enriched major event
+  const enrichedMajorEvent = useMemo(() => {
+    if (!currentMajorEvent) return null;
+    const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === currentMajorEvent.templateId);
+    if (!template) return null;
+    return enrichEventWithNarrative(currentMajorEvent, template);
+  }, [currentMajorEvent]);
 
   // Get simulation progress from store
 
@@ -457,38 +475,23 @@ export function TimeBar() {
       ))}
 
       {/* Drama Event Toasts - show minor events */}
-      {dramaToasts.map((event, index) => {
-        // Enrich event with template data for the toast
-        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === event.templateId);
-        if (!template) return null;
-
-        const enrichedEvent = enrichEventWithNarrative(event, template);
-
-        return (
-          <DramaEventToast
-            key={event.id}
-            event={enrichedEvent}
-            onDismiss={() => handleDismissDramaToast(index)}
-          />
-        );
-      })}
+      {validDramaToasts.map((enrichedEvent, index) => (
+        <DramaEventToast
+          key={enrichedEvent.id}
+          event={enrichedEvent}
+          onDismiss={() => handleDismissDramaToast(index)}
+        />
+      ))}
 
       {/* Drama Event Modal - show major events */}
-      {currentMajorEvent && (() => {
-        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === currentMajorEvent.templateId);
-        if (!template) return null;
-
-        const enrichedEvent = enrichEventWithNarrative(currentMajorEvent, template);
-
-        return (
-          <DramaEventModal
-            event={enrichedEvent}
-            choices={getChoicesForEvent(currentMajorEvent)}
-            onChoose={handleDramaChoice}
-            isOpen={true}
-          />
-        );
-      })()}
+      {enrichedMajorEvent && (
+        <DramaEventModal
+          event={enrichedMajorEvent}
+          choices={getChoicesForEvent(currentMajorEvent!)}
+          onChoose={handleDramaChoice}
+          isOpen={true}
+        />
+      )}
     </>
   );
 }
