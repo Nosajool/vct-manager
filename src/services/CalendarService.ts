@@ -174,8 +174,8 @@ export class CalendarService {
         };
         const featureName = featureMap[event.type];
 
-        if (featureName && featureGateService.isFeatureLocked(featureName)) {
-          // Feature is locked - skip this activity
+        if (featureName && !featureGateService.isFeatureUnlocked(featureName)) {
+          // Feature is locked (NOT unlocked) - skip this activity
           state.markEventProcessed(event.id);
           skippedEvents.push(event);
           console.log(`  Skipping locked feature: ${event.type} (${event.id})`);
