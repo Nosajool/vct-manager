@@ -3,6 +3,22 @@
 
 import type { StateCreator } from 'zustand';
 import type { ActivityConfig } from '../../types/activityPlan';
+import { featureGateService } from '../../services/FeatureGateService';
+import type { FeatureType } from '../../data/featureUnlocks';
+
+/**
+ * Map event types to their corresponding feature gates
+ */
+function getFeatureForEventType(eventType: string): FeatureType | null {
+  switch (eventType) {
+    case 'training_available':
+      return 'training';
+    case 'scrim_available':
+      return 'scrims';
+    default:
+      return null;
+  }
+}
 
 export interface ActivityPlanSlice {
   // State: activity configs keyed by event ID
@@ -96,7 +112,13 @@ export const createActivityPlanSlice: StateCreator<
 
     const configs = get().activityConfigs;
 
+    // Filter out locked features before checking configuration status
     return todaysEvents.some((event: any) => {
+      const feature = getFeatureForEventType(event.type);
+      if (feature && !featureGateService.isFeatureUnlocked(feature)) {
+        return false; // Ignore locked features
+      }
+
       const config = configs[event.id];
       return !config || config.status === 'needs_setup';
     });
@@ -116,8 +138,14 @@ export const createActivityPlanSlice: StateCreator<
 
     const configs = get().activityConfigs;
 
+    // Filter out locked features before checking configuration status
     return todaysEvents
       .filter((event: any) => {
+        const feature = getFeatureForEventType(event.type);
+        if (feature && !featureGateService.isFeatureUnlocked(feature)) {
+          return false; // Ignore locked features
+        }
+
         const config = configs[event.id];
         return !config || config.status === 'needs_setup';
       })

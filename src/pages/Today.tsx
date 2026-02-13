@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
-import { TournamentContextPanel, DayPlanPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
+import { TournamentContextPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
 import { ScrimModal } from '../components/scrim';
 import { DramaHistoryPanel } from '../components/drama';
 
@@ -103,9 +103,8 @@ export function Today() {
           <TournamentContextPanel />
         </div>
 
-        {/* Right Column - Day Plan & Alerts */}
+        {/* Right Column - Alerts */}
         <div className="space-y-6">
-          <DayPlanPanel />
           <AlertsPanel onOpenScrimModal={handleOpenScrimModal} />
         </div>
       </div>

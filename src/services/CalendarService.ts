@@ -167,6 +167,21 @@ export class CalendarService {
       const activityConfigs: ActivityConfig[] = [];
 
       for (const event of optionalEvents) {
+        // Feature gate check - map event type to feature name
+        const featureMap: Record<string, string> = {
+          'training_available': 'training',
+          'scrim_available': 'scrims'
+        };
+        const featureName = featureMap[event.type];
+
+        if (featureName && featureGateService.isFeatureLocked(featureName)) {
+          // Feature is locked - skip this activity
+          state.markEventProcessed(event.id);
+          skippedEvents.push(event);
+          console.log(`  Skipping locked feature: ${event.type} (${event.id})`);
+          continue;
+        }
+
         const config = state.getActivityConfig(event.id);
 
         if (config && config.status === 'configured') {
