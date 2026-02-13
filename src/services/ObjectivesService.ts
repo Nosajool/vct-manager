@@ -226,7 +226,7 @@ function getTrainingObjective(state: GameState, currentDate: string): DailyObjec
 
   // Check if training is configured
   const activityConfig = state.getActivityConfig?.(trainingEvent.id);
-  const isConfigured = activityConfig && activityConfig.status !== 'needs_setup';
+  const isConfigured = !!(activityConfig && activityConfig.status !== 'needs_setup');
 
   return {
     id: 'training-available',
@@ -264,7 +264,7 @@ function getScrimObjective(state: GameState, currentDate: string): DailyObjectiv
 
   // Check if scrim is configured
   const activityConfig = state.getActivityConfig?.(scrimEvent.id);
-  const isConfigured = activityConfig && activityConfig.status !== 'needs_setup';
+  const isConfigured = !!(activityConfig && activityConfig.status !== 'needs_setup');
 
   return {
     id: 'scrim-available',
