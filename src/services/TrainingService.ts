@@ -407,12 +407,11 @@ export class TrainingService {
    *
    * Algorithm:
    * 1. Selects starting 5 players only (skips reserves)
-   * 2. Skips players at their weekly training limit
-   * 3. For each player:
+   * 2. For each player:
    *    - Uses getRecommendedGoal() to select optimal training goal
    *    - Defaults to Moderate intensity
    *    - Downgrades to Light if morale < 50 (avoids further morale penalties)
-   * 4. Returns TrainingPlan for user review (does NOT execute training)
+   * 3. Returns TrainingPlan for user review (does NOT execute training)
    *
    * @returns TrainingPlan - Map of playerId to PlayerTrainingAssignment
    */
@@ -451,7 +450,7 @@ export class TrainingService {
       }
 
       // Note: Fatigue checking would be implemented here when fatigue tracking is added
-      // Current system relies on weekly limits and morale as proxies for player readiness
+      // Current system relies on morale as a proxy for player readiness
 
       // Add assignment to the plan
       plan.set(playerId, {

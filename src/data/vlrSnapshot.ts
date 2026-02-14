@@ -8,9 +8,9 @@ import type { VlrPlayerStats, VlrTeamRoster, VlrRosterData } from '@/types/vlr';
  * Metadata about when this snapshot was taken
  */
 export const VLR_SNAPSHOT_META = {
-  fetchedAt: '2026-02-11T01:54:55.650Z',
+  fetchedAt: '2026-02-14T02:28:26.054Z',
   regions: ["na","eu","br","ap","kr","cn"],
-  totalPlayers: 817,
+  totalPlayers: 829,
   totalRosters: 48,
 } as const;
 
@@ -65,28 +65,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "Cryocells",
-      "org": "100T",
-      "country": "United States",
-      "agents": [
-        "chamber",
-        "viper",
-        "veto"
-      ],
-      "rounds_played": "338",
-      "rating": "1.17",
-      "average_combat_score": "227.1",
-      "kill_deaths": "1.34",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "147.9",
-      "kills_per_round": "0.85",
-      "assists_per_round": "0.10",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "13%"
-    },
-    {
       "player": "Neon",
       "org": "LEV",
       "country": "Argentina",
@@ -107,6 +85,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "25%",
       "clutch_success_percentage": "27%"
+    },
+    {
+      "player": "bang",
+      "org": "100T",
+      "country": "United States",
+      "agents": [
+        "viper",
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "403",
+      "rating": "1.14",
+      "average_combat_score": "193.0",
+      "kill_deaths": "1.16",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "124.6",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.32",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "12%"
     },
     {
       "player": "Demon1",
@@ -131,26 +131,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "6%"
     },
     {
-      "player": "bang",
+      "player": "Cryocells",
       "org": "100T",
       "country": "United States",
       "agents": [
+        "chamber",
         "viper",
-        "astra",
-        "omen"
+        "veto"
       ],
-      "rounds_played": "338",
-      "rating": "1.09",
-      "average_combat_score": "188.0",
-      "kill_deaths": "1.10",
+      "rounds_played": "403",
+      "rating": "1.13",
+      "average_combat_score": "221.1",
+      "kill_deaths": "1.27",
       "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "119.8",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "37%",
-      "clutch_success_percentage": "10%"
+      "average_damage_per_round": "143.9",
+      "kills_per_round": "0.82",
+      "assists_per_round": "0.11",
+      "first_kills_per_round": "0.14",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "Inspire",
@@ -173,6 +173,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "33%",
       "clutch_success_percentage": "12%"
+    },
+    {
+      "player": "v1c",
+      "org": "C9",
+      "country": "United States",
+      "agents": [
+        "omen",
+        "astra",
+        "viper"
+      ],
+      "rounds_played": "350",
+      "rating": "1.08",
+      "average_combat_score": "196.6",
+      "kill_deaths": "1.10",
+      "kill_assists_survived_traded": "77%",
+      "average_damage_per_round": "127.3",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.34",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "valyn",
@@ -241,28 +263,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "9%"
     },
     {
-      "player": "v1c",
-      "org": "C9",
-      "country": "United States",
-      "agents": [
-        "omen",
-        "astra",
-        "viper"
-      ],
-      "rounds_played": "285",
-      "rating": "1.07",
-      "average_combat_score": "189.8",
-      "kill_deaths": "1.08",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "122.9",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "22%"
-    },
-    {
       "player": "keiko",
       "org": "NRG",
       "country": "United Kingdom",
@@ -283,6 +283,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.07",
       "headshot_percentage": "34%",
       "clutch_success_percentage": "4%"
+    },
+    {
+      "player": "OXY",
+      "org": "C9",
+      "country": "United States",
+      "agents": [
+        "neon",
+        "waylay",
+        "veto"
+      ],
+      "rounds_played": "230",
+      "rating": "1.06",
+      "average_combat_score": "225.2",
+      "kill_deaths": "1.15",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "144.7",
+      "kills_per_round": "0.85",
+      "assists_per_round": "0.11",
+      "first_kills_per_round": "0.21",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "mada",
@@ -307,28 +329,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Xeppaa",
-      "org": "C9",
-      "country": "United States",
-      "agents": [
-        "sova",
-        "tejo",
-        "skye"
-      ],
-      "rounds_played": "285",
-      "rating": "1.06",
-      "average_combat_score": "196.3",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "125.0",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.35",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "11%"
-    },
-    {
       "player": "brawk",
       "org": "NRG",
       "country": "United States",
@@ -348,49 +348,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.06",
       "headshot_percentage": "18%",
       "clutch_success_percentage": "21%"
-    },
-    {
-      "player": "penny",
-      "org": "C9",
-      "country": "Canada",
-      "agents": [
-        "viper",
-        "veto",
-        "chamber"
-      ],
-      "rounds_played": "285",
-      "rating": "1.05",
-      "average_combat_score": "204.1",
-      "kill_deaths": "1.10",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "137.1",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "11%"
-    },
-    {
-      "player": "supamen",
-      "org": "EG",
-      "country": "United States",
-      "agents": [
-        "astra",
-        "viper"
-      ],
-      "rounds_played": "256",
-      "rating": "1.04",
-      "average_combat_score": "190.5",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "124.2",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "37%",
-      "clutch_success_percentage": "4%"
     },
     {
       "player": "leaf",
@@ -415,26 +372,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "9%"
     },
     {
-      "player": "Rossy",
-      "org": "ENVY",
+      "player": "Xeppaa",
+      "org": "C9",
       "country": "United States",
       "agents": [
-        "omen",
-        "viper",
-        "astra"
+        "sova",
+        "tejo",
+        "skye"
       ],
-      "rounds_played": "304",
-      "rating": "1.02",
-      "average_combat_score": "190.8",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "120.8",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.32",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.06",
+      "rounds_played": "350",
+      "rating": "1.04",
+      "average_combat_score": "197.2",
+      "kill_deaths": "1.04",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "127.6",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.04",
       "headshot_percentage": "25%",
-      "clutch_success_percentage": "8%"
+      "clutch_success_percentage": "10%"
+    },
+    {
+      "player": "supamen",
+      "org": "EG",
+      "country": "United States",
+      "agents": [
+        "astra",
+        "viper"
+      ],
+      "rounds_played": "256",
+      "rating": "1.04",
+      "average_combat_score": "190.5",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "124.2",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.34",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "4%"
     },
     {
       "player": "skuba",
@@ -459,6 +437,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "33%"
     },
     {
+      "player": "Rossy",
+      "org": "ENVY",
+      "country": "United States",
+      "agents": [
+        "omen",
+        "viper",
+        "astra"
+      ],
+      "rounds_played": "304",
+      "rating": "1.02",
+      "average_combat_score": "190.8",
+      "kill_deaths": "1.02",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "120.8",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.32",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "8%"
+    },
+    {
       "player": "PxS",
       "org": "LEV",
       "country": "United States",
@@ -478,28 +478,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.06",
       "headshot_percentage": "23%",
       "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "kiNgg",
-      "org": "LEV",
-      "country": "Chile",
-      "agents": [
-        "brimstone",
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "231",
-      "rating": "1.01",
-      "average_combat_score": "189.2",
-      "kill_deaths": "1.03",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "120.5",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "13%"
     },
     {
       "player": "keznit",
@@ -524,48 +502,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "vora",
-      "org": "100T",
-      "country": "United States",
+      "player": "kiNgg",
+      "org": "LEV",
+      "country": "Chile",
       "agents": [
-        "skye",
-        "fade",
-        "sova"
+        "brimstone",
+        "astra",
+        "omen"
       ],
-      "rounds_played": "338",
-      "rating": "0.99",
-      "average_combat_score": "189.0",
-      "kill_deaths": "0.95",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "122.5",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "7%"
-    },
-    {
-      "player": "OXY",
-      "org": "C9",
-      "country": "United States",
-      "agents": [
-        "neon",
-        "waylay",
-        "veto"
-      ],
-      "rounds_played": "165",
-      "rating": "0.99",
-      "average_combat_score": "215.4",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "137.5",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.12",
-      "first_kills_per_round": "0.20",
-      "first_deaths_per_round": "0.18",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "11%"
+      "rounds_played": "231",
+      "rating": "1.01",
+      "average_combat_score": "189.2",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "120.5",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "Asuna",
@@ -576,40 +532,40 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "kayo",
         "sage"
       ],
-      "rounds_played": "338",
-      "rating": "0.98",
-      "average_combat_score": "175.1",
+      "rounds_played": "403",
+      "rating": "1.00",
+      "average_combat_score": "175.8",
       "kill_deaths": "0.94",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "108.6",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "109.3",
       "kills_per_round": "0.59",
-      "assists_per_round": "0.45",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.07",
+      "assists_per_round": "0.49",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
       "headshot_percentage": "23%",
-      "clutch_success_percentage": "6%"
+      "clutch_success_percentage": "7%"
     },
     {
-      "player": "Timotino",
+      "player": "vora",
       "org": "100T",
-      "country": "Canada",
+      "country": "United States",
       "agents": [
-        "waylay",
-        "jett",
-        "neon"
+        "skye",
+        "fade",
+        "sova"
       ],
-      "rounds_played": "338",
-      "rating": "0.96",
-      "average_combat_score": "227.1",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "149.5",
-      "kills_per_round": "0.77",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.19",
-      "first_deaths_per_round": "0.18",
+      "rounds_played": "403",
+      "rating": "1.00",
+      "average_combat_score": "195.3",
+      "kill_deaths": "0.96",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "126.2",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.36",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.07",
       "headshot_percentage": "29%",
-      "clutch_success_percentage": "19%"
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "bao",
@@ -632,6 +588,50 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.10",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "14%"
+    },
+    {
+      "player": "Timotino",
+      "org": "100T",
+      "country": "Canada",
+      "agents": [
+        "waylay",
+        "jett",
+        "neon"
+      ],
+      "rounds_played": "403",
+      "rating": "0.96",
+      "average_combat_score": "225.8",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "149.5",
+      "kills_per_round": "0.77",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.20",
+      "first_deaths_per_round": "0.18",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "16%"
+    },
+    {
+      "player": "penny",
+      "org": "C9",
+      "country": "Canada",
+      "agents": [
+        "viper",
+        "veto",
+        "chamber"
+      ],
+      "rounds_played": "350",
+      "rating": "0.95",
+      "average_combat_score": "189.1",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "128.0",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "8%"
     },
     {
       "player": "Reduxx",
@@ -678,28 +678,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "8%"
     },
     {
-      "player": "Kyu",
-      "org": "SEN",
-      "country": "Canada",
-      "agents": [
-        "tejo",
-        "skye",
-        "breach"
-      ],
-      "rounds_played": "190",
-      "rating": "0.90",
-      "average_combat_score": "176.8",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "114.0",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "21%",
-      "clutch_success_percentage": "12%"
-    },
-    {
       "player": "Sato",
       "org": "LEV",
       "country": "Brazil",
@@ -740,6 +718,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "21%",
       "clutch_success_percentage": "8%"
+    },
+    {
+      "player": "Kyu",
+      "org": "SEN",
+      "country": "Canada",
+      "agents": [
+        "tejo",
+        "skye",
+        "breach"
+      ],
+      "rounds_played": "190",
+      "rating": "0.90",
+      "average_combat_score": "176.8",
+      "kill_deaths": "0.86",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "114.0",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "12%"
     },
     {
       "player": "Okeanos",
@@ -850,28 +850,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "12%"
     },
     {
-      "player": "Zellsis",
-      "org": "C9",
-      "country": "United States",
-      "agents": [
-        "killjoy",
-        "breach",
-        "kayo"
-      ],
-      "rounds_played": "285",
-      "rating": "0.84",
-      "average_combat_score": "153.5",
-      "kill_deaths": "0.73",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "95.6",
-      "kills_per_round": "0.49",
-      "assists_per_round": "0.47",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "18%",
-      "clutch_success_percentage": "6%"
-    },
-    {
       "player": "P0PPIN",
       "org": "ENVY",
       "country": "United States",
@@ -892,6 +870,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "29%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Zellsis",
+      "org": "C9",
+      "country": "United States",
+      "agents": [
+        "killjoy",
+        "breach",
+        "kayo"
+      ],
+      "rounds_played": "350",
+      "rating": "0.83",
+      "average_combat_score": "150.0",
+      "kill_deaths": "0.71",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "93.3",
+      "kills_per_round": "0.49",
+      "assists_per_round": "0.49",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "18%",
+      "clutch_success_percentage": "8%"
     },
     {
       "player": "spike",
@@ -1230,6 +1230,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "squirmor",
+      "org": "Over",
+      "country": "United States",
+      "agents": [
+        "sova"
+      ],
+      "rounds_played": "32",
+      "rating": "1.15",
+      "average_combat_score": "225.0",
+      "kill_deaths": "1.24",
+      "kill_assists_survived_traded": "91%",
+      "average_damage_per_round": "157.1",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.34",
+      "first_kills_per_round": "0.00",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "FireBallOps",
       "org": "NBG",
       "country": "United States",
@@ -1249,26 +1269,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.01",
       "headshot_percentage": "32%",
       "clutch_success_percentage": "20%"
-    },
-    {
-      "player": "squirmor",
-      "org": "Over",
-      "country": "United States",
-      "agents": [
-        "sova"
-      ],
-      "rounds_played": "32",
-      "rating": "1.15",
-      "average_combat_score": "225.0",
-      "kill_deaths": "1.24",
-      "kill_assists_survived_traded": "91%",
-      "average_damage_per_round": "157.1",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.03",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "0"
     },
     {
       "player": "haeyoday",
@@ -1418,26 +1418,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
-      "player": "jas0n",
-      "org": "FUN",
-      "country": "Vietnam",
-      "agents": [
-        "viper"
-      ],
-      "rounds_played": "62",
-      "rating": "1.11",
-      "average_combat_score": "216.0",
-      "kill_deaths": "1.19",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "142.8",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "RetrQ",
       "org": "ROSE",
       "country": "United States",
@@ -1458,6 +1438,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "26%",
       "clutch_success_percentage": "29%"
+    },
+    {
+      "player": "jas0n",
+      "org": "FUN",
+      "country": "Vietnam",
+      "agents": [
+        "viper"
+      ],
+      "rounds_played": "62",
+      "rating": "1.11",
+      "average_combat_score": "216.0",
+      "kill_deaths": "1.19",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "142.8",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "atlas",
@@ -1647,28 +1647,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
-      "player": "Ange",
-      "org": "NRGA",
-      "country": "Canada",
-      "agents": [
-        "omen",
-        "viper",
-        "astra"
-      ],
-      "rounds_played": "171",
-      "rating": "1.04",
-      "average_combat_score": "191.9",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "127.6",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "23%",
-      "clutch_success_percentage": "19%"
-    },
-    {
       "player": "zander",
       "org": "SRB",
       "country": "Canada",
@@ -1689,6 +1667,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Ange",
+      "org": "NRGA",
+      "country": "Canada",
+      "agents": [
+        "omen",
+        "viper",
+        "astra"
+      ],
+      "rounds_played": "171",
+      "rating": "1.04",
+      "average_combat_score": "191.9",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "127.6",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "19%"
     },
     {
       "player": "traded",
@@ -1757,6 +1757,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "Kaoticc",
+      "org": "ADG",
+      "country": "Vietnam",
+      "agents": [
+        "yoru",
+        "jett",
+        "iso"
+      ],
+      "rounds_played": "213",
+      "rating": "1.02",
+      "average_combat_score": "232.1",
+      "kill_deaths": "1.09",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "148.0",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.15",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "4%"
+    },
+    {
       "player": "flux",
       "org": "Xora",
       "agents": [
@@ -1821,6 +1843,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "18%"
     },
     {
+      "player": "Boni",
+      "org": "M80",
+      "country": "Philippines",
+      "agents": [
+        "yoru",
+        "waylay",
+        "neon"
+      ],
+      "rounds_played": "131",
+      "rating": "1.01",
+      "average_combat_score": "222.0",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "148.2",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.22",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "mikeyy",
       "org": "Reac",
       "country": "Armenia",
@@ -1864,28 +1908,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "15%"
     },
     {
-      "player": "Boni",
-      "org": "M80",
-      "country": "Philippines",
-      "agents": [
-        "yoru",
-        "waylay",
-        "neon"
-      ],
-      "rounds_played": "131",
-      "rating": "1.01",
-      "average_combat_score": "222.0",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "148.2",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.22",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "flyuh",
       "org": "QOR",
       "country": "United States",
@@ -1905,28 +1927,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.13",
       "headshot_percentage": "23%",
       "clutch_success_percentage": "0"
-    },
-    {
-      "player": "dre",
-      "org": "ROSE",
-      "country": "Ukraine",
-      "agents": [
-        "astra",
-        "omen",
-        "brimstone"
-      ],
-      "rounds_played": "211",
-      "rating": "1.00",
-      "average_combat_score": "183.8",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "123.3",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "40%",
-      "clutch_success_percentage": "20%"
     },
     {
       "player": "Jerrwin",
@@ -1951,6 +1951,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
+      "player": "Recoil",
+      "org": "WU",
+      "country": "Saudi Arabia",
+      "agents": [
+        "sova",
+        "fade",
+        "clove"
+      ],
+      "rounds_played": "90",
+      "rating": "1.00",
+      "average_combat_score": "208.5",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "148.7",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "20%"
+    },
+    {
       "player": "g1tch2",
       "org": "Unknown",
       "agents": [
@@ -1971,25 +1993,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
-      "player": "Recoil",
-      "org": "WU",
-      "country": "Saudi Arabia",
+      "player": "sacred",
+      "org": "ADG",
+      "country": "India",
       "agents": [
         "sova",
-        "fade",
-        "clove"
+        "viper",
+        "cypher"
       ],
-      "rounds_played": "90",
+      "rounds_played": "213",
       "rating": "1.00",
-      "average_combat_score": "208.5",
-      "kill_deaths": "1.00",
+      "average_combat_score": "199.4",
+      "kill_deaths": "0.99",
       "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "148.7",
-      "kills_per_round": "0.74",
+      "average_damage_per_round": "129.3",
+      "kills_per_round": "0.69",
       "assists_per_round": "0.23",
-      "first_kills_per_round": "0.04",
+      "first_kills_per_round": "0.06",
       "first_deaths_per_round": "0.07",
-      "headshot_percentage": "21%",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "21%"
+    },
+    {
+      "player": "dre",
+      "org": "ROSE",
+      "country": "Ukraine",
+      "agents": [
+        "astra",
+        "omen",
+        "brimstone"
+      ],
+      "rounds_played": "211",
+      "rating": "1.00",
+      "average_combat_score": "183.8",
+      "kill_deaths": "0.96",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "123.3",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "40%",
       "clutch_success_percentage": "20%"
     },
     {
@@ -2036,25 +2080,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "33%"
     },
     {
-      "player": "Kaoticc",
-      "org": "BOXR",
-      "country": "Vietnam",
+      "player": "ducq",
+      "org": "happ",
+      "country": "Mexico",
       "agents": [
-        "yoru",
-        "jett"
+        "fade",
+        "skye",
+        "sova"
       ],
-      "rounds_played": "149",
-      "rating": "0.99",
-      "average_combat_score": "227.0",
-      "kill_deaths": "1.09",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "142.4",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.15",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "5%"
+      "rounds_played": "285",
+      "rating": "0.98",
+      "average_combat_score": "180.6",
+      "kill_deaths": "0.97",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "122.3",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "16%"
     },
     {
       "player": "Slammed",
@@ -2079,26 +2124,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "ducq",
-      "org": "happ",
-      "country": "Mexico",
+      "player": "tonza",
+      "org": "Cala",
+      "country": "United States",
       "agents": [
-        "fade",
-        "skye",
-        "sova"
+        "iso",
+        "yoru",
+        "veto"
       ],
       "rounds_played": "285",
-      "rating": "0.98",
-      "average_combat_score": "180.6",
-      "kill_deaths": "0.97",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "122.3",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "16%"
+      "rating": "0.97",
+      "average_combat_score": "193.7",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "124.0",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "22%"
     },
     {
       "player": "ethos",
@@ -2144,28 +2189,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "tonza",
-      "org": "Cala",
-      "country": "United States",
-      "agents": [
-        "iso",
-        "yoru",
-        "veto"
-      ],
-      "rounds_played": "285",
-      "rating": "0.97",
-      "average_combat_score": "193.7",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "124.0",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "22%"
-    },
-    {
       "player": "stallion",
       "org": "YFP",
       "country": "Canada",
@@ -2208,25 +2231,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "satellite",
-      "org": "SRB",
-      "country": "Canada",
+      "player": "Tn",
+      "org": "Team",
+      "country": "Philippines",
       "agents": [
-        "kayo",
-        "yoru"
+        "jett",
+        "raze"
       ],
-      "rounds_played": "59",
+      "rounds_played": "37",
       "rating": "0.95",
-      "average_combat_score": "198.3",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "118.9",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "17%",
-      "clutch_success_percentage": "25%"
+      "average_combat_score": "211.5",
+      "kill_deaths": "1.12",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "139.1",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.14",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "monSi",
@@ -2250,27 +2273,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "33%"
     },
     {
-      "player": "Tn",
-      "org": "Team",
-      "country": "Philippines",
-      "agents": [
-        "jett",
-        "raze"
-      ],
-      "rounds_played": "37",
-      "rating": "0.95",
-      "average_combat_score": "211.5",
-      "kill_deaths": "1.12",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "139.1",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "Add3r",
       "org": "TTR",
       "country": "United States",
@@ -2289,6 +2291,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.08",
       "first_deaths_per_round": "0.03",
       "headshot_percentage": "32%",
+      "clutch_success_percentage": "25%"
+    },
+    {
+      "player": "satellite",
+      "org": "SRB",
+      "country": "Canada",
+      "agents": [
+        "kayo",
+        "yoru"
+      ],
+      "rounds_played": "59",
+      "rating": "0.95",
+      "average_combat_score": "198.3",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "118.9",
+      "kills_per_round": "0.73",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.14",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "17%",
       "clutch_success_percentage": "25%"
     },
     {
@@ -2314,24 +2337,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
-      "player": "exa",
-      "org": "SRB",
-      "country": "South Korea",
+      "player": "JSERG",
+      "org": "Xora",
+      "country": "Philippines",
       "agents": [
-        "viper"
+        "fade",
+        "sova",
+        "skye"
       ],
-      "rounds_played": "59",
+      "rounds_played": "64",
       "rating": "0.94",
-      "average_combat_score": "192.3",
-      "kill_deaths": "0.95",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "130.9",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.31",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.08",
+      "average_combat_score": "194.0",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "133.1",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.02",
+      "first_deaths_per_round": "0.00",
       "headshot_percentage": "26%",
-      "clutch_success_percentage": "0"
+      "clutch_success_percentage": "21%"
     },
     {
       "player": "richie",
@@ -2355,26 +2380,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "25%"
     },
     {
-      "player": "bones",
-      "org": "PLUG",
-      "country": "United States",
+      "player": "gMd",
+      "org": "M80",
+      "country": "Canada",
       "agents": [
-        "killjoy",
-        "fade",
-        "sova"
+        "astra",
+        "omen"
       ],
-      "rounds_played": "149",
+      "rounds_played": "131",
       "rating": "0.94",
-      "average_combat_score": "194.3",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "123.0",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.09",
+      "average_combat_score": "158.7",
+      "kill_deaths": "0.81",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "105.1",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.10",
       "headshot_percentage": "22%",
-      "clutch_success_percentage": "16%"
+      "clutch_success_percentage": "29%"
+    },
+    {
+      "player": "guady",
+      "org": "Empi",
+      "country": "Mexico",
+      "agents": [
+        "yoru"
+      ],
+      "rounds_played": "82",
+      "rating": "0.94",
+      "average_combat_score": "221.5",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "139.7",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.22",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "conrad",
@@ -2398,67 +2442,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "JSERG",
-      "org": "Xora",
-      "country": "Philippines",
+      "player": "exa",
+      "org": "SRB",
+      "country": "South Korea",
       "agents": [
-        "fade",
-        "sova",
-        "skye"
+        "viper"
       ],
-      "rounds_played": "64",
+      "rounds_played": "59",
       "rating": "0.94",
-      "average_combat_score": "194.0",
-      "kill_deaths": "0.94",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "133.1",
-      "kills_per_round": "0.70",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.02",
-      "first_deaths_per_round": "0.00",
+      "average_combat_score": "192.3",
+      "kill_deaths": "0.95",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "130.9",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
       "headshot_percentage": "26%",
-      "clutch_success_percentage": "21%"
-    },
-    {
-      "player": "guady",
-      "org": "Empi",
-      "country": "Mexico",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "82",
-      "rating": "0.94",
-      "average_combat_score": "221.5",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "139.7",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.22",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "28%",
       "clutch_success_percentage": "0"
-    },
-    {
-      "player": "gMd",
-      "org": "M80",
-      "country": "Canada",
-      "agents": [
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "131",
-      "rating": "0.94",
-      "average_combat_score": "158.7",
-      "kill_deaths": "0.81",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "105.1",
-      "kills_per_round": "0.56",
-      "assists_per_round": "0.37",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "29%"
     },
     {
       "player": "Fair",
@@ -2504,28 +2505,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "21%"
     },
     {
-      "player": "sacred",
-      "org": "BOXR",
-      "country": "India",
-      "agents": [
-        "sova",
-        "viper",
-        "cypher"
-      ],
-      "rounds_played": "149",
-      "rating": "0.91",
-      "average_combat_score": "185.0",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "119.7",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "22%"
-    },
-    {
       "player": "Smoke",
       "org": "QOR",
       "country": "United States",
@@ -2569,25 +2548,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "moobs",
-      "org": "WU",
-      "country": "Canada",
+      "player": "bones",
+      "org": "ADG",
+      "country": "United States",
       "agents": [
-        "chamber",
-        "viper"
+        "killjoy",
+        "fade",
+        "sova"
       ],
-      "rounds_played": "90",
-      "rating": "0.90",
-      "average_combat_score": "197.3",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "61%",
-      "average_damage_per_round": "129.1",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.11",
-      "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "213",
+      "rating": "0.91",
+      "average_combat_score": "189.5",
+      "kill_deaths": "0.95",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "118.5",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "jakee",
@@ -2609,6 +2589,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.04",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "moobs",
+      "org": "WU",
+      "country": "Canada",
+      "agents": [
+        "chamber",
+        "viper"
+      ],
+      "rounds_played": "90",
+      "rating": "0.90",
+      "average_combat_score": "197.3",
+      "kill_deaths": "0.93",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "129.1",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.11",
+      "first_kills_per_round": "0.21",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "toozy",
+      "org": "BLUE",
+      "agents": [
+        "killjoy",
+        "viper"
+      ],
+      "rounds_played": "66",
+      "rating": "0.89",
+      "average_combat_score": "186.0",
+      "kill_deaths": "0.89",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "119.3",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "11%"
     },
     {
       "player": "Katashio",
@@ -2633,26 +2654,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "6%"
     },
     {
-      "player": "toozy",
-      "org": "BLUE",
-      "agents": [
-        "killjoy",
-        "viper"
-      ],
-      "rounds_played": "66",
-      "rating": "0.89",
-      "average_combat_score": "186.0",
-      "kill_deaths": "0.89",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "119.3",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "21%",
-      "clutch_success_percentage": "11%"
-    },
-    {
       "player": "stunna",
       "org": "EGA",
       "country": "United States",
@@ -2672,27 +2673,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.21",
       "headshot_percentage": "25%",
       "clutch_success_percentage": "0"
-    },
-    {
-      "player": "practo",
-      "org": "NBG",
-      "country": "South Korea",
-      "agents": [
-        "yoru",
-        "viper"
-      ],
-      "rounds_played": "71",
-      "rating": "0.89",
-      "average_combat_score": "203.7",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "119.4",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "19%",
-      "clutch_success_percentage": "14%"
     },
     {
       "player": "snowing",
@@ -2717,6 +2697,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
+      "player": "practo",
+      "org": "NBG",
+      "country": "South Korea",
+      "agents": [
+        "yoru",
+        "viper"
+      ],
+      "rounds_played": "71",
+      "rating": "0.89",
+      "average_combat_score": "203.7",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "119.4",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "19%",
+      "clutch_success_percentage": "14%"
+    },
+    {
       "player": "ven",
       "org": "KS",
       "country": "Hong Kong",
@@ -2738,24 +2739,23 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
-      "player": "Blahst",
-      "org": "ROSE",
-      "country": "United States",
+      "player": "Sliz",
+      "org": "Unknown",
       "agents": [
-        "viper",
-        "killjoy"
+        "waylay",
+        "neon"
       ],
-      "rounds_played": "69",
+      "rounds_played": "32",
       "rating": "0.87",
-      "average_combat_score": "184.3",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "119.6",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.19",
-      "headshot_percentage": "31%",
+      "average_combat_score": "209.5",
+      "kill_deaths": "0.80",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "125.7",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.22",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "27%",
       "clutch_success_percentage": "0"
     },
     {
@@ -2779,24 +2779,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "25%"
     },
     {
-      "player": "Sliz",
-      "org": "Unknown",
+      "player": "Blahst",
+      "org": "ROSE",
+      "country": "United States",
       "agents": [
-        "waylay",
-        "neon"
+        "viper",
+        "killjoy"
       ],
-      "rounds_played": "32",
+      "rounds_played": "69",
       "rating": "0.87",
-      "average_combat_score": "209.5",
-      "kill_deaths": "0.80",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "125.7",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.22",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "27%",
+      "average_combat_score": "184.3",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "119.6",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "31%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "tdawgg",
+      "org": "ADG",
+      "country": "United States",
+      "agents": [
+        "omen",
+        "astra",
+        "sova"
+      ],
+      "rounds_played": "213",
+      "rating": "0.86",
+      "average_combat_score": "150.5",
+      "kill_deaths": "0.73",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "100.2",
+      "kills_per_round": "0.49",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "19%",
+      "clutch_success_percentage": "21%"
     },
     {
       "player": "k0rupt",
@@ -2864,26 +2887,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "stellar",
-      "org": "SAD",
+      "player": "mitch",
+      "org": "EGA",
       "country": "United States",
       "agents": [
-        "kayo",
-        "viper",
-        "killjoy"
+        "fade",
+        "skye"
       ],
-      "rounds_played": "139",
+      "rounds_played": "56",
       "rating": "0.85",
-      "average_combat_score": "157.8",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "107.9",
-      "kills_per_round": "0.58",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "19%"
+      "average_combat_score": "168.7",
+      "kill_deaths": "0.75",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "104.3",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "15%",
+      "clutch_success_percentage": "29%"
     },
     {
       "player": "iansn",
@@ -2907,25 +2929,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "mitch",
-      "org": "EGA",
+      "player": "stellar",
+      "org": "SAD",
       "country": "United States",
       "agents": [
-        "fade",
-        "skye"
+        "kayo",
+        "viper",
+        "killjoy"
       ],
-      "rounds_played": "56",
+      "rounds_played": "139",
       "rating": "0.85",
-      "average_combat_score": "168.7",
-      "kill_deaths": "0.75",
-      "kill_assists_survived_traded": "61%",
-      "average_damage_per_round": "104.3",
-      "kills_per_round": "0.54",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "15%",
-      "clutch_success_percentage": "29%"
+      "average_combat_score": "157.8",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "107.9",
+      "kills_per_round": "0.58",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "19%"
     },
     {
       "player": "gizmoh",
@@ -2993,24 +3016,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "40%"
     },
     {
-      "player": "dodo",
-      "org": "Unknown",
+      "player": "strongtallguy62",
+      "org": "WU",
+      "country": "United States",
       "agents": [
-        "fade",
-        "sova"
+        "kayo",
+        "yoru",
+        "skye"
       ],
-      "rounds_played": "32",
+      "rounds_played": "90",
       "rating": "0.83",
-      "average_combat_score": "179.5",
-      "kill_deaths": "0.77",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "113.9",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.19",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "17%"
+      "average_combat_score": "165.8",
+      "kill_deaths": "0.79",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "111.7",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "24%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "DaG",
@@ -3034,26 +3059,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
-      "player": "strongtallguy62",
-      "org": "WU",
-      "country": "United States",
+      "player": "dodo",
+      "org": "Unknown",
       "agents": [
-        "kayo",
-        "yoru",
-        "skye"
+        "fade",
+        "sova"
       ],
-      "rounds_played": "90",
+      "rounds_played": "32",
       "rating": "0.83",
-      "average_combat_score": "165.8",
-      "kill_deaths": "0.79",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "111.7",
-      "kills_per_round": "0.56",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "179.5",
+      "kill_deaths": "0.77",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "113.9",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.00",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Ali",
+      "org": "BURG",
+      "agents": [
+        "clove",
+        "killjoy",
+        "chamber"
+      ],
+      "rounds_played": "78",
+      "rating": "0.82",
+      "average_combat_score": "158.5",
+      "kill_deaths": "0.76",
+      "kill_assists_survived_traded": "58%",
+      "average_damage_per_round": "114.8",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.09",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "GrimReaper874",
@@ -3078,25 +3122,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "Ali",
-      "org": "BURG",
+      "player": "Wild",
+      "org": "Unknown",
       "agents": [
-        "clove",
-        "killjoy",
+        "brimstone",
         "chamber"
       ],
-      "rounds_played": "78",
-      "rating": "0.82",
-      "average_combat_score": "158.5",
-      "kill_deaths": "0.76",
-      "kill_assists_survived_traded": "58%",
-      "average_damage_per_round": "114.8",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.19",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "25%"
+      "rounds_played": "32",
+      "rating": "0.81",
+      "average_combat_score": "209.0",
+      "kill_deaths": "0.68",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "129.2",
+      "kills_per_round": "0.59",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "ion",
@@ -3119,26 +3162,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Wild",
-      "org": "Unknown",
-      "agents": [
-        "brimstone",
-        "chamber"
-      ],
-      "rounds_played": "32",
-      "rating": "0.81",
-      "average_combat_score": "209.0",
-      "kill_deaths": "0.68",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "129.2",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "semik",
       "org": "PHX",
       "agents": [
@@ -3156,6 +3179,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.15",
       "first_deaths_per_round": "0.18",
       "headshot_percentage": "32%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Affect",
+      "org": "Oni",
+      "country": "United States",
+      "agents": [
+        "fade"
+      ],
+      "rounds_played": "40",
+      "rating": "0.78",
+      "average_combat_score": "161.0",
+      "kill_deaths": "0.66",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "106.4",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "31%",
       "clutch_success_percentage": "0"
     },
     {
@@ -3181,26 +3224,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Affect",
-      "org": "Oni",
-      "country": "United States",
-      "agents": [
-        "fade"
-      ],
-      "rounds_played": "40",
-      "rating": "0.78",
-      "average_combat_score": "161.0",
-      "kill_deaths": "0.66",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "106.4",
-      "kills_per_round": "0.53",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "Paincakes",
       "org": "EGA",
       "country": "United States",
@@ -3221,6 +3244,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.14",
       "headshot_percentage": "31%",
       "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "hieu",
+      "org": "ADG",
+      "country": "Vietnam",
+      "agents": [
+        "waylay",
+        "iso",
+        "yoru"
+      ],
+      "rounds_played": "213",
+      "rating": "0.76",
+      "average_combat_score": "169.5",
+      "kill_deaths": "0.78",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "105.0",
+      "kills_per_round": "0.59",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "6%"
     },
     {
       "player": "dancingdino371",
@@ -3245,28 +3290,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "13%"
     },
     {
-      "player": "tdawgg",
-      "org": "BOXR",
-      "country": "United States",
-      "agents": [
-        "omen",
-        "astra",
-        "sova"
-      ],
-      "rounds_played": "149",
-      "rating": "0.73",
-      "average_combat_score": "129.4",
-      "kill_deaths": "0.58",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "86.7",
-      "kills_per_round": "0.40",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "19%",
-      "clutch_success_percentage": "13%"
-    },
-    {
       "player": "geeza",
       "org": "NRGA",
       "country": "United States",
@@ -3287,28 +3310,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.13",
       "headshot_percentage": "33%",
       "clutch_success_percentage": "9%"
-    },
-    {
-      "player": "hieu",
-      "org": "ROSE",
-      "country": "Vietnam",
-      "agents": [
-        "waylay",
-        "iso",
-        "yoru"
-      ],
-      "rounds_played": "149",
-      "rating": "0.71",
-      "average_combat_score": "161.4",
-      "kill_deaths": "0.70",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "106.3",
-      "kills_per_round": "0.55",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "7%"
     },
     {
       "player": "sym",
@@ -3557,28 +3558,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
   ],
   "eu": [
     {
-      "player": "Minny",
-      "org": "M8",
-      "country": "Czech Republic",
-      "agents": [
-        "brimstone",
-        "viper",
-        "cypher"
-      ],
-      "rounds_played": "128",
-      "rating": "1.37",
-      "average_combat_score": "236.8",
-      "kill_deaths": "1.61",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "154.1",
-      "kills_per_round": "0.89",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "41%",
-      "clutch_success_percentage": "27%"
-    },
-    {
       "player": "hiro",
       "org": "NAVI",
       "country": "Turkey",
@@ -3601,26 +3580,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "29%"
     },
     {
-      "player": "lovers rock",
-      "org": "BBL",
-      "country": "Turkey",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "144",
-      "rating": "1.22",
-      "average_combat_score": "270.6",
-      "kill_deaths": "1.40",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "161.3",
-      "kills_per_round": "0.94",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.24",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "20%"
-    },
-    {
       "player": "Alfajer",
       "org": "FNC",
       "country": "Turkey",
@@ -3629,62 +3588,40 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "killjoy",
         "vyse"
       ],
-      "rounds_played": "235",
-      "rating": "1.19",
-      "average_combat_score": "233.5",
-      "kill_deaths": "1.22",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "160.7",
-      "kills_per_round": "0.83",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.19",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "20%"
-    },
-    {
-      "player": "Chronicle",
-      "org": "VIT",
-      "country": "Russia",
-      "agents": [
-        "viper",
-        "chamber",
-        "sage"
-      ],
-      "rounds_played": "182",
-      "rating": "1.18",
-      "average_combat_score": "227.2",
-      "kill_deaths": "1.36",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "145.3",
-      "kills_per_round": "0.80",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "5%"
-    },
-    {
-      "player": "Lar0k",
-      "org": "BBL",
-      "country": "Turkey",
-      "agents": [
-        "jett",
-        "waylay",
-        "neon"
-      ],
-      "rounds_played": "144",
-      "rating": "1.15",
-      "average_combat_score": "247.6",
-      "kill_deaths": "1.25",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "160.9",
-      "kills_per_round": "0.91",
+      "rounds_played": "274",
+      "rating": "1.24",
+      "average_combat_score": "241.8",
+      "kill_deaths": "1.30",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "165.7",
+      "kills_per_round": "0.86",
       "assists_per_round": "0.19",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.14",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.09",
       "headshot_percentage": "32%",
-      "clutch_success_percentage": "22%"
+      "clutch_success_percentage": "24%"
+    },
+    {
+      "player": "Minny",
+      "org": "M8",
+      "country": "Czech Republic",
+      "agents": [
+        "brimstone",
+        "viper",
+        "cypher"
+      ],
+      "rounds_played": "246",
+      "rating": "1.20",
+      "average_combat_score": "221.3",
+      "kill_deaths": "1.28",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "145.9",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "38%",
+      "clutch_success_percentage": "19%"
     },
     {
       "player": "marteen",
@@ -3693,83 +3630,60 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "agents": [
         "yoru"
       ],
-      "rounds_played": "128",
-      "rating": "1.15",
-      "average_combat_score": "224.5",
+      "rounds_played": "246",
+      "rating": "1.20",
+      "average_combat_score": "234.5",
       "kill_deaths": "1.30",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "136.7",
-      "kills_per_round": "0.82",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.20",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "starxo",
-      "org": "M8",
-      "country": "Poland",
-      "agents": [
-        "sova",
-        "fade"
-      ],
-      "rounds_played": "128",
-      "rating": "1.15",
-      "average_combat_score": "217.0",
-      "kill_deaths": "1.27",
-      "kill_assists_survived_traded": "82%",
-      "average_damage_per_round": "145.1",
-      "kills_per_round": "0.77",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "15%"
-    },
-    {
-      "player": "wayne",
-      "org": "TL",
-      "country": "Singapore",
-      "agents": [
-        "omen",
-        "astra",
-        "brimstone"
-      ],
-      "rounds_played": "230",
-      "rating": "1.14",
-      "average_combat_score": "199.0",
-      "kill_deaths": "1.15",
-      "kill_assists_survived_traded": "80%",
-      "average_damage_per_round": "132.4",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.37",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "35%",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "151.0",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "30%",
       "clutch_success_percentage": "13%"
     },
     {
-      "player": "Loita",
+      "player": "lovers rock",
       "org": "BBL",
       "country": "Turkey",
       "agents": [
-        "viper",
-        "omen",
-        "astra"
+        "yoru"
       ],
-      "rounds_played": "144",
-      "rating": "1.14",
-      "average_combat_score": "191.9",
-      "kill_deaths": "1.23",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "130.5",
-      "kills_per_round": "0.70",
-      "assists_per_round": "0.35",
-      "first_kills_per_round": "0.07",
+      "rounds_played": "262",
+      "rating": "1.18",
+      "average_combat_score": "251.1",
+      "kill_deaths": "1.31",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "153.9",
+      "kills_per_round": "0.89",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "14%"
+    },
+    {
+      "player": "Veqaj",
+      "org": "FNC",
+      "country": "France",
+      "agents": [
+        "viper",
+        "kayo",
+        "jett"
+      ],
+      "rounds_played": "274",
+      "rating": "1.15",
+      "average_combat_score": "226.2",
+      "kill_deaths": "1.21",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "147.5",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.36",
+      "first_kills_per_round": "0.10",
       "first_deaths_per_round": "0.09",
-      "headshot_percentage": "38%",
-      "clutch_success_percentage": "40%"
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "seven",
@@ -3794,6 +3708,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
+      "player": "Chronicle",
+      "org": "VIT",
+      "country": "Russia",
+      "agents": [
+        "viper",
+        "chamber",
+        "sage"
+      ],
+      "rounds_played": "221",
+      "rating": "1.11",
+      "average_combat_score": "217.4",
+      "kill_deaths": "1.24",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "140.6",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "4%"
+    },
+    {
       "player": "Derke",
       "org": "VIT",
       "country": "Finland",
@@ -3802,18 +3738,62 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "phoenix",
         "yoru"
       ],
-      "rounds_played": "182",
+      "rounds_played": "221",
       "rating": "1.11",
-      "average_combat_score": "243.4",
-      "kill_deaths": "1.22",
+      "average_combat_score": "242.1",
+      "kill_deaths": "1.17",
       "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "154.5",
-      "kills_per_round": "0.85",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.12",
+      "average_damage_per_round": "154.0",
+      "kills_per_round": "0.83",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.14",
       "headshot_percentage": "27%",
-      "clutch_success_percentage": "0"
+      "clutch_success_percentage": "6%"
+    },
+    {
+      "player": "Loita",
+      "org": "BBL",
+      "country": "Turkey",
+      "agents": [
+        "viper",
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "262",
+      "rating": "1.11",
+      "average_combat_score": "189.7",
+      "kill_deaths": "1.13",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "129.1",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "28%"
+    },
+    {
+      "player": "wayne",
+      "org": "TL",
+      "country": "Singapore",
+      "agents": [
+        "omen",
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "270",
+      "rating": "1.10",
+      "average_combat_score": "189.7",
+      "kill_deaths": "1.10",
+      "kill_assists_survived_traded": "80%",
+      "average_damage_per_round": "126.8",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.38",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "36%",
+      "clutch_success_percentage": "12%"
     },
     {
       "player": "dos9",
@@ -3837,28 +3817,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "16%"
     },
     {
-      "player": "Veqaj",
-      "org": "FNC",
-      "country": "France",
-      "agents": [
-        "viper",
-        "kayo",
-        "jett"
-      ],
-      "rounds_played": "235",
-      "rating": "1.10",
-      "average_combat_score": "223.2",
-      "kill_deaths": "1.13",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "146.6",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "11%"
-    },
-    {
       "player": "crashies",
       "org": "FNC",
       "country": "United States",
@@ -3866,17 +3824,17 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "sova",
         "fade"
       ],
-      "rounds_played": "235",
+      "rounds_played": "274",
       "rating": "1.09",
-      "average_combat_score": "199.1",
-      "kill_deaths": "1.13",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "129.6",
-      "kills_per_round": "0.72",
-      "assists_per_round": "0.25",
+      "average_combat_score": "196.8",
+      "kill_deaths": "1.15",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "128.4",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.24",
       "first_kills_per_round": "0.03",
       "first_deaths_per_round": "0.04",
-      "headshot_percentage": "33%",
+      "headshot_percentage": "32%",
       "clutch_success_percentage": "16%"
     },
     {
@@ -3900,6 +3858,50 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.12",
       "headshot_percentage": "23%",
       "clutch_success_percentage": "4%"
+    },
+    {
+      "player": "MiniBoo",
+      "org": "TL",
+      "country": "Lithuania",
+      "agents": [
+        "yoru",
+        "waylay",
+        "raze"
+      ],
+      "rounds_played": "342",
+      "rating": "1.08",
+      "average_combat_score": "226.2",
+      "kill_deaths": "1.11",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "146.5",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.20",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "19%"
+    },
+    {
+      "player": "Lar0k",
+      "org": "BBL",
+      "country": "Turkey",
+      "agents": [
+        "jett",
+        "waylay",
+        "neon"
+      ],
+      "rounds_played": "262",
+      "rating": "1.07",
+      "average_combat_score": "228.7",
+      "kill_deaths": "1.12",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "146.4",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "21%"
     },
     {
       "player": "al0rante",
@@ -3928,106 +3930,21 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "org": "TH",
       "agents": [
         "viper",
-        "cypher"
+        "cypher",
+        "veto"
       ],
-      "rounds_played": "245",
-      "rating": "1.06",
-      "average_combat_score": "203.0",
-      "kill_deaths": "1.09",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "132.4",
+      "rounds_played": "285",
+      "rating": "1.04",
+      "average_combat_score": "203.8",
+      "kill_deaths": "1.06",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "133.8",
       "kills_per_round": "0.75",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.11",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.12",
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "38%",
-      "clutch_success_percentage": "16%"
-    },
-    {
-      "player": "MiniBoo",
-      "org": "TL",
-      "country": "Lithuania",
-      "agents": [
-        "yoru",
-        "waylay",
-        "raze"
-      ],
-      "rounds_played": "302",
-      "rating": "1.06",
-      "average_combat_score": "217.9",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "142.2",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "21%"
-    },
-    {
-      "player": "ComeBack",
-      "org": "TH",
-      "country": "Turkey",
-      "agents": [
-        "raze",
-        "neon",
-        "waylay"
-      ],
-      "rounds_played": "245",
-      "rating": "1.03",
-      "average_combat_score": "227.8",
-      "kill_deaths": "1.04",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "146.1",
-      "kills_per_round": "0.79",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.18",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "GLYPH",
-      "org": "M8",
-      "country": "Philippines",
-      "agents": [
-        "astra"
-      ],
-      "rounds_played": "128",
-      "rating": "1.03",
-      "average_combat_score": "174.3",
-      "kill_deaths": "1.08",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "108.3",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "Kicks",
-      "org": "VIT",
-      "country": "Estonia",
-      "agents": [
-        "astra",
-        "brimstone",
-        "omen"
-      ],
-      "rounds_played": "72",
-      "rating": "1.02",
-      "average_combat_score": "165.0",
-      "kill_deaths": "0.98",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "114.5",
-      "kills_per_round": "0.57",
-      "assists_per_round": "0.40",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.03",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "22%"
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "SUYGETSU",
@@ -4051,47 +3968,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "PROFEK",
-      "org": "VIT",
-      "country": "Poland",
+      "player": "Kicks",
+      "org": "TLA",
+      "country": "Estonia",
       "agents": [
-        "omen",
-        "astra"
+        "astra",
+        "brimstone",
+        "omen"
       ],
-      "rounds_played": "182",
+      "rounds_played": "72",
       "rating": "1.02",
-      "average_combat_score": "183.4",
-      "kill_deaths": "1.13",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "115.1",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.31",
-      "first_kills_per_round": "0.09",
+      "average_combat_score": "165.0",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "114.5",
+      "kills_per_round": "0.57",
+      "assists_per_round": "0.40",
+      "first_kills_per_round": "0.07",
       "first_deaths_per_round": "0.03",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "25%"
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "22%"
     },
     {
-      "player": "LewN",
-      "org": "KC",
-      "country": "Turkey",
+      "player": "kamo",
+      "org": "TL",
+      "country": "Poland",
       "agents": [
-        "waylay",
-        "yoru",
-        "jett"
+        "sova",
+        "fade",
+        "tejo"
       ],
-      "rounds_played": "230",
+      "rounds_played": "342",
       "rating": "1.00",
-      "average_combat_score": "222.5",
-      "kill_deaths": "1.05",
+      "average_combat_score": "202.9",
+      "kill_deaths": "1.01",
       "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "134.8",
-      "kills_per_round": "0.77",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.19",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "13%"
+      "average_damage_per_round": "134.2",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "19%"
     },
     {
       "player": "Flickless",
@@ -4116,70 +4034,70 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "24%"
     },
     {
-      "player": "Wo0t",
+      "player": "PROFEK",
+      "org": "VIT",
+      "country": "Poland",
+      "agents": [
+        "omen",
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "221",
+      "rating": "1.00",
+      "average_combat_score": "181.9",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "115.8",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "29%"
+    },
+    {
+      "player": "LewN",
+      "org": "KC",
+      "country": "Turkey",
+      "agents": [
+        "waylay",
+        "yoru",
+        "jett"
+      ],
+      "rounds_played": "230",
+      "rating": "1.00",
+      "average_combat_score": "222.5",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "134.8",
+      "kills_per_round": "0.77",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "ComeBack",
       "org": "TH",
       "country": "Turkey",
       "agents": [
-        "yoru",
-        "fade",
-        "kayo"
+        "raze",
+        "neon",
+        "waylay"
       ],
-      "rounds_played": "245",
+      "rounds_played": "285",
       "rating": "0.99",
-      "average_combat_score": "192.3",
+      "average_combat_score": "215.8",
       "kill_deaths": "0.98",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "128.3",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.32",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "18%"
-    },
-    {
-      "player": "Boo",
-      "org": "TH",
-      "country": "Lithuania",
-      "agents": [
-        "brimstone",
-        "omen",
-        "astra"
-      ],
-      "rounds_played": "245",
-      "rating": "0.99",
-      "average_combat_score": "166.4",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "106.2",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.43",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.05",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "138.4",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.18",
+      "first_deaths_per_round": "0.14",
       "headshot_percentage": "32%",
       "clutch_success_percentage": "6%"
-    },
-    {
-      "player": "RieNs",
-      "org": "TH",
-      "country": "Turkey",
-      "agents": [
-        "fade",
-        "sova",
-        "gekko"
-      ],
-      "rounds_played": "245",
-      "rating": "0.99",
-      "average_combat_score": "201.3",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "135.9",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "27%"
     },
     {
       "player": "purp0",
@@ -4190,40 +4108,62 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "waylay",
         "kayo"
       ],
-      "rounds_played": "302",
-      "rating": "0.99",
-      "average_combat_score": "180.3",
-      "kill_deaths": "1.02",
+      "rounds_played": "342",
+      "rating": "0.98",
+      "average_combat_score": "175.6",
+      "kill_deaths": "1.01",
       "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "119.7",
-      "kills_per_round": "0.66",
+      "average_damage_per_round": "118.0",
+      "kills_per_round": "0.64",
       "assists_per_round": "0.24",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.08",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.07",
       "headshot_percentage": "43%",
+      "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "kaajak",
+      "org": "FNC",
+      "country": "Poland",
+      "agents": [
+        "neon",
+        "yoru",
+        "jett"
+      ],
+      "rounds_played": "274",
+      "rating": "0.98",
+      "average_combat_score": "212.4",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "130.7",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "32%",
       "clutch_success_percentage": "9%"
     },
     {
-      "player": "Jamppi",
-      "org": "VIT",
-      "country": "Finland",
+      "player": "nAts",
+      "org": "TL",
+      "country": "Russia",
       "agents": [
-        "yoru",
-        "tejo",
-        "sova"
+        "viper",
+        "killjoy",
+        "astra"
       ],
-      "rounds_played": "182",
-      "rating": "0.99",
-      "average_combat_score": "210.0",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "135.9",
-      "kills_per_round": "0.73",
+      "rounds_played": "342",
+      "rating": "0.98",
+      "average_combat_score": "197.8",
+      "kill_deaths": "1.02",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "138.2",
+      "kills_per_round": "0.69",
       "assists_per_round": "0.21",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "42%"
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "audaz",
@@ -4248,6 +4188,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "7%"
     },
     {
+      "player": "GLYPH",
+      "org": "M8",
+      "country": "Philippines",
+      "agents": [
+        "astra"
+      ],
+      "rounds_played": "246",
+      "rating": "0.98",
+      "average_combat_score": "168.8",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "106.9",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "13%"
+    },
+    {
       "player": "xeus",
       "org": "EF",
       "country": "Turkey",
@@ -4267,72 +4227,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.18",
       "first_deaths_per_round": "0.16",
       "headshot_percentage": "41%",
-      "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "kaajak",
-      "org": "FNC",
-      "country": "Poland",
-      "agents": [
-        "neon",
-        "yoru",
-        "jett"
-      ],
-      "rounds_played": "235",
-      "rating": "0.97",
-      "average_combat_score": "207.7",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "128.4",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "10%"
-    },
-    {
-      "player": "UNFAKE",
-      "org": "VIT",
-      "country": "Poland",
-      "agents": [
-        "sova",
-        "fade",
-        "killjoy"
-      ],
-      "rounds_played": "182",
-      "rating": "0.97",
-      "average_combat_score": "164.0",
-      "kill_deaths": "0.97",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "115.2",
-      "kills_per_round": "0.57",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "MrFaliN",
-      "org": "FUT",
-      "country": "Turkey",
-      "agents": [
-        "sova",
-        "omen",
-        "fade"
-      ],
-      "rounds_played": "187",
-      "rating": "0.97",
-      "average_combat_score": "173.6",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "116.6",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "33%",
       "clutch_success_percentage": "13%"
     },
     {
@@ -4358,6 +4252,115 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "16%"
     },
     {
+      "player": "RieNs",
+      "org": "TH",
+      "country": "Turkey",
+      "agents": [
+        "fade",
+        "sova",
+        "gekko"
+      ],
+      "rounds_played": "285",
+      "rating": "0.97",
+      "average_combat_score": "197.2",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "133.9",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "24%"
+    },
+    {
+      "player": "starxo",
+      "org": "M8",
+      "country": "Poland",
+      "agents": [
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "246",
+      "rating": "0.97",
+      "average_combat_score": "189.2",
+      "kill_deaths": "1.01",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "127.3",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "23%"
+    },
+    {
+      "player": "bipo",
+      "org": "M8",
+      "country": "Italy",
+      "agents": [
+        "waylay",
+        "raze",
+        "neon"
+      ],
+      "rounds_played": "246",
+      "rating": "0.97",
+      "average_combat_score": "201.1",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "131.6",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "MrFaliN",
+      "org": "FUT",
+      "country": "Turkey",
+      "agents": [
+        "sova",
+        "omen",
+        "fade"
+      ],
+      "rounds_played": "187",
+      "rating": "0.97",
+      "average_combat_score": "173.6",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "116.6",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "Boo",
+      "org": "TH",
+      "country": "Lithuania",
+      "agents": [
+        "brimstone",
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "285",
+      "rating": "0.97",
+      "average_combat_score": "163.9",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "77%",
+      "average_damage_per_round": "105.9",
+      "kills_per_round": "0.59",
+      "assists_per_round": "0.42",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "7%"
+    },
+    {
       "player": "Avez",
       "org": "KC",
       "country": "Egypt",
@@ -4380,48 +4383,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "8%"
     },
     {
-      "player": "nAts",
-      "org": "TL",
-      "country": "Russia",
+      "player": "Wo0t",
+      "org": "TH",
+      "country": "Turkey",
       "agents": [
-        "viper",
-        "killjoy",
-        "astra"
-      ],
-      "rounds_played": "302",
-      "rating": "0.95",
-      "average_combat_score": "189.1",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "134.5",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "7%"
-    },
-    {
-      "player": "kamo",
-      "org": "TL",
-      "country": "Poland",
-      "agents": [
-        "sova",
+        "yoru",
         "fade",
-        "tejo"
+        "kayo"
       ],
-      "rounds_played": "302",
-      "rating": "0.95",
-      "average_combat_score": "192.9",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "126.4",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.26",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "16%"
+      "rounds_played": "285",
+      "rating": "0.96",
+      "average_combat_score": "189.0",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "126.1",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "westside",
@@ -4446,48 +4427,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "19%"
     },
     {
-      "player": "Rosé",
-      "org": "BBL",
-      "country": "Turkey",
-      "agents": [
-        "sova"
-      ],
-      "rounds_played": "144",
-      "rating": "0.94",
-      "average_combat_score": "172.9",
-      "kill_deaths": "0.95",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "125.4",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "26%"
-    },
-    {
-      "player": "bipo",
-      "org": "M8",
-      "country": "Italy",
-      "agents": [
-        "waylay",
-        "raze",
-        "neon"
-      ],
-      "rounds_played": "128",
-      "rating": "0.93",
-      "average_combat_score": "198.8",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "131.6",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "grubinho",
       "org": "GX",
       "country": "Poland",
@@ -4510,26 +4449,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "15%"
     },
     {
-      "player": "ara",
-      "org": "GX",
-      "country": "Romania",
+      "player": "Jamppi",
+      "org": "VIT",
+      "country": "Finland",
       "agents": [
-        "neon",
-        "raze",
-        "waylay"
+        "yoru",
+        "tejo",
+        "sova"
       ],
-      "rounds_played": "262",
+      "rounds_played": "221",
       "rating": "0.90",
-      "average_combat_score": "183.8",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "118.4",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.17",
+      "average_combat_score": "192.5",
+      "kill_deaths": "0.95",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "125.5",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "33%"
+    },
+    {
+      "player": "UNFAKE",
+      "org": "VIT",
+      "country": "Poland",
+      "agents": [
+        "sova",
+        "fade",
+        "killjoy"
+      ],
+      "rounds_played": "221",
+      "rating": "0.90",
+      "average_combat_score": "156.7",
+      "kill_deaths": "0.87",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "109.4",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.07",
       "headshot_percentage": "30%",
-      "clutch_success_percentage": "29%"
+      "clutch_success_percentage": "6%"
     },
     {
       "player": "nekky",
@@ -4552,6 +4513,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.06",
       "headshot_percentage": "27%",
       "clutch_success_percentage": "24%"
+    },
+    {
+      "player": "ara",
+      "org": "GX",
+      "country": "Romania",
+      "agents": [
+        "neon",
+        "raze",
+        "waylay"
+      ],
+      "rounds_played": "262",
+      "rating": "0.90",
+      "average_combat_score": "183.8",
+      "kill_deaths": "0.93",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "118.4",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "29%"
     },
     {
       "player": "NINJA",
@@ -4596,6 +4579,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.12",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "Rosé",
+      "org": "BBL",
+      "country": "Turkey",
+      "agents": [
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "262",
+      "rating": "0.88",
+      "average_combat_score": "169.9",
+      "kill_deaths": "0.89",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "120.1",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "24%"
     },
     {
       "player": "qpert",
@@ -4707,6 +4711,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
+      "player": "Crewen",
+      "org": "BBL",
+      "country": "Turkey",
+      "agents": [
+        "cypher",
+        "viper"
+      ],
+      "rounds_played": "262",
+      "rating": "0.84",
+      "average_combat_score": "167.5",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "108.6",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "9%"
+    },
+    {
       "player": "Filu",
       "org": "NAVI",
       "country": "Poland",
@@ -4727,26 +4752,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.15",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "Crewen",
-      "org": "BBL",
-      "country": "Turkey",
-      "agents": [
-        "cypher"
-      ],
-      "rounds_played": "144",
-      "rating": "0.83",
-      "average_combat_score": "162.0",
-      "kill_deaths": "0.89",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "110.0",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "11%"
     },
     {
       "player": "d3mur",
@@ -4771,27 +4776,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "36%"
     },
     {
-      "player": "Shao",
-      "org": "NAVI",
-      "agents": [
-        "omen",
-        "sova",
-        "brimstone"
-      ],
-      "rounds_played": "261",
-      "rating": "0.78",
-      "average_combat_score": "149.7",
-      "kill_deaths": "0.71",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "101.5",
-      "kills_per_round": "0.51",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "10%"
-    },
-    {
       "player": "cNed",
       "org": "PCF",
       "country": "Turkey",
@@ -4813,6 +4797,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "7%"
     },
     {
+      "player": "Shao",
+      "org": "NAVI",
+      "agents": [
+        "omen",
+        "sova",
+        "brimstone"
+      ],
+      "rounds_played": "261",
+      "rating": "0.78",
+      "average_combat_score": "149.7",
+      "kill_deaths": "0.71",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "101.5",
+      "kills_per_round": "0.51",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "36%",
+      "clutch_success_percentage": "10%"
+    },
+    {
       "player": "Boaster",
       "org": "FNC",
       "country": "United Kingdom",
@@ -4821,18 +4826,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "omen",
         "brimstone"
       ],
-      "rounds_played": "235",
-      "rating": "0.78",
-      "average_combat_score": "140.0",
-      "kill_deaths": "0.73",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "89.9",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.03",
+      "rounds_played": "274",
+      "rating": "0.77",
+      "average_combat_score": "134.6",
+      "kill_deaths": "0.72",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "85.9",
+      "kills_per_round": "0.49",
+      "assists_per_round": "0.35",
+      "first_kills_per_round": "0.02",
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "30%",
-      "clutch_success_percentage": "10%"
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "sturNN",
@@ -4879,27 +4884,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "18%"
     },
     {
-      "player": "Proxh",
-      "org": "EP",
-      "country": "Turkey",
-      "agents": [
-        "brimstone",
-        "omen"
-      ],
-      "rounds_played": "74",
-      "rating": "1.55",
-      "average_combat_score": "281.5",
-      "kill_deaths": "2.08",
-      "kill_assists_survived_traded": "86%",
-      "average_damage_per_round": "184.1",
-      "kills_per_round": "1.07",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "13%"
-    },
-    {
       "player": "rexxtoned",
       "org": "TLA",
       "country": "Russia",
@@ -4918,6 +4902,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.05",
       "headshot_percentage": "44%",
       "clutch_success_percentage": "38%"
+    },
+    {
+      "player": "Proxh",
+      "org": "EP",
+      "country": "Turkey",
+      "agents": [
+        "brimstone",
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "142",
+      "rating": "1.42",
+      "average_combat_score": "265.7",
+      "kill_deaths": "1.75",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "168.0",
+      "kills_per_round": "0.99",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "36%",
+      "clutch_success_percentage": "8%"
     },
     {
       "player": "Jesse",
@@ -4961,48 +4967,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "33%"
     },
     {
-      "player": "swagzor",
-      "org": "EP",
-      "country": "Russia",
-      "agents": [
-        "raze",
-        "neon",
-        "waylay"
-      ],
-      "rounds_played": "74",
-      "rating": "1.40",
-      "average_combat_score": "312.3",
-      "kill_deaths": "1.67",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "193.1",
-      "kills_per_round": "1.11",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.24",
-      "first_deaths_per_round": "0.18",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "alexiiik",
-      "org": "EVO",
-      "country": "Czech Republic",
-      "agents": [
-        "raze"
-      ],
-      "rounds_played": "44",
-      "rating": "1.39",
-      "average_combat_score": "238.5",
-      "kill_deaths": "1.60",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "164.2",
-      "kills_per_round": "0.91",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "50%"
-    },
-    {
       "player": "GSR",
       "org": "TLA",
       "country": "Serbia",
@@ -5022,26 +4986,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "31%",
       "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "globeX",
-      "org": "BAR",
-      "country": "Russia",
-      "agents": [
-        "waylay"
-      ],
-      "rounds_played": "46",
-      "rating": "1.31",
-      "average_combat_score": "269.0",
-      "kill_deaths": "1.28",
-      "kill_assists_survived_traded": "80%",
-      "average_damage_per_round": "178.7",
-      "kills_per_round": "1.00",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "25%"
     },
     {
       "player": "LuKksTt",
@@ -5064,6 +5008,67 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
+      "player": "globeX",
+      "org": "BAR",
+      "country": "Russia",
+      "agents": [
+        "waylay"
+      ],
+      "rounds_played": "46",
+      "rating": "1.31",
+      "average_combat_score": "269.0",
+      "kill_deaths": "1.28",
+      "kill_assists_survived_traded": "80%",
+      "average_damage_per_round": "178.7",
+      "kills_per_round": "1.00",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "25%"
+    },
+    {
+      "player": "Fezisss",
+      "org": "LAG",
+      "country": "Ukraine",
+      "agents": [
+        "astra"
+      ],
+      "rounds_played": "66",
+      "rating": "1.29",
+      "average_combat_score": "220.0",
+      "kill_deaths": "1.27",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "152.2",
+      "kills_per_round": "0.79",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "DaGG3r",
+      "org": "VR2",
+      "country": "Ukraine",
+      "agents": [
+        "fade",
+        "sova"
+      ],
+      "rounds_played": "109",
+      "rating": "1.25",
+      "average_combat_score": "208.8",
+      "kill_deaths": "1.28",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "142.9",
+      "kills_per_round": "0.79",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "27%"
+    },
+    {
       "player": "Elite",
       "org": "MISA",
       "country": "Turkey",
@@ -5084,27 +5089,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "39%",
       "clutch_success_percentage": "22%"
-    },
-    {
-      "player": "DaGG3r",
-      "org": "ORA",
-      "country": "Ukraine",
-      "agents": [
-        "fade",
-        "sova"
-      ],
-      "rounds_played": "109",
-      "rating": "1.25",
-      "average_combat_score": "208.8",
-      "kill_deaths": "1.28",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "142.9",
-      "kills_per_round": "0.79",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "27%"
     },
     {
       "player": "zery",
@@ -5146,6 +5130,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.04",
       "headshot_percentage": "40%",
       "clutch_success_percentage": "33%"
+    },
+    {
+      "player": "alexiiik",
+      "org": "EVO",
+      "country": "Czech Republic",
+      "agents": [
+        "raze",
+        "yoru",
+        "jett"
+      ],
+      "rounds_played": "74",
+      "rating": "1.22",
+      "average_combat_score": "246.3",
+      "kill_deaths": "1.25",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "164.1",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.09",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "B1SK",
@@ -5211,7 +5217,7 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     },
     {
       "player": "BeX",
-      "org": "2L8",
+      "org": "VR2",
       "country": "Turkey",
       "agents": [
         "yoru"
@@ -5252,7 +5258,7 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     },
     {
       "player": "WanZeru",
-      "org": "SM",
+      "org": "TLA",
       "country": "Czech Republic",
       "agents": [
         "yoru",
@@ -5293,47 +5299,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "nataNk",
-      "org": "MDR",
-      "country": "France",
+      "player": "dragneel",
+      "org": "UNI",
+      "country": "Russia",
       "agents": [
+        "veto",
         "viper",
-        "killjoy",
-        "phoenix"
+        "killjoy"
       ],
-      "rounds_played": "200",
-      "rating": "1.15",
-      "average_combat_score": "208.3",
+      "rounds_played": "217",
+      "rating": "1.14",
+      "average_combat_score": "232.7",
       "kill_deaths": "1.22",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "141.1",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "28%"
-    },
-    {
-      "player": "kryo",
-      "org": "PRZ",
-      "country": "Poland",
-      "agents": [
-        "viper",
-        "phoenix",
-        "sage"
-      ],
-      "rounds_played": "66",
-      "rating": "1.15",
-      "average_combat_score": "203.3",
-      "kill_deaths": "1.07",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "139.3",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "26%",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "154.9",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "40%",
       "clutch_success_percentage": "21%"
     },
     {
@@ -5359,6 +5343,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "21%"
     },
     {
+      "player": "Nail",
+      "org": "BDX",
+      "country": "France",
+      "agents": [
+        "viper"
+      ],
+      "rounds_played": "59",
+      "rating": "1.14",
+      "average_combat_score": "206.0",
+      "kill_deaths": "1.12",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "143.8",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "15%"
+    },
+    {
       "player": "QutionerX",
       "org": "MISA",
       "country": "Turkey",
@@ -5381,24 +5385,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "15%"
     },
     {
-      "player": "Nail",
-      "org": "BDX",
-      "country": "France",
+      "player": "swagzor",
+      "org": "EP",
+      "country": "Russia",
       "agents": [
-        "viper"
+        "raze",
+        "neon",
+        "waylay"
       ],
-      "rounds_played": "59",
+      "rounds_played": "142",
       "rating": "1.14",
-      "average_combat_score": "206.0",
-      "kill_deaths": "1.12",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "143.8",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "15%"
+      "average_combat_score": "262.9",
+      "kill_deaths": "1.29",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "163.6",
+      "kills_per_round": "0.91",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.18",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "Kachoww",
@@ -5421,6 +5427,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.10",
       "headshot_percentage": "27%",
       "clutch_success_percentage": "16%"
+    },
+    {
+      "player": "VASQUEZ",
+      "org": "MZP",
+      "country": "Turkey",
+      "agents": [
+        "yoru"
+      ],
+      "rounds_played": "174",
+      "rating": "1.13",
+      "average_combat_score": "227.9",
+      "kill_deaths": "1.20",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "151.1",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.09",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "36%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "wezzy",
@@ -5466,69 +5492,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "VASQUEZ",
-      "org": "MZP",
-      "country": "Turkey",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "174",
-      "rating": "1.13",
-      "average_combat_score": "227.9",
-      "kill_deaths": "1.20",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "151.1",
-      "kills_per_round": "0.86",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.15",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "25%"
-    },
-    {
-      "player": "dragneel",
-      "org": "UNI",
-      "country": "Russia",
-      "agents": [
-        "veto",
-        "viper",
-        "killjoy"
-      ],
-      "rounds_played": "175",
-      "rating": "1.12",
-      "average_combat_score": "232.1",
-      "kill_deaths": "1.19",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "153.5",
-      "kills_per_round": "0.86",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "41%",
-      "clutch_success_percentage": "25%"
-    },
-    {
-      "player": "sulunist",
-      "org": "200",
-      "agents": [
-        "waylay",
-        "fade",
-        "omen"
-      ],
-      "rounds_played": "66",
-      "rating": "1.12",
-      "average_combat_score": "225.7",
-      "kill_deaths": "1.16",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "142.1",
-      "kills_per_round": "0.79",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "oroni",
       "org": "BJK",
       "country": "Turkey",
@@ -5551,27 +5514,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "13%"
     },
     {
-      "player": "Lime",
-      "org": "EP",
-      "country": "United Kingdom",
-      "agents": [
-        "yoru",
-        "kayo"
-      ],
-      "rounds_played": "74",
-      "rating": "1.11",
-      "average_combat_score": "175.5",
-      "kill_deaths": "1.18",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "111.0",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.32",
-      "first_kills_per_round": "0.15",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "33%"
-    },
-    {
       "player": "Zeask",
       "org": "GS",
       "country": "Turkey",
@@ -5592,48 +5534,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.16",
       "headshot_percentage": "31%",
       "clutch_success_percentage": "29%"
-    },
-    {
-      "player": "doma",
-      "org": "JL",
-      "country": "Croatia",
-      "agents": [
-        "kayo",
-        "yoru"
-      ],
-      "rounds_played": "131",
-      "rating": "1.11",
-      "average_combat_score": "213.7",
-      "kill_deaths": "1.20",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "132.5",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "22%"
-    },
-    {
-      "player": "baddyG",
-      "org": "GL",
-      "country": "Poland",
-      "agents": [
-        "omen",
-        "astra"
-      ],
-      "rounds_played": "106",
-      "rating": "1.11",
-      "average_combat_score": "207.8",
-      "kill_deaths": "1.10",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "130.4",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "15%"
     },
     {
       "player": "pyrolll",
@@ -5677,6 +5577,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
+      "player": "baddyG",
+      "org": "GL",
+      "country": "Poland",
+      "agents": [
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "106",
+      "rating": "1.11",
+      "average_combat_score": "207.8",
+      "kill_deaths": "1.10",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "130.4",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "15%"
+    },
+    {
       "player": "chiwa",
       "org": "JL",
       "country": "Russia",
@@ -5685,18 +5606,38 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "veto",
         "cypher"
       ],
-      "rounds_played": "131",
+      "rounds_played": "234",
       "rating": "1.10",
-      "average_combat_score": "206.2",
-      "kill_deaths": "1.19",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "144.7",
-      "kills_per_round": "0.80",
-      "assists_per_round": "0.17",
+      "average_combat_score": "207.4",
+      "kill_deaths": "1.20",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "141.2",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.18",
       "first_kills_per_round": "0.11",
       "first_deaths_per_round": "0.05",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "14%"
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "21%"
+    },
+    {
+      "player": "Kamisseq",
+      "org": "FLK",
+      "country": "Poland",
+      "agents": [
+        "omen"
+      ],
+      "rounds_played": "40",
+      "rating": "1.10",
+      "average_combat_score": "213.0",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "139.6",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "46%",
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "Snowi",
@@ -5720,23 +5661,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Kamisseq",
-      "org": "FLK",
-      "country": "Poland",
+      "player": "Padisah",
+      "org": "GS",
+      "country": "Turkey",
       "agents": [
-        "omen"
+        "cypher",
+        "chamber",
+        "sage"
       ],
-      "rounds_played": "40",
-      "rating": "1.10",
-      "average_combat_score": "213.0",
-      "kill_deaths": "1.03",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "139.6",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.30",
+      "rounds_played": "210",
+      "rating": "1.09",
+      "average_combat_score": "219.2",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "77%",
+      "average_damage_per_round": "138.0",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.25",
       "first_kills_per_round": "0.10",
       "first_deaths_per_round": "0.10",
-      "headshot_percentage": "46%",
+      "headshot_percentage": "38%",
       "clutch_success_percentage": "17%"
     },
     {
@@ -5759,6 +5702,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.05",
       "headshot_percentage": "23%",
       "clutch_success_percentage": "38%"
+    },
+    {
+      "player": "Burzzy",
+      "org": "MISA",
+      "country": "Turkey",
+      "agents": [
+        "omen",
+        "brimstone",
+        "astra"
+      ],
+      "rounds_played": "203",
+      "rating": "1.09",
+      "average_combat_score": "209.7",
+      "kill_deaths": "1.11",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "133.9",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.43",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "36%"
     },
     {
       "player": "hezacoil",
@@ -5804,92 +5769,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "Burzzy",
-      "org": "MISA",
-      "country": "Turkey",
-      "agents": [
-        "omen",
-        "brimstone",
-        "astra"
-      ],
-      "rounds_played": "203",
-      "rating": "1.09",
-      "average_combat_score": "209.7",
-      "kill_deaths": "1.11",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "133.9",
-      "kills_per_round": "0.72",
-      "assists_per_round": "0.43",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "36%"
-    },
-    {
-      "player": "Padisah",
-      "org": "GS",
-      "country": "Turkey",
-      "agents": [
-        "cypher",
-        "chamber",
-        "sage"
-      ],
-      "rounds_played": "210",
-      "rating": "1.09",
-      "average_combat_score": "219.2",
-      "kill_deaths": "1.14",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "138.0",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "38%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "kamyk",
-      "org": "JL",
-      "country": "Poland",
-      "agents": [
-        "omen",
-        "astra",
-        "brimstone"
-      ],
-      "rounds_played": "131",
-      "rating": "1.08",
-      "average_combat_score": "197.8",
-      "kill_deaths": "1.20",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "122.7",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "12%"
-    },
-    {
-      "player": "Kicks",
-      "org": "VIT",
-      "country": "Estonia",
-      "agents": [
-        "fade"
-      ],
-      "rounds_played": "80",
-      "rating": "1.08",
-      "average_combat_score": "200.8",
-      "kill_deaths": "1.16",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "141.5",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "30%"
-    },
-    {
       "player": "sh1n",
       "org": "MDR",
       "country": "France",
@@ -5898,61 +5777,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "viper",
         "omen"
       ],
-      "rounds_played": "200",
+      "rounds_played": "303",
       "rating": "1.08",
-      "average_combat_score": "196.7",
-      "kill_deaths": "1.23",
+      "average_combat_score": "199.7",
+      "kill_deaths": "1.17",
       "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "123.8",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "29%"
-    },
-    {
-      "player": "Yigox",
-      "org": "FA",
-      "country": "Turkey",
-      "agents": [
-        "killjoy",
-        "cypher",
-        "viper"
-      ],
-      "rounds_played": "212",
-      "rating": "1.08",
-      "average_combat_score": "193.7",
-      "kill_deaths": "1.18",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "125.9",
+      "average_damage_per_round": "125.7",
       "kills_per_round": "0.73",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "12%"
-    },
-    {
-      "player": "Yuta",
-      "org": "WIP",
-      "country": "France",
-      "agents": [
-        "viper",
-        "cypher"
-      ],
-      "rounds_played": "293",
-      "rating": "1.08",
-      "average_combat_score": "230.4",
-      "kill_deaths": "1.11",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "148.2",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.15",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.09",
       "first_deaths_per_round": "0.10",
-      "headshot_percentage": "41%",
-      "clutch_success_percentage": "23%"
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "18%"
     },
     {
       "player": "NoHelp",
@@ -5977,6 +5813,91 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
+      "player": "Yuta",
+      "org": "WIP",
+      "country": "France",
+      "agents": [
+        "viper",
+        "cypher"
+      ],
+      "rounds_played": "293",
+      "rating": "1.08",
+      "average_combat_score": "230.4",
+      "kill_deaths": "1.11",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "148.2",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "41%",
+      "clutch_success_percentage": "23%"
+    },
+    {
+      "player": "Kicks",
+      "org": "TLA",
+      "country": "Estonia",
+      "agents": [
+        "fade"
+      ],
+      "rounds_played": "80",
+      "rating": "1.08",
+      "average_combat_score": "200.8",
+      "kill_deaths": "1.16",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "141.5",
+      "kills_per_round": "0.73",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "35%",
+      "clutch_success_percentage": "30%"
+    },
+    {
+      "player": "nataNk",
+      "org": "MDR",
+      "country": "France",
+      "agents": [
+        "viper",
+        "killjoy",
+        "phoenix"
+      ],
+      "rounds_played": "303",
+      "rating": "1.08",
+      "average_combat_score": "197.3",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "130.7",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "22%"
+    },
+    {
+      "player": "Yigox",
+      "org": "FA",
+      "country": "Turkey",
+      "agents": [
+        "killjoy",
+        "cypher",
+        "viper"
+      ],
+      "rounds_played": "212",
+      "rating": "1.08",
+      "average_combat_score": "193.7",
+      "kill_deaths": "1.18",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "125.9",
+      "kills_per_round": "0.73",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "12%"
+    },
+    {
       "player": "ORI4K",
       "org": "BDX",
       "country": "France",
@@ -5998,48 +5919,90 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "27%"
     },
     {
-      "player": "szimpli",
-      "org": "PXL",
-      "country": "Hungary",
+      "player": "foe",
+      "org": "UNI",
+      "country": "Ukraine",
       "agents": [
-        "raze",
-        "waylay",
-        "yoru"
+        "yoru",
+        "neon",
+        "waylay"
       ],
-      "rounds_played": "222",
+      "rounds_played": "200",
       "rating": "1.07",
-      "average_combat_score": "232.4",
-      "kill_deaths": "1.13",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "150.5",
-      "kills_per_round": "0.83",
-      "assists_per_round": "0.15",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "27%"
+      "average_combat_score": "216.9",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "140.5",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "13%"
     },
     {
-      "player": "Sferon",
-      "org": "boti",
-      "country": "Poland",
+      "player": "Lime",
+      "org": "EP",
+      "country": "United Kingdom",
       "agents": [
-        "omen",
-        "astra",
-        "fade"
+        "yoru",
+        "kayo",
+        "tejo"
       ],
-      "rounds_played": "66",
+      "rounds_played": "142",
+      "rating": "1.07",
+      "average_combat_score": "181.3",
+      "kill_deaths": "1.11",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "116.9",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "18%"
+    },
+    {
+      "player": "wackie",
+      "org": "GL",
+      "country": "Estonia",
+      "agents": [
+        "viper",
+        "cypher"
+      ],
+      "rounds_played": "106",
       "rating": "1.06",
-      "average_combat_score": "208.3",
-      "kill_deaths": "1.07",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "135.3",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "198.8",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "129.6",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "Prti",
+      "org": "TLA",
+      "country": "Serbia",
+      "agents": [
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "80",
+      "rating": "1.06",
+      "average_combat_score": "186.5",
+      "kill_deaths": "1.06",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "120.4",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.41",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "batujnax",
@@ -6064,27 +6027,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Prti",
-      "org": "GMX",
-      "country": "Serbia",
-      "agents": [
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "80",
-      "rating": "1.06",
-      "average_combat_score": "186.5",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "120.4",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.41",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "17%"
-    },
-    {
       "player": "SebZz",
       "org": "KPI",
       "country": "Spain",
@@ -6106,25 +6048,113 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "wackie",
-      "org": "GL",
-      "country": "Estonia",
+      "player": "Sevire",
+      "org": "MDR",
+      "country": "United Kingdom",
+      "agents": [
+        "yoru",
+        "skye",
+        "omen"
+      ],
+      "rounds_played": "303",
+      "rating": "1.06",
+      "average_combat_score": "204.7",
+      "kill_deaths": "1.09",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "134.7",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.32",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "10%"
+    },
+    {
+      "player": "kamyk",
+      "org": "JL",
+      "country": "Poland",
+      "agents": [
+        "omen",
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "234",
+      "rating": "1.05",
+      "average_combat_score": "200.9",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "127.3",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "6%"
+    },
+    {
+      "player": "aNguiSt",
+      "org": "EVO",
+      "country": "United Kingdom",
       "agents": [
         "viper",
-        "cypher"
+        "killjoy"
       ],
-      "rounds_played": "106",
-      "rating": "1.06",
-      "average_combat_score": "198.8",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "129.6",
-      "kills_per_round": "0.70",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.08",
+      "rounds_played": "74",
+      "rating": "1.05",
+      "average_combat_score": "211.3",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "136.8",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "9%"
+    },
+    {
+      "player": "Anima",
+      "org": "FUT",
+      "country": "Turkey",
+      "agents": [
+        "kayo",
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "185",
+      "rating": "1.05",
+      "average_combat_score": "195.8",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "134.3",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.04",
       "first_deaths_per_round": "0.05",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "13%"
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "iluri",
+      "org": "EP",
+      "country": "Finland",
+      "agents": [
+        "fade",
+        "tejo",
+        "sova"
+      ],
+      "rounds_played": "142",
+      "rating": "1.05",
+      "average_combat_score": "143.7",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "77%",
+      "average_damage_per_round": "101.1",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.32",
+      "first_kills_per_round": "0.01",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "31%"
     },
     {
       "player": "Unfair",
@@ -6169,68 +6199,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "aNguiSt",
-      "org": "EVO",
-      "country": "United Kingdom",
+      "player": "Leare",
+      "org": "PXL",
       "agents": [
-        "viper"
+        "omen",
+        "astra",
+        "brimstone"
       ],
-      "rounds_played": "44",
-      "rating": "1.05",
-      "average_combat_score": "231.0",
-      "kill_deaths": "1.24",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "159.0",
-      "kills_per_round": "0.82",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Anima",
-      "org": "FUT",
-      "country": "Turkey",
-      "agents": [
-        "kayo",
-        "sova",
-        "fade"
-      ],
-      "rounds_played": "185",
-      "rating": "1.05",
-      "average_combat_score": "195.8",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "134.3",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "11%"
-    },
-    {
-      "player": "pAwn1",
-      "org": "FF",
-      "country": "Turkey",
-      "agents": [
-        "kayo",
-        "breach",
-        "skye"
-      ],
-      "rounds_played": "218",
+      "rounds_played": "290",
       "rating": "1.04",
-      "average_combat_score": "208.2",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "134.7",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.44",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.09",
+      "average_combat_score": "193.2",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "131.0",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.06",
       "headshot_percentage": "33%",
-      "clutch_success_percentage": "25%"
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "reos",
@@ -6254,26 +6241,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "Sevire",
-      "org": "MDR",
-      "country": "United Kingdom",
+      "player": "doma",
+      "org": "JL",
+      "country": "Croatia",
       "agents": [
-        "yoru",
-        "skye",
-        "omen"
+        "kayo",
+        "yoru"
       ],
-      "rounds_played": "200",
-      "rating": "1.03",
-      "average_combat_score": "201.5",
-      "kill_deaths": "1.07",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "130.0",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.32",
-      "first_kills_per_round": "0.12",
+      "rounds_played": "234",
+      "rating": "1.04",
+      "average_combat_score": "203.2",
+      "kill_deaths": "1.09",
+      "kill_assists_survived_traded": "79%",
+      "average_damage_per_round": "123.6",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.15",
       "first_deaths_per_round": "0.08",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "6%"
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "16%"
+    },
+    {
+      "player": "pAwn1",
+      "org": "FF",
+      "country": "Turkey",
+      "agents": [
+        "kayo",
+        "breach",
+        "skye"
+      ],
+      "rounds_played": "218",
+      "rating": "1.04",
+      "average_combat_score": "208.2",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "134.7",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.44",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "Chadi",
@@ -6318,6 +6326,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
+      "player": "kryo",
+      "org": "PRZ",
+      "country": "Poland",
+      "agents": [
+        "viper",
+        "phoenix",
+        "sage"
+      ],
+      "rounds_played": "146",
+      "rating": "1.01",
+      "average_combat_score": "184.3",
+      "kill_deaths": "0.96",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "126.8",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "21%"
+    },
+    {
       "player": "77even",
       "org": "FMG",
       "country": "Lithuania",
@@ -6339,113 +6369,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Leare",
-      "org": "PXL",
-      "agents": [
-        "omen",
-        "astra"
-      ],
-      "rounds_played": "222",
-      "rating": "1.01",
-      "average_combat_score": "187.8",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "127.7",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "tickso",
-      "org": "FRG",
-      "country": "Sweden",
-      "agents": [
-        "sova",
-        "fade"
-      ],
-      "rounds_played": "170",
-      "rating": "1.01",
-      "average_combat_score": "189.9",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "125.5",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "22%"
-    },
-    {
-      "player": "sizo",
-      "org": "FMG",
-      "country": "Poland",
-      "agents": [
-        "vyse",
-        "viper",
-        "cypher"
-      ],
-      "rounds_played": "164",
-      "rating": "1.01",
-      "average_combat_score": "190.6",
-      "kill_deaths": "1.08",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "127.5",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "40%",
-      "clutch_success_percentage": "7%"
-    },
-    {
-      "player": "Kada",
-      "org": "MDR",
-      "country": "France",
-      "agents": [
-        "fade",
-        "sova",
-        "kayo"
-      ],
-      "rounds_played": "200",
-      "rating": "1.01",
-      "average_combat_score": "178.0",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "121.2",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "TakaS",
-      "org": "MDR",
-      "country": "France",
-      "agents": [
-        "waylay",
-        "jett",
-        "neon"
-      ],
-      "rounds_played": "200",
-      "rating": "1.01",
-      "average_combat_score": "224.4",
-      "kill_deaths": "1.12",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "142.0",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "19%",
-      "clutch_success_percentage": "17%"
-    },
-    {
       "player": "Anq",
       "org": "NOVO",
       "country": "Russia",
@@ -6465,6 +6388,50 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.11",
       "headshot_percentage": "22%",
       "clutch_success_percentage": "18%"
+    },
+    {
+      "player": "Kada",
+      "org": "MDR",
+      "country": "France",
+      "agents": [
+        "fade",
+        "sova",
+        "kayo"
+      ],
+      "rounds_played": "303",
+      "rating": "1.00",
+      "average_combat_score": "180.5",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "121.8",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "Shadow1",
+      "org": "CLS",
+      "country": "United Kingdom",
+      "agents": [
+        "waylay",
+        "yoru",
+        "neon"
+      ],
+      "rounds_played": "167",
+      "rating": "1.00",
+      "average_combat_score": "196.0",
+      "kill_deaths": "0.97",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "133.2",
+      "kills_per_round": "0.77",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "MerSa",
@@ -6529,6 +6496,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "50%"
     },
     {
+      "player": "szimpli",
+      "org": "PXL",
+      "country": "Hungary",
+      "agents": [
+        "raze",
+        "waylay",
+        "yoru"
+      ],
+      "rounds_played": "290",
+      "rating": "1.00",
+      "average_combat_score": "217.5",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "141.3",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.15",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "23%"
+    },
+    {
       "player": "Vitie",
       "org": "NOVO",
       "country": "Russia",
@@ -6551,111 +6540,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "samed",
-      "org": "CGN",
-      "country": "Austria",
+      "player": "Sferon",
+      "org": "boti",
+      "country": "Poland",
       "agents": [
-        "neon",
-        "jett",
-        "waylay"
+        "omen",
+        "astra",
+        "fade"
       ],
-      "rounds_played": "195",
-      "rating": "0.99",
-      "average_combat_score": "232.2",
-      "kill_deaths": "1.01",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "150.1",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.23",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "20%"
-    },
-    {
-      "player": "Spear",
-      "org": "EF",
-      "country": "Turkey",
-      "agents": [
-        "cypher",
-        "killjoy",
-        "waylay"
-      ],
-      "rounds_played": "185",
-      "rating": "0.99",
-      "average_combat_score": "201.4",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "62%",
-      "average_damage_per_round": "138.3",
-      "kills_per_round": "0.72",
-      "assists_per_round": "0.14",
+      "rounds_played": "146",
+      "rating": "1.00",
+      "average_combat_score": "182.9",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "119.8",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.27",
       "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "37%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "Enzo",
-      "org": "JL",
-      "country": "France",
-      "agents": [
-        "sova",
-        "tejo"
-      ],
-      "rounds_played": "131",
-      "rating": "0.99",
-      "average_combat_score": "184.5",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "126.1",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.34",
-      "first_kills_per_round": "0.05",
       "first_deaths_per_round": "0.06",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "foe",
-      "org": "UNI",
-      "country": "Ukraine",
-      "agents": [
-        "yoru",
-        "neon",
-        "waylay"
-      ],
-      "rounds_played": "158",
-      "rating": "0.99",
-      "average_combat_score": "203.3",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "134.2",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.15",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.18",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "4%"
-    },
-    {
-      "player": "depressed abuser",
-      "org": "Unknown",
-      "agents": [
-        "yoru",
-        "tejo"
-      ],
-      "rounds_played": "112",
-      "rating": "0.99",
-      "average_combat_score": "204.6",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "62%",
-      "average_damage_per_round": "133.1",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "13%"
+      "headshot_percentage": "35%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "sterben",
@@ -6680,6 +6584,69 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "13%"
     },
     {
+      "player": "maniek",
+      "org": "PXL",
+      "country": "Poland",
+      "agents": [
+        "yoru",
+        "chamber"
+      ],
+      "rounds_played": "80",
+      "rating": "0.99",
+      "average_combat_score": "202.5",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "127.8",
+      "kills_per_round": "0.73",
+      "assists_per_round": "0.10",
+      "first_kills_per_round": "0.24",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "40%"
+    },
+    {
+      "player": "Spear",
+      "org": "EF",
+      "country": "Turkey",
+      "agents": [
+        "cypher",
+        "killjoy",
+        "waylay"
+      ],
+      "rounds_played": "185",
+      "rating": "0.99",
+      "average_combat_score": "201.4",
+      "kill_deaths": "0.96",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "138.3",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.14",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "8%"
+    },
+    {
+      "player": "depressed abuser",
+      "org": "Unknown",
+      "agents": [
+        "yoru",
+        "tejo"
+      ],
+      "rounds_played": "112",
+      "rating": "0.99",
+      "average_combat_score": "204.6",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "133.1",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.15",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "13%"
+    },
+    {
       "player": "Demiurge",
       "org": "LEO",
       "country": "Sweden",
@@ -6701,113 +6668,91 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "ALMO",
-      "org": "VR2",
+      "player": "NeFi",
+      "org": "EVO",
       "country": "Poland",
-      "agents": [
-        "viper",
-        "veto",
-        "killjoy"
-      ],
-      "rounds_played": "198",
-      "rating": "0.98",
-      "average_combat_score": "183.9",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "127.8",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "23%"
-    },
-    {
-      "player": "VenTT",
-      "org": "GS",
-      "country": "Turkey",
       "agents": [
         "omen",
         "astra"
       ],
-      "rounds_played": "210",
-      "rating": "0.98",
-      "average_combat_score": "181.9",
-      "kill_deaths": "0.98",
+      "rounds_played": "74",
+      "rating": "0.99",
+      "average_combat_score": "179.3",
+      "kill_deaths": "1.02",
       "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "115.1",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.40",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "k9lyos",
-      "org": "F9",
-      "country": "France",
-      "agents": [
-        "veto",
-        "killjoy",
-        "cypher"
-      ],
-      "rounds_played": "112",
-      "rating": "0.98",
-      "average_combat_score": "201.0",
-      "kill_deaths": "0.92",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "140.7",
-      "kills_per_round": "0.70",
+      "average_damage_per_round": "114.4",
+      "kills_per_round": "0.66",
       "assists_per_round": "0.19",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "22%",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "41%",
       "clutch_success_percentage": "13%"
     },
     {
-      "player": "msh",
-      "org": "SM",
-      "country": "Poland",
+      "player": "flank",
+      "org": "LP",
+      "country": "United Kingdom",
       "agents": [
-        "sova",
-        "killjoy",
-        "viper"
+        "cypher",
+        "yoru",
+        "killjoy"
       ],
-      "rounds_played": "66",
-      "rating": "0.98",
-      "average_combat_score": "193.3",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "129.5",
-      "kills_per_round": "0.73",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "25%"
+      "rounds_played": "208",
+      "rating": "0.99",
+      "average_combat_score": "204.3",
+      "kill_deaths": "1.01",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "133.3",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "23%"
     },
     {
-      "player": "skylen",
-      "org": "EF",
-      "country": "Turkey",
+      "player": "ShedeRik",
+      "org": "UNI",
+      "country": "Russia",
       "agents": [
-        "sova",
-        "omen",
-        "tejo"
+        "astra",
+        "fade",
+        "sova"
       ],
-      "rounds_played": "185",
-      "rating": "0.98",
-      "average_combat_score": "191.4",
-      "kill_deaths": "0.92",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "129.7",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.35",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "19%"
+      "rounds_played": "217",
+      "rating": "0.99",
+      "average_combat_score": "189.9",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "125.4",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "5%"
+    },
+    {
+      "player": "samed",
+      "org": "CGN",
+      "country": "Austria",
+      "agents": [
+        "neon",
+        "jett",
+        "waylay"
+      ],
+      "rounds_played": "195",
+      "rating": "0.99",
+      "average_combat_score": "232.2",
+      "kill_deaths": "1.01",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "150.1",
+      "kills_per_round": "0.81",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.23",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "20%"
     },
     {
       "player": "JrayN",
@@ -6832,26 +6777,243 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "5%"
     },
     {
-      "player": "Serial",
-      "org": "FKS",
-      "country": "Latvia",
+      "player": "k9lyos",
+      "org": "F9",
+      "country": "France",
       "agents": [
-        "cypher",
-        "viper",
-        "reyna"
+        "veto",
+        "killjoy",
+        "cypher"
       ],
-      "rounds_played": "107",
-      "rating": "0.97",
-      "average_combat_score": "212.0",
-      "kill_deaths": "1.08",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "144.3",
-      "kills_per_round": "0.79",
+      "rounds_played": "112",
+      "rating": "0.98",
+      "average_combat_score": "201.0",
+      "kill_deaths": "0.92",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "140.7",
+      "kills_per_round": "0.70",
       "assists_per_round": "0.19",
-      "first_kills_per_round": "0.17",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "MAGNUM",
+      "org": "EP",
+      "country": "Czech Republic",
+      "agents": [
+        "viper",
+        "killjoy",
+        "cypher"
+      ],
+      "rounds_played": "142",
+      "rating": "0.98",
+      "average_combat_score": "170.3",
+      "kill_deaths": "1.02",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "117.3",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.08",
       "first_deaths_per_round": "0.11",
-      "headshot_percentage": "49%",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "11%"
+    },
+    {
+      "player": "TakaS",
+      "org": "MDR",
+      "country": "France",
+      "agents": [
+        "waylay",
+        "jett",
+        "neon"
+      ],
+      "rounds_played": "303",
+      "rating": "0.98",
+      "average_combat_score": "219.1",
+      "kill_deaths": "1.06",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "140.2",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.15",
+      "headshot_percentage": "21%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "skylen",
+      "org": "EF",
+      "country": "Turkey",
+      "agents": [
+        "sova",
+        "omen",
+        "tejo"
+      ],
+      "rounds_played": "185",
+      "rating": "0.98",
+      "average_combat_score": "191.4",
+      "kill_deaths": "0.92",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "129.7",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.35",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "19%"
+    },
+    {
+      "player": "Br0zgA",
+      "org": "FMG",
+      "country": "Slovenia",
+      "agents": [
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "206",
+      "rating": "0.98",
+      "average_combat_score": "185.9",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "115.8",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.38",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "15%"
+    },
+    {
+      "player": "narky poo",
+      "org": "Lost",
+      "country": "United Kingdom",
+      "agents": [
+        "yoru",
+        "phoenix",
+        "neon"
+      ],
+      "rounds_played": "208",
+      "rating": "0.98",
+      "average_combat_score": "216.1",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "138.6",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.21",
+      "first_deaths_per_round": "0.18",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "9%"
+    },
+    {
+      "player": "sizo",
+      "org": "FMG",
+      "country": "Poland",
+      "agents": [
+        "vyse",
+        "viper",
+        "cypher"
+      ],
+      "rounds_played": "206",
+      "rating": "0.98",
+      "average_combat_score": "185.9",
+      "kill_deaths": "1.02",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "123.5",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "6%"
+    },
+    {
+      "player": "VenTT",
+      "org": "GS",
+      "country": "Turkey",
+      "agents": [
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "210",
+      "rating": "0.98",
+      "average_combat_score": "181.9",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "115.1",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.40",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "35%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "ALMO",
+      "org": "VR2",
+      "country": "Poland",
+      "agents": [
+        "viper",
+        "veto",
+        "killjoy"
+      ],
+      "rounds_played": "198",
+      "rating": "0.98",
+      "average_combat_score": "183.9",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "127.8",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "23%"
+    },
+    {
+      "player": "Guardy",
+      "org": "BAR",
+      "country": "Spain",
+      "agents": [
+        "veto",
+        "viper"
+      ],
+      "rounds_played": "46",
+      "rating": "0.97",
+      "average_combat_score": "205.5",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "133.5",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "33%"
+    },
+    {
+      "player": "msh",
+      "org": "SM",
+      "country": "Poland",
+      "agents": [
+        "sova",
+        "killjoy",
+        "viper"
+      ],
+      "rounds_played": "146",
+      "rating": "0.97",
+      "average_combat_score": "200.7",
+      "kill_deaths": "0.99",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "130.5",
+      "kills_per_round": "0.73",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "38%",
+      "clutch_success_percentage": "21%"
     },
     {
       "player": "musashi",
@@ -6896,28 +7058,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "33%"
     },
     {
-      "player": "ShedeRik",
-      "org": "UNI",
-      "country": "Russia",
-      "agents": [
-        "astra",
-        "fade",
-        "sova"
-      ],
-      "rounds_played": "175",
-      "rating": "0.97",
-      "average_combat_score": "186.0",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "124.3",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "5%"
-    },
-    {
       "player": "demek",
       "org": "LEO",
       "country": "Poland",
@@ -6939,89 +7079,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "27%"
     },
     {
-      "player": "YHYDRO",
-      "org": "FMG",
+      "player": "Serial",
+      "org": "FKS",
+      "country": "Latvia",
       "agents": [
-        "sage",
-        "raze",
-        "tejo"
+        "cypher",
+        "viper",
+        "reyna"
       ],
-      "rounds_played": "164",
+      "rounds_played": "107",
       "rating": "0.97",
-      "average_combat_score": "190.6",
-      "kill_deaths": "0.99",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "128.8",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "23%",
-      "clutch_success_percentage": "50%"
-    },
-    {
-      "player": "Guardy",
-      "org": "BAR",
-      "country": "Spain",
-      "agents": [
-        "veto",
-        "viper"
-      ],
-      "rounds_played": "46",
-      "rating": "0.97",
-      "average_combat_score": "205.5",
-      "kill_deaths": "1.03",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "133.5",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "33%"
-    },
-    {
-      "player": "narky poo",
-      "org": "Lost",
-      "country": "United Kingdom",
-      "agents": [
-        "yoru",
-        "phoenix",
-        "neon"
-      ],
-      "rounds_played": "142",
-      "rating": "0.97",
-      "average_combat_score": "221.1",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "142.0",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.25",
-      "first_deaths_per_round": "0.18",
-      "headshot_percentage": "37%",
+      "average_combat_score": "212.0",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "144.3",
+      "kills_per_round": "0.79",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "49%",
       "clutch_success_percentage": "0"
-    },
-    {
-      "player": "NeFi",
-      "org": "EVO",
-      "country": "Poland",
-      "agents": [
-        "brimstone",
-        "astra"
-      ],
-      "rounds_played": "44",
-      "rating": "0.96",
-      "average_combat_score": "168.0",
-      "kill_deaths": "1.04",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "103.5",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.11",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.02",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "17%"
     },
     {
       "player": "Whiteslow",
@@ -7046,89 +7123,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "7%"
     },
     {
-      "player": "Drog",
-      "org": "QM",
-      "country": "Ireland",
-      "agents": [
-        "viper",
-        "chamber"
-      ],
-      "rounds_played": "142",
-      "rating": "0.96",
-      "average_combat_score": "184.4",
-      "kill_deaths": "1.03",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "119.8",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.11",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "18%"
-    },
-    {
-      "player": "Br0zgA",
-      "org": "FMG",
-      "country": "Slovenia",
-      "agents": [
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "164",
-      "rating": "0.95",
-      "average_combat_score": "179.7",
-      "kill_deaths": "0.83",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "111.2",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.43",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "6%"
-    },
-    {
-      "player": "Brädi",
-      "org": "HLT",
-      "country": "Finland",
+      "player": "Enzo",
+      "org": "JL",
+      "country": "France",
       "agents": [
         "sova",
-        "tejo"
+        "tejo",
+        "fade"
       ],
-      "rounds_played": "142",
+      "rounds_played": "234",
       "rating": "0.95",
-      "average_combat_score": "177.6",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "121.1",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "19%",
-      "clutch_success_percentage": "6%"
-    },
-    {
-      "player": "Corsa",
-      "org": "FMG",
-      "country": "United Kingdom",
-      "agents": [
-        "viper",
-        "killjoy",
-        "cypher"
-      ],
-      "rounds_played": "140",
-      "rating": "0.95",
-      "average_combat_score": "192.7",
-      "kill_deaths": "0.91",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "134.6",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "19%"
+      "average_combat_score": "171.4",
+      "kill_deaths": "0.86",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "117.1",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.32",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "11%"
     },
     {
       "player": "krejz",
@@ -7151,24 +7165,46 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "8%"
     },
     {
-      "player": "MAGNUM",
-      "org": "EP",
-      "country": "Czech Republic",
+      "player": "Fit1nho",
+      "org": "BAR",
+      "country": "Spain",
       "agents": [
-        "viper"
+        "sova",
+        "fade"
       ],
-      "rounds_played": "74",
-      "rating": "0.95",
-      "average_combat_score": "158.3",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "105.0",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.30",
+      "rounds_played": "46",
+      "rating": "0.94",
+      "average_combat_score": "170.5",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "123.3",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "25%"
+    },
+    {
+      "player": "tickso",
+      "org": "FRG",
+      "country": "Sweden",
+      "agents": [
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "209",
+      "rating": "0.94",
+      "average_combat_score": "178.2",
+      "kill_deaths": "0.86",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "119.0",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.26",
       "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "33%"
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "21%"
     },
     {
       "player": "Fel1x",
@@ -7193,88 +7229,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "4%"
     },
     {
-      "player": "KovaQ",
-      "org": "CGN",
-      "country": "Switzerland",
-      "agents": [
-        "fade",
-        "sova",
-        "sage"
-      ],
-      "rounds_played": "254",
-      "rating": "0.94",
-      "average_combat_score": "192.7",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "128.5",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "16%"
-    },
-    {
-      "player": "iluri",
-      "org": "EP",
-      "country": "Finland",
-      "agents": [
-        "fade",
-        "tejo"
-      ],
-      "rounds_played": "74",
-      "rating": "0.94",
-      "average_combat_score": "123.3",
-      "kill_deaths": "0.87",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "84.8",
-      "kills_per_round": "0.46",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "38%"
-    },
-    {
-      "player": "Fit1nho",
-      "org": "BAR",
+      "player": "azaziN",
+      "org": "O2G",
       "country": "Spain",
       "agents": [
-        "sova",
-        "fade"
+        "waylay"
       ],
-      "rounds_played": "46",
+      "rounds_played": "43",
       "rating": "0.94",
-      "average_combat_score": "170.5",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "123.3",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.37",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "25%"
-    },
-    {
-      "player": "Vašek",
-      "org": "EVO",
-      "country": "Czech Republic",
-      "agents": [
-        "fade"
-      ],
-      "rounds_played": "44",
-      "rating": "0.94",
-      "average_combat_score": "151.5",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "104.5",
-      "kills_per_round": "0.52",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.00",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "25%"
+      "average_combat_score": "179.5",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "56%",
+      "average_damage_per_round": "106.4",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.21",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "influx",
@@ -7298,68 +7270,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "23%"
     },
     {
-      "player": "azaziN",
-      "org": "O2G",
-      "country": "Spain",
+      "player": "KovaQ",
+      "org": "CGN",
+      "country": "Switzerland",
       "agents": [
-        "waylay"
-      ],
-      "rounds_played": "43",
-      "rating": "0.94",
-      "average_combat_score": "179.5",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "106.4",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "ibonata",
-      "org": "FA",
-      "country": "Turkey",
-      "agents": [
-        "sova",
         "fade",
-        "gekko"
+        "sova",
+        "sage"
       ],
-      "rounds_played": "212",
-      "rating": "0.93",
-      "average_combat_score": "178.1",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "123.0",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.37",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "18%",
-      "clutch_success_percentage": "33%"
-    },
-    {
-      "player": "flank",
-      "org": "LP",
-      "country": "United Kingdom",
-      "agents": [
-        "cypher",
-        "yoru",
-        "killjoy"
-      ],
-      "rounds_played": "142",
-      "rating": "0.93",
-      "average_combat_score": "198.4",
-      "kill_deaths": "0.97",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "126.1",
-      "kills_per_round": "0.70",
+      "rounds_played": "254",
+      "rating": "0.94",
+      "average_combat_score": "192.7",
+      "kill_deaths": "0.93",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "128.5",
+      "kills_per_round": "0.69",
       "assists_per_round": "0.23",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "23%"
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "16%"
     },
     {
       "player": "ef1sS",
@@ -7384,51 +7314,8 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "Fizzy",
-      "org": "SGE",
-      "country": "Portugal",
-      "agents": [
-        "omen",
-        "astra"
-      ],
-      "rounds_played": "67",
-      "rating": "0.93",
-      "average_combat_score": "178.0",
-      "kill_deaths": "0.82",
-      "kill_assists_survived_traded": "60%",
-      "average_damage_per_round": "119.0",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "Brave",
-      "org": "MISA",
-      "country": "Turkey",
-      "agents": [
-        "kayo",
-        "neon",
-        "fade"
-      ],
-      "rounds_played": "203",
-      "rating": "0.93",
-      "average_combat_score": "188.6",
-      "kill_deaths": "0.97",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "125.2",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "18%"
-    },
-    {
       "player": "Szalony",
-      "org": "AGT",
+      "org": "VR2",
       "country": "Poland",
       "agents": [
         "raze",
@@ -7447,28 +7334,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "21%",
       "clutch_success_percentage": "33%"
-    },
-    {
-      "player": "Pitou",
-      "org": "ERAH",
-      "country": "France",
-      "agents": [
-        "neon",
-        "yoru",
-        "raze"
-      ],
-      "rounds_played": "79",
-      "rating": "0.93",
-      "average_combat_score": "239.0",
-      "kill_deaths": "0.94",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "163.6",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.20",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "25%"
     },
     {
       "player": "deminatiX",
@@ -7493,6 +7358,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
+      "player": "ibonata",
+      "org": "FA",
+      "country": "Turkey",
+      "agents": [
+        "sova",
+        "fade",
+        "gekko"
+      ],
+      "rounds_played": "212",
+      "rating": "0.93",
+      "average_combat_score": "178.1",
+      "kill_deaths": "0.86",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "123.0",
+      "kills_per_round": "0.59",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "18%",
+      "clutch_success_percentage": "33%"
+    },
+    {
       "player": "WerlasS",
       "org": "GS",
       "country": "Turkey",
@@ -7515,132 +7402,69 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
-      "player": "Vince",
-      "org": "CGN",
-      "country": "Germany",
-      "agents": [
-        "omen",
-        "astra",
-        "brimstone"
-      ],
-      "rounds_played": "254",
-      "rating": "0.92",
-      "average_combat_score": "179.4",
-      "kill_deaths": "0.85",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "117.4",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "prayy",
-      "org": "ATN",
-      "country": "Germany",
-      "agents": [
-        "iso",
-        "raze",
-        "phoenix"
-      ],
-      "rounds_played": "183",
-      "rating": "0.92",
-      "average_combat_score": "204.3",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "140.4",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "5%"
-    },
-    {
-      "player": "Kolosha",
-      "org": "BOA",
-      "country": "Ukraine",
-      "agents": [
-        "raze",
-        "chamber"
-      ],
-      "rounds_played": "42",
-      "rating": "0.92",
-      "average_combat_score": "215.5",
-      "kill_deaths": "1.00",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "131.8",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.10",
-      "first_kills_per_round": "0.24",
-      "first_deaths_per_round": "0.21",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "50%"
-    },
-    {
-      "player": "ANXiOS",
-      "org": "NOVO",
-      "country": "Russia",
-      "agents": [
-        "omen",
-        "skye",
-        "tejo"
-      ],
-      "rounds_played": "140",
-      "rating": "0.92",
-      "average_combat_score": "168.6",
-      "kill_deaths": "0.92",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "113.0",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "henky",
-      "org": "EVO",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "44",
-      "rating": "0.92",
-      "average_combat_score": "210.5",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "130.2",
-      "kills_per_round": "0.77",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.23",
-      "headshot_percentage": "38%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Docent",
-      "org": "BJK",
+      "player": "Brave",
+      "org": "MISA",
       "country": "Turkey",
       "agents": [
-        "brimstone",
-        "astra",
-        "omen"
+        "kayo",
+        "neon",
+        "fade"
       ],
-      "rounds_played": "163",
-      "rating": "0.92",
-      "average_combat_score": "160.3",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "99.8",
+      "rounds_played": "203",
+      "rating": "0.93",
+      "average_combat_score": "188.6",
+      "kill_deaths": "0.97",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "125.2",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.14",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "18%"
+    },
+    {
+      "player": "Pitou",
+      "org": "ERAH",
+      "country": "France",
+      "agents": [
+        "neon",
+        "yoru",
+        "raze"
+      ],
+      "rounds_played": "79",
+      "rating": "0.93",
+      "average_combat_score": "239.0",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "163.6",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.20",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "25%"
+    },
+    {
+      "player": "Fizzy",
+      "org": "SGE",
+      "country": "Portugal",
+      "agents": [
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "67",
+      "rating": "0.93",
+      "average_combat_score": "178.0",
+      "kill_deaths": "0.82",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "119.0",
       "kills_per_round": "0.60",
-      "assists_per_round": "0.31",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "11%"
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "disisjohn",
@@ -7665,96 +7489,159 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
-      "player": "beNca",
-      "org": "FRG",
-      "country": "Hungary",
-      "agents": [
-        "waylay",
-        "yoru",
-        "jett"
-      ],
-      "rounds_played": "170",
-      "rating": "0.91",
-      "average_combat_score": "181.1",
-      "kill_deaths": "0.87",
-      "kill_assists_survived_traded": "59%",
-      "average_damage_per_round": "119.6",
-      "kills_per_round": "0.66",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.19",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "9%"
-    },
-    {
-      "player": "mepeezy",
-      "org": "FA",
+      "player": "Docent",
+      "org": "BJK",
       "country": "Turkey",
       "agents": [
-        "viper",
-        "yoru",
-        "kayo"
+        "brimstone",
+        "astra",
+        "omen"
       ],
-      "rounds_played": "212",
-      "rating": "0.91",
-      "average_combat_score": "201.4",
+      "rounds_played": "163",
+      "rating": "0.92",
+      "average_combat_score": "160.3",
       "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "134.4",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.42",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "24%"
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "99.8",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "11%"
     },
     {
-      "player": "ip0TT",
-      "org": "FF",
-      "country": "Turkey",
-      "agents": [
-        "waylay",
-        "yoru",
-        "neon"
-      ],
-      "rounds_played": "218",
-      "rating": "0.91",
-      "average_combat_score": "218.3",
-      "kill_deaths": "0.97",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "139.2",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.18",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "29%"
-    },
-    {
-      "player": "Arishikii",
-      "org": "DXG",
+      "player": "prayy",
+      "org": "ATN",
       "country": "Germany",
       "agents": [
-        "viper",
+        "iso",
+        "raze",
         "phoenix"
       ],
-      "rounds_played": "41",
-      "rating": "0.91",
-      "average_combat_score": "185.0",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "124.1",
+      "rounds_played": "183",
+      "rating": "0.92",
+      "average_combat_score": "204.3",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "140.4",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "5%"
+    },
+    {
+      "player": "Turbo",
+      "org": "FRG",
+      "country": "Ukraine",
+      "agents": [
+        "omen",
+        "viper"
+      ],
+      "rounds_played": "209",
+      "rating": "0.92",
+      "average_combat_score": "195.8",
+      "kill_deaths": "0.89",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "125.5",
       "kills_per_round": "0.68",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.20",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "64%",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "7%"
+    },
+    {
+      "player": "Vince",
+      "org": "CGN",
+      "country": "Germany",
+      "agents": [
+        "omen",
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "254",
+      "rating": "0.92",
+      "average_combat_score": "179.4",
+      "kill_deaths": "0.85",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "117.4",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "14%"
+    },
+    {
+      "player": "ANXiOS",
+      "org": "NOVO",
+      "country": "Russia",
+      "agents": [
+        "omen",
+        "skye",
+        "tejo"
+      ],
+      "rounds_played": "140",
+      "rating": "0.92",
+      "average_combat_score": "168.6",
+      "kill_deaths": "0.92",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "113.0",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.36",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Kolosha",
+      "org": "BOA",
+      "country": "Ukraine",
+      "agents": [
+        "raze",
+        "chamber"
+      ],
+      "rounds_played": "42",
+      "rating": "0.92",
+      "average_combat_score": "215.5",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "131.8",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.10",
+      "first_kills_per_round": "0.24",
+      "first_deaths_per_round": "0.21",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "50%"
+    },
+    {
+      "player": "Foxie",
+      "org": "MZP",
+      "country": "United Kingdom",
+      "agents": [
+        "sova"
+      ],
+      "rounds_played": "36",
+      "rating": "0.91",
+      "average_combat_score": "187.0",
+      "kill_deaths": "0.96",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "131.5",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.11",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "40%",
       "clutch_success_percentage": "0"
     },
     {
       "player": "Movv",
       "org": "KPI",
-      "country": "Spain",
+      "country": "Ecuador",
       "agents": [
         "viper"
       ],
@@ -7794,24 +7681,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Foxie",
-      "org": "MZP",
-      "country": "United Kingdom",
+      "player": "mepeezy",
+      "org": "FA",
+      "country": "Turkey",
       "agents": [
-        "sova"
+        "viper",
+        "yoru",
+        "kayo"
       ],
-      "rounds_played": "36",
+      "rounds_played": "212",
       "rating": "0.91",
-      "average_combat_score": "187.0",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "131.5",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.11",
+      "average_combat_score": "201.4",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "134.4",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.42",
       "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "40%",
-      "clutch_success_percentage": "0"
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "24%"
     },
     {
       "player": "Kozok",
@@ -7833,6 +7722,93 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.07",
       "headshot_percentage": "23%",
       "clutch_success_percentage": "10%"
+    },
+    {
+      "player": "ip0TT",
+      "org": "FF",
+      "country": "Turkey",
+      "agents": [
+        "waylay",
+        "yoru",
+        "neon"
+      ],
+      "rounds_played": "218",
+      "rating": "0.91",
+      "average_combat_score": "218.3",
+      "kill_deaths": "0.97",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "139.2",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.18",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "29%"
+    },
+    {
+      "player": "Corsa",
+      "org": "FMG",
+      "country": "United Kingdom",
+      "agents": [
+        "viper",
+        "killjoy",
+        "cypher"
+      ],
+      "rounds_played": "178",
+      "rating": "0.91",
+      "average_combat_score": "183.4",
+      "kill_deaths": "0.86",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "128.2",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.15",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "elllement",
+      "org": "PXL",
+      "country": "Serbia",
+      "agents": [
+        "viper",
+        "killjoy",
+        "yoru"
+      ],
+      "rounds_played": "290",
+      "rating": "0.91",
+      "average_combat_score": "175.0",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "122.8",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "7%"
+    },
+    {
+      "player": "Arishikii",
+      "org": "DXG",
+      "country": "Germany",
+      "agents": [
+        "viper",
+        "phoenix"
+      ],
+      "rounds_played": "41",
+      "rating": "0.91",
+      "average_combat_score": "185.0",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "124.1",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.20",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "64%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "Símplex",
@@ -7899,46 +7875,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
-      "player": "hoody",
-      "org": "FMG",
-      "country": "Finland",
-      "agents": [
-        "fade",
-        "sova"
-      ],
-      "rounds_played": "164",
-      "rating": "0.89",
-      "average_combat_score": "174.4",
-      "kill_deaths": "0.84",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "116.4",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "4%"
-    },
-    {
-      "player": "elllement",
-      "org": "PXL",
-      "country": "Serbia",
+      "player": "Drog",
+      "org": "QM",
+      "country": "Ireland",
       "agents": [
         "viper",
-        "killjoy"
+        "chamber"
       ],
-      "rounds_played": "222",
+      "rounds_played": "208",
       "rating": "0.89",
-      "average_combat_score": "175.2",
-      "kill_deaths": "0.89",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "123.8",
+      "average_combat_score": "172.0",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "111.5",
       "kills_per_round": "0.62",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "6%"
+      "assists_per_round": "0.10",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "DeadInk",
@@ -7963,6 +7918,69 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
+      "player": "hoody",
+      "org": "FMG",
+      "country": "Finland",
+      "agents": [
+        "fade",
+        "sova"
+      ],
+      "rounds_played": "206",
+      "rating": "0.89",
+      "average_combat_score": "180.4",
+      "kill_deaths": "0.84",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "119.1",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "3%"
+    },
+    {
+      "player": "Brädi",
+      "org": "HLT",
+      "country": "Finland",
+      "agents": [
+        "sova",
+        "tejo",
+        "fade"
+      ],
+      "rounds_played": "208",
+      "rating": "0.88",
+      "average_combat_score": "164.3",
+      "kill_deaths": "0.82",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "110.5",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "5%"
+    },
+    {
+      "player": "YuNo",
+      "org": "OTK",
+      "country": "Spain",
+      "agents": [
+        "omen"
+      ],
+      "rounds_played": "43",
+      "rating": "0.88",
+      "average_combat_score": "172.5",
+      "kill_deaths": "0.84",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "111.0",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.47",
+      "first_kills_per_round": "0.00",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "bandz",
       "org": "Unknown",
       "agents": [
@@ -7981,6 +7999,69 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.13",
       "first_deaths_per_round": "0.14",
       "headshot_percentage": "35%",
+      "clutch_success_percentage": "7%"
+    },
+    {
+      "player": "Enrik",
+      "org": "RBT",
+      "country": "Czech Republic",
+      "agents": [
+        "brimstone",
+        "astra"
+      ],
+      "rounds_played": "42",
+      "rating": "0.88",
+      "average_combat_score": "140.5",
+      "kill_deaths": "0.72",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "87.0",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.38",
+      "first_kills_per_round": "0.02",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "22%"
+    },
+    {
+      "player": "YHYDRO",
+      "org": "FMG",
+      "agents": [
+        "sage",
+        "raze",
+        "tejo"
+      ],
+      "rounds_played": "206",
+      "rating": "0.88",
+      "average_combat_score": "178.1",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "119.4",
+      "kills_per_round": "0.63",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "33%"
+    },
+    {
+      "player": "wtex",
+      "org": "FA",
+      "country": "Turkey",
+      "agents": [
+        "neon",
+        "waylay"
+      ],
+      "rounds_played": "212",
+      "rating": "0.88",
+      "average_combat_score": "211.9",
+      "kill_deaths": "0.91",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "133.4",
+      "kills_per_round": "0.75",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.25",
+      "first_deaths_per_round": "0.21",
+      "headshot_percentage": "32%",
       "clutch_success_percentage": "7%"
     },
     {
@@ -8005,26 +8086,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "YuNo",
-      "org": "OTK",
-      "country": "Spain",
-      "agents": [
-        "omen"
-      ],
-      "rounds_played": "43",
-      "rating": "0.88",
-      "average_combat_score": "172.5",
-      "kill_deaths": "0.84",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "111.0",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.47",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "Famsii",
       "org": "UCAM",
       "country": "Finland",
@@ -8046,46 +8107,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Enrik",
-      "org": "RBT",
-      "country": "Czech Republic",
+      "player": "sora",
+      "org": "UNI",
+      "country": "Belarus",
       "agents": [
-        "brimstone",
-        "astra"
+        "waylay",
+        "yoru",
+        "fade"
       ],
-      "rounds_played": "42",
-      "rating": "0.88",
-      "average_combat_score": "140.5",
-      "kill_deaths": "0.72",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "87.0",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.02",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "22%"
+      "rounds_played": "217",
+      "rating": "0.87",
+      "average_combat_score": "166.0",
+      "kill_deaths": "0.89",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "111.8",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "15%"
     },
     {
-      "player": "wtex",
-      "org": "FA",
-      "country": "Turkey",
+      "player": "runneR",
+      "org": "JL",
+      "country": "North Macedonia",
       "agents": [
-        "neon",
-        "waylay"
+        "waylay",
+        "neon"
       ],
-      "rounds_played": "212",
-      "rating": "0.88",
-      "average_combat_score": "211.9",
-      "kill_deaths": "0.91",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "133.4",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.25",
-      "first_deaths_per_round": "0.21",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "7%"
+      "rounds_played": "234",
+      "rating": "0.87",
+      "average_combat_score": "180.9",
+      "kill_deaths": "0.85",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "118.0",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "24%",
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "Necro",
@@ -8130,46 +8192,68 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "30%"
     },
     {
-      "player": "Shadow1",
-      "org": "CLS",
-      "country": "United Kingdom",
+      "player": "Shazeon",
+      "org": "ATN",
+      "country": "Germany",
+      "agents": [
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "183",
+      "rating": "0.86",
+      "average_combat_score": "159.7",
+      "kill_deaths": "0.80",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "110.5",
+      "kills_per_round": "0.58",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "15%"
+    },
+    {
+      "player": "beNca",
+      "org": "FRG",
+      "country": "Hungary",
       "agents": [
         "waylay",
         "yoru",
-        "neon"
+        "jett"
       ],
-      "rounds_played": "120",
-      "rating": "0.87",
-      "average_combat_score": "171.3",
-      "kill_deaths": "0.82",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "116.2",
+      "rounds_played": "209",
+      "rating": "0.86",
+      "average_combat_score": "177.2",
+      "kill_deaths": "0.84",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "114.7",
       "kills_per_round": "0.65",
-      "assists_per_round": "0.15",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "0"
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "7%"
     },
     {
-      "player": "szoren",
-      "org": "TSE",
-      "country": "Denmark",
+      "player": "kya",
+      "org": "PXL",
+      "country": "Netherlands",
       "agents": [
+        "fade",
         "sova"
       ],
-      "rounds_played": "33",
+      "rounds_played": "290",
       "rating": "0.86",
-      "average_combat_score": "149.5",
-      "kill_deaths": "0.55",
-      "kill_assists_survived_traded": "55%",
-      "average_damage_per_round": "107.7",
-      "kills_per_round": "0.48",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.00",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "169.5",
+      "kill_deaths": "0.82",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "115.3",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "Keatz",
@@ -8193,68 +8277,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "19%"
     },
     {
-      "player": "Shazeon",
-      "org": "ATN",
-      "country": "Germany",
+      "player": "szoren",
+      "org": "TSE",
+      "country": "Denmark",
       "agents": [
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "183",
-      "rating": "0.86",
-      "average_combat_score": "159.7",
-      "kill_deaths": "0.80",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "110.5",
-      "kills_per_round": "0.58",
-      "assists_per_round": "0.31",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "15%"
-    },
-    {
-      "player": "Waddles",
-      "org": "VNR",
-      "country": "United Kingdom",
-      "agents": [
-        "yoru",
-        "kayo",
-        "gekko"
-      ],
-      "rounds_played": "140",
-      "rating": "0.85",
-      "average_combat_score": "170.0",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "61%",
-      "average_damage_per_round": "112.6",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "kya",
-      "org": "PXL",
-      "country": "Netherlands",
-      "agents": [
-        "fade",
         "sova"
       ],
-      "rounds_played": "222",
+      "rounds_played": "33",
+      "rating": "0.86",
+      "average_combat_score": "149.5",
+      "kill_deaths": "0.55",
+      "kill_assists_survived_traded": "55%",
+      "average_damage_per_round": "107.7",
+      "kills_per_round": "0.48",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.00",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Dro9",
+      "org": "CLS",
+      "country": "Lithuania",
+      "agents": [
+        "yoru",
+        "sova"
+      ],
+      "rounds_played": "167",
       "rating": "0.85",
-      "average_combat_score": "166.6",
-      "kill_deaths": "0.81",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "114.2",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "16%"
+      "average_combat_score": "197.0",
+      "kill_deaths": "0.80",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "121.7",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "15%",
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "Flexxin",
@@ -8278,46 +8339,88 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "7%"
     },
     {
-      "player": "Dro9",
-      "org": "CLS",
-      "country": "Lithuania",
+      "player": "sulunist",
+      "org": "200",
+      "country": "Poland",
       "agents": [
-        "yoru",
-        "sova"
+        "waylay",
+        "fade",
+        "omen"
       ],
-      "rounds_played": "120",
-      "rating": "0.85",
-      "average_combat_score": "193.0",
-      "kill_deaths": "0.80",
+      "rounds_played": "146",
+      "rating": "0.84",
+      "average_combat_score": "189.6",
+      "kill_deaths": "0.86",
       "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "123.6",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.28",
+      "average_damage_per_round": "123.3",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.23",
       "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "14%",
-      "clutch_success_percentage": "14%"
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "17%"
     },
     {
-      "player": "ianto",
-      "org": "BNK",
+      "player": "henky",
+      "org": "EVO",
       "agents": [
-        "sova",
-        "fade",
-        "viper"
+        "yoru",
+        "neon"
       ],
-      "rounds_played": "140",
-      "rating": "0.85",
-      "average_combat_score": "171.1",
-      "kill_deaths": "0.80",
-      "kill_assists_survived_traded": "62%",
-      "average_damage_per_round": "115.7",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "20%",
+      "rounds_played": "74",
+      "rating": "0.84",
+      "average_combat_score": "212.7",
+      "kill_deaths": "0.95",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "132.5",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.15",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.23",
+      "headshot_percentage": "43%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "kendo",
+      "org": "HLT",
+      "country": "United Kingdom",
+      "agents": [
+        "waylay",
+        "neon"
+      ],
+      "rounds_played": "112",
+      "rating": "0.84",
+      "average_combat_score": "178.0",
+      "kill_deaths": "0.84",
+      "kill_assists_survived_traded": "68%",
+      "average_damage_per_round": "114.6",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.15",
+      "headshot_percentage": "29%",
       "clutch_success_percentage": "7%"
+    },
+    {
+      "player": "Pa1ze",
+      "org": "FKS",
+      "country": "Denmark",
+      "agents": [
+        "neon",
+        "waylay"
+      ],
+      "rounds_played": "107",
+      "rating": "0.84",
+      "average_combat_score": "197.6",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "139.0",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.21",
+      "headshot_percentage": "35%",
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "izana",
@@ -8364,68 +8467,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "8%"
     },
     {
-      "player": "kendo",
-      "org": "HLT",
-      "country": "United Kingdom",
+      "player": "Ecoo",
+      "org": "BW",
+      "country": "Turkey",
       "agents": [
-        "waylay",
-        "neon"
+        "yoru",
+        "vyse",
+        "killjoy"
       ],
-      "rounds_played": "112",
-      "rating": "0.84",
-      "average_combat_score": "178.0",
-      "kill_deaths": "0.84",
-      "kill_assists_survived_traded": "68%",
-      "average_damage_per_round": "114.6",
+      "rounds_played": "176",
+      "rating": "0.83",
+      "average_combat_score": "173.9",
+      "kill_deaths": "0.79",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "124.8",
       "kills_per_round": "0.60",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "7%"
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "19%"
     },
     {
-      "player": "ASPY",
-      "org": "FRG",
-      "country": "Russia",
+      "player": "Sane",
+      "org": "UNI",
+      "country": "Ukraine",
       "agents": [
-        "kayo",
-        "brimstone",
+        "sova",
+        "astra",
         "omen"
       ],
-      "rounds_played": "170",
-      "rating": "0.84",
-      "average_combat_score": "163.8",
-      "kill_deaths": "0.76",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "111.3",
-      "kills_per_round": "0.56",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "5%"
-    },
-    {
-      "player": "Pa1ze",
-      "org": "FKS",
-      "country": "Denmark",
-      "agents": [
-        "neon",
-        "waylay"
-      ],
-      "rounds_played": "107",
-      "rating": "0.84",
-      "average_combat_score": "197.6",
-      "kill_deaths": "0.94",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "139.0",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.21",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "17%"
+      "rounds_played": "217",
+      "rating": "0.83",
+      "average_combat_score": "175.3",
+      "kill_deaths": "0.77",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "115.1",
+      "kills_per_round": "0.57",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "10%"
     },
     {
       "player": "Zyppan",
@@ -8450,50 +8533,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "7%"
     },
     {
-      "player": "reazy",
-      "org": "S2G",
-      "country": "Turkey",
-      "agents": [
-        "killjoy",
-        "cypher",
-        "brimstone"
-      ],
-      "rounds_played": "165",
-      "rating": "0.83",
-      "average_combat_score": "160.7",
-      "kill_deaths": "0.78",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "110.4",
-      "kills_per_round": "0.55",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "6%"
-    },
-    {
-      "player": "Ecoo",
-      "org": "BW",
-      "country": "Turkey",
-      "agents": [
-        "yoru",
-        "vyse",
-        "killjoy"
-      ],
-      "rounds_played": "176",
-      "rating": "0.83",
-      "average_combat_score": "173.9",
-      "kill_deaths": "0.79",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "124.8",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "19%"
-    },
-    {
       "player": "Wolfen",
       "org": "CGN",
       "country": "Bulgaria",
@@ -8514,27 +8553,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "30%",
       "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "Turbo",
-      "org": "FRG",
-      "country": "Ukraine",
-      "agents": [
-        "omen",
-        "viper"
-      ],
-      "rounds_played": "170",
-      "rating": "0.83",
-      "average_combat_score": "176.9",
-      "kill_deaths": "0.81",
-      "kill_assists_survived_traded": "59%",
-      "average_damage_per_round": "116.8",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "8%"
     },
     {
       "player": "Luvjix",
@@ -8559,47 +8577,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "9%"
     },
     {
-      "player": "sora",
-      "org": "UNI",
-      "country": "Belarus",
-      "agents": [
-        "waylay",
-        "yoru",
-        "fade"
-      ],
-      "rounds_played": "175",
-      "rating": "0.83",
-      "average_combat_score": "165.8",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "109.5",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "ARGENT",
-      "org": "MISA",
+      "player": "reazy",
+      "org": "S2G",
       "country": "Turkey",
       "agents": [
-        "viper",
-        "yoru"
+        "killjoy",
+        "cypher",
+        "brimstone"
       ],
-      "rounds_played": "116",
-      "rating": "0.82",
-      "average_combat_score": "177.7",
-      "kill_deaths": "0.73",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "117.8",
-      "kills_per_round": "0.58",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "165",
+      "rating": "0.83",
+      "average_combat_score": "160.7",
+      "kill_deaths": "0.78",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "110.4",
+      "kills_per_round": "0.55",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "6%"
     },
     {
       "player": "Destrian",
@@ -8645,6 +8642,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
+      "player": "ianto",
+      "org": "BNK",
+      "agents": [
+        "sova",
+        "fade",
+        "viper"
+      ],
+      "rounds_played": "178",
+      "rating": "0.82",
+      "average_combat_score": "163.0",
+      "kill_deaths": "0.76",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "111.1",
+      "kills_per_round": "0.58",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "17%"
+    },
+    {
       "player": "bênjiro",
       "org": "6GPA",
       "country": "Germany",
@@ -8667,26 +8685,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Kaaru",
-      "org": "BNK",
-      "country": "Poland",
+      "player": "ARGENT",
+      "org": "MISA",
+      "country": "Turkey",
       "agents": [
-        "jett",
-        "neon",
-        "raze"
+        "viper",
+        "yoru"
       ],
-      "rounds_played": "140",
+      "rounds_played": "116",
       "rating": "0.82",
-      "average_combat_score": "187.6",
-      "kill_deaths": "0.79",
-      "kill_assists_survived_traded": "57%",
-      "average_damage_per_round": "123.7",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "6%"
+      "average_combat_score": "177.7",
+      "kill_deaths": "0.73",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "117.8",
+      "kills_per_round": "0.58",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "r1zvaN",
@@ -8708,47 +8725,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "35%",
       "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "runneR",
-      "org": "JL",
-      "country": "North Macedonia",
-      "agents": [
-        "waylay"
-      ],
-      "rounds_played": "131",
-      "rating": "0.81",
-      "average_combat_score": "172.2",
-      "kill_deaths": "0.82",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "110.1",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Saiz",
-      "org": "OTK",
-      "country": "Spain",
-      "agents": [
-        "veto",
-        "killjoy"
-      ],
-      "rounds_played": "43",
-      "rating": "0.81",
-      "average_combat_score": "197.5",
-      "kill_deaths": "0.78",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "133.3",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "42%",
-      "clutch_success_percentage": "0"
     },
     {
       "player": "lurzy0y0",
@@ -8835,6 +8811,68 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "Saiz",
+      "org": "OTK",
+      "country": "Spain",
+      "agents": [
+        "veto",
+        "killjoy"
+      ],
+      "rounds_played": "43",
+      "rating": "0.81",
+      "average_combat_score": "197.5",
+      "kill_deaths": "0.78",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "133.3",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "42%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "delamac",
+      "org": "KPI",
+      "country": "Spain",
+      "agents": [
+        "yoru"
+      ],
+      "rounds_played": "46",
+      "rating": "0.80",
+      "average_combat_score": "190.5",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "125.8",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.04",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.24",
+      "headshot_percentage": "14%",
+      "clutch_success_percentage": "33%"
+    },
+    {
+      "player": "luky",
+      "org": "RBT",
+      "country": "Czech Republic",
+      "agents": [
+        "yoru",
+        "phoenix"
+      ],
+      "rounds_played": "42",
+      "rating": "0.80",
+      "average_combat_score": "190.5",
+      "kill_deaths": "0.85",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "125.5",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "24%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "RARE",
       "org": "BOA",
       "country": "Ukraine",
@@ -8876,69 +8914,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "18%"
     },
     {
-      "player": "delamac",
-      "org": "KPI",
-      "country": "Spain",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "46",
-      "rating": "0.80",
-      "average_combat_score": "190.5",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "125.8",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.04",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.24",
-      "headshot_percentage": "14%",
-      "clutch_success_percentage": "33%"
-    },
-    {
-      "player": "Sane",
-      "org": "UNI",
-      "country": "Ukraine",
-      "agents": [
-        "sova",
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "175",
-      "rating": "0.80",
-      "average_combat_score": "172.3",
-      "kill_deaths": "0.75",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "113.4",
-      "kills_per_round": "0.55",
-      "assists_per_round": "0.36",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "21%",
-      "clutch_success_percentage": "11%"
-    },
-    {
-      "player": "luky",
-      "org": "RBT",
-      "country": "Czech Republic",
-      "agents": [
-        "yoru",
-        "phoenix"
-      ],
-      "rounds_played": "42",
-      "rating": "0.80",
-      "average_combat_score": "190.5",
-      "kill_deaths": "0.85",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "125.5",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "mikee",
       "org": "ES",
       "country": "France",
@@ -8958,28 +8933,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.13",
       "headshot_percentage": "26%",
       "clutch_success_percentage": "20%"
-    },
-    {
-      "player": "Moks",
-      "org": "Unknown",
-      "country": "Thailand",
-      "agents": [
-        "viper",
-        "omen",
-        "deadlock"
-      ],
-      "rounds_played": "105",
-      "rating": "0.79",
-      "average_combat_score": "176.8",
-      "kill_deaths": "0.75",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "112.3",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "6%"
     },
     {
       "player": "MONSTEERR",
@@ -9025,26 +8978,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
-      "player": "Koshmaras",
-      "org": "6GPA",
-      "country": "Lithuania",
+      "player": "Moks",
+      "org": "Unknown",
+      "country": "Thailand",
       "agents": [
+        "viper",
         "omen",
-        "neon",
-        "waylay"
+        "deadlock"
       ],
-      "rounds_played": "100",
+      "rounds_played": "105",
       "rating": "0.79",
-      "average_combat_score": "183.0",
-      "kill_deaths": "0.72",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "125.2",
-      "kills_per_round": "0.60",
+      "average_combat_score": "176.8",
+      "kill_deaths": "0.75",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "112.3",
+      "kills_per_round": "0.59",
       "assists_per_round": "0.28",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "10%"
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "6%"
     },
     {
       "player": "Newzera",
@@ -9069,130 +9022,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "Che",
-      "org": "CLS",
-      "country": "France",
+      "player": "Koshmaras",
+      "org": "6GPA",
+      "country": "Lithuania",
       "agents": [
-        "brimstone",
-        "astra",
-        "omen"
+        "omen",
+        "neon",
+        "waylay"
       ],
-      "rounds_played": "120",
+      "rounds_played": "100",
       "rating": "0.79",
-      "average_combat_score": "180.7",
-      "kill_deaths": "0.69",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "114.4",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "13%"
+      "average_combat_score": "183.0",
+      "kill_deaths": "0.72",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "125.2",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.14",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "10%"
     },
     {
-      "player": "Apyr",
-      "org": "RZN",
-      "country": "Netherlands",
-      "agents": [
-        "raze",
-        "jett"
-      ],
-      "rounds_played": "42",
-      "rating": "0.78",
-      "average_combat_score": "171.0",
-      "kill_deaths": "0.66",
-      "kill_assists_survived_traded": "64%",
-      "average_damage_per_round": "131.0",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.21",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "robz",
-      "org": "ERAH",
-      "country": "France",
-      "agents": [
-        "tejo",
-        "sova",
-        "skye"
-      ],
-      "rounds_played": "79",
-      "rating": "0.78",
-      "average_combat_score": "170.8",
-      "kill_deaths": "0.69",
-      "kill_assists_survived_traded": "52%",
-      "average_damage_per_round": "112.7",
-      "kills_per_round": "0.54",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "spiral",
-      "org": "Unknown",
-      "agents": [
-        "yoru",
-        "brimstone",
-        "astra"
-      ],
-      "rounds_played": "105",
-      "rating": "0.78",
-      "average_combat_score": "184.2",
-      "kill_deaths": "0.78",
-      "kill_assists_survived_traded": "61%",
-      "average_damage_per_round": "120.4",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "6%"
-    },
-    {
-      "player": "Hazard",
-      "org": "RBT",
-      "country": "Slovakia",
-      "agents": [
-        "fade"
-      ],
-      "rounds_played": "42",
-      "rating": "0.78",
-      "average_combat_score": "195.5",
-      "kill_deaths": "0.81",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "128.4",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Jady",
-      "org": "MZP",
+      "player": "ASPY",
+      "org": "FRG",
       "country": "Russia",
       "agents": [
+        "kayo",
+        "brimstone",
         "omen"
       ],
-      "rounds_played": "36",
+      "rounds_played": "209",
       "rating": "0.78",
-      "average_combat_score": "152.0",
+      "average_combat_score": "149.9",
       "kill_deaths": "0.71",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "106.7",
-      "kills_per_round": "0.56",
-      "assists_per_round": "0.31",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "51%",
-      "clutch_success_percentage": "0"
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "103.7",
+      "kills_per_round": "0.52",
+      "assists_per_round": "0.35",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "hAwksinho",
@@ -9217,6 +9088,110 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "9%"
     },
     {
+      "player": "spiral",
+      "org": "Unknown",
+      "agents": [
+        "yoru",
+        "brimstone",
+        "astra"
+      ],
+      "rounds_played": "105",
+      "rating": "0.78",
+      "average_combat_score": "184.2",
+      "kill_deaths": "0.78",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "120.4",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "6%"
+    },
+    {
+      "player": "robz",
+      "org": "ERAH",
+      "country": "France",
+      "agents": [
+        "tejo",
+        "sova",
+        "skye"
+      ],
+      "rounds_played": "79",
+      "rating": "0.78",
+      "average_combat_score": "170.8",
+      "kill_deaths": "0.69",
+      "kill_assists_survived_traded": "52%",
+      "average_damage_per_round": "112.7",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "13%"
+    },
+    {
+      "player": "Jady",
+      "org": "MZP",
+      "country": "Russia",
+      "agents": [
+        "omen"
+      ],
+      "rounds_played": "36",
+      "rating": "0.78",
+      "average_combat_score": "152.0",
+      "kill_deaths": "0.71",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "106.7",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "51%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Hazard",
+      "org": "RBT",
+      "country": "Slovakia",
+      "agents": [
+        "fade"
+      ],
+      "rounds_played": "42",
+      "rating": "0.78",
+      "average_combat_score": "195.5",
+      "kill_deaths": "0.81",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "128.4",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Apyr",
+      "org": "RZN",
+      "country": "Netherlands",
+      "agents": [
+        "raze",
+        "jett"
+      ],
+      "rounds_played": "42",
+      "rating": "0.78",
+      "average_combat_score": "171.0",
+      "kill_deaths": "0.66",
+      "kill_assists_survived_traded": "64%",
+      "average_damage_per_round": "131.0",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.21",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "azury",
       "org": "SGE",
       "country": "Germany",
@@ -9239,88 +9214,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "38%"
     },
     {
-      "player": "Faska",
-      "org": "OTK",
-      "country": "Spain",
+      "player": "Waddles",
+      "org": "VNR",
+      "country": "United Kingdom",
       "agents": [
-        "fade",
-        "sova"
+        "yoru",
+        "kayo",
+        "gekko"
       ],
-      "rounds_played": "43",
-      "rating": "0.77",
-      "average_combat_score": "138.5",
-      "kill_deaths": "0.69",
-      "kill_assists_survived_traded": "60%",
-      "average_damage_per_round": "94.8",
-      "kills_per_round": "0.47",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Kajuks",
-      "org": "BAR",
-      "country": "Lithuania",
-      "agents": [
-        "astra",
-        "brimstone"
-      ],
-      "rounds_played": "46",
-      "rating": "0.77",
-      "average_combat_score": "150.5",
-      "kill_deaths": "0.70",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "101.3",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.41",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "Davia",
-      "org": "BFG",
-      "country": "Italy",
-      "agents": [
-        "raze",
-        "neon"
-      ],
-      "rounds_played": "75",
-      "rating": "0.77",
-      "average_combat_score": "184.5",
-      "kill_deaths": "0.83",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "121.6",
-      "kills_per_round": "0.69",
-      "assists_per_round": "0.12",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.29",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Czester",
-      "org": "FLK",
-      "country": "Poland",
-      "agents": [
-        "neon",
-        "waylay"
-      ],
-      "rounds_played": "40",
-      "rating": "0.77",
-      "average_combat_score": "197.5",
-      "kill_deaths": "0.79",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "121.0",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.13",
-      "first_kills_per_round": "0.23",
-      "first_deaths_per_round": "0.20",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "178",
+      "rating": "0.78",
+      "average_combat_score": "161.8",
+      "kill_deaths": "0.78",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "108.3",
+      "kills_per_round": "0.57",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "7%"
     },
     {
       "player": "DonatelloOO",
@@ -9344,6 +9257,91 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "Che",
+      "org": "CLS",
+      "country": "France",
+      "agents": [
+        "brimstone",
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "167",
+      "rating": "0.77",
+      "average_combat_score": "162.4",
+      "kill_deaths": "0.67",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "105.9",
+      "kills_per_round": "0.55",
+      "assists_per_round": "0.39",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "9%"
+    },
+    {
+      "player": "Kajuks",
+      "org": "BAR",
+      "country": "Lithuania",
+      "agents": [
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "46",
+      "rating": "0.77",
+      "average_combat_score": "150.5",
+      "kill_deaths": "0.70",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "101.3",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.41",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "36%",
+      "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Czester",
+      "org": "FLK",
+      "country": "Poland",
+      "agents": [
+        "neon",
+        "waylay"
+      ],
+      "rounds_played": "40",
+      "rating": "0.77",
+      "average_combat_score": "197.5",
+      "kill_deaths": "0.79",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "121.0",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.13",
+      "first_kills_per_round": "0.23",
+      "first_deaths_per_round": "0.20",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Davia",
+      "org": "BFG",
+      "country": "Italy",
+      "agents": [
+        "raze",
+        "neon"
+      ],
+      "rounds_played": "75",
+      "rating": "0.77",
+      "average_combat_score": "184.5",
+      "kill_deaths": "0.83",
+      "kill_assists_survived_traded": "56%",
+      "average_damage_per_round": "121.6",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.12",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.29",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "Hassan",
       "org": "OTK",
       "country": "Morocco",
@@ -9362,6 +9360,49 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.02",
       "headshot_percentage": "22%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Faska",
+      "org": "OTK",
+      "country": "Spain",
+      "agents": [
+        "fade",
+        "sova"
+      ],
+      "rounds_played": "43",
+      "rating": "0.77",
+      "average_combat_score": "138.5",
+      "kill_deaths": "0.69",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "94.8",
+      "kills_per_round": "0.47",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "AvovA",
+      "org": "APK",
+      "country": "Denmark",
+      "agents": [
+        "astra",
+        "omen",
+        "brimstone"
+      ],
+      "rounds_played": "178",
+      "rating": "0.76",
+      "average_combat_score": "153.3",
+      "kill_deaths": "0.69",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "105.6",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "Mally",
@@ -9407,6 +9448,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "Kaaru",
+      "org": "BNK",
+      "country": "Poland",
+      "agents": [
+        "jett",
+        "neon",
+        "raze"
+      ],
+      "rounds_played": "178",
+      "rating": "0.76",
+      "average_combat_score": "179.3",
+      "kill_deaths": "0.74",
+      "kill_assists_survived_traded": "54%",
+      "average_damage_per_round": "116.8",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.13",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.18",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "6%"
+    },
+    {
       "player": "kvmil",
       "org": "FLK",
       "country": "Poland",
@@ -9425,48 +9488,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.00",
       "first_deaths_per_round": "0.10",
       "headshot_percentage": "33%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "Buld",
-      "org": "UCAM",
-      "country": "Poland",
-      "agents": [
-        "viper",
-        "breach"
-      ],
-      "rounds_played": "46",
-      "rating": "0.75",
-      "average_combat_score": "160.0",
-      "kill_deaths": "0.73",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "118.3",
-      "kills_per_round": "0.52",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "rehn",
-      "org": "LEO",
-      "country": "Sweden",
-      "agents": [
-        "yoru",
-        "phoenix"
-      ],
-      "rounds_played": "80",
-      "rating": "0.75",
-      "average_combat_score": "167.8",
-      "kill_deaths": "0.74",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "112.6",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "38%",
       "clutch_success_percentage": "0"
     },
     {
@@ -9491,25 +9512,66 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "resistance",
-      "org": "FRG",
+      "player": "rehn",
+      "org": "LEO",
+      "country": "Sweden",
+      "agents": [
+        "yoru",
+        "phoenix"
+      ],
+      "rounds_played": "80",
+      "rating": "0.75",
+      "average_combat_score": "167.8",
+      "kill_deaths": "0.74",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "112.6",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.14",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "38%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "basya",
+      "org": "OXJ",
       "country": "Russia",
       "agents": [
         "viper",
-        "waylay",
         "killjoy"
       ],
-      "rounds_played": "170",
+      "rounds_played": "68",
       "rating": "0.75",
-      "average_combat_score": "157.0",
+      "average_combat_score": "160.7",
       "kill_deaths": "0.70",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "107.3",
-      "kills_per_round": "0.53",
-      "assists_per_round": "0.26",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "24%",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "113.0",
+      "kills_per_round": "0.51",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Buld",
+      "org": "UCAM",
+      "country": "Poland",
+      "agents": [
+        "viper",
+        "breach"
+      ],
+      "rounds_played": "46",
+      "rating": "0.75",
+      "average_combat_score": "160.0",
+      "kill_deaths": "0.73",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "118.3",
+      "kills_per_round": "0.52",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "32%",
       "clutch_success_percentage": "0"
     },
     {
@@ -9531,6 +9593,93 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.13",
       "first_deaths_per_round": "0.16",
       "headshot_percentage": "39%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "resistance",
+      "org": "FRG",
+      "country": "Russia",
+      "agents": [
+        "viper",
+        "waylay",
+        "killjoy"
+      ],
+      "rounds_played": "209",
+      "rating": "0.74",
+      "average_combat_score": "157.2",
+      "kill_deaths": "0.70",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "107.2",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "4%"
+    },
+    {
+      "player": "Gingi",
+      "org": "CLS",
+      "country": "United Kingdom",
+      "agents": [
+        "fade",
+        "reyna",
+        "killjoy"
+      ],
+      "rounds_played": "109",
+      "rating": "0.74",
+      "average_combat_score": "145.2",
+      "kill_deaths": "0.63",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "98.1",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "23%"
+    },
+    {
+      "player": "kappi",
+      "org": "CLS",
+      "country": "Sweden",
+      "agents": [
+        "viper",
+        "sova",
+        "cypher"
+      ],
+      "rounds_played": "167",
+      "rating": "0.74",
+      "average_combat_score": "148.3",
+      "kill_deaths": "0.67",
+      "kill_assists_survived_traded": "59%",
+      "average_damage_per_round": "96.6",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "6%"
+    },
+    {
+      "player": "WillyG",
+      "org": "TSE",
+      "country": "United Kingdom",
+      "agents": [
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "33",
+      "rating": "0.73",
+      "average_combat_score": "137.5",
+      "kill_deaths": "0.48",
+      "kill_assists_survived_traded": "48%",
+      "average_damage_per_round": "93.8",
+      "kills_per_round": "0.39",
+      "assists_per_round": "0.45",
+      "first_kills_per_round": "0.00",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "26%",
       "clutch_success_percentage": "0"
     },
     {
@@ -9556,90 +9705,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "WillyG",
-      "org": "TSE",
-      "country": "United Kingdom",
+      "player": "Rouss",
+      "org": "F9",
+      "country": "Turkey",
       "agents": [
-        "astra",
-        "omen"
+        "sova"
       ],
-      "rounds_played": "33",
-      "rating": "0.73",
-      "average_combat_score": "137.5",
-      "kill_deaths": "0.48",
-      "kill_assists_survived_traded": "48%",
-      "average_damage_per_round": "93.8",
-      "kills_per_round": "0.39",
-      "assists_per_round": "0.45",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "0"
-    },
-    {
-      "player": "AvovA",
-      "org": "APK",
-      "country": "Denmark",
-      "agents": [
-        "astra",
-        "omen",
-        "brimstone"
-      ],
-      "rounds_played": "140",
+      "rounds_played": "35",
       "rating": "0.72",
-      "average_combat_score": "146.3",
-      "kill_deaths": "0.68",
-      "kill_assists_survived_traded": "63%",
-      "average_damage_per_round": "98.8",
-      "kills_per_round": "0.52",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "13%"
-    },
-    {
-      "player": "nepalwarrior",
-      "org": "Unknown",
-      "agents": [
-        "omen",
-        "waylay",
-        "chamber"
-      ],
-      "rounds_played": "105",
-      "rating": "0.72",
-      "average_combat_score": "166.6",
-      "kill_deaths": "0.76",
-      "kill_assists_survived_traded": "60%",
-      "average_damage_per_round": "106.5",
-      "kills_per_round": "0.61",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "21%"
-    },
-    {
-      "player": "xuss",
-      "org": "MZP",
-      "country": "Poland",
-      "agents": [
-        "neon",
-        "jett",
-        "raze"
-      ],
-      "rounds_played": "75",
-      "rating": "0.72",
-      "average_combat_score": "178.3",
-      "kill_deaths": "0.70",
-      "kill_assists_survived_traded": "61%",
-      "average_damage_per_round": "121.4",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.16",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "21%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "161.0",
+      "kill_deaths": "0.75",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "107.1",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.03",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "45%",
+      "clutch_success_percentage": "17%"
     },
     {
       "player": "zyn",
@@ -9663,28 +9746,30 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Rouss",
-      "org": "F9",
-      "country": "Turkey",
+      "player": "nepalwarrior",
+      "org": "Unknown",
       "agents": [
-        "sova"
+        "omen",
+        "waylay",
+        "chamber"
       ],
-      "rounds_played": "35",
+      "rounds_played": "105",
       "rating": "0.72",
-      "average_combat_score": "161.0",
-      "kill_deaths": "0.75",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "107.1",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.03",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "45%",
-      "clutch_success_percentage": "17%"
+      "average_combat_score": "166.6",
+      "kill_deaths": "0.76",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "106.5",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.09",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "21%"
     },
     {
-      "player": "disgr4se",
-      "org": "Unknown",
+      "player": "disgr4ce",
+      "org": "UNI",
+      "country": "Russia",
       "agents": [
         "jett"
       ],
@@ -9700,49 +9785,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.00",
       "headshot_percentage": "26%",
       "clutch_success_percentage": "0"
-    },
-    {
-      "player": "kappi",
-      "org": "CLS",
-      "country": "Sweden",
-      "agents": [
-        "viper",
-        "sova"
-      ],
-      "rounds_played": "120",
-      "rating": "0.72",
-      "average_combat_score": "145.0",
-      "kill_deaths": "0.67",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "95.8",
-      "kills_per_round": "0.53",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "5%"
-    },
-    {
-      "player": "Gingi",
-      "org": "CLS",
-      "country": "United Kingdom",
-      "agents": [
-        "fade",
-        "reyna",
-        "killjoy"
-      ],
-      "rounds_played": "62",
-      "rating": "0.70",
-      "average_combat_score": "149.7",
-      "kill_deaths": "0.63",
-      "kill_assists_survived_traded": "66%",
-      "average_damage_per_round": "104.2",
-      "kills_per_round": "0.52",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "31%",
-      "clutch_success_percentage": "22%"
     },
     {
       "player": "Raz",
@@ -9763,6 +9805,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.13",
       "first_deaths_per_round": "0.06",
       "headshot_percentage": "36%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "xuss",
+      "org": "MZP",
+      "country": "Poland",
+      "agents": [
+        "neon",
+        "jett",
+        "raze"
+      ],
+      "rounds_played": "117",
+      "rating": "0.70",
+      "average_combat_score": "161.2",
+      "kill_deaths": "0.67",
+      "kill_assists_survived_traded": "61%",
+      "average_damage_per_round": "110.3",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "24%",
       "clutch_success_percentage": "0"
     },
     {
@@ -9788,27 +9852,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "Thander",
-      "org": "BFG",
-      "country": "Serbia",
-      "agents": [
-        "viper",
-        "killjoy"
-      ],
-      "rounds_played": "75",
-      "rating": "0.68",
-      "average_combat_score": "163.0",
-      "kill_deaths": "0.66",
-      "kill_assists_survived_traded": "49%",
-      "average_damage_per_round": "112.6",
-      "kills_per_round": "0.55",
-      "assists_per_round": "0.12",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "14%"
-    },
-    {
       "player": "Kiles",
       "org": "MZP",
       "country": "Ukraine",
@@ -9830,25 +9873,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Sayf",
-      "org": "CGN",
-      "country": "Sweden",
+      "player": "Vašek",
+      "org": "EVO",
+      "country": "Czech Republic",
       "agents": [
-        "raze",
-        "waylay"
+        "fade"
       ],
-      "rounds_played": "59",
-      "rating": "0.67",
-      "average_combat_score": "165.0",
-      "kill_deaths": "0.64",
-      "kill_assists_survived_traded": "59%",
-      "average_damage_per_round": "106.6",
-      "kills_per_round": "0.54",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "74",
+      "rating": "0.68",
+      "average_combat_score": "114.3",
+      "kill_deaths": "0.58",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "78.2",
+      "kills_per_round": "0.39",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "20%"
+    },
+    {
+      "player": "Thander",
+      "org": "BFG",
+      "country": "Serbia",
+      "agents": [
+        "viper",
+        "killjoy"
+      ],
+      "rounds_played": "75",
+      "rating": "0.68",
+      "average_combat_score": "163.0",
+      "kill_deaths": "0.66",
+      "kill_assists_survived_traded": "49%",
+      "average_damage_per_round": "112.6",
+      "kills_per_round": "0.55",
+      "assists_per_round": "0.12",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "NowaXxZang",
@@ -9870,6 +9933,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "27%",
       "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Sayf",
+      "org": "CGN",
+      "country": "Sweden",
+      "agents": [
+        "raze",
+        "waylay"
+      ],
+      "rounds_played": "59",
+      "rating": "0.67",
+      "average_combat_score": "165.0",
+      "kill_deaths": "0.64",
+      "kill_assists_survived_traded": "59%",
+      "average_damage_per_round": "106.6",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "sh1ngo",
@@ -9955,26 +10039,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Akira",
-      "org": "LEO",
-      "country": "Portugal",
-      "agents": [
-        "sova"
-      ],
-      "rounds_played": "80",
-      "rating": "0.63",
-      "average_combat_score": "147.5",
-      "kill_deaths": "0.61",
-      "kill_assists_survived_traded": "59%",
-      "average_damage_per_round": "99.9",
-      "kills_per_round": "0.49",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "23%",
-      "clutch_success_percentage": "14%"
-    },
-    {
       "player": "Redgar",
       "org": "MIR",
       "country": "Russia",
@@ -9996,25 +10060,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "kospa1n",
-      "org": "MIR",
-      "country": "Russia",
+      "player": "Akira",
+      "org": "LEO",
+      "country": "Portugal",
       "agents": [
-        "raze",
-        "kayo"
+        "sova"
       ],
-      "rounds_played": "32",
-      "rating": "0.62",
-      "average_combat_score": "158.5",
-      "kill_deaths": "0.57",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "114.3",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.22",
-      "headshot_percentage": "41%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "80",
+      "rating": "0.63",
+      "average_combat_score": "147.5",
+      "kill_deaths": "0.61",
+      "kill_assists_survived_traded": "59%",
+      "average_damage_per_round": "99.9",
+      "kills_per_round": "0.49",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "23%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "Hiiro",
@@ -10035,6 +10098,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_kills_per_round": "0.05",
       "first_deaths_per_round": "0.14",
       "headshot_percentage": "30%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "kospa1n",
+      "org": "MIR",
+      "country": "Russia",
+      "agents": [
+        "raze",
+        "kayo"
+      ],
+      "rounds_played": "32",
+      "rating": "0.62",
+      "average_combat_score": "158.5",
+      "kill_deaths": "0.57",
+      "kill_assists_survived_traded": "56%",
+      "average_damage_per_round": "114.3",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.22",
+      "headshot_percentage": "41%",
       "clutch_success_percentage": "0"
     },
     {
@@ -10079,26 +10163,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "25%"
     },
     {
-      "player": "Opex",
-      "org": "Unknown",
-      "country": "Germany",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "15",
-      "rating": "0.60",
-      "average_combat_score": "180.0",
-      "kill_deaths": "0.75",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "121.5",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.20",
-      "first_deaths_per_round": "0.33",
-      "headshot_percentage": "39%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "poegii",
       "org": "F9",
       "country": "Belgium",
@@ -10118,6 +10182,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.09",
       "headshot_percentage": "44%",
       "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Opex",
+      "org": "Unknown",
+      "country": "Germany",
+      "agents": [
+        "yoru"
+      ],
+      "rounds_played": "15",
+      "rating": "0.60",
+      "average_combat_score": "180.0",
+      "kill_deaths": "0.75",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "121.5",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.20",
+      "first_deaths_per_round": "0.33",
+      "headshot_percentage": "39%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "STAVINCI",
@@ -10267,6 +10351,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
+      "player": "Kongi",
+      "org": "DXG",
+      "country": "Austria",
+      "agents": [
+        "kayo"
+      ],
+      "rounds_played": "24",
+      "rating": "0.51",
+      "average_combat_score": "106.0",
+      "kill_deaths": "0.47",
+      "kill_assists_survived_traded": "58%",
+      "average_damage_per_round": "68.6",
+      "kills_per_round": "0.33",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.17",
+      "headshot_percentage": "25%",
+      "clutch_success_percentage": "0"
+    },
+    {
       "player": "darkwinjett",
       "org": "DXG",
       "country": "Germany",
@@ -10288,23 +10392,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Kongi",
-      "org": "DXG",
-      "country": "Austria",
+      "player": "BarcK",
+      "org": "RZN",
+      "country": "United Kingdom",
       "agents": [
-        "kayo"
+        "yoru",
+        "sova"
       ],
-      "rounds_played": "24",
-      "rating": "0.51",
-      "average_combat_score": "106.0",
-      "kill_deaths": "0.47",
-      "kill_assists_survived_traded": "58%",
-      "average_damage_per_round": "68.6",
-      "kills_per_round": "0.33",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.17",
-      "headshot_percentage": "25%",
+      "rounds_played": "42",
+      "rating": "0.50",
+      "average_combat_score": "111.0",
+      "kill_deaths": "0.35",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "82.9",
+      "kills_per_round": "0.29",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "14%",
       "clutch_success_percentage": "0"
     },
     {
@@ -10326,27 +10431,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.03",
       "headshot_percentage": "15%",
       "clutch_success_percentage": "25%"
-    },
-    {
-      "player": "BarcK",
-      "org": "RZN",
-      "country": "United Kingdom",
-      "agents": [
-        "yoru",
-        "sova"
-      ],
-      "rounds_played": "42",
-      "rating": "0.50",
-      "average_combat_score": "111.0",
-      "kill_deaths": "0.35",
-      "kill_assists_survived_traded": "60%",
-      "average_damage_per_round": "82.9",
-      "kills_per_round": "0.29",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "14%",
-      "clutch_success_percentage": "0"
     },
     {
       "player": "roxie",
@@ -10392,27 +10476,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
   ],
   "br": [
     {
-      "player": "Verno",
-      "org": "MIBR",
-      "country": "United States",
-      "agents": [
-        "sova",
-        "fade"
-      ],
-      "rounds_played": "108",
-      "rating": "1.24",
-      "average_combat_score": "226.6",
-      "kill_deaths": "1.31",
-      "kill_assists_survived_traded": "83%",
-      "average_damage_per_round": "152.0",
-      "kills_per_round": "0.78",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.03",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "15%"
-    },
-    {
       "player": "koalanoob",
       "org": "FUR",
       "country": "Canada",
@@ -10421,40 +10484,39 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "jett",
         "omen"
       ],
-      "rounds_played": "159",
-      "rating": "1.21",
-      "average_combat_score": "243.9",
-      "kill_deaths": "1.34",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "157.5",
-      "kills_per_round": "0.89",
-      "assists_per_round": "0.18",
+      "rounds_played": "218",
+      "rating": "1.20",
+      "average_combat_score": "245.2",
+      "kill_deaths": "1.27",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "156.0",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.19",
       "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.13",
-      "headshot_percentage": "23%",
-      "clutch_success_percentage": "17%"
+      "first_deaths_per_round": "0.15",
+      "headshot_percentage": "24%",
+      "clutch_success_percentage": "13%"
     },
     {
-      "player": "artzin",
-      "org": "FUR",
-      "country": "Brazil",
+      "player": "Verno",
+      "org": "MIBR",
+      "country": "United States",
       "agents": [
-        "kayo",
-        "astra",
-        "omen"
+        "sova",
+        "fade"
       ],
-      "rounds_played": "159",
-      "rating": "1.14",
-      "average_combat_score": "199.4",
-      "kill_deaths": "1.26",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "127.4",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.08",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "36%"
+      "rounds_played": "167",
+      "rating": "1.16",
+      "average_combat_score": "211.6",
+      "kill_deaths": "1.18",
+      "kill_assists_survived_traded": "82%",
+      "average_damage_per_round": "142.3",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "12%"
     },
     {
       "player": "lukxo",
@@ -10479,28 +10541,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "6%"
     },
     {
-      "player": "zekken",
-      "org": "MIBR",
-      "country": "United States",
-      "agents": [
-        "astra",
-        "omen",
-        "yoru"
-      ],
-      "rounds_played": "108",
-      "rating": "1.11",
-      "average_combat_score": "189.2",
-      "kill_deaths": "1.11",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "122.0",
-      "kills_per_round": "0.68",
-      "assists_per_round": "0.35",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "18%"
-    },
-    {
       "player": "eeiu",
       "org": "FUR",
       "country": "Canada",
@@ -10508,18 +10548,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "fade",
         "sova"
       ],
-      "rounds_played": "159",
-      "rating": "1.08",
-      "average_combat_score": "186.9",
-      "kill_deaths": "1.22",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "123.0",
-      "kills_per_round": "0.69",
+      "rounds_played": "218",
+      "rating": "1.09",
+      "average_combat_score": "182.4",
+      "kill_deaths": "1.18",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "120.6",
+      "kills_per_round": "0.66",
       "assists_per_round": "0.30",
       "first_kills_per_round": "0.05",
       "first_deaths_per_round": "0.05",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "15%"
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "Mazino",
@@ -10530,18 +10570,62 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "omen",
         "astra"
       ],
-      "rounds_played": "108",
-      "rating": "1.04",
-      "average_combat_score": "214.2",
+      "rounds_played": "167",
+      "rating": "1.06",
+      "average_combat_score": "212.6",
       "kill_deaths": "1.12",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "138.7",
-      "kills_per_round": "0.79",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.10",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "138.6",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "14%"
+    },
+    {
+      "player": "artzin",
+      "org": "FUR",
+      "country": "Brazil",
+      "agents": [
+        "kayo",
+        "astra",
+        "omen"
+      ],
+      "rounds_played": "218",
+      "rating": "1.05",
+      "average_combat_score": "189.2",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "120.9",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.36",
+      "first_kills_per_round": "0.07",
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "30%",
-      "clutch_success_percentage": "25%"
+      "clutch_success_percentage": "32%"
+    },
+    {
+      "player": "zekken",
+      "org": "MIBR",
+      "country": "United States",
+      "agents": [
+        "astra",
+        "omen",
+        "yoru"
+      ],
+      "rounds_played": "167",
+      "rating": "1.05",
+      "average_combat_score": "184.1",
+      "kill_deaths": "1.10",
+      "kill_assists_survived_traded": "80%",
+      "average_damage_per_round": "118.8",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "19%"
     },
     {
       "player": "aspas",
@@ -10552,39 +10636,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "waylay",
         "raze"
       ],
-      "rounds_played": "108",
-      "rating": "1.04",
-      "average_combat_score": "202.2",
-      "kill_deaths": "1.21",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "137.0",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.15",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "32%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "alym",
-      "org": "FUR",
-      "agents": [
-        "neon",
-        "yoru",
-        "waylay"
-      ],
-      "rounds_played": "159",
-      "rating": "1.00",
-      "average_combat_score": "207.3",
-      "kill_deaths": "1.11",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "127.9",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.21",
-      "first_deaths_per_round": "0.11",
+      "rounds_played": "167",
+      "rating": "0.99",
+      "average_combat_score": "192.1",
+      "kill_deaths": "1.12",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "132.1",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.13",
+      "first_kills_per_round": "0.14",
+      "first_deaths_per_round": "0.13",
       "headshot_percentage": "29%",
-      "clutch_success_percentage": "22%"
+      "clutch_success_percentage": "7%"
     },
     {
       "player": "nerve",
@@ -10595,18 +10658,39 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "viper",
         "tejo"
       ],
-      "rounds_played": "159",
-      "rating": "0.96",
-      "average_combat_score": "172.3",
-      "kill_deaths": "0.99",
+      "rounds_played": "218",
+      "rating": "0.97",
+      "average_combat_score": "175.8",
+      "kill_deaths": "0.98",
       "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "116.7",
-      "kills_per_round": "0.59",
+      "average_damage_per_round": "118.3",
+      "kills_per_round": "0.61",
       "assists_per_round": "0.34",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "21%",
-      "clutch_success_percentage": "13%"
+      "first_kills_per_round": "0.04",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "10%"
+    },
+    {
+      "player": "alym",
+      "org": "FUR",
+      "agents": [
+        "neon",
+        "yoru",
+        "waylay"
+      ],
+      "rounds_played": "218",
+      "rating": "0.97",
+      "average_combat_score": "199.7",
+      "kill_deaths": "1.05",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "124.2",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "27%"
     },
     {
       "player": "Darker",
@@ -10631,6 +10715,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "27%"
     },
     {
+      "player": "tex",
+      "org": "MIBR",
+      "country": "Germany",
+      "agents": [
+        "cypher",
+        "viper",
+        "astra"
+      ],
+      "rounds_played": "167",
+      "rating": "0.90",
+      "average_combat_score": "179.6",
+      "kill_deaths": "0.95",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "113.1",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "14%"
+    },
+    {
       "player": "pANcada",
       "org": "LOUD",
       "country": "Brazil",
@@ -10651,27 +10757,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.03",
       "headshot_percentage": "30%",
       "clutch_success_percentage": "10%"
-    },
-    {
-      "player": "tex",
-      "org": "MIBR",
-      "country": "Germany",
-      "agents": [
-        "cypher",
-        "viper"
-      ],
-      "rounds_played": "108",
-      "rating": "0.84",
-      "average_combat_score": "164.4",
-      "kill_deaths": "0.88",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "104.8",
-      "kills_per_round": "0.63",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "29%",
-      "clutch_success_percentage": "25%"
     },
     {
       "player": "cauanzin",
@@ -10738,47 +10823,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "Brinks",
-      "org": "2G.AC",
-      "country": "Brazil",
-      "agents": [
-        "omen",
-        "brimstone"
-      ],
-      "rounds_played": "42",
-      "rating": "1.30",
-      "average_combat_score": "226.0",
-      "kill_deaths": "1.50",
-      "kill_assists_survived_traded": "83%",
-      "average_damage_per_round": "138.7",
-      "kills_per_round": "0.86",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "38%",
-      "clutch_success_percentage": "25%"
-    },
-    {
-      "player": "lz",
-      "org": "2G",
-      "country": "Brazil",
-      "agents": [
-        "viper"
-      ],
-      "rounds_played": "42",
-      "rating": "1.17",
-      "average_combat_score": "203.0",
-      "kill_deaths": "1.28",
-      "kill_assists_survived_traded": "81%",
-      "average_damage_per_round": "133.2",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.40",
-      "first_kills_per_round": "0.02",
-      "first_deaths_per_round": "0.02",
-      "headshot_percentage": "26%",
-      "clutch_success_percentage": "0"
-    },
-    {
       "player": "pollo",
       "org": "HL",
       "country": "Brazil",
@@ -10800,46 +10844,47 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "22%"
     },
     {
-      "player": "frz",
+      "player": "lz",
       "org": "2G",
       "country": "Brazil",
       "agents": [
-        "sova",
-        "fade"
+        "viper",
+        "astra"
       ],
-      "rounds_played": "42",
-      "rating": "1.14",
-      "average_combat_score": "162.0",
-      "kill_deaths": "1.10",
-      "kill_assists_survived_traded": "86%",
-      "average_damage_per_round": "107.5",
-      "kills_per_round": "0.52",
-      "assists_per_round": "0.43",
-      "first_kills_per_round": "0.05",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "36%",
-      "clutch_success_percentage": "40%"
+      "rounds_played": "103",
+      "rating": "1.12",
+      "average_combat_score": "208.8",
+      "kill_deaths": "1.14",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "138.8",
+      "kills_per_round": "0.77",
+      "assists_per_round": "0.35",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "40%",
+      "clutch_success_percentage": "11%"
     },
     {
-      "player": "ambitioN",
-      "org": "2G",
+      "player": "Brinks",
+      "org": "2G.AC",
       "country": "Brazil",
       "agents": [
-        "killjoy",
-        "yoru"
+        "omen",
+        "brimstone",
+        "harbor"
       ],
-      "rounds_played": "42",
-      "rating": "1.14",
-      "average_combat_score": "260.0",
-      "kill_deaths": "1.30",
-      "kill_assists_survived_traded": "81%",
-      "average_damage_per_round": "157.9",
-      "kills_per_round": "0.93",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.17",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "0"
+      "rounds_played": "103",
+      "rating": "1.11",
+      "average_combat_score": "207.6",
+      "kill_deaths": "1.18",
+      "kill_assists_survived_traded": "74%",
+      "average_damage_per_round": "128.8",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "32%",
+      "clutch_success_percentage": "9%"
     },
     {
       "player": "shion",
@@ -10885,25 +10930,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "29%"
     },
     {
-      "player": "gobera",
+      "player": "ambitioN",
       "org": "2G",
       "country": "Brazil",
       "agents": [
-        "neon",
-        "raze"
+        "killjoy",
+        "yoru"
       ],
-      "rounds_played": "42",
-      "rating": "1.08",
-      "average_combat_score": "236.0",
-      "kill_deaths": "1.26",
+      "rounds_played": "103",
+      "rating": "1.06",
+      "average_combat_score": "222.6",
+      "kill_deaths": "1.15",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "139.1",
+      "kills_per_round": "0.83",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "20%"
+    },
+    {
+      "player": "Fw",
+      "org": "REM",
+      "country": "Brazil",
+      "agents": [
+        "viper"
+      ],
+      "rounds_played": "58",
+      "rating": "1.06",
+      "average_combat_score": "206.0",
+      "kill_deaths": "1.07",
       "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "137.9",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.17",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.24",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "0"
+      "average_damage_per_round": "134.7",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.14",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "15%"
     },
     {
       "player": "dth",
@@ -10927,26 +10992,25 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "Loweed",
-      "org": "F4T",
+      "player": "frz",
+      "org": "2G",
       "country": "Brazil",
       "agents": [
-        "skye",
-        "omen",
-        "yoru"
+        "sova",
+        "fade"
       ],
-      "rounds_played": "58",
+      "rounds_played": "103",
       "rating": "1.00",
-      "average_combat_score": "184.7",
-      "kill_deaths": "0.90",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "110.4",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.33",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "164.6",
+      "kill_deaths": "0.92",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "113.4",
+      "kills_per_round": "0.54",
+      "assists_per_round": "0.39",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.06",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "23%"
     },
     {
       "player": "RgLMeister",
@@ -10968,6 +11032,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.13",
       "headshot_percentage": "28%",
       "clutch_success_percentage": "7%"
+    },
+    {
+      "player": "Loweed",
+      "org": "F4T",
+      "country": "Brazil",
+      "agents": [
+        "skye",
+        "omen",
+        "yoru"
+      ],
+      "rounds_played": "58",
+      "rating": "1.00",
+      "average_combat_score": "184.7",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "110.4",
+      "kills_per_round": "0.62",
+      "assists_per_round": "0.33",
+      "first_kills_per_round": "0.10",
+      "first_deaths_per_round": "0.07",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "tinchoff",
@@ -11055,6 +11141,114 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "30%"
     },
     {
+      "player": "xenom",
+      "org": "EC",
+      "country": "Brazil",
+      "agents": [
+        "omen",
+        "astra",
+        "brimstone"
+      ],
+      "rounds_played": "76",
+      "rating": "0.94",
+      "average_combat_score": "203.0",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "59%",
+      "average_damage_per_round": "132.9",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "30%",
+      "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "drakz",
+      "org": "RED",
+      "country": "Brazil",
+      "agents": [
+        "waylay",
+        "jett"
+      ],
+      "rounds_played": "58",
+      "rating": "0.93",
+      "average_combat_score": "210.0",
+      "kill_deaths": "0.91",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "141.3",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.21",
+      "first_deaths_per_round": "0.21",
+      "headshot_percentage": "35%",
+      "clutch_success_percentage": "100%"
+    },
+    {
+      "player": "prince",
+      "org": "TBK",
+      "country": "Brazil",
+      "agents": [
+        "fade",
+        "tejo",
+        "sova"
+      ],
+      "rounds_played": "58",
+      "rating": "0.92",
+      "average_combat_score": "197.7",
+      "kill_deaths": "1.03",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "131.3",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.05",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "0"
+    },
+    {
+      "player": "rodd",
+      "org": "Unknown",
+      "country": "Brazil",
+      "agents": [
+        "yoru",
+        "sova",
+        "kayo"
+      ],
+      "rounds_played": "58",
+      "rating": "0.92",
+      "average_combat_score": "186.0",
+      "kill_deaths": "0.91",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "121.3",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.14",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "25%"
+    },
+    {
+      "player": "tuyz",
+      "org": "EC",
+      "country": "Brazil",
+      "agents": [
+        "waylay",
+        "jett"
+      ],
+      "rounds_played": "76",
+      "rating": "0.90",
+      "average_combat_score": "173.8",
+      "kill_deaths": "0.81",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "110.5",
+      "kills_per_round": "0.57",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.18",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "30%"
+    },
+    {
       "player": "skz",
       "org": "RED",
       "country": "Brazil",
@@ -11077,27 +11271,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "0"
     },
     {
-      "player": "tuyz",
-      "org": "EC",
-      "country": "Brazil",
-      "agents": [
-        "waylay",
-        "jett"
-      ],
-      "rounds_played": "34",
-      "rating": "0.83",
-      "average_combat_score": "157.0",
-      "kill_deaths": "0.74",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "93.7",
-      "kills_per_round": "0.50",
-      "assists_per_round": "0.09",
-      "first_kills_per_round": "0.15",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "29%"
-    },
-    {
       "player": "v1nny",
       "org": "TBK",
       "country": "Brazil",
@@ -11117,6 +11290,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.05",
       "headshot_percentage": "42%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "Stwz1",
+      "org": "PEEK",
+      "country": "Brazil",
+      "agents": [
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "43",
+      "rating": "0.81",
+      "average_combat_score": "177.5",
+      "kill_deaths": "0.76",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "118.3",
+      "kills_per_round": "0.60",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "40%",
+      "clutch_success_percentage": "20%"
+    },
+    {
+      "player": "PKX",
+      "org": "PEEK",
+      "country": "Brazil",
+      "agents": [
+        "killjoy",
+        "viper"
+      ],
+      "rounds_played": "43",
+      "rating": "0.81",
+      "average_combat_score": "136.0",
+      "kill_deaths": "0.71",
+      "kill_assists_survived_traded": "77%",
+      "average_damage_per_round": "103.4",
+      "kills_per_round": "0.47",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.02",
+      "first_deaths_per_round": "0.00",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "nicksz",
@@ -11205,6 +11420,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "14%"
     },
     {
+      "player": "desire",
+      "org": "EC",
+      "country": "Brazil",
+      "agents": [
+        "fade",
+        "sova"
+      ],
+      "rounds_played": "76",
+      "rating": "0.78",
+      "average_combat_score": "175.3",
+      "kill_deaths": "0.70",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "115.8",
+      "kills_per_round": "0.55",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "33%",
+      "clutch_success_percentage": "23%"
+    },
+    {
       "player": "Urango",
       "org": "RED",
       "country": "Brazil",
@@ -11225,6 +11461,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.13",
       "headshot_percentage": "29%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "lilo",
+      "org": "PEEK",
+      "country": "Italy",
+      "agents": [
+        "yoru"
+      ],
+      "rounds_played": "43",
+      "rating": "0.77",
+      "average_combat_score": "163.5",
+      "kill_deaths": "0.73",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "113.3",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.19",
+      "headshot_percentage": "12%",
+      "clutch_success_percentage": "14%"
     },
     {
       "player": "gbz",
@@ -11248,66 +11504,46 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "25%"
     },
     {
-      "player": "xenom",
-      "org": "EC",
+      "player": "gobera",
+      "org": "2G",
       "country": "Brazil",
       "agents": [
-        "omen",
-        "astra"
+        "neon",
+        "raze",
+        "jett"
       ],
-      "rounds_played": "34",
-      "rating": "0.72",
-      "average_combat_score": "191.5",
-      "kill_deaths": "0.69",
-      "kill_assists_survived_traded": "50%",
-      "average_damage_per_round": "129.1",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "23%",
+      "rounds_played": "103",
+      "rating": "0.75",
+      "average_combat_score": "179.6",
+      "kill_deaths": "0.82",
+      "kill_assists_survived_traded": "65%",
+      "average_damage_per_round": "110.4",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.16",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.24",
+      "headshot_percentage": "28%",
       "clutch_success_percentage": "0"
     },
     {
-      "player": "desire",
-      "org": "EC",
+      "player": "HiiiK",
+      "org": "PEEK",
       "country": "Brazil",
       "agents": [
-        "fade",
-        "sova"
+        "astra",
+        "omen"
       ],
-      "rounds_played": "34",
-      "rating": "0.63",
-      "average_combat_score": "159.0",
-      "kill_deaths": "0.57",
-      "kill_assists_survived_traded": "56%",
-      "average_damage_per_round": "110.8",
-      "kills_per_round": "0.47",
-      "assists_per_round": "0.18",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.12",
-      "headshot_percentage": "43%",
-      "clutch_success_percentage": "33%"
-    },
-    {
-      "player": "mazin",
-      "org": "EC",
-      "country": "Brazil",
-      "agents": [
-        "skye",
-        "kayo"
-      ],
-      "rounds_played": "34",
-      "rating": "0.62",
-      "average_combat_score": "146.0",
-      "kill_deaths": "0.48",
-      "kill_assists_survived_traded": "53%",
-      "average_damage_per_round": "99.0",
-      "kills_per_round": "0.41",
-      "assists_per_round": "0.29",
-      "first_kills_per_round": "0.03",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "27%",
+      "rounds_played": "43",
+      "rating": "0.74",
+      "average_combat_score": "149.5",
+      "kill_deaths": "0.77",
+      "kill_assists_survived_traded": "63%",
+      "average_damage_per_round": "91.4",
+      "kills_per_round": "0.56",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.02",
+      "first_deaths_per_round": "0.02",
+      "headshot_percentage": "44%",
       "clutch_success_percentage": "0"
     },
     {
@@ -11317,18 +11553,39 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "agents": [
         "viper"
       ],
-      "rounds_played": "34",
-      "rating": "0.48",
-      "average_combat_score": "137.5",
-      "kill_deaths": "0.55",
-      "kill_assists_survived_traded": "50%",
-      "average_damage_per_round": "91.4",
-      "kills_per_round": "0.47",
-      "assists_per_round": "0.03",
+      "rounds_played": "76",
+      "rating": "0.71",
+      "average_combat_score": "164.8",
+      "kill_deaths": "0.71",
+      "kill_assists_survived_traded": "59%",
+      "average_damage_per_round": "109.7",
+      "kills_per_round": "0.55",
+      "assists_per_round": "0.17",
       "first_kills_per_round": "0.12",
-      "first_deaths_per_round": "0.15",
-      "headshot_percentage": "24%",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "31%",
       "clutch_success_percentage": "0"
+    },
+    {
+      "player": "bnj",
+      "org": "REM",
+      "country": "Argentina",
+      "agents": [
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "58",
+      "rating": "0.67",
+      "average_combat_score": "152.3",
+      "kill_deaths": "0.66",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "102.8",
+      "kills_per_round": "0.50",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.03",
+      "first_deaths_per_round": "0.12",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "taka",
@@ -11336,88 +11593,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "country": "Japan",
       "agents": [
         "jett",
-        "neon"
+        "neon",
+        "waylay"
       ],
-      "rounds_played": "41",
-      "rating": "0.40",
-      "average_combat_score": "108.0",
-      "kill_deaths": "0.47",
-      "kill_assists_survived_traded": "54%",
-      "average_damage_per_round": "81.0",
-      "kills_per_round": "0.39",
-      "assists_per_round": "0.15",
-      "first_kills_per_round": "0.00",
-      "first_deaths_per_round": "0.41",
-      "headshot_percentage": "23%",
+      "rounds_played": "84",
+      "rating": "0.62",
+      "average_combat_score": "152.3",
+      "kill_deaths": "0.64",
+      "kill_assists_survived_traded": "60%",
+      "average_damage_per_round": "105.8",
+      "kills_per_round": "0.52",
+      "assists_per_round": "0.18",
+      "first_kills_per_round": "0.08",
+      "first_deaths_per_round": "0.29",
+      "headshot_percentage": "31%",
+      "clutch_success_percentage": "14%"
+    },
+    {
+      "player": "mazin",
+      "org": "EC",
+      "country": "Brazil",
+      "agents": [
+        "skye",
+        "kayo"
+      ],
+      "rounds_played": "76",
+      "rating": "0.62",
+      "average_combat_score": "136.3",
+      "kill_deaths": "0.54",
+      "kill_assists_survived_traded": "62%",
+      "average_damage_per_round": "87.9",
+      "kills_per_round": "0.43",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.01",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "28%",
       "clutch_success_percentage": "0"
     }
   ],
   "ap": [
-    {
-      "player": "Kushy",
-      "org": "RRQ",
-      "country": "Indonesia",
-      "agents": [
-        "sova",
-        "fade",
-        "skye"
-      ],
-      "rounds_played": "78",
-      "rating": "1.52",
-      "average_combat_score": "257.5",
-      "kill_deaths": "1.78",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "173.2",
-      "kills_per_round": "0.91",
-      "assists_per_round": "0.28",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "14%"
-    },
-    {
-      "player": "Jemkin",
-      "org": "RRQ",
-      "country": "Russia",
-      "agents": [
-        "neon",
-        "chamber"
-      ],
-      "rounds_played": "78",
-      "rating": "1.33",
-      "average_combat_score": "244.5",
-      "kill_deaths": "1.76",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "155.9",
-      "kills_per_round": "0.92",
-      "assists_per_round": "0.14",
-      "first_kills_per_round": "0.26",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "17%"
-    },
-    {
-      "player": "xffero",
-      "org": "RRQ",
-      "country": "Indonesia",
-      "agents": [
-        "killjoy",
-        "viper",
-        "astra"
-      ],
-      "rounds_played": "78",
-      "rating": "1.31",
-      "average_combat_score": "212.8",
-      "kill_deaths": "1.62",
-      "kill_assists_survived_traded": "81%",
-      "average_damage_per_round": "146.1",
-      "kills_per_round": "0.81",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.08",
-      "first_deaths_per_round": "0.01",
-      "headshot_percentage": "33%",
-      "clutch_success_percentage": "44%"
-    },
     {
       "player": "primmie",
       "org": "FS",
@@ -11437,6 +11651,50 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.12",
       "headshot_percentage": "32%",
       "clutch_success_percentage": "28%"
+    },
+    {
+      "player": "Jemkin",
+      "org": "RRQ",
+      "country": "Russia",
+      "agents": [
+        "neon",
+        "chamber",
+        "yoru"
+      ],
+      "rounds_played": "187",
+      "rating": "1.21",
+      "average_combat_score": "233.2",
+      "kill_deaths": "1.40",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "145.8",
+      "kills_per_round": "0.84",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.19",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "12%"
+    },
+    {
+      "player": "xffero",
+      "org": "RRQ",
+      "country": "Indonesia",
+      "agents": [
+        "killjoy",
+        "viper",
+        "astra"
+      ],
+      "rounds_played": "187",
+      "rating": "1.18",
+      "average_combat_score": "200.8",
+      "kill_deaths": "1.30",
+      "kill_assists_survived_traded": "80%",
+      "average_damage_per_round": "138.1",
+      "kills_per_round": "0.76",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.03",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "PatMen",
@@ -11459,6 +11717,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.10",
       "headshot_percentage": "31%",
       "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Kushy",
+      "org": "RRQ",
+      "country": "Indonesia",
+      "agents": [
+        "sova",
+        "fade",
+        "skye"
+      ],
+      "rounds_played": "187",
+      "rating": "1.11",
+      "average_combat_score": "203.2",
+      "kill_deaths": "1.07",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "135.6",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.29",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "10%"
     },
     {
       "player": "Autumn",
@@ -11504,26 +11784,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "20%"
     },
     {
-      "player": "invy",
+      "player": "Jinggg",
       "org": "PRX",
-      "country": "Philippines",
+      "country": "Singapore",
       "agents": [
-        "sova",
-        "fade",
-        "kayo"
+        "jett",
+        "raze",
+        "waylay"
       ],
-      "rounds_played": "235",
+      "rounds_played": "303",
       "rating": "1.04",
-      "average_combat_score": "199.0",
-      "kill_deaths": "1.01",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "135.5",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "37%",
-      "clutch_success_percentage": "12%"
+      "average_combat_score": "209.1",
+      "kill_deaths": "1.07",
+      "kill_assists_survived_traded": "73%",
+      "average_damage_per_round": "140.1",
+      "kills_per_round": "0.74",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.13",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "11%"
     },
     {
       "player": "xavi8k",
@@ -11548,26 +11828,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "13%"
     },
     {
-      "player": "Jinggg",
+      "player": "invy",
       "org": "PRX",
-      "country": "Singapore",
+      "country": "Philippines",
       "agents": [
-        "jett",
-        "raze",
-        "waylay"
+        "sova",
+        "fade",
+        "kayo"
       ],
-      "rounds_played": "235",
-      "rating": "1.02",
-      "average_combat_score": "210.3",
-      "kill_deaths": "1.06",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "141.5",
-      "kills_per_round": "0.76",
-      "assists_per_round": "0.13",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "16%"
+      "rounds_played": "303",
+      "rating": "1.03",
+      "average_combat_score": "198.3",
+      "kill_deaths": "1.00",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "133.7",
+      "kills_per_round": "0.70",
+      "assists_per_round": "0.28",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "37%",
+      "clutch_success_percentage": "12%"
     },
     {
       "player": "UdoTan",
@@ -11635,28 +11915,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "15%"
     },
     {
-      "player": "f0rsakeN",
-      "org": "PRX",
-      "country": "Indonesia",
-      "agents": [
-        "brimstone",
-        "omen",
-        "astra"
-      ],
-      "rounds_played": "235",
-      "rating": "0.96",
-      "average_combat_score": "206.5",
-      "kill_deaths": "0.94",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "131.8",
-      "kills_per_round": "0.70",
-      "assists_per_round": "0.38",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "8%"
-    },
-    {
       "player": "Leviathan",
       "org": "FS",
       "country": "Thailand",
@@ -11677,6 +11935,50 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.08",
       "headshot_percentage": "38%",
       "clutch_success_percentage": "20%"
+    },
+    {
+      "player": "f0rsakeN",
+      "org": "PRX",
+      "country": "Indonesia",
+      "agents": [
+        "brimstone",
+        "omen",
+        "astra"
+      ],
+      "rounds_played": "303",
+      "rating": "0.95",
+      "average_combat_score": "202.4",
+      "kill_deaths": "0.93",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "130.3",
+      "kills_per_round": "0.69",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.11",
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "9%"
+    },
+    {
+      "player": "d4v41",
+      "org": "PRX",
+      "country": "Malaysia",
+      "agents": [
+        "viper",
+        "killjoy",
+        "tejo"
+      ],
+      "rounds_played": "303",
+      "rating": "0.94",
+      "average_combat_score": "183.4",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "123.9",
+      "kills_per_round": "0.65",
+      "assists_per_round": "0.23",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "0"
     },
     {
       "player": "BerserX",
@@ -11722,26 +12024,48 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "5%"
     },
     {
-      "player": "d4v41",
+      "player": "something",
       "org": "PRX",
-      "country": "Malaysia",
+      "country": "Russia",
+      "agents": [
+        "yoru",
+        "chamber",
+        "veto"
+      ],
+      "rounds_played": "303",
+      "rating": "0.93",
+      "average_combat_score": "181.4",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "66%",
+      "average_damage_per_round": "119.9",
+      "kills_per_round": "0.67",
+      "assists_per_round": "0.17",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "19%"
+    },
+    {
+      "player": "Monyet",
+      "org": "RRQ",
+      "country": "Indonesia",
       "agents": [
         "viper",
-        "killjoy",
-        "tejo"
+        "neon",
+        "raze"
       ],
-      "rounds_played": "235",
+      "rounds_played": "187",
       "rating": "0.88",
-      "average_combat_score": "172.8",
-      "kill_deaths": "0.82",
-      "kill_assists_survived_traded": "69%",
-      "average_damage_per_round": "116.9",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.23",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "0"
+      "average_combat_score": "192.2",
+      "kill_deaths": "0.89",
+      "kill_assists_survived_traded": "67%",
+      "average_damage_per_round": "132.5",
+      "kills_per_round": "0.66",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.20",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "29%"
     },
     {
       "player": "JitBoyS",
@@ -11766,28 +12090,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "11%"
     },
     {
-      "player": "something",
-      "org": "PRX",
-      "country": "Russia",
-      "agents": [
-        "yoru",
-        "chamber",
-        "veto"
-      ],
-      "rounds_played": "235",
-      "rating": "0.86",
-      "average_combat_score": "173.3",
-      "kill_deaths": "0.84",
-      "kill_assists_survived_traded": "65%",
-      "average_damage_per_round": "115.1",
-      "kills_per_round": "0.62",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "18%"
-    },
-    {
       "player": "crazyguy",
       "org": "RRQ",
       "country": "Vietnam",
@@ -11796,18 +12098,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "brimstone",
         "tejo"
       ],
-      "rounds_played": "78",
-      "rating": "0.85",
-      "average_combat_score": "163.0",
-      "kill_deaths": "0.96",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "109.8",
+      "rounds_played": "187",
+      "rating": "0.84",
+      "average_combat_score": "161.6",
+      "kill_deaths": "0.90",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "107.5",
       "kills_per_round": "0.62",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.04",
+      "assists_per_round": "0.30",
+      "first_kills_per_round": "0.05",
       "first_deaths_per_round": "0.14",
       "headshot_percentage": "29%",
-      "clutch_success_percentage": "40%"
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "TenTen",
@@ -11830,28 +12132,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.20",
       "headshot_percentage": "17%",
       "clutch_success_percentage": "21%"
-    },
-    {
-      "player": "Monyet",
-      "org": "RRQ",
-      "country": "Indonesia",
-      "agents": [
-        "viper",
-        "neon",
-        "raze"
-      ],
-      "rounds_played": "78",
-      "rating": "0.79",
-      "average_combat_score": "187.0",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "124.9",
-      "kills_per_round": "0.64",
-      "assists_per_round": "0.19",
-      "first_kills_per_round": "0.09",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "30%",
-      "clutch_success_percentage": "0"
     },
     {
       "player": "thyy",
@@ -15529,26 +15809,6 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
   ],
   "kr": [
     {
-      "player": "Dambi",
-      "org": "NS",
-      "country": "South Korea",
-      "agents": [
-        "neon"
-      ],
-      "rounds_played": "141",
-      "rating": "1.30",
-      "average_combat_score": "262.3",
-      "kill_deaths": "1.43",
-      "kill_assists_survived_traded": "77%",
-      "average_damage_per_round": "150.3",
-      "kills_per_round": "0.95",
-      "assists_per_round": "0.25",
-      "first_kills_per_round": "0.16",
-      "first_deaths_per_round": "0.14",
-      "headshot_percentage": "19%",
-      "clutch_success_percentage": "33%"
-    },
-    {
       "player": "Karon",
       "org": "GEN",
       "country": "South Korea",
@@ -15571,6 +15831,49 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "23%"
     },
     {
+      "player": "Rb",
+      "org": "NS",
+      "country": "South Korea",
+      "agents": [
+        "omen",
+        "brimstone",
+        "viper"
+      ],
+      "rounds_played": "250",
+      "rating": "1.12",
+      "average_combat_score": "186.8",
+      "kill_deaths": "1.16",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "119.7",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.37",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "15%"
+    },
+    {
+      "player": "Dambi",
+      "org": "NS",
+      "country": "South Korea",
+      "agents": [
+        "neon",
+        "waylay"
+      ],
+      "rounds_played": "250",
+      "rating": "1.11",
+      "average_combat_score": "246.5",
+      "kill_deaths": "1.19",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "141.6",
+      "kills_per_round": "0.86",
+      "assists_per_round": "0.22",
+      "first_kills_per_round": "0.16",
+      "first_deaths_per_round": "0.14",
+      "headshot_percentage": "19%",
+      "clutch_success_percentage": "14%"
+    },
+    {
       "player": "iZu",
       "org": "T1",
       "country": "South Korea",
@@ -15578,103 +15881,61 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "omen",
         "yoru"
       ],
-      "rounds_played": "232",
-      "rating": "1.12",
-      "average_combat_score": "216.0",
+      "rounds_played": "275",
+      "rating": "1.11",
+      "average_combat_score": "217.4",
       "kill_deaths": "1.27",
       "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "137.9",
+      "average_damage_per_round": "138.9",
       "kills_per_round": "0.80",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.14",
+      "assists_per_round": "0.19",
+      "first_kills_per_round": "0.16",
       "first_deaths_per_round": "0.11",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "24%"
-    },
-    {
-      "player": "Francis",
-      "org": "NS",
-      "country": "South Korea",
-      "agents": [
-        "yoru"
-      ],
-      "rounds_played": "141",
-      "rating": "1.11",
-      "average_combat_score": "245.6",
-      "kill_deaths": "1.17",
-      "kill_assists_survived_traded": "75%",
-      "average_damage_per_round": "148.9",
-      "kills_per_round": "0.84",
-      "assists_per_round": "0.26",
-      "first_kills_per_round": "0.20",
-      "first_deaths_per_round": "0.16",
-      "headshot_percentage": "24%",
-      "clutch_success_percentage": "38%"
-    },
-    {
-      "player": "Rb",
-      "org": "NS",
-      "country": "South Korea",
-      "agents": [
-        "omen",
-        "brimstone"
-      ],
-      "rounds_played": "141",
-      "rating": "1.09",
-      "average_combat_score": "177.0",
-      "kill_deaths": "1.11",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "116.6",
-      "kills_per_round": "0.65",
-      "assists_per_round": "0.40",
-      "first_kills_per_round": "0.04",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "25%",
-      "clutch_success_percentage": "22%"
-    },
-    {
-      "player": "MaKo",
-      "org": "DRX",
-      "country": "South Korea",
-      "agents": [
-        "viper",
-        "astra",
-        "omen"
-      ],
-      "rounds_played": "271",
-      "rating": "1.09",
-      "average_combat_score": "207.2",
-      "kill_deaths": "1.12",
-      "kill_assists_survived_traded": "76%",
-      "average_damage_per_round": "132.1",
-      "kills_per_round": "0.74",
-      "assists_per_round": "0.32",
-      "first_kills_per_round": "0.10",
-      "first_deaths_per_round": "0.08",
       "headshot_percentage": "27%",
-      "clutch_success_percentage": "23%"
+      "clutch_success_percentage": "22%"
     },
     {
-      "player": "free1ng",
-      "org": "DRX",
+      "player": "Xross",
+      "org": "NS",
       "country": "South Korea",
       "agents": [
-        "astra",
-        "cypher",
-        "viper"
+        "sova",
+        "fade"
       ],
-      "rounds_played": "271",
+      "rounds_played": "250",
       "rating": "1.06",
-      "average_combat_score": "198.2",
-      "kill_deaths": "1.13",
-      "kill_assists_survived_traded": "70%",
-      "average_damage_per_round": "127.0",
-      "kills_per_round": "0.71",
-      "assists_per_round": "0.21",
-      "first_kills_per_round": "0.10",
+      "average_combat_score": "186.2",
+      "kill_deaths": "1.07",
+      "kill_assists_survived_traded": "75%",
+      "average_damage_per_round": "125.0",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.04",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "21%"
+    },
+    {
+      "player": "Ivy",
+      "org": "NS",
+      "country": "South Korea",
+      "agents": [
+        "killjoy",
+        "viper",
+        "astra"
+      ],
+      "rounds_played": "250",
+      "rating": "1.05",
+      "average_combat_score": "188.1",
+      "kill_deaths": "1.15",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "125.9",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.26",
+      "first_kills_per_round": "0.07",
       "first_deaths_per_round": "0.08",
-      "headshot_percentage": "34%",
-      "clutch_success_percentage": "22%"
+      "headshot_percentage": "29%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "XuNa",
@@ -15707,61 +15968,62 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "neon",
         "waylay"
       ],
-      "rounds_played": "271",
-      "rating": "1.04",
-      "average_combat_score": "230.5",
+      "rounds_played": "339",
+      "rating": "1.05",
+      "average_combat_score": "234.6",
       "kill_deaths": "1.09",
-      "kill_assists_survived_traded": "73%",
-      "average_damage_per_round": "147.4",
-      "kills_per_round": "0.79",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "150.3",
+      "kills_per_round": "0.81",
       "assists_per_round": "0.21",
-      "first_kills_per_round": "0.14",
-      "first_deaths_per_round": "0.11",
-      "headshot_percentage": "25%",
+      "first_kills_per_round": "0.15",
+      "first_deaths_per_round": "0.13",
+      "headshot_percentage": "27%",
       "clutch_success_percentage": "0"
     },
     {
-      "player": "BeYN",
+      "player": "MaKo",
       "org": "DRX",
       "country": "South Korea",
       "agents": [
-        "sova",
-        "fade",
-        "skye"
+        "viper",
+        "astra",
+        "omen"
       ],
-      "rounds_played": "271",
-      "rating": "1.02",
-      "average_combat_score": "186.5",
-      "kill_deaths": "1.05",
-      "kill_assists_survived_traded": "74%",
-      "average_damage_per_round": "120.5",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.30",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.05",
-      "headshot_percentage": "27%",
-      "clutch_success_percentage": "12%"
+      "rounds_played": "339",
+      "rating": "1.05",
+      "average_combat_score": "202.8",
+      "kill_deaths": "1.07",
+      "kill_assists_survived_traded": "76%",
+      "average_damage_per_round": "128.5",
+      "kills_per_round": "0.72",
+      "assists_per_round": "0.31",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "28%",
+      "clutch_success_percentage": "18%"
     },
     {
-      "player": "Ivy",
-      "org": "NS",
+      "player": "free1ng",
+      "org": "DRX",
       "country": "South Korea",
       "agents": [
-        "killjoy",
+        "astra",
+        "cypher",
         "viper"
       ],
-      "rounds_played": "141",
-      "rating": "1.02",
-      "average_combat_score": "180.4",
-      "kill_deaths": "1.17",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "120.1",
-      "kills_per_round": "0.67",
-      "assists_per_round": "0.22",
-      "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.07",
-      "headshot_percentage": "28%",
-      "clutch_success_percentage": "22%"
+      "rounds_played": "339",
+      "rating": "1.03",
+      "average_combat_score": "191.6",
+      "kill_deaths": "1.07",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "123.8",
+      "kills_per_round": "0.68",
+      "assists_per_round": "0.21",
+      "first_kills_per_round": "0.09",
+      "first_deaths_per_round": "0.09",
+      "headshot_percentage": "34%",
+      "clutch_success_percentage": "25%"
     },
     {
       "player": "BuZz",
@@ -15772,18 +16034,40 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "yoru",
         "raze"
       ],
-      "rounds_played": "232",
-      "rating": "1.01",
-      "average_combat_score": "215.7",
-      "kill_deaths": "1.08",
+      "rounds_played": "275",
+      "rating": "1.02",
+      "average_combat_score": "216.7",
+      "kill_deaths": "1.10",
       "kill_assists_survived_traded": "67%",
-      "average_damage_per_round": "132.6",
+      "average_damage_per_round": "133.5",
       "kills_per_round": "0.77",
       "assists_per_round": "0.16",
-      "first_kills_per_round": "0.14",
+      "first_kills_per_round": "0.13",
       "first_deaths_per_round": "0.13",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "13%"
+      "headshot_percentage": "18%",
+      "clutch_success_percentage": "17%"
+    },
+    {
+      "player": "Meteor",
+      "org": "T1",
+      "country": "South Korea",
+      "agents": [
+        "killjoy",
+        "waylay",
+        "viper"
+      ],
+      "rounds_played": "275",
+      "rating": "1.01",
+      "average_combat_score": "212.6",
+      "kill_deaths": "1.08",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "141.2",
+      "kills_per_round": "0.78",
+      "assists_per_round": "0.20",
+      "first_kills_per_round": "0.11",
+      "first_deaths_per_round": "0.10",
+      "headshot_percentage": "35%",
+      "clutch_success_percentage": "11%"
     },
     {
       "player": "Zexy",
@@ -15806,6 +16090,28 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "first_deaths_per_round": "0.16",
       "headshot_percentage": "26%",
       "clutch_success_percentage": "20%"
+    },
+    {
+      "player": "Munchkin",
+      "org": "T1",
+      "country": "South Korea",
+      "agents": [
+        "viper",
+        "omen",
+        "brimstone"
+      ],
+      "rounds_played": "275",
+      "rating": "1.00",
+      "average_combat_score": "182.2",
+      "kill_deaths": "0.94",
+      "kill_assists_survived_traded": "78%",
+      "average_damage_per_round": "117.4",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.45",
+      "first_kills_per_round": "0.07",
+      "first_deaths_per_round": "0.08",
+      "headshot_percentage": "20%",
+      "clutch_success_percentage": "18%"
     },
     {
       "player": "Klaus",
@@ -15852,69 +16158,26 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "17%"
     },
     {
-      "player": "Munchkin",
-      "org": "T1",
-      "country": "South Korea",
-      "agents": [
-        "viper",
-        "omen",
-        "brimstone"
-      ],
-      "rounds_played": "232",
-      "rating": "0.98",
-      "average_combat_score": "178.8",
-      "kill_deaths": "0.92",
-      "kill_assists_survived_traded": "78%",
-      "average_damage_per_round": "117.0",
-      "kills_per_round": "0.60",
-      "assists_per_round": "0.47",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.09",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "20%"
-    },
-    {
-      "player": "Meteor",
-      "org": "T1",
-      "country": "South Korea",
-      "agents": [
-        "killjoy",
-        "waylay",
-        "viper"
-      ],
-      "rounds_played": "232",
-      "rating": "0.98",
-      "average_combat_score": "205.4",
-      "kill_deaths": "1.02",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "137.0",
-      "kills_per_round": "0.75",
-      "assists_per_round": "0.20",
-      "first_kills_per_round": "0.11",
-      "first_deaths_per_round": "0.10",
-      "headshot_percentage": "35%",
-      "clutch_success_percentage": "8%"
-    },
-    {
-      "player": "Xross",
-      "org": "NS",
+      "player": "BeYN",
+      "org": "DRX",
       "country": "South Korea",
       "agents": [
         "sova",
-        "fade"
+        "fade",
+        "skye"
       ],
-      "rounds_played": "141",
-      "rating": "0.97",
-      "average_combat_score": "179.3",
-      "kill_deaths": "0.93",
-      "kill_assists_survived_traded": "79%",
-      "average_damage_per_round": "119.4",
-      "kills_per_round": "0.58",
-      "assists_per_round": "0.31",
+      "rounds_played": "339",
+      "rating": "0.98",
+      "average_combat_score": "181.6",
+      "kill_deaths": "0.97",
+      "kill_assists_survived_traded": "72%",
+      "average_damage_per_round": "118.7",
+      "kills_per_round": "0.64",
+      "assists_per_round": "0.29",
       "first_kills_per_round": "0.06",
-      "first_deaths_per_round": "0.06",
-      "headshot_percentage": "20%",
-      "clutch_success_percentage": "16%"
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "27%",
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "Ash",
@@ -15959,25 +16222,24 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
-      "player": "stax",
-      "org": "T1",
+      "player": "Francis",
+      "org": "NS",
       "country": "South Korea",
       "agents": [
-        "sova",
-        "fade"
+        "yoru"
       ],
-      "rounds_played": "232",
-      "rating": "0.86",
-      "average_combat_score": "158.6",
-      "kill_deaths": "0.79",
-      "kill_assists_survived_traded": "72%",
-      "average_damage_per_round": "108.4",
-      "kills_per_round": "0.54",
-      "assists_per_round": "0.27",
-      "first_kills_per_round": "0.07",
-      "first_deaths_per_round": "0.04",
-      "headshot_percentage": "22%",
-      "clutch_success_percentage": "9%"
+      "rounds_played": "250",
+      "rating": "0.94",
+      "average_combat_score": "211.0",
+      "kill_deaths": "0.98",
+      "kill_assists_survived_traded": "70%",
+      "average_damage_per_round": "129.1",
+      "kills_per_round": "0.71",
+      "assists_per_round": "0.24",
+      "first_kills_per_round": "0.17",
+      "first_deaths_per_round": "0.16",
+      "headshot_percentage": "26%",
+      "clutch_success_percentage": "31%"
     },
     {
       "player": "Lakia",
@@ -16002,6 +16264,27 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clutch_success_percentage": "10%"
     },
     {
+      "player": "stax",
+      "org": "T1",
+      "country": "South Korea",
+      "agents": [
+        "sova",
+        "fade"
+      ],
+      "rounds_played": "275",
+      "rating": "0.86",
+      "average_combat_score": "156.5",
+      "kill_deaths": "0.79",
+      "kill_assists_survived_traded": "71%",
+      "average_damage_per_round": "106.1",
+      "kills_per_round": "0.53",
+      "assists_per_round": "0.27",
+      "first_kills_per_round": "0.06",
+      "first_deaths_per_round": "0.05",
+      "headshot_percentage": "22%",
+      "clutch_success_percentage": "14%"
+    },
+    {
       "player": "Hermes",
       "org": "DRX",
       "country": "South Korea",
@@ -16010,18 +16293,18 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
         "viper",
         "cypher"
       ],
-      "rounds_played": "271",
-      "rating": "0.82",
-      "average_combat_score": "167.5",
-      "kill_deaths": "0.86",
-      "kill_assists_survived_traded": "71%",
-      "average_damage_per_round": "106.2",
-      "kills_per_round": "0.59",
-      "assists_per_round": "0.24",
-      "first_kills_per_round": "0.13",
-      "first_deaths_per_round": "0.15",
+      "rounds_played": "339",
+      "rating": "0.85",
+      "average_combat_score": "172.9",
+      "kill_deaths": "0.88",
+      "kill_assists_survived_traded": "69%",
+      "average_damage_per_round": "110.5",
+      "kills_per_round": "0.61",
+      "assists_per_round": "0.25",
+      "first_kills_per_round": "0.12",
+      "first_deaths_per_round": "0.14",
       "headshot_percentage": "27%",
-      "clutch_success_percentage": "9%"
+      "clutch_success_percentage": "13%"
     },
     {
       "player": "oonzmlp",
@@ -17419,7 +17702,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "kyu",
       "cortezia"
     ],
-    "scrapedAt": "2026-02-11T01:52:54.853Z"
+    "scrapedAt": "2026-02-14T02:26:26.665Z"
   },
   "Cloud9": {
     "teamName": "Cloud9",
@@ -17431,7 +17714,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "penny",
       "oxy"
     ],
-    "scrapedAt": "2026-02-11T01:52:57.653Z"
+    "scrapedAt": "2026-02-14T02:26:29.362Z"
   },
   "100 Thieves": {
     "teamName": "100 Thieves",
@@ -17443,7 +17726,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "timotino",
       "bang"
     ],
-    "scrapedAt": "2026-02-11T01:53:00.325Z"
+    "scrapedAt": "2026-02-14T02:26:32.007Z"
   },
   "NRG": {
     "teamName": "NRG",
@@ -17455,7 +17738,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "mada",
       "skuba"
     ],
-    "scrapedAt": "2026-02-11T01:53:02.938Z"
+    "scrapedAt": "2026-02-14T02:26:34.622Z"
   },
   "Evil Geniuses": {
     "teamName": "Evil Geniuses",
@@ -17467,7 +17750,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "okeanos",
       "dgzin"
     ],
-    "scrapedAt": "2026-02-11T01:53:05.349Z"
+    "scrapedAt": "2026-02-14T02:26:37.029Z"
   },
   "LOUD": {
     "teamName": "LOUD",
@@ -17479,7 +17762,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "pancada",
       "cauanzin"
     ],
-    "scrapedAt": "2026-02-11T01:53:07.934Z"
+    "scrapedAt": "2026-02-14T02:26:39.632Z"
   },
   "FURIA": {
     "teamName": "FURIA",
@@ -17491,7 +17774,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "koalanoob",
       "alym"
     ],
-    "scrapedAt": "2026-02-11T01:53:10.542Z"
+    "scrapedAt": "2026-02-14T02:26:42.246Z"
   },
   "MIBR": {
     "teamName": "MIBR",
@@ -17503,7 +17786,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "verno",
       "aspas"
     ],
-    "scrapedAt": "2026-02-11T01:53:13.146Z"
+    "scrapedAt": "2026-02-14T02:26:44.854Z"
   },
   "Leviatán": {
     "teamName": "Leviatán",
@@ -17515,7 +17798,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "neon",
       "sato"
     ],
-    "scrapedAt": "2026-02-11T01:53:15.765Z"
+    "scrapedAt": "2026-02-14T02:26:47.491Z"
   },
   "KRÜ Esports": {
     "teamName": "KRÜ Esports",
@@ -17527,7 +17810,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "less",
       "dantedeu5"
     ],
-    "scrapedAt": "2026-02-11T01:53:18.464Z"
+    "scrapedAt": "2026-02-14T02:26:50.131Z"
   },
   "G2 Esports": {
     "teamName": "G2 Esports",
@@ -17539,7 +17822,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "trent",
       "leaf"
     ],
-    "scrapedAt": "2026-02-11T01:53:21.150Z"
+    "scrapedAt": "2026-02-14T02:26:52.724Z"
   },
   "ENVY": {
     "teamName": "ENVY",
@@ -17551,7 +17834,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "rossy",
       "keznit"
     ],
-    "scrapedAt": "2026-02-11T01:53:23.138Z"
+    "scrapedAt": "2026-02-14T02:26:54.735Z"
   },
   "Fnatic": {
     "teamName": "Fnatic",
@@ -17563,7 +17846,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "veqaj",
       "alfajer"
     ],
-    "scrapedAt": "2026-02-11T01:53:25.730Z"
+    "scrapedAt": "2026-02-14T02:26:57.337Z"
   },
   "Team Liquid": {
     "teamName": "Team Liquid",
@@ -17575,7 +17858,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "miniboo",
       "kamo"
     ],
-    "scrapedAt": "2026-02-11T01:53:28.445Z"
+    "scrapedAt": "2026-02-14T02:27:00.080Z"
   },
   "Team Vitality": {
     "teamName": "Team Vitality",
@@ -17587,7 +17870,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "chronicle",
       "sayonara"
     ],
-    "scrapedAt": "2026-02-11T01:53:31.161Z"
+    "scrapedAt": "2026-02-14T02:27:02.700Z"
   },
   "Karmine Corp": {
     "teamName": "Karmine Corp",
@@ -17599,7 +17882,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "avez",
       "suygetsu"
     ],
-    "scrapedAt": "2026-02-11T01:53:33.866Z"
+    "scrapedAt": "2026-02-14T02:27:05.300Z"
   },
   "Team Heretics": {
     "teamName": "Team Heretics",
@@ -17611,7 +17894,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "benjyfishy",
       "comeback"
     ],
-    "scrapedAt": "2026-02-11T01:53:36.516Z"
+    "scrapedAt": "2026-02-14T02:27:07.948Z"
   },
   "NAVI": {
     "teamName": "NAVI",
@@ -17623,7 +17906,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ruxic",
       "hiro"
     ],
-    "scrapedAt": "2026-02-11T01:53:39.226Z"
+    "scrapedAt": "2026-02-14T02:27:10.562Z"
   },
   "FUT Esports": {
     "teamName": "FUT Esports",
@@ -17635,7 +17918,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "krostaly",
       "baha"
     ],
-    "scrapedAt": "2026-02-11T01:53:41.932Z"
+    "scrapedAt": "2026-02-14T02:27:13.162Z"
   },
   "BBL Esports": {
     "teamName": "BBL Esports",
@@ -17647,7 +17930,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ros",
       "lovers-rock"
     ],
-    "scrapedAt": "2026-02-11T01:53:44.694Z"
+    "scrapedAt": "2026-02-14T02:27:15.892Z"
   },
   "Giants Gaming": {
     "teamName": "Giants Gaming",
@@ -17659,7 +17942,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "flickless",
       "ara"
     ],
-    "scrapedAt": "2026-02-11T01:53:47.150Z"
+    "scrapedAt": "2026-02-14T02:27:18.288Z"
   },
   "PCIFIC Esports": {
     "teamName": "PCIFIC Esports",
@@ -17671,7 +17954,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "ninja",
       "seven"
     ],
-    "scrapedAt": "2026-02-11T01:53:49.817Z"
+    "scrapedAt": "2026-02-14T02:27:20.947Z"
   },
   "Gentle Mates": {
     "teamName": "Gentle Mates",
@@ -17683,7 +17966,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "glyph",
       "minny"
     ],
-    "scrapedAt": "2026-02-11T01:53:52.464Z"
+    "scrapedAt": "2026-02-14T02:27:23.600Z"
   },
   "ULF Esports": {
     "teamName": "ULF Esports",
@@ -17695,7 +17978,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sturnn",
       "favian"
     ],
-    "scrapedAt": "2026-02-11T01:53:54.895Z"
+    "scrapedAt": "2026-02-14T02:27:26.031Z"
   },
   "Paper Rex": {
     "teamName": "Paper Rex",
@@ -17707,7 +17990,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "d4v41",
       "something"
     ],
-    "scrapedAt": "2026-02-11T01:53:57.622Z"
+    "scrapedAt": "2026-02-14T02:27:28.648Z"
   },
   "DRX": {
     "teamName": "DRX",
@@ -17719,7 +18002,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "hyunmin",
       "beyn"
     ],
-    "scrapedAt": "2026-02-11T01:54:00.128Z"
+    "scrapedAt": "2026-02-14T02:27:31.168Z"
   },
   "T1": {
     "teamName": "T1",
@@ -17731,7 +18014,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "buzz",
       "izu"
     ],
-    "scrapedAt": "2026-02-11T01:54:02.921Z"
+    "scrapedAt": "2026-02-14T02:27:33.807Z"
   },
   "Gen.G": {
     "teamName": "Gen.G",
@@ -17743,7 +18026,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "karon",
       "t3xture"
     ],
-    "scrapedAt": "2026-02-11T01:54:05.144Z"
+    "scrapedAt": "2026-02-14T02:27:36.029Z"
   },
   "ZETA DIVISION": {
     "teamName": "ZETA DIVISION",
@@ -17755,7 +18038,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "eko",
       "xdll"
     ],
-    "scrapedAt": "2026-02-11T01:54:07.901Z"
+    "scrapedAt": "2026-02-14T02:27:38.640Z"
   },
   "DetonatioN Gaming": {
     "teamName": "DetonatioN Gaming",
@@ -17767,7 +18050,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "caedye",
       "akame"
     ],
-    "scrapedAt": "2026-02-11T01:54:10.620Z"
+    "scrapedAt": "2026-02-14T02:27:41.259Z"
   },
   "Global Esports": {
     "teamName": "Global Esports",
@@ -17779,7 +18062,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "xavi8k",
       "autumn"
     ],
-    "scrapedAt": "2026-02-11T01:54:13.334Z"
+    "scrapedAt": "2026-02-14T02:27:43.874Z"
   },
   "Team Secret": {
     "teamName": "Team Secret",
@@ -17791,7 +18074,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sylvan",
       "berserx"
     ],
-    "scrapedAt": "2026-02-11T01:54:16.000Z"
+    "scrapedAt": "2026-02-14T02:27:46.471Z"
   },
   "FULL SENSE": {
     "teamName": "FULL SENSE",
@@ -17803,7 +18086,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "primmie",
       "jitboys"
     ],
-    "scrapedAt": "2026-02-11T01:54:18.830Z"
+    "scrapedAt": "2026-02-14T02:27:49.304Z"
   },
   "Rex Regum Qeon": {
     "teamName": "Rex Regum Qeon",
@@ -17815,7 +18098,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "jemkin",
       "kushy"
     ],
-    "scrapedAt": "2026-02-11T01:54:21.512Z"
+    "scrapedAt": "2026-02-14T02:27:51.916Z"
   },
   "VARREL": {
     "teamName": "VARREL",
@@ -17827,7 +18110,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "oonzmlp",
       "zexy"
     ],
-    "scrapedAt": "2026-02-11T01:54:23.304Z"
+    "scrapedAt": "2026-02-14T02:27:53.762Z"
   },
   "Nongshim RedForce": {
     "teamName": "Nongshim RedForce",
@@ -17839,7 +18122,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "dambi",
       "ivy"
     ],
-    "scrapedAt": "2026-02-11T01:54:26.030Z"
+    "scrapedAt": "2026-02-14T02:27:56.367Z"
   },
   "EDward Gaming": {
     "teamName": "EDward Gaming",
@@ -17851,7 +18134,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "cb",
       "smoggy"
     ],
-    "scrapedAt": "2026-02-11T01:54:28.742Z"
+    "scrapedAt": "2026-02-14T02:27:59.093Z"
   },
   "Bilibili Gaming": {
     "teamName": "Bilibili Gaming",
@@ -17863,7 +18146,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "knight",
       "bud"
     ],
-    "scrapedAt": "2026-02-11T01:54:31.220Z"
+    "scrapedAt": "2026-02-14T02:28:01.580Z"
   },
   "FunPlus Phoenix": {
     "teamName": "FunPlus Phoenix",
@@ -17875,7 +18158,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sscary",
       "setrod"
     ],
-    "scrapedAt": "2026-02-11T01:54:33.687Z"
+    "scrapedAt": "2026-02-14T02:28:04.059Z"
   },
   "JD Gaming": {
     "teamName": "JD Gaming",
@@ -17887,7 +18170,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "yuicaw",
       "coconut"
     ],
-    "scrapedAt": "2026-02-11T01:54:36.378Z"
+    "scrapedAt": "2026-02-14T02:28:06.722Z"
   },
   "Nova Esports": {
     "teamName": "Nova Esports",
@@ -17899,7 +18182,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "heybay",
       "guang"
     ],
-    "scrapedAt": "2026-02-11T01:54:39.033Z"
+    "scrapedAt": "2026-02-14T02:28:09.373Z"
   },
   "All Gamers": {
     "teamName": "All Gamers",
@@ -17911,7 +18194,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "f4ngeer",
       "iamgrq"
     ],
-    "scrapedAt": "2026-02-11T01:54:41.104Z"
+    "scrapedAt": "2026-02-14T02:28:11.451Z"
   },
   "Dragon Ranger Gaming": {
     "teamName": "Dragon Ranger Gaming",
@@ -17923,7 +18206,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "akeman",
       "spiritz1"
     ],
-    "scrapedAt": "2026-02-11T01:54:43.569Z"
+    "scrapedAt": "2026-02-14T02:28:13.928Z"
   },
   "Wolves Esports": {
     "teamName": "Wolves Esports",
@@ -17935,7 +18218,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "spring",
       "qiutian"
     ],
-    "scrapedAt": "2026-02-11T01:54:45.844Z"
+    "scrapedAt": "2026-02-14T02:28:16.207Z"
   },
   "Titan Esports Club": {
     "teamName": "Titan Esports Club",
@@ -17947,7 +18230,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "abo",
       "coco"
     ],
-    "scrapedAt": "2026-02-11T01:54:48.277Z"
+    "scrapedAt": "2026-02-14T02:28:18.661Z"
   },
   "TYLOO": {
     "teamName": "TYLOO",
@@ -17959,7 +18242,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "sword9",
       "slowly"
     ],
-    "scrapedAt": "2026-02-11T01:54:50.536Z"
+    "scrapedAt": "2026-02-14T02:28:20.947Z"
   },
   "Trace Esports": {
     "teamName": "Trace Esports",
@@ -17971,7 +18254,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "viva",
       "delb"
     ],
-    "scrapedAt": "2026-02-11T01:54:53.202Z"
+    "scrapedAt": "2026-02-14T02:28:23.616Z"
   },
   "Xi Lai Gaming": {
     "teamName": "Xi Lai Gaming",
@@ -17983,7 +18266,7 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "rarga",
       "happywei"
     ],
-    "scrapedAt": "2026-02-11T01:54:55.650Z"
+    "scrapedAt": "2026-02-14T02:28:26.054Z"
   }
 };
 

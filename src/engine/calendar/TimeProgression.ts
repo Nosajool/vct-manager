@@ -185,9 +185,6 @@ export class TimeProgression {
       });
     }
 
-    // DEPRECATED: Training availability is now computed dynamically by DayScheduleService
-    // No longer adding training_available events here
-
     // Sort: required first, then by type
     return activities.sort((a, b) => {
       if (a.required && !b.required) return -1;

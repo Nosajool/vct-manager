@@ -9,8 +9,6 @@ import type { CalendarEvent, CalendarEventType, Team, Match, SeasonPhase } from 
 export interface ScheduleOptions {
   startDate: string; // ISO date string
   seasonYear: number;
-  includeTrainingDays?: boolean;
-  includeRestDays?: boolean;
   /** Skip league match events (use when GlobalTournamentScheduler handles matches) */
   skipMatchEvents?: boolean;
 }
@@ -273,33 +271,7 @@ export class EventScheduler {
     return events;
   }
 
-  /**
-   * DEPRECATED: Training day events are no longer pre-generated.
-   * Use DayScheduleService for dynamic availability computation.
-   * @deprecated Phase 1: Removed pre-generation of training_available events
-   */
-  scheduleTrainingDays(
-    _startDate: string,
-    _endDate: string,
-    _matchDates: string[]
-  ): CalendarEvent[] {
-    // No longer generates events - training availability is computed dynamically
-    return [];
-  }
 
-  /**
-   * DEPRECATED: Scrim availability events are no longer pre-generated.
-   * Use DayScheduleService for dynamic availability computation.
-   * @deprecated Phase 1: Removed pre-generation of scrim_available events
-   */
-  scheduleScrimDays(
-    _startDate: string,
-    _endDate: string,
-    _matchDates: string[]
-  ): CalendarEvent[] {
-    // No longer generates events - scrim availability is computed dynamically
-    return [];
-  }
 
   /**
    * Generate rest day events (one per week, typically Sunday)
