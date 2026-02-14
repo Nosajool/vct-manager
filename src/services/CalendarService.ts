@@ -11,10 +11,13 @@ import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
 import { activityResolutionService } from './ActivityResolutionService';
+import { trainingService } from './TrainingService';
+import { scrimService } from './ScrimService';
+import { eventLifecycleManager } from '../engine/scheduling/EventLifecycleManager';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
-import type { ActivityResolutionResult, ActivityConfig } from '../types/activityPlan';
+import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
 
 /**
@@ -92,18 +95,99 @@ export class CalendarService {
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
 
-    // Separate events into required and optional
+    // Separate events into required and scheduled activities
     const requiredEvents: CalendarEvent[] = [];
-    const optionalEvents: CalendarEvent[] = []; // scheduled_training, scheduled_scrim
+    const scheduledActivities: CalendarEvent[] = []; // scheduled_training, scheduled_scrim
 
     for (const event of unprocessedEvents) {
       if (
         event.type === 'scheduled_training' ||
         event.type === 'scheduled_scrim'
       ) {
-        optionalEvents.push(event);
+        scheduledActivities.push(event);
       } else {
         requiredEvents.push(event);
+      }
+    }
+
+    // Phase 4: Lifecycle state transitions for scheduled activities
+    // Handle lifecycle transitions at day start (before processing)
+    for (const event of scheduledActivities) {
+      const config = state.getActivityConfigByEventId(event.id);
+
+      if (config) {
+        // Transition configured → locked
+        if (config.status === 'configured') {
+          const transitionResult = eventLifecycleManager.transitionToLocked(config.status);
+          if (transitionResult.valid) {
+            // Update both the event and the config
+            state.updateEventLifecycleState(event.id, 'locked');
+            state.setActivityConfig({ ...config, status: 'locked' });
+            console.log(`  Transitioned ${event.type} (${event.id}) to locked state`);
+          }
+        }
+      } else {
+        // No config found - check if this is a needs_setup activity
+        // Auto-configure at 80% efficiency
+        if (event.type === 'scheduled_training') {
+          const trainingPlan = trainingService.autoAssignTraining();
+          const assignments = Array.from(trainingPlan.values()).map(assignment => ({
+            playerId: assignment.playerId,
+            action: 'train' as const,
+            goal: assignment.goal,
+            intensity: assignment.intensity,
+          }));
+
+          const autoConfig: TrainingActivityConfig = {
+            type: 'training',
+            id: crypto.randomUUID(),
+            date: event.date,
+            eventId: event.id,
+            status: 'locked', // Immediately locked since it's today
+            assignments,
+            autoConfigured: true,
+          };
+
+          state.setActivityConfig(autoConfig);
+          state.updateEventLifecycleState(event.id, 'locked');
+          console.log(`  Auto-configured training activity (${event.id}) at 80% efficiency`);
+        } else if (event.type === 'scheduled_scrim') {
+          const scrimOptions = scrimService.generateAutoConfig();
+
+          if (scrimOptions) {
+            const autoConfig: ScrimActivityConfig = {
+              type: 'scrim',
+              id: crypto.randomUUID(),
+              date: event.date,
+              eventId: event.id,
+              status: 'locked', // Immediately locked since it's today
+              action: 'play',
+              partnerTeamId: scrimOptions.partnerTeamId,
+              maps: scrimOptions.focusMaps || [],
+              intensity: scrimOptions.intensity || 'moderate',
+              autoConfigured: true,
+            };
+
+            state.setActivityConfig(autoConfig);
+            state.updateEventLifecycleState(event.id, 'locked');
+            console.log(`  Auto-configured scrim activity (${event.id}) at 80% efficiency`);
+          } else {
+            // Auto-config failed - skip the scrim
+            const skipConfig: ScrimActivityConfig = {
+              type: 'scrim',
+              id: crypto.randomUUID(),
+              date: event.date,
+              eventId: event.id,
+              status: 'locked',
+              action: 'skip',
+              autoConfigured: true,
+            };
+
+            state.setActivityConfig(skipConfig);
+            state.updateEventLifecycleState(event.id, 'locked');
+            console.log(`  Auto-configured scrim to skip (${event.id}) - no partner available`);
+          }
+        }
       }
     }
 
@@ -162,50 +246,59 @@ export class CalendarService {
       }
     }
 
-    // Process optional events (training, scrim) using activity configs
-    if (optionalEvents.length > 0) {
+    // Process scheduled activities (training, scrim) using activity configs
+    if (scheduledActivities.length > 0) {
       const activityConfigs: ActivityConfig[] = [];
 
-      for (const event of optionalEvents) {
+      for (const event of scheduledActivities) {
         // Feature gate check - map event type to feature name
         const featureMap: Record<string, FeatureType> = {
-          'training_available': 'training',
-          'scrim_available': 'scrims'
+          'scheduled_training': 'training',
+          'scheduled_scrim': 'scrims'
         };
         const featureName = featureMap[event.type];
 
         if (featureName && !featureGateService.isFeatureUnlocked(featureName)) {
-          // Feature is locked (NOT unlocked) - skip this activity
+          // Feature is locked - skip this activity
           state.markEventProcessed(event.id);
           skippedEvents.push(event);
           console.log(`  Skipping locked feature: ${event.type} (${event.id})`);
           continue;
         }
 
-        const config = state.getActivityConfig(event.id);
+        const config = state.getActivityConfigByEventId(event.id);
 
-        if (config && config.status === 'configured') {
-          // Collect configured activities
+        if (config && config.status === 'locked') {
+          // Collect locked activities for resolution
+          // They will be transitioned to completed after resolution
           activityConfigs.push(config);
 
-          // Mark event as processed
-          state.markEventProcessed(event.id);
-          processedEvents.push(event);
-
-          console.log(`  Processing configured activity: ${event.type} (${event.id})`);
+          console.log(`  Processing locked activity: ${event.type} (${event.id})`);
         } else {
-          // No config or not configured - skip the activity
+          // No config or not in locked state - skip the activity
           state.markEventProcessed(event.id);
           skippedEvents.push(event);
 
-          console.log(`  Skipping unconfigured activity: ${event.type} (${event.id})`);
+          console.log(`  Skipping activity not in locked state: ${event.type} (${event.id}) - status: ${config?.status || 'no config'}`);
         }
       }
 
-      // Resolve all configured activities
+      // Resolve all locked activities
       if (activityConfigs.length > 0) {
-        console.log(`  Resolving ${activityConfigs.length} configured activities`);
+        console.log(`  Resolving ${activityConfigs.length} locked activities`);
         activityResults = activityResolutionService.resolveAllActivities(activityConfigs);
+
+        // Transition locked → completed after resolution
+        for (const config of activityConfigs) {
+          const transitionResult = eventLifecycleManager.transitionToCompleted('locked');
+          if (transitionResult.valid) {
+            state.updateEventLifecycleState(config.eventId, 'completed');
+            state.setActivityConfig({ ...config, status: 'completed' });
+            state.markEventProcessed(config.eventId);
+            processedEvents.push(scheduledActivities.find(e => e.id === config.eventId)!);
+            console.log(`  Completed activity: ${config.eventId}`);
+          }
+        }
       }
 
       // Clear today's configs from slice

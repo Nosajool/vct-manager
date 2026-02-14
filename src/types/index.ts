@@ -123,6 +123,9 @@ export type {
   SalaryPaymentEventData,
   RestDayEventData,
   CalendarEventData,
+  ActivityLifecycleState,
+  SchedulableActivityType,
+  PlaceholderMatchEventData,
 } from './calendar';
 
 // Activity plan types
