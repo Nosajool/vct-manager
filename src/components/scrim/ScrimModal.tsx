@@ -57,6 +57,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
+  const calendar = useGameStore((state) => state.calendar);
 
   // Get available partners organized by tier - must be before early returns
   const availablePartners = useMemo(() => {
@@ -117,8 +118,17 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
       return;
     }
 
+    // Get the event to extract the date
+    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
+    if (!event) {
+      console.error('Event not found:', eventId);
+      return;
+    }
+
     const config: ScrimActivityConfig = {
       type: 'scrim',
+      id: existingConfig?.id ?? crypto.randomUUID(), // Reuse existing ID or generate new one
+      date: event.date,
       eventId,
       status: 'configured',
       action: isSkipping ? 'skip' : 'play',
@@ -135,7 +145,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
     }
 
     // Write config to store
-    setActivityConfig(eventId, config);
+    setActivityConfig(config);
 
     // Close modal
     handleClose();

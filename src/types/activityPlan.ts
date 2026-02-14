@@ -1,10 +1,6 @@
 import type { TrainingGoal, TrainingIntensity, TrainingResult } from './economy';
 import type { ScrimResult } from './scrim';
-
-/**
- * Status of an activity configuration
- */
-export type ActivityConfigStatus = 'needs_setup' | 'configured';
+import type { ActivityLifecycleState } from './calendar';
 
 /**
  * Player assignment for a training activity
@@ -21,8 +17,10 @@ export interface TrainingPlayerAssignment {
  */
 export interface TrainingActivityConfig {
   type: 'training';
-  eventId: string;
-  status: ActivityConfigStatus;
+  id: string;                           // Own identity, not tied to event ID
+  date: string;                         // ISO date string for which day this is for
+  eventId: string;                      // Links to the calendar event
+  status: ActivityLifecycleState;       // Full lifecycle state
   assignments: TrainingPlayerAssignment[];
   autoConfigured: boolean;
 }
@@ -32,8 +30,10 @@ export interface TrainingActivityConfig {
  */
 export interface ScrimActivityConfig {
   type: 'scrim';
-  eventId: string;
-  status: ActivityConfigStatus;
+  id: string;                           // Own identity, not tied to event ID
+  date: string;                         // ISO date string for which day this is for
+  eventId: string;                      // Links to the calendar event
+  status: ActivityLifecycleState;       // Full lifecycle state
   action: 'play' | 'skip';
   partnerTeamId?: string;
   maps?: string[];

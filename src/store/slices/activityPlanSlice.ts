@@ -21,16 +21,18 @@ function getFeatureForEventType(eventType: string): FeatureType | null {
 }
 
 export interface ActivityPlanSlice {
-  // State: activity configs keyed by event ID
+  // State: activity configs keyed by config ID (not event ID)
   activityConfigs: Record<string, ActivityConfig>;
 
   // Actions
-  setActivityConfig: (eventId: string, config: ActivityConfig) => void;
-  removeActivityConfig: (eventId: string) => void;
+  setActivityConfig: (config: ActivityConfig) => void;
+  removeActivityConfig: (configId: string) => void;
+  removeActivityConfigByEventId: (eventId: string) => void;
   clearConfigsForDate: (date: string) => void;
 
   // Selectors
-  getActivityConfig: (eventId: string) => ActivityConfig | undefined;
+  getActivityConfig: (configId: string) => ActivityConfig | undefined;
+  getActivityConfigByEventId: (eventId: string) => ActivityConfig | undefined;
   getTodayConfigs: () => ActivityConfig[];
   hasUnconfiguredActivities: () => boolean;
   getUnconfiguredActivities: () => string[]; // Returns array of unconfigured event IDs
@@ -46,32 +48,38 @@ export const createActivityPlanSlice: StateCreator<
   activityConfigs: {},
 
   // Actions
-  setActivityConfig: (eventId, config) =>
+  setActivityConfig: (config) =>
     set((state) => ({
-      activityConfigs: { ...state.activityConfigs, [eventId]: config },
+      activityConfigs: { ...state.activityConfigs, [config.id]: config },
     })),
 
-  removeActivityConfig: (eventId) =>
+  removeActivityConfig: (configId) =>
     set((state) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [eventId]: removed, ...remaining } = state.activityConfigs;
+      const { [configId]: removed, ...remaining } = state.activityConfigs;
+      return { activityConfigs: remaining };
+    }),
+
+  removeActivityConfigByEventId: (eventId) =>
+    set((state) => {
+      const remaining: Record<string, ActivityConfig> = {};
+
+      for (const [configId, config] of Object.entries(state.activityConfigs)) {
+        if (config.eventId !== eventId) {
+          remaining[configId] = config;
+        }
+      }
+
       return { activityConfigs: remaining };
     }),
 
   clearConfigsForDate: (date) =>
     set((state) => {
-      // Access calendar from the full store state
-      const fullState = get() as any;
-      const eventsOnDate = fullState.calendar?.scheduledEvents?.filter(
-        (event: any) => event.date === date
-      ) || [];
-
-      const eventIdsToRemove = new Set(eventsOnDate.map((e: any) => e.id));
       const remaining: Record<string, ActivityConfig> = {};
 
-      for (const [eventId, config] of Object.entries(state.activityConfigs)) {
-        if (!eventIdsToRemove.has(eventId)) {
-          remaining[eventId] = config;
+      for (const [configId, config] of Object.entries(state.activityConfigs)) {
+        if (config.date !== date) {
+          remaining[configId] = config;
         }
       }
 
@@ -79,23 +87,21 @@ export const createActivityPlanSlice: StateCreator<
     }),
 
   // Selectors
-  getActivityConfig: (eventId) => get().activityConfigs[eventId],
+  getActivityConfig: (configId) => get().activityConfigs[configId],
+
+  getActivityConfigByEventId: (eventId) => {
+    const configs = get().activityConfigs;
+    return Object.values(configs).find((config) => config.eventId === eventId);
+  },
 
   getTodayConfigs: () => {
     const fullState = get() as any;
     const today = fullState.calendar?.currentDate;
     if (!today) return [];
 
-    const todaysEvents = fullState.calendar?.scheduledEvents?.filter(
-      (event: any) => event.date === today
-    ) || [];
-
-    const todaysEventIds = new Set(todaysEvents.map((e: any) => e.id));
     const configs = get().activityConfigs;
 
-    return Object.entries(configs)
-      .filter(([eventId]) => todaysEventIds.has(eventId))
-      .map(([, config]) => config);
+    return Object.values(configs).filter((config) => config.date === today);
   },
 
   hasUnconfiguredActivities: () => {
@@ -119,7 +125,7 @@ export const createActivityPlanSlice: StateCreator<
         return false; // Ignore locked features
       }
 
-      const config = configs[event.id];
+      const config = Object.values(configs).find((c) => c.eventId === event.id);
       return !config || config.status === 'needs_setup';
     });
   },
@@ -146,7 +152,7 @@ export const createActivityPlanSlice: StateCreator<
           return false; // Ignore locked features
         }
 
-        const config = configs[event.id];
+        const config = Object.values(configs).find((c) => c.eventId === event.id);
         return !config || config.status === 'needs_setup';
       })
       .map((event: any) => event.id);

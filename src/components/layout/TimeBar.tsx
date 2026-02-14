@@ -248,13 +248,15 @@ export function TimeBar() {
 
         const config: TrainingActivityConfig = {
           type: 'training',
+          id: crypto.randomUUID(),
+          date: event.date,
           eventId: event.id,
           status: 'configured',
           assignments,
           autoConfigured: true,
         };
 
-        state.setActivityConfig(event.id, config);
+        state.setActivityConfig(config);
       } else if (event.type === 'scheduled_scrim') {
         // Auto-configure scrim
         const scrimOptions = scrimService.generateAutoConfig();
@@ -262,6 +264,8 @@ export function TimeBar() {
         if (scrimOptions) {
           const config: ScrimActivityConfig = {
             type: 'scrim',
+            id: crypto.randomUUID(),
+            date: event.date,
             eventId: event.id,
             status: 'configured',
             action: 'play',
@@ -271,18 +275,20 @@ export function TimeBar() {
             autoConfigured: true,
           };
 
-          state.setActivityConfig(event.id, config);
+          state.setActivityConfig(config);
         } else {
           // If auto-config fails, skip the scrim
           const config: ScrimActivityConfig = {
             type: 'scrim',
+            id: crypto.randomUUID(),
+            date: event.date,
             eventId: event.id,
             status: 'configured',
             action: 'skip',
             autoConfigured: true,
           };
 
-          state.setActivityConfig(event.id, config);
+          state.setActivityConfig(config);
         }
       }
     }

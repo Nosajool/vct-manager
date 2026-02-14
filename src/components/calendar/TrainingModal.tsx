@@ -66,6 +66,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
+  const calendar = useGameStore((state) => state.calendar);
 
   // Load existing config when modal opens
   useEffect(() => {
@@ -293,9 +294,18 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
       return;
     }
 
+    // Get the event to extract the date
+    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
+    if (!event) {
+      console.error('Event not found:', eventId);
+      return;
+    }
+
     // Create config object
     const config: TrainingActivityConfig = {
       type: 'training',
+      id: existingConfig?.id ?? crypto.randomUUID(), // Reuse existing ID or generate new one
+      date: event.date,
       eventId,
       status: 'configured',
       assignments: Array.from(trainingPlan.values()),
@@ -303,7 +313,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
     };
 
     // Save to store
-    setActivityConfig(eventId, config);
+    setActivityConfig(config);
 
     // Close modal
     handleClose();

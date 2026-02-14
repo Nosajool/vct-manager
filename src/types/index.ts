@@ -127,7 +127,6 @@ export type {
 
 // Activity plan types
 export type {
-  ActivityConfigStatus,
   TrainingPlayerAssignment,
   TrainingActivityConfig,
   ScrimActivityConfig,
