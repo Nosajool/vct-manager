@@ -31,9 +31,9 @@ function getEventColor(type: string): string {
       return 'bg-purple-500';
     case 'salary_payment':
       return 'bg-yellow-500';
-    case 'training_available':
+    case 'scheduled_training':
       return 'bg-blue-500';
-    case 'scrim_available':
+    case 'scheduled_scrim':
       return 'bg-orange-500';
     case 'rest_day':
       return 'bg-green-500';

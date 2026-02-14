@@ -694,7 +694,7 @@ export class ScrimService {
   private markScrimEventProcessed(): void {
     const state = useGameStore.getState();
     const todaysActivities = state.getTodaysActivities();
-    const scrimEvent = todaysActivities.find((e) => e.type === 'scrim_available');
+    const scrimEvent = todaysActivities.find((e) => e.type === 'scheduled_scrim');
     if (scrimEvent) {
       state.markEventProcessed(scrimEvent.id);
     }

@@ -21,9 +21,26 @@ export type CalendarEventType =
   | 'salary_payment'
   | 'sponsorship_renewal'
   | 'season_end'
-  | 'training_available'
-  | 'scrim_available'
-  | 'rest_day';
+  | 'rest_day'
+  | 'placeholder_match'
+  | 'scheduled_training'
+  | 'scheduled_scrim'
+  | 'team_activity';
+
+export type ActivityLifecycleState =
+  | 'needs_setup'   // scheduled but unconfigured
+  | 'configured'    // user has set it up, can still modify
+  | 'locked'        // day arrived, frozen
+  | 'completed'     // resolved by ActivityResolutionService
+  | 'cancelled';    // removed before execution
+
+export type SchedulableActivityType =
+  | 'training'
+  | 'scrim'
+  | 'rest'
+  | 'social_media'
+  | 'team_offsite'
+  | 'bootcamp';
 
 export interface CalendarEvent {
   id: string;
@@ -32,6 +49,7 @@ export interface CalendarEvent {
   data: unknown;  // Event-specific data
   processed: boolean;
   required?: boolean;  // Must process (matches) vs optional (training)
+  lifecycleState?: ActivityLifecycleState;  // Only for activity events
 }
 
 export interface GameCalendar {
@@ -78,9 +96,28 @@ export interface RestDayEventData {
   description?: string;
 }
 
+// TeamSlot types for placeholder matches
+export type TeamSlot =
+  | { type: 'team'; teamId: string }
+  | { type: 'tbd' }
+  | { type: 'qualified_from'; tournamentId: string; position: number };
+
+export interface PlaceholderMatchEventData {
+  tournamentId: string;
+  tournamentName: string;
+  phase: SeasonPhase;
+  region?: Region;
+  bracketMatchId: string;        // links to BracketMatch
+  teamASlot: TeamSlot;           // may be 'tbd' or 'qualified_from'
+  teamBSlot: TeamSlot;
+  resolvedTeamAId?: string;      // filled when resolved
+  resolvedTeamBId?: string;
+}
+
 // Union type for all event data - used for type-safe casting
 export type CalendarEventData =
   | MatchEventData
   | TournamentEventData
   | SalaryPaymentEventData
-  | RestDayEventData;
+  | RestDayEventData
+  | PlaceholderMatchEventData;

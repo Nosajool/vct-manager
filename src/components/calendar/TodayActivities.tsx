@@ -30,10 +30,10 @@ export function TodayActivities({ onTrainingClick, onScrimClick }: TodayActiviti
   });
 
   // Separate other activities by type
-  const trainingActivity = activities.find((a) => a.type === 'training_available');
-  const scrimActivity = activities.find((a) => a.type === 'scrim_available');
+  const trainingActivity = activities.find((a) => a.type === 'scheduled_training');
+  const scrimActivity = activities.find((a) => a.type === 'scheduled_scrim');
   const otherActivities = activities.filter(
-    (a) => a.type !== 'match' && a.type !== 'training_available' && a.type !== 'scrim_available'
+    (a) => a.type !== 'match' && a.type !== 'scheduled_training' && a.type !== 'scheduled_scrim'
   );
 
   // Get weekly scrim status

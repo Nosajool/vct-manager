@@ -94,12 +94,12 @@ export class CalendarService {
 
     // Separate events into required and optional
     const requiredEvents: CalendarEvent[] = [];
-    const optionalEvents: CalendarEvent[] = []; // training_available, scrim_available
+    const optionalEvents: CalendarEvent[] = []; // scheduled_training, scheduled_scrim
 
     for (const event of unprocessedEvents) {
       if (
-        event.type === 'training_available' ||
-        event.type === 'scrim_available'
+        event.type === 'scheduled_training' ||
+        event.type === 'scheduled_scrim'
       ) {
         optionalEvents.push(event);
       } else {

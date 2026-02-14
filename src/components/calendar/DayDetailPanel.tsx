@@ -25,7 +25,7 @@ function getEventStyle(type: string): { bg: string; text: string; label: string 
       return { bg: 'bg-vct-red/20', text: 'text-vct-red', label: 'Match' };
     case 'salary_payment':
       return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Salary' };
-    case 'training_available':
+    case 'scheduled_training':
       return { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Training' };
     case 'rest_day':
       return { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Rest' };
@@ -33,7 +33,7 @@ function getEventStyle(type: string): { bg: string; text: string; label: string 
       return { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Tournament Start' };
     case 'tournament_end':
       return { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Tournament End' };
-    case 'scrim_available':
+    case 'scheduled_scrim':
       return { bg: 'bg-orange-500/20', text: 'text-orange-400', label: 'Scrim' };
     default:
       return { bg: 'bg-vct-gray/20', text: 'text-vct-gray', label: 'Event' };
@@ -277,16 +277,16 @@ function getEventDescription(event: CalendarEvent, teams: Record<string, { name:
     }
     case 'salary_payment':
       return 'Monthly salaries due';
-    case 'training_available':
-      return 'Training session available';
+    case 'scheduled_training':
+      return 'Scheduled training session';
     case 'rest_day':
       return 'Scheduled rest day';
     case 'tournament_start':
       return `${data?.tournamentName || 'Tournament'} begins`;
     case 'tournament_end':
       return `${data?.tournamentName || 'Tournament'} ends`;
-    case 'scrim_available':
-      return 'Scrim session available';
+    case 'scheduled_scrim':
+      return 'Scheduled scrim session';
     default:
       return event.type.replace(/_/g, ' ');
   }

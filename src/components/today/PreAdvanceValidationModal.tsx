@@ -22,9 +22,9 @@ export function PreAdvanceValidationModal({
   // Get a user-friendly label for each event type
   const getEventLabel = (event: CalendarEvent): string => {
     switch (event.type) {
-      case 'training_available':
+      case 'scheduled_training':
         return 'Training Session';
-      case 'scrim_available':
+      case 'scheduled_scrim':
         return 'Scrim';
       default:
         return event.type;

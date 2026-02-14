@@ -11,9 +11,9 @@ import type { FeatureType } from '../../data/featureUnlocks';
  */
 function getFeatureForEventType(eventType: string): FeatureType | null {
   switch (eventType) {
-    case 'training_available':
+    case 'scheduled_training':
       return 'training';
-    case 'scrim_available':
+    case 'scheduled_scrim':
       return 'scrims';
     default:
       return null;
@@ -107,7 +107,7 @@ export const createActivityPlanSlice: StateCreator<
       (event: any) =>
         event.date === today &&
         !event.processed &&
-        (event.type === 'training_available' || event.type === 'scrim_available')
+        (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
     ) || [];
 
     const configs = get().activityConfigs;
@@ -133,7 +133,7 @@ export const createActivityPlanSlice: StateCreator<
       (event: any) =>
         event.date === today &&
         !event.processed &&
-        (event.type === 'training_available' || event.type === 'scrim_available')
+        (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
     ) || [];
 
     const configs = get().activityConfigs;

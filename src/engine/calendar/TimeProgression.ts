@@ -185,19 +185,8 @@ export class TimeProgression {
       });
     }
 
-    // If no match today, training is available
-    const hasMatch = eventsToday.some((e) => e.type === 'match');
-    if (!hasMatch) {
-      // Check if there's already a training_available event
-      const hasTrainingEvent = eventsToday.some((e) => e.type === 'training_available');
-      if (!hasTrainingEvent) {
-        activities.push({
-          type: 'training_available',
-          required: false,
-          description: 'Team training session available',
-        });
-      }
-    }
+    // DEPRECATED: Training availability is now computed dynamically by DayScheduleService
+    // No longer adding training_available events here
 
     // Sort: required first, then by type
     return activities.sort((a, b) => {
@@ -234,8 +223,8 @@ export class TimeProgression {
         return `Match: ${data?.homeTeam || 'TBD'} vs ${data?.awayTeam || 'TBD'}`;
       case 'salary_payment':
         return 'Monthly salary payments due';
-      case 'training_available':
-        return 'Training session available';
+      case 'scheduled_training':
+        return 'Scheduled training session';
       case 'rest_day':
         return 'Rest day - no activities scheduled';
       case 'tournament_start':
@@ -287,9 +276,11 @@ export class TimeProgression {
       salary_payment: [],
       sponsorship_renewal: [],
       season_end: [],
-      training_available: [],
-      scrim_available: [],
       rest_day: [],
+      placeholder_match: [],
+      scheduled_training: [],
+      scheduled_scrim: [],
+      team_activity: [],
     };
 
     for (const event of events) {

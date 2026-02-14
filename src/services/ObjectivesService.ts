@@ -203,10 +203,10 @@ function getTrainingObjective(state: GameState, currentDate: string): DailyObjec
     return null;
   }
 
-  // Check for training_available event today
+  // Check for scheduled_training event today
   const todaysEvents = state.getEventsOnDate(currentDate);
   const trainingEvent = todaysEvents.find(
-    e => e.type === 'training_available' && !e.processed
+    e => e.type === 'scheduled_training' && !e.processed
   );
 
   if (!trainingEvent) return null;
@@ -252,10 +252,10 @@ function getScrimObjective(state: GameState, currentDate: string): DailyObjectiv
     return null;
   }
 
-  // Check for scrim_available event today
+  // Check for scheduled_scrim event today
   const todaysEvents = state.getEventsOnDate(currentDate);
   const scrimEvent = todaysEvents.find(
-    e => e.type === 'scrim_available' && !e.processed
+    e => e.type === 'scheduled_scrim' && !e.processed
   );
 
   if (!scrimEvent) return null;

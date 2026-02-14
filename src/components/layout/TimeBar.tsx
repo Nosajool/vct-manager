@@ -234,7 +234,7 @@ export function TimeBar() {
     const state = useGameStore.getState();
 
     for (const event of unconfiguredEvents) {
-      if (event.type === 'training_available') {
+      if (event.type === 'scheduled_training') {
         // Auto-configure training
         const trainingPlan = trainingService.autoAssignTraining();
 
@@ -255,7 +255,7 @@ export function TimeBar() {
         };
 
         state.setActivityConfig(event.id, config);
-      } else if (event.type === 'scrim_available') {
+      } else if (event.type === 'scheduled_scrim') {
         // Auto-configure scrim
         const scrimOptions = scrimService.generateAutoConfig();
 

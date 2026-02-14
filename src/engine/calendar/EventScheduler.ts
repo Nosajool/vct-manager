@@ -274,84 +274,31 @@ export class EventScheduler {
   }
 
   /**
-   * Generate training day events
-   * Training is available on any day without a match
+   * DEPRECATED: Training day events are no longer pre-generated.
+   * Use DayScheduleService for dynamic availability computation.
+   * @deprecated Phase 1: Removed pre-generation of training_available events
    */
   scheduleTrainingDays(
-    startDate: string,
-    endDate: string,
-    matchDates: string[]
+    _startDate: string,
+    _endDate: string,
+    _matchDates: string[]
   ): CalendarEvent[] {
-    const events: CalendarEvent[] = [];
-    const matchDateSet = new Set(
-      matchDates.map((d) => new Date(d).toDateString())
-    );
-
-    const current = new Date(startDate);
-    const end = new Date(endDate);
-
-    while (current <= end) {
-      const dateString = current.toDateString();
-
-      // If no match on this day, training is available
-      if (!matchDateSet.has(dateString)) {
-        events.push({
-          id: this.generateId('training'),
-          date: current.toISOString(),
-          type: 'training_available',
-          required: false,
-          processed: false,
-          data: {
-            description: 'Training session available',
-          },
-        });
-      }
-
-      current.setDate(current.getDate() + 1);
-    }
-
-    return events;
+    // No longer generates events - training availability is computed dynamically
+    return [];
   }
 
   /**
-   * Generate scrim availability events
-   * Scrims are available on days without matches (similar to training)
-   * Teams can do up to 4 scrims per week
+   * DEPRECATED: Scrim availability events are no longer pre-generated.
+   * Use DayScheduleService for dynamic availability computation.
+   * @deprecated Phase 1: Removed pre-generation of scrim_available events
    */
   scheduleScrimDays(
-    startDate: string,
-    endDate: string,
-    matchDates: string[]
+    _startDate: string,
+    _endDate: string,
+    _matchDates: string[]
   ): CalendarEvent[] {
-    const events: CalendarEvent[] = [];
-    const matchDateSet = new Set(
-      matchDates.map((d) => new Date(d).toDateString())
-    );
-
-    const current = new Date(startDate);
-    const end = new Date(endDate);
-
-    while (current <= end) {
-      const dateString = current.toDateString();
-
-      // If no match on this day, scrim is available
-      if (!matchDateSet.has(dateString)) {
-        events.push({
-          id: this.generateId('scrim'),
-          date: current.toISOString(),
-          type: 'scrim_available',
-          required: false,
-          processed: false,
-          data: {
-            description: 'Scrim session available',
-          },
-        });
-      }
-
-      current.setDate(current.getDate() + 1);
-    }
-
-    return events;
+    // No longer generates events - scrim availability is computed dynamically
+    return [];
   }
 
   /**
@@ -440,9 +387,6 @@ export class EventScheduler {
     const salaryEvents = this.scheduleSalaryPayments(startDate, 12);
     allEvents.push(...salaryEvents);
 
-    // Track match dates for training/scrim availability (even if we don't generate match events)
-    let matchDates: string[] = [];
-
     // Only generate match events if not skipped (GlobalTournamentScheduler handles them now)
     if (!skipMatchEvents) {
       // For Phase 3, simplified match schedule:
@@ -460,17 +404,10 @@ export class EventScheduler {
         opponents,
       });
       allEvents.push(...matchEvents);
-      matchDates = matchEvents.map((e) => e.date);
     }
 
-    // Generate training days (available on non-match days)
-    const seasonEndDate = this.addDays(startDate, 365); // Full year
-    const trainingEvents = this.scheduleTrainingDays(startDate, seasonEndDate, matchDates);
-    allEvents.push(...trainingEvents);
-
-    // Generate scrim availability days (available on non-match days)
-    const scrimEvents = this.scheduleScrimDays(startDate, seasonEndDate, matchDates);
-    allEvents.push(...scrimEvents);
+    // Training and scrim availability is now computed dynamically by DayScheduleService
+    // No longer pre-generating training_available and scrim_available events
 
     // Add tournament phase markers
     for (const phase of EventScheduler.SEASON_STRUCTURE) {
