@@ -116,6 +116,25 @@ export class DayPlanService {
         const matchData = event.data as any;
         const isToday = event.date === state.calendar.currentDate;
 
+        // Filter out matches that don't involve the player's team
+        if (!state.playerTeamId) continue;
+
+        // Skip regular matches not involving player's team
+        if (event.type === 'match') {
+          const isPlayerMatch =
+            matchData.homeTeamId === state.playerTeamId ||
+            matchData.awayTeamId === state.playerTeamId;
+          if (!isPlayerMatch) continue;
+        }
+
+        // Skip placeholder matches not involving player's team
+        if (event.type === 'placeholder_match') {
+          const isPlayerMatch =
+            matchData.resolvedTeamAId === state.playerTeamId ||
+            matchData.resolvedTeamBId === state.playerTeamId;
+          if (!isPlayerMatch) continue;
+        }
+
         // Determine match participants
         let homeTeamName = 'TBD';
         let awayTeamName = 'TBD';
