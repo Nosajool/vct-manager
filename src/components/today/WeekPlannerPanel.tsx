@@ -8,10 +8,11 @@ import { timeProgression } from '../../engine/calendar';
 import { TrainingModal } from '../calendar/TrainingModal';
 import { ScrimModal } from '../scrim/ScrimModal';
 import type { DaySchedule } from '../../types/scheduling';
-import type { CalendarEvent, MatchEventData } from '../../types';
+import type { MatchEventData } from '../../types';
 
 export function WeekPlannerPanel() {
-  const [selectedDaySchedule, setSelectedDaySchedule] = useState<DaySchedule | null>(null);
+  const [selectedTrainingEventId, setSelectedTrainingEventId] = useState<string | null>(null);
+  const [selectedScrimEventId, setSelectedScrimEventId] = useState<string | null>(null);
   const [showTrainingModal, setShowTrainingModal] = useState(false);
   const [showScrimModal, setShowScrimModal] = useState(false);
 
@@ -23,21 +24,23 @@ export function WeekPlannerPanel() {
   const dayScheduleService = useMemo(() => new DayScheduleService(), []);
   const weekSchedule = useMemo(() => {
     return dayScheduleService.getWeekSchedule(calendar.currentDate);
-  }, [calendar.currentDate, dayScheduleService]);
+  }, [calendar.currentDate, calendar.scheduledEvents, dayScheduleService]);
 
   // Handle scheduling training for a day
   const handleScheduleTraining = (daySchedule: DaySchedule) => {
-    setSelectedDaySchedule(daySchedule);
-
     // Check if there's already a scheduled training event
     const existingEvent = daySchedule.scheduledActivities.find(
       (e) => e.type === 'scheduled_training'
     );
 
-    if (!existingEvent) {
+    if (existingEvent) {
+      // Event already exists, use its ID
+      setSelectedTrainingEventId(existingEvent.id);
+    } else {
       // Create a new scheduled_training event
       try {
-        dayScheduleService.scheduleActivity(daySchedule.date, 'training');
+        const newEvent = dayScheduleService.scheduleActivity(daySchedule.date, 'training');
+        setSelectedTrainingEventId(newEvent.id); // Capture the returned event's ID
       } catch (err) {
         console.error('Failed to schedule training:', err);
         return;
@@ -49,17 +52,19 @@ export function WeekPlannerPanel() {
 
   // Handle scheduling scrim for a day
   const handleScheduleScrim = (daySchedule: DaySchedule) => {
-    setSelectedDaySchedule(daySchedule);
-
     // Check if there's already a scheduled scrim event
     const existingEvent = daySchedule.scheduledActivities.find(
       (e) => e.type === 'scheduled_scrim'
     );
 
-    if (!existingEvent) {
+    if (existingEvent) {
+      // Event already exists, use its ID
+      setSelectedScrimEventId(existingEvent.id);
+    } else {
       // Create a new scheduled_scrim event
       try {
-        dayScheduleService.scheduleActivity(daySchedule.date, 'scrim');
+        const newEvent = dayScheduleService.scheduleActivity(daySchedule.date, 'scrim');
+        setSelectedScrimEventId(newEvent.id); // Capture the returned event's ID
       } catch (err) {
         console.error('Failed to schedule scrim:', err);
         return;
@@ -67,27 +72,6 @@ export function WeekPlannerPanel() {
     }
 
     setShowScrimModal(true);
-  };
-
-  // Get the event ID for the modal
-  const getEventForActivityType = (daySchedule: DaySchedule, activityType: 'training' | 'scrim') => {
-    const eventType = activityType === 'training' ? 'scheduled_training' : 'scheduled_scrim';
-    return daySchedule.scheduledActivities.find((e) => e.type === eventType);
-  };
-
-  // Get activity config for the event with proper type
-  const getTrainingConfig = (event: CalendarEvent | undefined) => {
-    if (!event) return undefined;
-    const activityConfigs = useGameStore.getState().activityConfigs;
-    const config = activityConfigs[event.id];
-    return config?.type === 'training' ? config : undefined;
-  };
-
-  const getScrimConfig = (event: CalendarEvent | undefined) => {
-    if (!event) return undefined;
-    const activityConfigs = useGameStore.getState().activityConfigs;
-    const config = activityConfigs[event.id];
-    return config?.type === 'scrim' ? config : undefined;
   };
 
   return (
@@ -113,27 +97,33 @@ export function WeekPlannerPanel() {
       </div>
 
       {/* Modals */}
-      {selectedDaySchedule && showTrainingModal && (
+      {selectedTrainingEventId && showTrainingModal && (
         <TrainingModal
           isOpen={showTrainingModal}
           onClose={() => {
             setShowTrainingModal(false);
-            setSelectedDaySchedule(null);
+            setSelectedTrainingEventId(null);
           }}
-          eventId={getEventForActivityType(selectedDaySchedule, 'training')?.id}
-          existingConfig={getTrainingConfig(getEventForActivityType(selectedDaySchedule, 'training'))}
+          eventId={selectedTrainingEventId}
+          existingConfig={(() => {
+            const config = useGameStore.getState().getActivityConfig(selectedTrainingEventId);
+            return config?.type === 'training' ? config : undefined;
+          })()}
         />
       )}
 
-      {selectedDaySchedule && showScrimModal && (
+      {selectedScrimEventId && showScrimModal && (
         <ScrimModal
           isOpen={showScrimModal}
           onClose={() => {
             setShowScrimModal(false);
-            setSelectedDaySchedule(null);
+            setSelectedScrimEventId(null);
           }}
-          eventId={getEventForActivityType(selectedDaySchedule, 'scrim')?.id}
-          existingConfig={getScrimConfig(getEventForActivityType(selectedDaySchedule, 'scrim'))}
+          eventId={selectedScrimEventId}
+          existingConfig={(() => {
+            const config = useGameStore.getState().getActivityConfig(selectedScrimEventId);
+            return config?.type === 'scrim' ? config : undefined;
+          })()}
         />
       )}
     </div>

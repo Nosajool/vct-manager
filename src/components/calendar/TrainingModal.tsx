@@ -66,6 +66,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
+  const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
 
   // Load existing config when modal opens
@@ -306,6 +307,9 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
 
     // Save to store
     setActivityConfig(config);
+
+    // Update event lifecycle state to 'configured'
+    updateEventLifecycleState(eventId, 'configured');
 
     // Close modal
     handleClose();

@@ -56,6 +56,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
+  const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
 
   // Get available partners organized by tier - must be before early returns
@@ -141,6 +142,9 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
 
     // Write config to store
     setActivityConfig(config);
+
+    // Update event lifecycle state to 'configured'
+    updateEventLifecycleState(eventId, 'configured');
 
     // Close modal
     handleClose();
