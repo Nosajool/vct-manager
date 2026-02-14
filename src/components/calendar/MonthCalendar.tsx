@@ -26,6 +26,8 @@ function getEventColor(type: string): string {
   switch (type) {
     case 'match':
       return 'bg-vct-red';
+    case 'placeholder_match':
+      return 'bg-orange-600';
     case 'tournament_start':
     case 'tournament_end':
       return 'bg-purple-500';

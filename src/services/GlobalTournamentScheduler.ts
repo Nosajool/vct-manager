@@ -538,43 +538,82 @@ export class GlobalTournamentScheduler {
 
   /**
    * Generate match calendar events for a tournament
-   * Only creates events for matches with both teams known
+   * Creates 'match' events for ready matches and 'placeholder_match' events for TBD matches
    */
   private generateMatchEventsForTournament(tournament: Tournament): CalendarEvent[] {
     const events: CalendarEvent[] = [];
+
+    // Helper to determine the phase from tournament type
+    const getPhase = (): import('../types/calendar').SeasonPhase => {
+      if (tournament.type === 'kickoff') return 'kickoff';
+      if (tournament.type === 'stage1') return 'stage1';
+      if (tournament.type === 'stage2') return 'stage2';
+      if (tournament.type === 'masters') {
+        return tournament.name.includes('Santiago') ? 'masters1' : 'masters2';
+      }
+      return 'champions';
+    };
+
+    const phase = getPhase();
+    const region = tournament.region === 'International' ? undefined : tournament.region as Region;
 
     const processMatches = (matches: Array<{
       matchId: string;
       teamAId?: string;
       teamBId?: string;
+      teamASource?: import('../types/competition').TeamSource;
+      teamBSource?: import('../types/competition').TeamSource;
       scheduledDate?: string;
       status: string;
     }>) => {
       for (const match of matches) {
-        // Only create events for ready matches with known teams
-        if (match.status !== 'ready') continue;
-        if (!match.teamAId || !match.teamBId) continue;
+        // Skip matches without a scheduled date
+        if (!match.scheduledDate) continue;
 
-        events.push({
-          id: `event-match-${match.matchId}`,
-          type: 'match',
-          date: match.scheduledDate || tournament.startDate,
-          data: {
-            matchId: match.matchId,
-            homeTeamId: match.teamAId,
-            awayTeamId: match.teamBId,
-            tournamentId: tournament.id,
-            isPlayerMatch: false,
-            region: tournament.region === 'International' ? undefined : tournament.region as Region,
-            phase: tournament.type === 'kickoff' ? 'kickoff' :
-                   tournament.type === 'stage1' ? 'stage1' :
-                   tournament.type === 'stage2' ? 'stage2' :
-                   tournament.type === 'masters' ? (tournament.name.includes('Santiago') ? 'masters1' : 'masters2') :
-                   'champions',
-          },
-          processed: false,
-          required: true,
-        });
+        // Create match event for ready matches with both teams known
+        if (match.status === 'ready' && match.teamAId && match.teamBId) {
+          events.push({
+            id: `event-match-${match.matchId}`,
+            type: 'match',
+            date: match.scheduledDate,
+            data: {
+              matchId: match.matchId,
+              homeTeamId: match.teamAId,
+              awayTeamId: match.teamBId,
+              tournamentId: tournament.id,
+              isPlayerMatch: false,
+              region,
+              phase,
+            },
+            processed: false,
+            required: true,
+          });
+        }
+        // Create placeholder_match event for matches with TBD teams
+        else {
+          // Convert team sources to TeamSlot format for calendar events
+          const teamASlot = this.getTeamSlotFromMatch(match.teamAId, match.teamASource, tournament);
+          const teamBSlot = this.getTeamSlotFromMatch(match.teamBId, match.teamBSource, tournament);
+
+          events.push({
+            id: `event-placeholder-${match.matchId}`,
+            type: 'placeholder_match',
+            date: match.scheduledDate,
+            data: {
+              tournamentId: tournament.id,
+              tournamentName: tournament.name,
+              phase,
+              region,
+              bracketMatchId: match.matchId,
+              teamASlot,
+              teamBSlot,
+              resolvedTeamAId: match.teamAId,
+              resolvedTeamBId: match.teamBId,
+            },
+            processed: false,
+            required: false, // Placeholder matches are informational, not required to process
+          });
+        }
       }
     };
 
@@ -600,6 +639,32 @@ export class GlobalTournamentScheduler {
     }
 
     return events;
+  }
+
+  /**
+   * Convert BracketMatch team info to TeamSlot format for calendar events
+   */
+  private getTeamSlotFromMatch(
+    teamId: string | undefined,
+    teamSource: import('../types/competition').TeamSource | undefined,
+    tournament: Tournament
+  ): import('../types/calendar').TeamSlot {
+    // If team is resolved, return team slot
+    if (teamId) {
+      return { type: 'team', teamId };
+    }
+
+    // If source indicates winner/loser from another match, use qualified_from
+    if (teamSource?.type === 'winner' || teamSource?.type === 'loser') {
+      return {
+        type: 'qualified_from',
+        tournamentId: tournament.id,
+        position: 0, // Position not relevant for intra-tournament qualification
+      };
+    }
+
+    // Default to TBD
+    return { type: 'tbd' };
   }
 
   // ============================================

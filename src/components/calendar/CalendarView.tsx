@@ -22,6 +22,8 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
     switch (type) {
       case 'match':
         return { bg: 'bg-vct-red/20', text: 'text-vct-red', label: 'Match' };
+      case 'placeholder_match':
+        return { bg: 'bg-orange-600/20', text: 'text-orange-500', label: 'Match (TBD)' };
       case 'salary_payment':
         return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Salary' };
       case 'scheduled_training':
@@ -45,6 +47,10 @@ export function CalendarView({ showFullSchedule = false, maxEvents = 5 }: Calend
         const homeTeamName = data.homeTeamName || teams[data.homeTeamId]?.name || 'TBD';
         const awayTeamName = data.awayTeamName || teams[data.awayTeamId]?.name || 'TBD';
         return `${homeTeamName} vs ${awayTeamName}`;
+      }
+      case 'placeholder_match': {
+        const data = event.data as any;
+        return `${data.tournamentName || 'Tournament'}: TBD vs TBD`;
       }
       case 'salary_payment':
         return 'Monthly salaries due';

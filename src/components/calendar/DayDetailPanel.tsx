@@ -23,6 +23,8 @@ function getEventStyle(type: string): { bg: string; text: string; label: string 
   switch (type) {
     case 'match':
       return { bg: 'bg-vct-red/20', text: 'text-vct-red', label: 'Match' };
+    case 'placeholder_match':
+      return { bg: 'bg-orange-600/20', text: 'text-orange-500', label: 'Match (TBD)' };
     case 'salary_payment':
       return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Salary' };
     case 'scheduled_training':
@@ -274,6 +276,10 @@ function getEventDescription(event: CalendarEvent, teams: Record<string, { name:
       const homeTeamName = data?.homeTeamName as string || teams[data?.homeTeamId as string]?.name || 'TBD';
       const awayTeamName = data?.awayTeamName as string || teams[data?.awayTeamId as string]?.name || 'TBD';
       return `${homeTeamName} vs ${awayTeamName}`;
+    }
+    case 'placeholder_match': {
+      const tournamentName = data?.tournamentName as string || 'Tournament';
+      return `${tournamentName}: TBD vs TBD`;
     }
     case 'salary_payment':
       return 'Monthly salaries due';

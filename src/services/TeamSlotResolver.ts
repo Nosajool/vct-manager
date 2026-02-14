@@ -274,6 +274,162 @@ export class TeamSlotResolver {
         this.generateBracketForResolvedTournament(tournamentId, resolvedTeamIds);
       }
     }
+
+    // Convert any resolved placeholder matches to real matches
+    this.convertPlaceholderMatchesToRealMatches(tournamentId);
+  }
+
+  /**
+   * Convert placeholder_match events to match events when teams are resolved
+   * Also checks for conflicts with scheduled activities
+   */
+  private convertPlaceholderMatchesToRealMatches(tournamentId: string): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) return;
+
+    // Get all calendar events
+    const events = state.calendar.scheduledEvents;
+    const playerTeamId = state.playerTeamId;
+
+    // Find placeholder matches for this tournament
+    const placeholderMatches = events.filter(
+      (event) =>
+        event.type === 'placeholder_match' &&
+        (event.data as any).tournamentId === tournamentId
+    );
+
+    for (const placeholderEvent of placeholderMatches) {
+      const data = placeholderEvent.data as import('../types/calendar').PlaceholderMatchEventData;
+
+      // Check if both teams are now resolved
+      const bracketMatch = this.findBracketMatch(tournament, data.bracketMatchId);
+      if (!bracketMatch || !bracketMatch.teamAId || !bracketMatch.teamBId) {
+        continue; // Still TBD
+      }
+
+      console.log(`Converting placeholder match ${data.bracketMatchId} to real match`);
+
+      // Create Match entity if it doesn't exist
+      if (!state.matches[data.bracketMatchId]) {
+        const matchEntity: Match = {
+          id: data.bracketMatchId,
+          teamAId: bracketMatch.teamAId,
+          teamBId: bracketMatch.teamBId,
+          scheduledDate: bracketMatch.scheduledDate || tournament.startDate,
+          status: 'scheduled',
+          tournamentId,
+          season: state.calendar.currentSeason,
+        };
+        state.addMatch(matchEntity);
+      }
+
+      // Remove the placeholder event
+      state.removeCalendarEvent(placeholderEvent.id);
+
+      // Create a new match event
+      const teamA = state.teams[bracketMatch.teamAId];
+      const teamB = state.teams[bracketMatch.teamBId];
+
+      const matchEvent: CalendarEvent = {
+        id: `event-match-${data.bracketMatchId}`,
+        type: 'match',
+        date: placeholderEvent.date,
+        data: {
+          matchId: data.bracketMatchId,
+          homeTeamId: bracketMatch.teamAId,
+          awayTeamId: bracketMatch.teamBId,
+          homeTeamName: teamA?.name || 'Unknown',
+          awayTeamName: teamB?.name || 'Unknown',
+          tournamentId,
+          phase: data.phase,
+          region: data.region,
+        },
+        processed: false,
+        required: true,
+      };
+
+      state.addCalendarEvent(matchEvent);
+
+      // Check for conflicts: if player's team is involved, cancel any scheduled activities on that day
+      if (bracketMatch.teamAId === playerTeamId || bracketMatch.teamBId === playerTeamId) {
+        this.cancelConflictingActivities(placeholderEvent.date, playerTeamId);
+      }
+    }
+  }
+
+  /**
+   * Find a bracket match by ID in the tournament's bracket structure
+   */
+  private findBracketMatch(
+    tournament: Tournament,
+    matchId: string
+  ): BracketMatch | undefined {
+    // Search upper bracket
+    for (const round of tournament.bracket.upper) {
+      const match = round.matches.find((m) => m.matchId === matchId);
+      if (match) return match;
+    }
+
+    // Search lower bracket
+    if (tournament.bracket.lower) {
+      for (const round of tournament.bracket.lower) {
+        const match = round.matches.find((m) => m.matchId === matchId);
+        if (match) return match;
+      }
+    }
+
+    // Search middle bracket
+    if (tournament.bracket.middle) {
+      for (const round of tournament.bracket.middle) {
+        const match = round.matches.find((m) => m.matchId === matchId);
+        if (match) return match;
+      }
+    }
+
+    // Check grand final
+    if (tournament.bracket.grandfinal?.matchId === matchId) {
+      return tournament.bracket.grandfinal;
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Cancel scheduled activities on a day when a match is confirmed for player's team
+   */
+  private cancelConflictingActivities(date: string, _playerTeamId: string): void {
+    const state = useGameStore.getState();
+
+    // Find scheduled activities on this date
+    const scheduledActivities = state.calendar.scheduledEvents.filter(
+      (event) =>
+        event.date === date &&
+        (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
+    );
+
+    if (scheduledActivities.length === 0) return;
+
+    console.log(
+      `Found ${scheduledActivities.length} scheduled activities on ${date} conflicting with match`
+    );
+
+    // Cancel each activity
+    for (const activity of scheduledActivities) {
+      console.log(`  Cancelling ${activity.type} (${activity.id})`);
+      state.removeCalendarEvent(activity.id);
+
+      // TODO: Show notification to user about the cancellation
+      // This would require a notification system which may not be implemented yet
+      // For now, just log it
+    }
+
+    if (scheduledActivities.length > 0) {
+      console.warn(
+        `NOTIFICATION: ${scheduledActivities.length} scheduled activities on ${date} were automatically cancelled due to a confirmed match.`
+      );
+    }
   }
 
   /**
@@ -362,6 +518,9 @@ export class TeamSlotResolver {
 
     // Create Match entities for first round
     this.createSwissRoundMatches(tournamentId, swissStage, 1);
+
+    // Convert any placeholder matches to real matches
+    this.convertPlaceholderMatchesToRealMatches(tournamentId);
   }
 
   /**
@@ -508,6 +667,9 @@ export class TeamSlotResolver {
 
     // Create Match entities for ready matches
     this.createMatchEntitiesForBracket(tournamentId, bracket);
+
+    // Convert any placeholder matches to real matches
+    this.convertPlaceholderMatchesToRealMatches(tournamentId);
   }
 
   /**
