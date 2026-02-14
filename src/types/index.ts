@@ -138,6 +138,16 @@ export type {
   ActivityResolutionResult,
 } from './activityPlan';
 
+// Day plan types
+export type {
+  DayPlanItemCategory,
+  DayPlanItemAction,
+  ActivityState,
+  DayPlanItemSeverity,
+  DayPlanItem,
+  DayPlan,
+} from './dayPlan';
+
 // Tournament transition types
 export type {
   TournamentTransitionConfig,
