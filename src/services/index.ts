@@ -29,11 +29,6 @@ export {
 } from './RegionalSimulationService';
 export { StrategyService, strategyService } from './StrategyService';
 export {
-  getDailyObjectives,
-  type DailyObjective,
-  type ObjectiveAction,
-} from './ObjectivesService';
-export {
   ProgressTrackingService,
   progressTrackingService,
 } from './ProgressTrackingService';
