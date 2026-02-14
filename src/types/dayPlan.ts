@@ -18,7 +18,7 @@ export type DayPlanItemCategory = 'match' | 'activity' | 'alert' | 'info';
  */
 export interface DayPlanItemAction {
   /** View to navigate to when item is clicked */
-  view: ActiveView;
+  view?: ActiveView;
   /** Optional data context for navigation */
   data?: {
     matchId?: string;
@@ -29,6 +29,11 @@ export interface DayPlanItemAction {
   openModal?: 'training' | 'scrim' | 'strategy';
   /** Event ID for modal context (e.g., calendar event ID) */
   eventId?: string;
+  /** Schedule data for available activities that need scheduling */
+  scheduleData?: {
+    date: string;
+    activityType: SchedulableActivityType;
+  };
 }
 
 /**

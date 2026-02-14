@@ -3,6 +3,7 @@
 
 import { useWeekPlan } from '../../hooks/useDayPlan';
 import { useActivityModals } from '../../hooks/useActivityModals';
+import { dayPlanService } from '../../services/DayPlanService';
 import { timeProgression } from '../../engine/calendar';
 import {
   DayPlanItemCard,
@@ -16,13 +17,38 @@ export function WeekPlannerPanel() {
   const modals = useActivityModals();
 
   const handleActivityClick = (item: DayPlanItem) => {
-    if (!item.action?.openModal || !item.action.eventId) return;
+    if (!item.action) return;
 
-    // Open appropriate modal based on activity type
-    if (item.action.openModal === 'training') {
-      modals.openTrainingModal(item.action.eventId);
-    } else if (item.action.openModal === 'scrim') {
-      modals.openScrimModal(item.action.eventId);
+    // Handle available activities - schedule first, then open modal
+    if (item.action.scheduleData && item.action.openModal) {
+      try {
+        const event = dayPlanService.scheduleActivity(
+          item.action.scheduleData.date,
+          item.action.scheduleData.activityType
+        );
+
+        // Open the modal with the newly created event
+        if (item.action.openModal === 'training') {
+          modals.openTrainingModal(event.id);
+        } else if (item.action.openModal === 'scrim') {
+          modals.openScrimModal(event.id);
+        }
+      } catch (err) {
+        console.error('Failed to schedule activity:', err);
+      }
+      return;
+    }
+
+    // Handle existing scheduled activities
+    if (item.action.openModal && item.action.eventId) {
+      if (item.action.openModal === 'training') {
+        modals.openTrainingModal(item.action.eventId);
+        return;
+      }
+      if (item.action.openModal === 'scrim') {
+        modals.openScrimModal(item.action.eventId);
+        return;
+      }
     }
   };
 

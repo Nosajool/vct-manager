@@ -6,6 +6,7 @@
 import { useGameStore } from '../../store';
 import { useDayPlan } from '../../hooks/useDayPlan';
 import { useActivityModals } from '../../hooks/useActivityModals';
+import { dayPlanService } from '../../services/DayPlanService';
 import {
   DayPlanItemCard,
   ActivityStatusBadge,
@@ -21,19 +22,39 @@ export function TodayPlanPanel() {
   const handleItemClick = (item: (typeof dayPlan.items)[0]) => {
     if (!item.action) return;
 
-    // Check if we should open a modal instead of navigating
-    if (item.action.openModal) {
-      if (item.action.openModal === 'training' && item.action.eventId) {
+    // Handle available activities - schedule first, then open modal
+    if (item.action.scheduleData && item.action.openModal) {
+      try {
+        const event = dayPlanService.scheduleActivity(
+          item.action.scheduleData.date,
+          item.action.scheduleData.activityType
+        );
+
+        // Open the modal with the newly created event
+        if (item.action.openModal === 'training') {
+          modals.openTrainingModal(event.id);
+        } else if (item.action.openModal === 'scrim') {
+          modals.openScrimModal(event.id);
+        }
+      } catch (err) {
+        console.error('Failed to schedule activity:', err);
+      }
+      return;
+    }
+
+    // Handle existing scheduled activities
+    if (item.action.openModal && item.action.eventId) {
+      if (item.action.openModal === 'training') {
         modals.openTrainingModal(item.action.eventId);
         return;
       }
-      if (item.action.openModal === 'scrim' && item.action.eventId) {
+      if (item.action.openModal === 'scrim') {
         modals.openScrimModal(item.action.eventId);
         return;
       }
     }
 
-    // Otherwise, navigate to the specified view
+    // Handle navigation
     if (item.action.view) {
       setActiveView(item.action.view);
     }

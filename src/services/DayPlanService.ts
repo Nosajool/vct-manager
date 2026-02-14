@@ -267,6 +267,14 @@ export class DayPlanService {
         activityType: activityCategory,
         activityState: 'available',
         schedulableType: activityType,
+        action: {
+          view: 'team',
+          openModal: activityCategory,
+          scheduleData: {
+            date: date,
+            activityType: activityType,
+          }
+        }
       });
     }
 
