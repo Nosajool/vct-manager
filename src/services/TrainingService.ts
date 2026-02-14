@@ -6,25 +6,9 @@ import { playerDevelopment, PlayerDevelopment } from '../engine/player';
 import type { Player, TrainingFocus, TrainingGoal, TrainingIntensity, TrainingResult, TrainingPlan } from '../types';
 
 /**
- * Training session tracking for weekly limits
- */
-interface WeeklyTrainingTracker {
-  playerId: string;
-  weekStart: string; // ISO date of week start
-  sessionsUsed: number;
-}
-
-/**
  * TrainingService - Handles player training operations
  */
 export class TrainingService {
-  // In-memory tracking of weekly training sessions
-  private weeklyTracker: Map<string, WeeklyTrainingTracker> = new Map();
-
-  /**
-   * Maximum training sessions per week per player
-   */
-  private static readonly MAX_WEEKLY_SESSIONS = 2;
 
   /**
    * Train a player with the specified focus and intensity
@@ -45,12 +29,6 @@ export class TrainingService {
     const playerTeamId = state.playerTeamId;
     if (player.teamId !== playerTeamId) {
       return { success: false, error: 'Can only train players on your team' };
-    }
-
-    // Check weekly training limit
-    const weeklyCheck = this.checkWeeklyLimit(playerId);
-    if (!weeklyCheck.canTrain) {
-      return { success: false, error: weeklyCheck.reason };
     }
 
     // Get coach bonus (future: lookup actual coach)
@@ -75,9 +53,6 @@ export class TrainingService {
       stats: updatedPlayer.stats,
       morale: updatedPlayer.morale,
     });
-
-    // Track the training session
-    this.recordTrainingSession(playerId);
 
     // NOTE: We no longer mark the training event as processed because:
     // - Each player has 2 training sessions per week (individual limit)
@@ -110,12 +85,6 @@ export class TrainingService {
       return { success: false, error: 'Can only train players on your team' };
     }
 
-    // Check weekly training limit
-    const weeklyCheck = this.checkWeeklyLimit(playerId);
-    if (!weeklyCheck.canTrain) {
-      return { success: false, error: weeklyCheck.reason };
-    }
-
     // Get coach bonus (future: lookup actual coach)
     const coachBonus = this.getCoachBonus(player.teamId);
 
@@ -138,9 +107,6 @@ export class TrainingService {
       stats: updatedPlayer.stats,
       morale: updatedPlayer.morale,
     });
-
-    // Track the training session
-    this.recordTrainingSession(playerId);
 
     return { success: true, result };
   }
@@ -168,12 +134,6 @@ export class TrainingService {
     const playerTeamId = state.playerTeamId;
     if (player.teamId !== playerTeamId) {
       return { success: false, error: 'Can only train players on your team' };
-    }
-
-    // Check weekly training limit
-    const weeklyCheck = this.checkWeeklyLimit(playerId);
-    if (!weeklyCheck.canTrain) {
-      return { success: false, error: weeklyCheck.reason };
     }
 
     // Get coach bonus (future: lookup actual coach)
@@ -224,9 +184,6 @@ export class TrainingService {
       morale: updatedMorale,
     });
 
-    // Track the training session
-    this.recordTrainingSession(playerId);
-
     return { success: true, result: modifiedResult };
   }
 
@@ -273,68 +230,6 @@ export class TrainingService {
     return { results };
   }
 
-  /**
-   * Check if a player can train this week
-   */
-  checkWeeklyLimit(playerId: string): { canTrain: boolean; sessionsUsed: number; reason?: string } {
-    const currentDate = useGameStore.getState().calendar.currentDate;
-    const weekStart = this.getWeekStart(currentDate);
-    const key = `${playerId}-${weekStart}`;
-
-    const tracker = this.weeklyTracker.get(key);
-    const sessionsUsed = tracker?.sessionsUsed ?? 0;
-
-    const check = playerDevelopment.canPlayerTrain(
-      sessionsUsed,
-      TrainingService.MAX_WEEKLY_SESSIONS
-    );
-
-    return {
-      canTrain: check.canTrain,
-      sessionsUsed,
-      reason: check.reason,
-    };
-  }
-
-  /**
-   * Get training sessions remaining for a player this week
-   */
-  getRemainingSessions(playerId: string): number {
-    const { sessionsUsed } = this.checkWeeklyLimit(playerId);
-    return Math.max(0, TrainingService.MAX_WEEKLY_SESSIONS - sessionsUsed);
-  }
-
-  /**
-   * Record a training session for weekly tracking
-   */
-  private recordTrainingSession(playerId: string): void {
-    const currentDate = useGameStore.getState().calendar.currentDate;
-    const weekStart = this.getWeekStart(currentDate);
-    const key = `${playerId}-${weekStart}`;
-
-    const existing = this.weeklyTracker.get(key);
-    if (existing) {
-      existing.sessionsUsed += 1;
-    } else {
-      this.weeklyTracker.set(key, {
-        playerId,
-        weekStart,
-        sessionsUsed: 1,
-      });
-    }
-  }
-
-  /**
-   * Get the start of the week (Monday) for a date
-   */
-  private getWeekStart(isoDate: string): string {
-    const date = new Date(isoDate);
-    const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-    date.setDate(diff);
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString().split('T')[0];
-  }
 
   /**
    * Get coach bonus for a team (placeholder - could be expanded)
@@ -376,8 +271,7 @@ export class TrainingService {
    * Get players who can still train this week
    */
   getPlayersWithTrainingSlotsAvailable(): Player[] {
-    const players = this.getTrainablePlayers();
-    return players.filter((player) => this.checkWeeklyLimit(player.id).canTrain);
+    return this.getTrainablePlayers();
   }
 
   /**
@@ -544,12 +438,6 @@ export class TrainingService {
       const player = state.players[playerId];
       if (!player) continue;
 
-      // Skip players at their weekly training limit
-      const weeklyCheck = this.checkWeeklyLimit(playerId);
-      if (!weeklyCheck.canTrain) {
-        continue;
-      }
-
       // Get recommended goal based on player's weakest stats
       const goal = this.getRecommendedGoal(playerId);
       if (!goal) continue;
@@ -578,27 +466,17 @@ export class TrainingService {
   }
 
   /**
-   * Reset weekly tracker (called at week start or game load)
-   */
-  resetWeeklyTracker(): void {
-    this.weeklyTracker.clear();
-  }
-
-  /**
    * Get summary of training activities for the team
    */
   getTeamTrainingSummary(): {
     totalPlayers: number;
     playersCanTrain: number;
-    playersAtLimit: number;
   } {
     const allPlayers = this.getTrainablePlayers();
-    const playersCanTrain = this.getPlayersWithTrainingSlotsAvailable();
 
     return {
       totalPlayers: allPlayers.length,
-      playersCanTrain: playersCanTrain.length,
-      playersAtLimit: allPlayers.length - playersCanTrain.length,
+      playersCanTrain: allPlayers.length,
     };
   }
 }

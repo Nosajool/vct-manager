@@ -5,8 +5,6 @@
 interface ScrimStatsSummaryProps {
   stats: {
     totalScrims: number;
-    weeklyScrimsUsed: number;
-    weeklyScrimsMax: number;
     avgRelationshipScore: number;
     t1Partners: number;
     t2Partners: number;
@@ -17,28 +15,15 @@ interface ScrimStatsSummaryProps {
 }
 
 export function ScrimStatsSummary({ stats }: ScrimStatsSummaryProps) {
-  const weeklyPercentage = (stats.weeklyScrimsUsed / stats.weeklyScrimsMax) * 100;
-
   return (
     <div className="bg-vct-dark border border-vct-gray/20 rounded-lg p-4">
       <h3 className="text-lg font-semibold text-vct-light mb-4">Scrim Overview</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Weekly Usage */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {/* Total Scrims */}
         <div className="bg-vct-darker rounded-lg p-3">
-          <p className="text-xs text-vct-gray mb-1">Weekly Scrims</p>
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-vct-light">{stats.weeklyScrimsUsed}</span>
-            <span className="text-vct-gray">/{stats.weeklyScrimsMax}</span>
-          </div>
-          <div className="mt-2 h-2 bg-vct-gray/20 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full ${
-                weeklyPercentage >= 100 ? 'bg-red-500' : weeklyPercentage >= 75 ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
-              style={{ width: `${Math.min(weeklyPercentage, 100)}%` }}
-            />
-          </div>
+          <p className="text-xs text-vct-gray mb-1">Total Scrims</p>
+          <span className="text-2xl font-bold text-vct-light">{stats.totalScrims}</span>
         </div>
 
         {/* Average Relationship */}

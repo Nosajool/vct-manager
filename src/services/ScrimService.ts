@@ -11,7 +11,6 @@ import type {
   ScrimOptions,
   ScrimResult,
   ScrimRelationship,
-  WeeklyScrimTracker,
   ScrimEligibilityCheck,
   MapStrengthAttributes,
 } from '../types';
@@ -21,8 +20,6 @@ import { SCRIM_CONSTANTS } from '../types/scrim';
  * ScrimService - Handles all scrim-related operations
  */
 export class ScrimService {
-  // In-memory tracking of weekly scrim sessions
-  private weeklyTracker: Map<string, WeeklyScrimTracker> = new Map();
 
   // ============================================
   // Scrim Scheduling
@@ -43,13 +40,6 @@ export class ScrimService {
 
     const playerTeam = state.teams[playerTeamId];
     if (!playerTeam) {
-      return null;
-    }
-
-    // Check weekly limit before generating config (edge case handling)
-    const weeklyCheck = this.checkWeeklyLimit();
-    if (!weeklyCheck.canScrim) {
-      console.log('Auto-config skipped: weekly scrim limit reached');
       return null;
     }
 
@@ -316,9 +306,6 @@ export class ScrimService {
     // Apply results to store
     this.applyScrimResults(result, playerTeamId);
 
-    // Track scrim usage
-    this.recordScrimSession(options.partnerTeamId);
-
     // Mark calendar event as processed
     this.markScrimEventProcessed();
 
@@ -550,43 +537,31 @@ export class ScrimService {
   // ============================================
 
   /**
-   * Check if player can scrim this week
+   * Get the start of the week (Monday) for a date
+   * Used for map decay tracking
    */
-  checkWeeklyLimit(): {
-    canScrim: boolean;
-    scrimsUsed: number;
-    reason?: string;
-  } {
-    const currentDate = useGameStore.getState().calendar.currentDate;
-    const weekStart = this.getWeekStart(currentDate);
-    const tracker = this.weeklyTracker.get(weekStart);
-    const scrimsUsed = tracker?.scrimsUsed ?? 0;
-
-    if (scrimsUsed >= SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS) {
-      return {
-        canScrim: false,
-        scrimsUsed,
-        reason: `Maximum ${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} scrims per week reached`,
-      };
-    }
-
-    return { canScrim: true, scrimsUsed };
+  private getWeekStart(isoDate: string): string {
+    const date = new Date(isoDate);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    date.setDate(diff);
+    date.setHours(0, 0, 0, 0);
+    return date.toISOString().split('T')[0];
   }
 
   /**
    * Comprehensive eligibility check for scheduling scrims
-   * Checks weekly limit, match day restrictions, and player requirements
+   * Checks match day restrictions and player requirements
    */
   checkScrimEligibility(): ScrimEligibilityCheck {
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId;
-    const failedChecks: Array<'weekly_limit' | 'match_day' | 'player_count'> = [];
+    const failedChecks: Array<'match_day' | 'player_count'> = [];
 
     // Check 1: Player team exists and has enough players
     if (!playerTeamId) {
       return {
         canScrim: false,
-        scrimsUsed: 0,
         reason: 'No player team found',
         failedChecks: ['player_count'],
       };
@@ -596,7 +571,6 @@ export class ScrimService {
     if (!playerTeam) {
       return {
         canScrim: false,
-        scrimsUsed: 0,
         reason: 'Player team not found',
         failedChecks: ['player_count'],
       };
@@ -619,12 +593,6 @@ export class ScrimService {
       failedChecks.push('match_day');
     }
 
-    // Check 3: Weekly limit
-    const weeklyCheck = this.checkWeeklyLimit();
-    if (!weeklyCheck.canScrim) {
-      failedChecks.push('weekly_limit');
-    }
-
     // Determine primary reason for failure
     let reason: string | undefined;
     if (failedChecks.length > 0) {
@@ -632,60 +600,14 @@ export class ScrimService {
         reason = 'Cannot schedule scrims on match days';
       } else if (failedChecks.includes('player_count')) {
         reason = `Need at least 5 players on roster (current: ${playerCount})`;
-      } else if (failedChecks.includes('weekly_limit')) {
-        reason = weeklyCheck.reason;
       }
     }
 
     return {
       canScrim: failedChecks.length === 0,
-      scrimsUsed: weeklyCheck.scrimsUsed,
       reason,
       failedChecks,
     };
-  }
-
-  /**
-   * Get remaining scrim slots this week
-   */
-  getRemainingScrimSlots(): number {
-    const { scrimsUsed } = this.checkWeeklyLimit();
-    return Math.max(0, SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - scrimsUsed);
-  }
-
-  /**
-   * Record a scrim session
-   */
-  private recordScrimSession(partnerTeamId: string): void {
-    const currentDate = useGameStore.getState().calendar.currentDate;
-    const weekStart = this.getWeekStart(currentDate);
-
-    const existing = this.weeklyTracker.get(weekStart);
-    if (existing) {
-      existing.scrimsUsed += 1;
-      if (!existing.partnersUsedThisWeek.includes(partnerTeamId)) {
-        existing.partnersUsedThisWeek.push(partnerTeamId);
-      }
-    } else {
-      this.weeklyTracker.set(weekStart, {
-        weekStart,
-        scrimsUsed: 1,
-        maxScrims: SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS,
-        partnersUsedThisWeek: [partnerTeamId],
-      });
-    }
-  }
-
-  /**
-   * Get the start of the week (Monday) for a date
-   */
-  private getWeekStart(isoDate: string): string {
-    const date = new Date(isoDate);
-    const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-    date.setDate(diff);
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString().split('T')[0];
   }
 
   /**
@@ -788,8 +710,6 @@ export class ScrimService {
    */
   getRelationshipStats(): {
     totalScrims: number;
-    weeklyScrimsUsed: number;
-    weeklyScrimsMax: number;
     avgRelationshipScore: number;
     t1Partners: number;
     t2Partners: number;
@@ -836,12 +756,8 @@ export class ScrimService {
       if (rel.vodLeakRisk > 50) highVodRiskCount++;
     }
 
-    const weeklyCheck = this.checkWeeklyLimit();
-
     return {
       totalScrims,
-      weeklyScrimsUsed: weeklyCheck.scrimsUsed,
-      weeklyScrimsMax: SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS,
       avgRelationshipScore: Math.round(avgScore),
       t1Partners: tierCounts.T1,
       t2Partners: tierCounts.T2,
@@ -912,41 +828,7 @@ export class ScrimService {
       }
     }
 
-    // Check 2: Weekly limit
-    const weeklyCheck = this.checkWeeklyLimit();
-    if (weeklyCheck.scrimsUsed < SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS) {
-      const remaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - weeklyCheck.scrimsUsed;
-      recommendations.push({
-        type: 'weekly_limit',
-        message: `Schedule ${remaining} more scrim${remaining > 1 ? 's' : ''} this week for optimal practice`,
-        priority: 'medium',
-      });
-    }
-
-    // Check 3: Partner diversity
-    if (weeklyCheck.scrimsUsed > 0) {
-      const currentDate = state.calendar.currentDate;
-      const weekStart = this.getWeekStart(currentDate);
-      const tracker = this.weeklyTracker.get(weekStart);
-      if (tracker) {
-        const partnerCounts: Record<string, number> = {};
-        for (const partnerId of tracker.partnersUsedThisWeek) {
-          partnerCounts[partnerId] = (partnerCounts[partnerId] || 0) + 1;
-        }
-        for (const [partnerId, count] of Object.entries(partnerCounts)) {
-          if (count > weeklyCheck.scrimsUsed * 0.5) {
-            const teamName = this.getPartnerName(partnerId);
-            recommendations.push({
-              type: 'partner_diversity',
-              message: `Mix up your scrim partners - you've scrimmed ${teamName} ${count} times this week`,
-              priority: 'medium',
-            });
-          }
-        }
-      }
-    }
-
-    // Check 4: Tier balance
+    // Check 2: Tier balance
     const tierCounts = { T1: 0, T2: 0, T3: 0 };
     for (const rel of relationships) {
       tierCounts[rel.tier]++;
@@ -959,7 +841,7 @@ export class ScrimService {
       });
     }
 
-    // Check 5: Map pool decay
+    // Check 3: Map pool decay
     const mapSummary = this.getMapPoolSummary();
     if (mapSummary.needsPractice.length > 0) {
       const maps = mapSummary.needsPractice.slice(0, 2).join(', ');
@@ -1023,13 +905,6 @@ export class ScrimService {
   // ============================================
   // Initialization
   // ============================================
-
-  /**
-   * Reset weekly tracker (called at start of new week)
-   */
-  resetWeeklyTracker(): void {
-    this.weeklyTracker.clear();
-  }
 
   /**
    * Initialize T2/T3 teams for a region

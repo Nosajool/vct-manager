@@ -158,27 +158,16 @@ export interface ScrimResult {
 }
 
 // ============================================
-// Weekly Scrim Tracking
+// Scrim Eligibility
 // ============================================
-
-/**
- * Track weekly scrim usage
- */
-export interface WeeklyScrimTracker {
-  weekStart: string;
-  scrimsUsed: number;
-  maxScrims: number; // 4 per week
-  partnersUsedThisWeek: string[]; // Track variety
-}
 
 /**
  * Result of scrim eligibility check
  */
 export interface ScrimEligibilityCheck {
   canScrim: boolean;
-  scrimsUsed: number;
   reason?: string;
-  failedChecks: Array<'weekly_limit' | 'match_day' | 'player_count'>;
+  failedChecks: Array<'match_day' | 'player_count'>;
 }
 
 // ============================================
@@ -186,8 +175,6 @@ export interface ScrimEligibilityCheck {
 // ============================================
 
 export const SCRIM_CONSTANTS = {
-  MAX_WEEKLY_SCRIMS: 4,
-
   // Efficiency multipliers by tier
   TIER_EFFICIENCY: {
     T1: 1.0, // Full efficiency

@@ -8,7 +8,6 @@ import { ScrimStatsSummary } from './ScrimStatsSummary';
 import { RelationshipPartnerCard } from './RelationshipPartnerCard';
 import { ScrimRecommendations } from './ScrimRecommendations';
 import { ScrimModal } from './ScrimModal';
-import { SCRIM_CONSTANTS } from '../../types/scrim';
 
 export function ScrimOverview() {
   const [expandedPartner, setExpandedPartner] = useState<string | null>(null);
@@ -43,7 +42,6 @@ export function ScrimOverview() {
 
   // Get comprehensive eligibility status
   const eligibility = scrimService.checkScrimEligibility();
-  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - eligibility.scrimsUsed;
 
   // Helper to get team name
   const getTeamName = (teamId: string): string => {
@@ -68,9 +66,7 @@ export function ScrimOverview() {
               : 'bg-vct-gray/20 text-vct-gray cursor-not-allowed'}
           `}
         >
-          {eligibility.canScrim
-            ? `Schedule Scrim (${scrimsRemaining} of ${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} remaining)`
-            : 'Schedule Scrim'}
+          Schedule Scrim
         </button>
         {!eligibility.canScrim && eligibility.reason && (
           <p className="text-sm text-vct-gray italic">

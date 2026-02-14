@@ -104,7 +104,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
         statChanges: null,
         moraleImpact: { min: 1, max: 2, qualitative: 'Small boost' },
         fatigueRisk: { increase: 0, resultLevel: 'None' },
-        trainingStatus: trainingService.checkWeeklyLimit(selectedPlayerId),
         shouldOverrideIntensity: false,
         overrideReason: null,
       };
@@ -117,7 +116,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
     const statChanges = trainingService.previewStatChanges(selectedPlayerId, goal, intensity);
     const moraleImpact = trainingService.previewMoraleImpact(intensity);
     const fatigueRisk = trainingService.previewFatigueRisk(intensity);
-    const trainingStatus = trainingService.checkWeeklyLimit(selectedPlayerId);
 
     // Check if intensity should be auto-overridden
     const shouldOverrideIntensity = player.morale < 50;
@@ -134,7 +132,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
       statChanges,
       moraleImpact,
       fatigueRisk,
-      trainingStatus,
       shouldOverrideIntensity,
       overrideReason,
     };
@@ -152,11 +149,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const benchPlayers = team.reservePlayerIds
     .map((id) => players[id])
     .filter((p): p is Player => p !== undefined);
-
-  // Helper: Check if player can train
-  const getPlayerTrainingStatus = (playerId: string) => {
-    return trainingService.checkWeeklyLimit(playerId);
-  };
 
   // Helper: Get recommended intensity for a player
   const getRecommendedIntensity = (playerId: string): TrainingIntensity => {
@@ -397,7 +389,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
             onSelectPlayer={selectPlayer}
             onTogglePlayer={togglePlayerAssignment}
             onToggleSkip={togglePlayerSkip}
-            getPlayerTrainingStatus={getPlayerTrainingStatus}
           />
 
           {/* MIDDLE COLUMN: Goal Selector */}
@@ -435,7 +426,6 @@ interface PlayerListColumnProps {
   onSelectPlayer: (playerId: string) => void;
   onTogglePlayer: (playerId: string) => void;
   onToggleSkip: (playerId: string) => void;
-  getPlayerTrainingStatus: (playerId: string) => { canTrain: boolean; sessionsUsed: number };
 }
 
 function PlayerListColumn({
@@ -446,7 +436,6 @@ function PlayerListColumn({
   onSelectPlayer,
   onTogglePlayer,
   onToggleSkip,
-  getPlayerTrainingStatus,
 }: PlayerListColumnProps) {
   const [showBench, setShowBench] = useState(false);
 
@@ -467,7 +456,6 @@ function PlayerListColumn({
               isSelected={selectedPlayerId === player.id}
               isAssigned={trainingPlan.has(player.id)}
               assignment={trainingPlan.get(player.id) ?? null}
-              trainingStatus={getPlayerTrainingStatus(player.id)}
               onSelect={() => onSelectPlayer(player.id)}
               onToggle={() => onTogglePlayer(player.id)}
               onToggleSkip={() => onToggleSkip(player.id)}
@@ -494,7 +482,6 @@ function PlayerListColumn({
                   isSelected={selectedPlayerId === player.id}
                   isAssigned={trainingPlan.has(player.id)}
                   assignment={trainingPlan.get(player.id) ?? null}
-                  trainingStatus={getPlayerTrainingStatus(player.id)}
                   onSelect={() => onSelectPlayer(player.id)}
                   onToggle={() => onTogglePlayer(player.id)}
                   onToggleSkip={() => onToggleSkip(player.id)}
@@ -513,7 +500,6 @@ interface PlayerListItemProps {
   isSelected: boolean;
   isAssigned: boolean;
   assignment: TrainingPlayerAssignment | null;
-  trainingStatus: { canTrain: boolean; sessionsUsed: number };
   onSelect: () => void;
   onToggle: () => void;
   onToggleSkip: () => void;
@@ -525,14 +511,12 @@ function PlayerListItem({
   isSelected,
   isAssigned,
   assignment,
-  trainingStatus,
   onSelect,
   onToggle,
   onToggleSkip,
   onClickRecommendation,
 }: PlayerListItemProps) {
   const ovr = playerDevelopment.calculateOverall(player.stats);
-  const canTrain = trainingStatus.canTrain;
 
   // Get recommended goal for display
   const recommendedGoal = trainingService.getRecommendedGoal(player.id);
@@ -548,15 +532,11 @@ function PlayerListItem({
   // Extract role from recommended goal (e.g., "Entry" from "Entry Fragging Mastery")
   const roleLabel = recommendedGoalInfo?.displayName.split(' ')[0] ?? 'N/A';
 
-  // Get sessions remaining
-  const sessionsRemaining = 2 - trainingStatus.sessionsUsed;
-
   return (
     <div
       className={`
         p-2 rounded transition-colors border
         ${isSelected ? 'bg-vct-red/20 border-vct-red' : 'border-transparent'}
-        ${!canTrain ? 'opacity-50' : ''}
       `}
     >
       {/* Main row: checkbox + name/age/ovr */}
@@ -570,9 +550,8 @@ function PlayerListItem({
             checked={isAssigned}
             onChange={(e) => {
               e.stopPropagation();
-              if (canTrain) onToggle();
+              onToggle();
             }}
-            disabled={!canTrain}
             className="rounded border-vct-gray"
           />
         </div>
@@ -585,17 +564,10 @@ function PlayerListItem({
             <span className="text-xs font-medium text-blue-400 flex-shrink-0">OVR {ovr}</span>
           </div>
 
-          {/* Role badge + Sessions remaining */}
+          {/* Role badge */}
           <div className="flex items-center gap-2 mb-1 text-xs">
             <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 flex-shrink-0">
               {roleLabel}
-            </span>
-            <span className="text-vct-gray">
-              {sessionsRemaining === 0 ? (
-                <span className="text-red-400">No sessions left</span>
-              ) : (
-                `${sessionsRemaining} session${sessionsRemaining > 1 ? 's' : ''} left`
-              )}
             </span>
           </div>
 
@@ -629,7 +601,7 @@ function PlayerListItem({
           )}
 
           {/* Clickable recommendation chip */}
-          {!isAssigned && recommendedGoalInfo && canTrain && (
+          {!isAssigned && recommendedGoalInfo && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -769,7 +741,6 @@ interface IntensityPreviewColumnProps {
     statChanges: Record<string, { min: number; max: number }> | null;
     moraleImpact: { min: number; max: number; qualitative: string };
     fatigueRisk: { increase: number; resultLevel: string };
-    trainingStatus: { canTrain: boolean; sessionsUsed: number };
     shouldOverrideIntensity: boolean;
     overrideReason: string | null;
   } | null;
@@ -968,26 +939,6 @@ function IntensityPreviewColumn({
                           ⚠
                         </span>
                       )}
-                    </div>
-                  </div>
-                  {/* Current training sessions indicator */}
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-vct-gray">
-                      Sessions used: {selectedPlayerPreview.trainingStatus.sessionsUsed}/2
-                    </span>
-                    <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all ${
-                          selectedPlayerPreview.trainingStatus.sessionsUsed >= 2
-                            ? 'bg-red-500'
-                            : selectedPlayerPreview.trainingStatus.sessionsUsed >= 1
-                            ? 'bg-yellow-500'
-                            : 'bg-green-500'
-                        }`}
-                        style={{
-                          width: `${(selectedPlayerPreview.trainingStatus.sessionsUsed / 2) * 100}%`,
-                        }}
-                      />
                     </div>
                   </div>
                 </div>

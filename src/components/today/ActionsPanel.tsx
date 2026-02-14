@@ -6,7 +6,6 @@
 import { useGameStore } from '../../store';
 import { useMatchDay, useFeatureUnlocked } from '../../hooks';
 import { scrimService, trainingService } from '../../services';
-import { SCRIM_CONSTANTS } from '../../types/scrim';
 
 interface ActionsPanelProps {
   onTrainingClick: () => void;
@@ -28,9 +27,8 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
   // Get training summary
   const trainingSummary = trainingService.getTeamTrainingSummary();
 
-  // Get scrim status
-  const scrimStatus = scrimService.checkWeeklyLimit();
-  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - scrimStatus.scrimsUsed;
+  // Get scrim eligibility
+  const scrimStatus = scrimService.checkScrimEligibility();
 
   // Get map pool summary for scrim preview
   const mapPoolSummary = scrimService.getMapPoolSummary();
@@ -78,40 +76,21 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
         {/* Training Button */}
         <button
           onClick={onTrainingClick}
-          disabled={trainingSummary.playersCanTrain === 0}
-          className={`w-full p-3 border rounded-lg transition-colors text-left ${
-            trainingSummary.playersCanTrain > 0
-              ? 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30'
-              : 'bg-vct-gray/5 border-vct-gray/10 opacity-60 cursor-not-allowed'
-          }`}
+          className="w-full p-3 border rounded-lg transition-colors text-left bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg">🏋️</span>
-              <span
-                className={
-                  trainingSummary.playersCanTrain > 0
-                    ? 'text-blue-400 font-medium'
-                    : 'text-vct-gray/60'
-                }
-              >
+              <span className="text-blue-400 font-medium">
                 Training
               </span>
             </div>
-            <span
-              className={`px-2 py-0.5 text-xs rounded font-medium ${
-                trainingSummary.playersCanTrain > 0
-                  ? 'bg-blue-500/20 text-blue-400'
-                  : 'bg-vct-gray/20 text-vct-gray'
-              }`}
-            >
-              {trainingSummary.playersCanTrain}/{trainingSummary.totalPlayers} can train
+            <span className="px-2 py-0.5 text-xs rounded font-medium bg-blue-500/20 text-blue-400">
+              {trainingSummary.totalPlayers} players
             </span>
           </div>
           <p className="text-xs text-vct-gray mt-1">
-            {trainingSummary.playersCanTrain > 0
-              ? `Train ${trainingSummary.playersCanTrain} player${trainingSummary.playersCanTrain > 1 ? 's' : ''} to improve stats`
-              : 'All players have reached their weekly limit'}
+            Train your players to improve their stats
           </p>
         </button>
 
@@ -143,11 +122,7 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
                   : 'bg-vct-gray/20 text-vct-gray'
               }`}
             >
-              {scrimsUnlocked ? (
-                <>{scrimsRemaining}/{SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} this week</>
-              ) : (
-                <>Unlocks Week 2</>
-              )}
+              {scrimsUnlocked ? 'Available' : 'Unlocks Week 2'}
             </span>
           </div>
           <p className="text-xs text-vct-gray mt-1">
@@ -160,7 +135,7 @@ export function ActionsPanel({ onTrainingClick, onScrimClick }: ActionsPanelProp
                     ? `Practice ${weakestMap.map} to boost strength`
                     : 'Practice maps and build team chemistry';
                 })()
-              : 'Weekly scrim limit reached'}
+              : scrimStatus.reason || 'Scrim unavailable'}
           </p>
         </button>
 

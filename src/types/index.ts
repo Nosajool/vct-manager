@@ -254,7 +254,6 @@ export type {
   ScrimIntensity,
   ScrimOptions,
   ScrimResult,
-  WeeklyScrimTracker,
   ScrimEligibilityCheck,
 } from './scrim';
 

@@ -6,7 +6,6 @@ import { scrimService } from '../../services';
 import type { TeamTier, ScrimIntensity } from '../../types';
 import type { ScrimActivityConfig } from '../../types/activityPlan';
 import { MAPS } from '../../utils/constants';
-import { SCRIM_CONSTANTS } from '../../types/scrim';
 
 interface ScrimModalProps {
   isOpen: boolean;
@@ -77,10 +76,6 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
   if (!playerTeam) return null;
-
-  // Get weekly limit status
-  const weeklyStatus = scrimService.checkWeeklyLimit();
-  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - weeklyStatus.scrimsUsed;
 
   // Get relationship score for a partner
   const getRelationshipScore = (partnerId: string): number => {
@@ -167,9 +162,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
           <div>
             <h2 className="text-xl font-bold text-vct-light">Configure Scrim</h2>
             <p className="text-sm text-vct-gray">
-              {weeklyStatus.canScrim
-                ? `${scrimsRemaining} of ${SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} scrims remaining this week`
-                : 'Weekly scrim limit reached'}
+              Practice against other teams
             </p>
           </div>
           <button
@@ -241,12 +234,12 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                       <button
                         key={partner.id}
                         onClick={() => setSelectedPartner(partner.id)}
-                        disabled={!weeklyStatus.canScrim}
+                        disabled={!true}
                         className={`
                           p-3 rounded-lg border transition-all text-left
                           ${isSelected
                             ? 'border-vct-red bg-vct-red/10'
-                            : weeklyStatus.canScrim
+                            : true
                             ? 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'
                             : 'border-vct-gray/10 bg-vct-gray/5 opacity-50 cursor-not-allowed'}
                         `}
@@ -344,12 +337,12 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
             {/* Confirm Button */}
             <button
               onClick={handleConfirm}
-              disabled={!isSkipping && (!selectedPartner || selectedMaps.size === 0 || !weeklyStatus.canScrim)}
+              disabled={!isSkipping && (!selectedPartner || selectedMaps.size === 0 || !true)}
               className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
             >
               {isSkipping
                 ? 'Confirm Skip'
-                : !weeklyStatus.canScrim
+                : !true
                 ? 'Weekly Limit Reached'
                 : !selectedPartner
                 ? 'Select a Partner'

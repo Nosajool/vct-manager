@@ -6,7 +6,6 @@
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { scrimService, trainingService } from '../../services';
-import { SCRIM_CONSTANTS } from '../../types/scrim';
 import type { CalendarEvent, MatchEventData } from '../../types';
 
 interface TodayActivitiesProps {
@@ -36,9 +35,8 @@ export function TodayActivities({ onTrainingClick, onScrimClick }: TodayActiviti
     (a) => a.type !== 'match' && a.type !== 'scheduled_training' && a.type !== 'scheduled_scrim'
   );
 
-  // Get weekly scrim status
-  const scrimStatus = scrimService.checkWeeklyLimit();
-  const scrimsRemaining = SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS - scrimStatus.scrimsUsed;
+  // Get eligibility status
+  const scrimStatus = scrimService.checkScrimEligibility();
 
   // Get team training summary for capacity indicator
   const trainingSummary = trainingService.getTeamTrainingSummary();
@@ -107,31 +105,20 @@ export function TodayActivities({ onTrainingClick, onScrimClick }: TodayActiviti
         {!hasMatchToday && trainingActivity && (
           <button
             onClick={() => onTrainingClick?.()}
-            disabled={trainingSummary.playersCanTrain === 0}
-            className={`w-full p-3 border rounded-lg transition-colors text-left ${
-              trainingSummary.playersCanTrain > 0
-                ? 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30'
-                : 'bg-vct-gray/5 border-vct-gray/10 opacity-60 cursor-not-allowed'
-            }`}
+            className="w-full p-3 border rounded-lg transition-colors text-left bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className={trainingSummary.playersCanTrain > 0 ? 'text-blue-400 font-medium' : 'text-vct-gray/60'}>
+                <span className="text-blue-400 font-medium">
                   Team Training
                 </span>
               </div>
-              <span className={`px-2 py-0.5 text-xs rounded font-medium ${
-                trainingSummary.playersCanTrain > 0
-                  ? 'bg-blue-500/20 text-blue-400'
-                  : 'bg-vct-gray/20 text-vct-gray'
-              }`}>
-                {trainingSummary.playersCanTrain}/{trainingSummary.totalPlayers} players can train
+              <span className="px-2 py-0.5 text-xs rounded font-medium bg-blue-500/20 text-blue-400">
+                {trainingSummary.totalPlayers} players
               </span>
             </div>
             <p className="text-xs text-vct-gray mt-1">
-              {trainingSummary.playersCanTrain > 0
-                ? 'Train your players to improve their stats'
-                : 'All players have reached their weekly training limit'}
+              Train your players to improve their stats
             </p>
           </button>
         )}
@@ -158,13 +145,13 @@ export function TodayActivities({ onTrainingClick, onScrimClick }: TodayActiviti
                   ? 'bg-purple-500/20 text-purple-400'
                   : 'bg-vct-gray/20 text-vct-gray'
               }`}>
-                {scrimsRemaining}/{SCRIM_CONSTANTS.MAX_WEEKLY_SCRIMS} this week
+                Available
               </span>
             </div>
             <p className="text-xs text-vct-gray mt-1">
               {scrimStatus.canScrim
                 ? 'Practice against other teams to improve map pool and chemistry'
-                : 'Weekly scrim limit reached'}
+                : scrimStatus.reason || 'Scrim unavailable'}
             </p>
           </button>
         )}
