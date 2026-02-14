@@ -14,6 +14,7 @@ import {
 } from '../components/calendar';
 import { ScrimModal } from '../components/scrim';
 import { getPhaseStatusDisplay } from '../utils/phaseStatus';
+import { DayScheduleService } from '../services/DayScheduleService';
 import type { Match, MatchEventData } from '../types';
 
 type ViewMode = 'calendar' | 'results';
@@ -24,6 +25,9 @@ export function Schedule() {
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [viewDate, setViewDate] = useState<string | null>(null);
+  const [targetDate, setTargetDate] = useState<string | null>(null);
+
+  const dayScheduleService = useMemo(() => new DayScheduleService(), []);
 
   const gameStarted = useGameStore((state) => state.gameStarted);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
@@ -98,12 +102,46 @@ export function Schedule() {
   };
 
   // Handle training click
-  const handleTrainingClick = () => {
+  const handleTrainingClick = (date: string) => {
+    setTargetDate(date);
+
+    // Check if there's already a scheduled training event on this date
+    const existingEvent = calendar.scheduledEvents.find(
+      (e) => e.type === 'scheduled_training' && e.date.startsWith(date.split('T')[0])
+    );
+
+    if (!existingEvent) {
+      // Create a new scheduled_training event
+      try {
+        dayScheduleService.scheduleActivity(date, 'training');
+      } catch (err) {
+        console.error('Failed to schedule training:', err);
+        return;
+      }
+    }
+
     setTrainingModalOpen(true);
   };
 
   // Handle scrim click
-  const handleScrimClick = () => {
+  const handleScrimClick = (date: string) => {
+    setTargetDate(date);
+
+    // Check if there's already a scheduled scrim event on this date
+    const existingEvent = calendar.scheduledEvents.find(
+      (e) => e.type === 'scheduled_scrim' && e.date.startsWith(date.split('T')[0])
+    );
+
+    if (!existingEvent) {
+      // Create a new scheduled_scrim event
+      try {
+        dayScheduleService.scheduleActivity(date, 'scrim');
+      } catch (err) {
+        console.error('Failed to schedule scrim:', err);
+        return;
+      }
+    }
+
     setScrimModalOpen(true);
   };
 
@@ -389,13 +427,65 @@ export function Schedule() {
       {/* Training Modal */}
       <TrainingModal
         isOpen={trainingModalOpen}
-        onClose={() => setTrainingModalOpen(false)}
+        onClose={() => {
+          setTrainingModalOpen(false);
+          setTargetDate(null);
+        }}
+        eventId={
+          targetDate
+            ? calendar.scheduledEvents.find(
+                (e) =>
+                  e.type === 'scheduled_training' &&
+                  e.date.startsWith(targetDate.split('T')[0])
+              )?.id
+            : undefined
+        }
+        existingConfig={
+          targetDate
+            ? (() => {
+                const event = calendar.scheduledEvents.find(
+                  (e) =>
+                    e.type === 'scheduled_training' &&
+                    e.date.startsWith(targetDate.split('T')[0])
+                );
+                if (!event) return undefined;
+                const config = useGameStore.getState().activityConfigs[event.id];
+                return config?.type === 'training' ? config : undefined;
+              })()
+            : undefined
+        }
       />
 
       {/* Scrim Modal */}
       <ScrimModal
         isOpen={scrimModalOpen}
-        onClose={() => setScrimModalOpen(false)}
+        onClose={() => {
+          setScrimModalOpen(false);
+          setTargetDate(null);
+        }}
+        eventId={
+          targetDate
+            ? calendar.scheduledEvents.find(
+                (e) =>
+                  e.type === 'scheduled_scrim' &&
+                  e.date.startsWith(targetDate.split('T')[0])
+              )?.id
+            : undefined
+        }
+        existingConfig={
+          targetDate
+            ? (() => {
+                const event = calendar.scheduledEvents.find(
+                  (e) =>
+                    e.type === 'scheduled_scrim' &&
+                    e.date.startsWith(targetDate.split('T')[0])
+                );
+                if (!event) return undefined;
+                const config = useGameStore.getState().activityConfigs[event.id];
+                return config?.type === 'scrim' ? config : undefined;
+              })()
+            : undefined
+        }
       />
     </div>
   );

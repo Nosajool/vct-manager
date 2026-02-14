@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
-import { TournamentContextPanel, AlertsPanel, ObjectivesPanel } from '../components/today';
+import { TournamentContextPanel, AlertsPanel, ObjectivesPanel, WeekPlannerPanel } from '../components/today';
 import { ScrimModal } from '../components/scrim';
 import { DramaHistoryPanel } from '../components/drama';
 
@@ -95,6 +95,9 @@ export function Today() {
 
       {/* Daily Objectives */}
       <ObjectivesPanel />
+
+      {/* Week Planner */}
+      <WeekPlannerPanel />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
