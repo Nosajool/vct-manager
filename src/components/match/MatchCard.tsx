@@ -1,9 +1,11 @@
 // MatchCard Component - Displays match summary (upcoming or completed)
 
+import { useState } from 'react';
 import { useGameStore } from '../../store';
 import type { Match, MatchResult } from '../../types';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { MatchStrategyEditor } from './MatchStrategyEditor';
 
 interface MatchCardProps {
   match: Match;
@@ -20,6 +22,10 @@ export function MatchCard({
 }: MatchCardProps) {
   const teams = useGameStore((state) => state.teams);
   const results = useGameStore((state) => state.results);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const hasMatchStrategy = useGameStore((state) => state.hasMatchStrategy);
+
+  const [showStrategyEditor, setShowStrategyEditor] = useState(false);
 
   const teamA = teams[match.teamAId];
   const teamB = teams[match.teamBId];
@@ -31,6 +37,8 @@ export function MatchCard({
 
   const isCompleted = match.status === 'completed';
   const isScheduled = match.status === 'scheduled';
+  const isPlayerMatch = match.teamAId === playerTeamId || match.teamBId === playerTeamId;
+  const hasCustomStrategy = hasMatchStrategy(match.id);
 
   // Parse date string as local date to avoid timezone shifts
   const parseAsLocalDate = (dateStr: string): Date => {
@@ -101,18 +109,46 @@ export function MatchCard({
       </div>
 
       {/* Actions */}
-      {showActions && isScheduled && onSimulate && (
-        <div className="mt-4 pt-3 border-t border-vct-gray/10">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onSimulate();
-            }}
-            className="w-full py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded font-medium transition-colors"
-          >
-            Simulate Match
-          </button>
+      {showActions && isScheduled && (
+        <div className="mt-4 pt-3 border-t border-vct-gray/10 space-y-2">
+          {/* Strategy Customization - only for player's matches */}
+          {isPlayerMatch && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowStrategyEditor(true);
+              }}
+              className={`w-full py-2 rounded font-medium transition-colors ${
+                hasCustomStrategy
+                  ? 'bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30'
+                  : 'bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light'
+              }`}
+            >
+              {hasCustomStrategy ? '⚙️ Custom Strategy Set' : '⚙️ Customize Strategy'}
+            </button>
+          )}
+
+          {/* Simulate Button */}
+          {onSimulate && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSimulate();
+              }}
+              className="w-full py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded font-medium transition-colors"
+            >
+              Simulate Match
+            </button>
+          )}
         </div>
+      )}
+
+      {/* Strategy Editor Modal */}
+      {showStrategyEditor && (
+        <MatchStrategyEditor
+          match={match}
+          onClose={() => setShowStrategyEditor(false)}
+        />
       )}
 
       {/* Map Details for Completed */}

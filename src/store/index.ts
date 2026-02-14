@@ -14,6 +14,7 @@ import { createMatchSlice, type MatchSlice } from './slices/matchSlice';
 import { createCompetitionSlice, type CompetitionSlice } from './slices/competitionSlice';
 import { createScrimSlice, type ScrimSlice } from './slices/scrimSlice';
 import { createStrategySlice, type StrategySlice } from './slices/strategySlice';
+import { createMatchStrategySlice, type MatchStrategySlice } from './slices/matchStrategySlice';
 import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
 import { createSeasonStatsSlice, type SeasonStatsSlice } from './slices/seasonStatsSlice';
 import { createDramaSlice, type DramaSlice } from './slices/dramaSlice';
@@ -26,7 +27,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice;
 
 // Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -39,6 +40,7 @@ export const useGameStore = create<GameState>()(
     ...createCompetitionSlice(...args),
     ...createScrimSlice(...args),
     ...createStrategySlice(...args),
+    ...createMatchStrategySlice(...args),
     ...createRoundDataSlice(...args),
     ...createSeasonStatsSlice(...args),
     ...createDramaSlice(...args),
@@ -55,6 +57,7 @@ export type { MatchSlice } from './slices/matchSlice';
 export type { CompetitionSlice, StandingsEntry, QualificationRecord } from './slices/competitionSlice';
 export type { ScrimSlice } from './slices/scrimSlice';
 export type { StrategySlice } from './slices/strategySlice';
+export type { MatchStrategySlice } from './slices/matchStrategySlice';
 export type { RoundDataSlice, MatchRoundData } from './slices/roundDataSlice';
 export type { SeasonStatsSlice } from './slices/seasonStatsSlice';
 export type { DramaSlice } from './slices/dramaSlice';
@@ -246,6 +249,16 @@ export const usePlayerTeamStrategy = () =>
 
 export const usePlayerAgentPrefs = (playerId: string) =>
   useGameStore((state) => state.getPlayerAgentPreferences(playerId));
+
+// ============================================
+// Match Strategy selector hooks
+// ============================================
+
+export const useMatchStrategy = (matchId: string, teamId: string) =>
+  useGameStore((state) => state.getMatchStrategy(matchId, teamId));
+
+export const useHasMatchStrategy = (matchId: string) =>
+  useGameStore((state) => state.hasMatchStrategy(matchId));
 
 // ============================================
 // Round data selector hooks

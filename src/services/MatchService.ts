@@ -45,9 +45,11 @@ export class MatchService {
       return null;
     }
 
-    // Get team strategies
-    const strategyA = state.getTeamStrategy(match.teamAId);
-    const strategyB = state.getTeamStrategy(match.teamBId);
+    // Get team strategies - check for match-specific overrides first
+    const snapshotA = state.getMatchStrategy(matchId, match.teamAId);
+    const snapshotB = state.getMatchStrategy(matchId, match.teamBId);
+    const strategyA = snapshotA?.strategy ?? state.getTeamStrategy(match.teamAId);
+    const strategyB = snapshotB?.strategy ?? state.getTeamStrategy(match.teamBId);
 
     // Run simulation with strategies
     const result = matchSimulator.simulate(
@@ -72,6 +74,9 @@ export class MatchService {
     if (match.tournamentId) {
       tournamentService.advanceTournament(match.tournamentId, matchId, result);
     }
+
+    // Clean up match strategy snapshots after completion
+    state.deleteMatchStrategy(matchId);
 
     return result;
   }

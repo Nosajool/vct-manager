@@ -147,6 +147,21 @@ export const AI_STRATEGY_PRESETS: Record<string, Partial<TeamStrategy>> = {
 };
 
 /**
+ * Match-specific strategy snapshot
+ * Allows customizing strategy for a specific match before simulation
+ */
+export interface MatchStrategySnapshot {
+  /** The match this strategy applies to */
+  matchId: string;
+
+  /** The team this strategy is for */
+  teamId: string;
+
+  /** The customized strategy */
+  strategy: TeamStrategy;
+}
+
+/**
  * Get strategy name for display
  */
 export function getStrategyDisplayName(strategy: TeamStrategy): string {

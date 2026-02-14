@@ -75,6 +75,7 @@ export type {
 // Strategy types
 export type {
   TeamStrategy,
+  MatchStrategySnapshot,
   PlayerAgentPreferences,
   CompositionBonus,
   AgentSelection,
