@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
-import { TournamentContextPanel, AlertsPanel, ObjectivesPanel, WeekPlannerPanel } from '../components/today';
+import { TournamentContextPanel, AlertsPanel, TodayPlanPanel, WeekPlannerPanel } from '../components/today';
 import { ScrimModal } from '../components/scrim';
 import { DramaHistoryPanel } from '../components/drama';
 
@@ -93,8 +93,8 @@ export function Today() {
         </div>
       </div>
 
-      {/* Daily Objectives */}
-      <ObjectivesPanel />
+      {/* Today's Plan */}
+      <TodayPlanPanel />
 
       {/* Week Planner */}
       <WeekPlannerPanel />
