@@ -85,12 +85,6 @@ export class CalendarService {
       progressTrackingService.startCalendarSimulation(unprocessedEvents.length);
     }
 
-    // Artificial delay to ensure loading overlay renders before blocking work
-    // See docs/tech-debt/async_match_simulation.md
-    if (withProgress && unprocessedEvents.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
-
     // Process each event for TODAY
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
