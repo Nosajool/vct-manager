@@ -428,7 +428,7 @@ export class CompositionEngine {
   /**
    * Infer a player's primary role from their stats
    */
-  private inferRoleFromStats(player: Player): AgentRole {
+  public inferRoleFromStats(player: Player): AgentRole {
     const { stats } = player;
 
     // High entry + mechanics = Duelist
