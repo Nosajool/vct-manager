@@ -85,10 +85,10 @@ export class ActivityResolutionService {
    * @param efficiencyModifier - Multiplier for improvements (1.0 normal, 0.8 auto-configured)
    * @returns Scrim result or null if skipped
    */
-  resolveScrimConfig(
+  async resolveScrimConfig(
     config: ScrimActivityConfig,
     efficiencyModifier: number
-  ): ScrimResult | null {
+  ): Promise<ScrimResult | null> {
     if (config.action === 'skip') {
       // Apply team morale boost for skipping scrim
       this.applyTeamRestMoraleBoost();
@@ -105,7 +105,7 @@ export class ActivityResolutionService {
     // Execute scrim via existing service
     // Note: For V1, we call the existing scheduleScrim method
     // Future enhancement (Step 7): use scheduleScrimWithModifier() for proper efficiency scaling
-    const scrimResult = scrimService.scheduleScrim({
+    const scrimResult = await scrimService.scheduleScrim({
       partnerTeamId: config.partnerTeamId,
       format: config.maps.length === 1 ? 'single_map' : config.maps.length === 3 ? 'best_of_3' : 'map_rotation',
       focusMaps: config.maps,
@@ -154,7 +154,7 @@ export class ActivityResolutionService {
    * @param configs - Array of activity configurations to resolve
    * @returns Resolution result with training results, scrim result, and skip flags
    */
-  resolveAllActivities(configs: ActivityConfig[]): ActivityResolutionResult {
+  async resolveAllActivities(configs: ActivityConfig[]): Promise<ActivityResolutionResult> {
     const result: ActivityResolutionResult = {
       trainingResults: [],
       scrimResult: null,
@@ -180,7 +180,7 @@ export class ActivityResolutionService {
           result.skippedScrim = true;
         }
 
-        result.scrimResult = this.resolveScrimConfig(config, efficiencyModifier);
+        result.scrimResult = await this.resolveScrimConfig(config, efficiencyModifier);
       }
     }
 

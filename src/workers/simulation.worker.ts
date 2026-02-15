@@ -247,7 +247,7 @@ function handleScrimSimulation(id: string, input: ScrimInput): void {
   // Build result object
   const result: ScrimResult = {
     id: `scrim-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-    date: new Date().toISOString(),
+    date: currentDate,
     playerTeamId: playerTeam.id,
     partnerTeamId: partnerTeam.id,
     partnerTeamName: partnerTeam.name,
@@ -260,7 +260,7 @@ function handleScrimSimulation(id: string, input: ScrimInput): void {
     relationshipChange,
     relationshipEvent,
     efficiencyMultiplier: efficiency,
-    duration: mapsToPlay.length * 1.5, // ~1.5 hours per map
+    duration: options.format === 'single_map' ? 1 : options.format === 'best_of_3' ? 3 : 5,
     chemistryBefore,
     relationshipBefore,
     mapStatsBefore,

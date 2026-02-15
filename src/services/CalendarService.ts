@@ -286,7 +286,7 @@ export class CalendarService {
       // Resolve all locked activities
       if (activityConfigs.length > 0) {
         console.log(`  Resolving ${activityConfigs.length} locked activities`);
-        activityResults = activityResolutionService.resolveAllActivities(activityConfigs);
+        activityResults = await activityResolutionService.resolveAllActivities(activityConfigs);
 
         // Transition locked → completed after resolution
         for (const config of activityConfigs) {

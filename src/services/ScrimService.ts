@@ -3,6 +3,7 @@
 
 import { useGameStore } from '../store';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
+import { simulationWorkerService } from './SimulationWorkerService';
 import type {
   Team,
   Player,
@@ -89,17 +90,17 @@ export class ScrimService {
    * NOTE: Only map improvements are scaled by the modifier.
    * Chemistry, relationship changes, and VOD leak risk are NOT scaled.
    */
-  scheduleScrimWithModifier(
+  async scheduleScrimWithModifier(
     options: ScrimOptions,
     modifier: number
-  ): { success: boolean; result?: ScrimResult; error?: string } {
+  ): Promise<{ success: boolean; result?: ScrimResult; error?: string }> {
     // If modifier is 1.0, just use regular scheduleScrim
     if (modifier === 1.0) {
-      return this.scheduleScrim(options);
+      return await this.scheduleScrim(options);
     }
 
     // Execute the base scrim
-    const scrimResult = this.scheduleScrim(options);
+    const scrimResult = await this.scheduleScrim(options);
 
     // If scrim failed or no result, return as-is
     if (!scrimResult.success || !scrimResult.result) {
@@ -165,9 +166,9 @@ export class ScrimService {
   /**
    * Schedule and execute a scrim session
    */
-  scheduleScrim(
+  async scheduleScrim(
     options: ScrimOptions
-  ): { success: boolean; result?: ScrimResult; error?: string } {
+  ): Promise<{ success: boolean; result?: ScrimResult; error?: string }> {
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId;
 
@@ -211,97 +212,30 @@ export class ScrimService {
 
     // Calculate team strengths
     const playerTeamStrength = this.calculateTeamStrength(playerTeam, playerTeamPlayers);
-    const partnerStrength = this.calculatePartnerStrength(partnerTeam, partnerPlayers);
+    const partnerTeamStrength = this.calculatePartnerStrength(partnerTeam, partnerPlayers);
 
-    // Calculate efficiency
-    const efficiency = scrimEngine.calculateEfficiency(
-      partnerTeam.tier,
-      relationship.relationshipScore
-    );
-
-    // Select maps
+    // Get map pool
     const mapPool = playerTeam.mapPool || scrimEngine.createDefaultMapPool();
-    const mapsToPlay = scrimEngine.selectScrimMaps(options, mapPool);
 
     // Capture "before" snapshot for display
     const chemistryBefore = playerTeam.chemistry.overall;
     const relationshipBefore = relationship.relationshipScore;
-    const mapStatsBefore: Record<string, typeof mapPool.maps[string]['attributes']> = {};
-    for (const mapName of mapsToPlay) {
-      const mapStrength = mapPool.maps[mapName];
-      if (mapStrength) {
-        mapStatsBefore[mapName] = { ...mapStrength.attributes };
-      }
-    }
 
-    // Simulate each map
-    const maps = mapsToPlay.map((mapName) =>
-      scrimEngine.simulateScrimMap(
-        playerTeamStrength,
-        partnerStrength,
-        mapName,
-        playerTeamPlayers,
-        partnerPlayers,
-        options.intensity
-      )
-    );
-
-    // Calculate improvements
-    const mapImprovements = scrimEngine.calculateMapImprovements(
-      mapsToPlay,
-      options.focusAttributes,
-      efficiency,
-      options.intensity
-    );
-
-    // Calculate chemistry changes
-    const chemistryChanges = scrimEngine.calculateChemistryChanges(
-      playerTeamPlayers,
-      maps,
-      options.intensity
-    );
-
-    // Roll for relationship event
-    const relationshipEvent = scrimEngine.rollRelationshipEvent(
-      relationship,
+    // Offload heavy compute to worker
+    const result = await simulationWorkerService.resolveScrim({
+      playerTeam,
       partnerTeam,
-      options.intensity,
-      state.calendar.currentDate
-    );
-
-    // Calculate relationship change
-    const relationshipChange = scrimEngine.calculateRelationshipChange(
-      maps,
-      options.intensity,
-      relationshipEvent
-    );
-
-    // Determine winner
-    const winsA = maps.filter((m) => m.winner === 'teamA').length;
-    const overallWinner = winsA > maps.length / 2 ? playerTeamId : options.partnerTeamId;
-
-    // Build result
-    const result: ScrimResult = {
-      id: `scrim-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      date: state.calendar.currentDate,
-      playerTeamId,
-      partnerTeamId: options.partnerTeamId,
-      partnerTeamName: partnerTeam.name,
-      partnerTier: partnerTeam.tier,
-      maps,
-      overallWinner,
-      mapImprovements,
-      chemistryChange: chemistryChanges.overallChange,
-      pairChemistryChanges: chemistryChanges.pairChanges,
-      relationshipChange,
-      relationshipEvent,
-      efficiencyMultiplier: efficiency,
-      duration: options.format === 'single_map' ? 1 : options.format === 'best_of_3' ? 3 : 5,
-      // "Before" snapshots for "old → new" display
+      playerTeamPlayers,
+      partnerTeamPlayers: partnerPlayers,
+      options,
+      relationship,
+      mapPool,
+      currentDate: state.calendar.currentDate,
+      playerTeamStrength,
+      partnerTeamStrength,
       chemistryBefore,
       relationshipBefore,
-      mapStatsBefore,
-    };
+    });
 
     // Apply results to store
     this.applyScrimResults(result, playerTeamId);
