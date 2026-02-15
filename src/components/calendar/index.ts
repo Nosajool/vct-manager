@@ -6,4 +6,5 @@ export { TrainingModal } from './TrainingModal';
 export { MonthCalendar } from './MonthCalendar';
 export { DayDetailPanel } from './DayDetailPanel';
 export { SimulationResultsModal } from './SimulationResultsModal';
+export { SimulationProgressModal } from './SimulationProgressModal';
 export { DayRecapModal } from './DayRecapModal';

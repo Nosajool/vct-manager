@@ -7,11 +7,17 @@ import { Roster } from './pages/Roster';
 import { TournamentPage } from './pages/Tournament';
 import { Finances } from './pages/Finances';
 import { useActiveView, useGameStore } from './store';
+import { progressTrackingService } from './services/ProgressTrackingService';
 
 function App() {
   const activeView = useActiveView();
   const gameStarted = useGameStore((state) => state.gameStarted);
   const setActiveView = useGameStore((state) => state.setActiveView);
+
+  // Initialize worker progress connection on mount
+  useEffect(() => {
+    progressTrackingService.connectWorkerProgress();
+  }, []);
 
   // Auto-navigate to team view when game hasn't started
   useEffect(() => {

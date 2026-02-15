@@ -11,9 +11,12 @@ import {
   type ProgressCallback,
   type SimulationProgress,
 } from '../utils/progress';
+import { simulationWorkerService } from './SimulationWorkerService';
+import type { ProgressUpdate } from '../workers/types';
 
 export class ProgressTrackingService {
   private activeSession: SimulationProgress | null = null;
+  private workerProgressConnected = false;
 
   /**
    * Start tracking a new simulation session
@@ -187,6 +190,41 @@ export class ProgressTrackingService {
   clearProgress(): void {
     this.activeSession = null;
     useGameStore.getState().setSimulationProgress(null);
+  }
+
+  /**
+   * Connect to worker progress updates
+   * Call this once during app initialization to wire up worker progress to the store
+   */
+  connectWorkerProgress(): void {
+    if (this.workerProgressConnected) return;
+
+    simulationWorkerService.onProgress((update: ProgressUpdate) => {
+      // Translate worker progress update to our progress format
+      // The worker sends { stage, progress, details? }
+      // We need to update our active session
+
+      if (!this.activeSession) {
+        // No active session - worker is sending progress but we haven't started tracking
+        // This could happen if the worker was called directly without going through ProgressTrackingService
+        // Start a generic session
+        this.startSimulation({
+          type: 'bulk',
+          total: 100,
+          status: update.stage,
+          canCancel: false,
+        });
+      }
+
+      // Update progress based on worker's percentage (0-100)
+      const current = Math.round((update.progress / 100) * (this.activeSession?.total || 100));
+
+      this.updateProgress(current, update.stage, {
+        currentMatch: update.details,
+      });
+    });
+
+    this.workerProgressConnected = true;
   }
 }
 

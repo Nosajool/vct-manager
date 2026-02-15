@@ -16,8 +16,7 @@ import { calendarService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
-import { SimulationResultsModal, DayRecapModal } from '../calendar';
-import { LoadingOverlay } from '../shared/LoadingSpinner';
+import { SimulationResultsModal, DayRecapModal, SimulationProgressModal } from '../calendar';
 import { progressTrackingService } from '../../services';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
@@ -76,7 +75,6 @@ function enrichEventWithNarrative(
 
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
-  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [showDayRecapModal, setShowDayRecapModal] = useState(false);
@@ -105,7 +103,8 @@ export function TimeBar() {
     return enrichEventWithNarrative(currentMajorEvent, template);
   }, [currentMajorEvent]);
 
-  // Get simulation progress from store
+  // Get simulation progress from store (updated by ProgressTrackingService)
+  const simulationProgress = useGameStore((state) => state.simulationProgress);
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
@@ -126,10 +125,6 @@ export function TimeBar() {
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
-    setShowLoadingOverlay(true);
-
-    // Yield to event loop to allow React to render the loading overlay
-    await new Promise(resolve => setTimeout(resolve, 0));
 
     try {
       const result = await advanceFn(true); // Pass true for withProgress
@@ -159,7 +154,6 @@ export function TimeBar() {
       setShowDayRecapModal(true);
     } finally {
       setIsAdvancing(false);
-      setShowLoadingOverlay(false);
     }
   };
 
@@ -415,11 +409,10 @@ export function TimeBar() {
         </div>
       </div>
 
-      {/* Loading Overlay - shown during simulation */}
-      <LoadingOverlay
-        isVisible={showLoadingOverlay}
-        text="Simulating matches..."
-        size="md"
+      {/* Simulation Progress Modal - shown during worker simulation */}
+      <SimulationProgressModal
+        isOpen={isAdvancing && !!simulationProgress}
+        progress={simulationProgress}
       />
 
       {/* Simulation Results Modal */}
