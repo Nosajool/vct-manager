@@ -167,7 +167,7 @@ export interface ScrimResult {
 export interface ScrimEligibilityCheck {
   canScrim: boolean;
   reason?: string;
-  failedChecks: Array<'match_day' | 'player_count'>;
+  failedChecks: Array<'match_day' | 'player_count' | 'cross_region'>;
 }
 
 // ============================================

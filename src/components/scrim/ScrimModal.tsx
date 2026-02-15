@@ -228,6 +228,14 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                   training efficiency
                 </div>
 
+                {/* Region Info */}
+                <div className="text-xs text-vct-gray mb-2 flex items-center gap-2">
+                  <span>📍</span>
+                  <span>
+                    Showing {playerTeam.region} teams only - scrims are region-restricted
+                  </span>
+                </div>
+
                 {/* Partner List */}
                 <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
                   {availablePartners[activeTier].map((partner) => {
@@ -269,7 +277,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                   })}
                   {availablePartners[activeTier].length === 0 && (
                     <p className="text-vct-gray text-sm text-center py-4">
-                      No {TIER_LABELS[activeTier].label.toLowerCase()} available
+                      No {TIER_LABELS[activeTier].label.toLowerCase()} available in {playerTeam.region}
                     </p>
                   )}
                 </div>

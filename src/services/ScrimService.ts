@@ -49,12 +49,20 @@ export class ScrimService {
     const relationships = Object.values(playerTeam.scrimRelationships || {});
 
     if (relationships.length > 0) {
-      // Sort by relationship score, pick the best one
-      const sortedRelationships = [...relationships].sort(
-        (a, b) => b.relationshipScore - a.relationshipScore
-      );
-      partnerTeamId = sortedRelationships[0].teamId;
-    } else {
+      // Filter to same-region partners only, then sort by relationship score
+      const sortedRelationships = [...relationships]
+        .filter(rel => {
+          const partner = this.getPartnerTeam(rel.teamId);
+          return partner && partner.region === playerTeam.region;
+        })
+        .sort((a, b) => b.relationshipScore - a.relationshipScore);
+
+      if (sortedRelationships.length > 0) {
+        partnerTeamId = sortedRelationships[0].teamId;
+      }
+    }
+
+    if (!partnerTeamId) {
       // No relationships yet, pick a T2 team from available partners
       const availablePartners = this.getAvailablePartners();
       if (availablePartners.t2Teams.length > 0) {
@@ -180,6 +188,12 @@ export class ScrimService {
     const eligibilityCheck = this.checkScrimEligibility();
     if (!eligibilityCheck.canScrim) {
       return { success: false, error: eligibilityCheck.reason || 'Cannot schedule scrim' };
+    }
+
+    // Validate partner region
+    const partnerEligibility = this.checkPartnerEligibility(options.partnerTeamId);
+    if (!partnerEligibility.isEligible) {
+      return { success: false, error: partnerEligibility.reason || 'Invalid partner selection' };
     }
 
     // Get player team and players
@@ -347,26 +361,20 @@ export class ScrimService {
     const playerTeamId = state.playerTeamId;
     const playerTeam = playerTeamId ? state.teams[playerTeamId] : null;
 
-    // T1: All VCT teams except player's team
+    // T1: All VCT teams except player's team, same region only
     const t1Teams = Object.values(state.teams)
       .filter((t) => t.id !== playerTeamId)
+      .filter((t) => !playerTeam || t.region === playerTeam.region)
       .map((t) => ({ ...t, tier: 'T1' as TeamTier }));
 
-    // T2/T3: From tier teams, prefer same region
+    // T2/T3: From tier teams, same region only
     const allTierTeams = Object.values(state.tierTeams);
-    const t2Teams = allTierTeams.filter((t) => t.tier === 'T2');
-    const t3Teams = allTierTeams.filter((t) => t.tier === 'T3');
-
-    // Sort by region preference (same region first)
-    if (playerTeam) {
-      const sortByRegion = (a: TierTeam, b: TierTeam) => {
-        const aMatch = a.region === playerTeam.region ? 0 : 1;
-        const bMatch = b.region === playerTeam.region ? 0 : 1;
-        return aMatch - bMatch;
-      };
-      t2Teams.sort(sortByRegion);
-      t3Teams.sort(sortByRegion);
-    }
+    const t2Teams = allTierTeams
+      .filter((t) => t.tier === 'T2')
+      .filter((t) => !playerTeam || t.region === playerTeam.region);
+    const t3Teams = allTierTeams
+      .filter((t) => t.tier === 'T3')
+      .filter((t) => !playerTeam || t.region === playerTeam.region);
 
     return { t1Teams, t2Teams, t3Teams };
   }
@@ -490,7 +498,7 @@ export class ScrimService {
   checkScrimEligibility(): ScrimEligibilityCheck {
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId;
-    const failedChecks: Array<'match_day' | 'player_count'> = [];
+    const failedChecks: Array<'match_day' | 'player_count' | 'cross_region'> = [];
 
     // Check 1: Player team exists and has enough players
     if (!playerTeamId) {
@@ -542,6 +550,41 @@ export class ScrimService {
       reason,
       failedChecks,
     };
+  }
+
+  /**
+   * Check if a specific partner is eligible for scrims
+   * Validates that partner is from the same region
+   */
+  private checkPartnerEligibility(partnerTeamId: string): {
+    isEligible: boolean;
+    reason?: string;
+  } {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+
+    if (!playerTeamId) {
+      return { isEligible: false, reason: 'No player team found' };
+    }
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) {
+      return { isEligible: false, reason: 'Player team not found' };
+    }
+
+    const partnerTeam = this.getPartnerTeam(partnerTeamId);
+    if (!partnerTeam) {
+      return { isEligible: false, reason: 'Partner team not found' };
+    }
+
+    if (playerTeam.region !== partnerTeam.region) {
+      return {
+        isEligible: false,
+        reason: `Cannot scrim with ${partnerTeam.name} - different region (${partnerTeam.region}). Only ${playerTeam.region} teams are available.`,
+      };
+    }
+
+    return { isEligible: true };
   }
 
   /**
