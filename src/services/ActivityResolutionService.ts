@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
+import { simulationWorkerService } from './SimulationWorkerService';
 import type {
   TrainingActivityConfig,
   ScrimActivityConfig,
@@ -11,6 +12,7 @@ import type {
   ActivityResolutionResult,
 } from '../types/activityPlan';
 import type { TrainingResult, ScrimResult } from '../types';
+import type { TrainingBatchInput } from '../workers/types';
 
 /**
  * ActivityResolutionService - Orchestrates resolution of configured activities
@@ -26,28 +28,122 @@ export class ActivityResolutionService {
    * Resolve a training activity configuration
    * Executes training for assigned players and applies skip bonuses for resting players
    *
+   * This method offloads training computation to a web worker for better performance.
+   * Training is batched into a single worker message to minimize overhead.
+   *
    * @param config - Training activity configuration
    * @param efficiencyModifier - Multiplier for stat improvements (1.0 normal, 0.8 auto-configured)
    * @returns Array of training results for players who trained
    */
-  resolveTrainingConfig(
+  async resolveTrainingConfig(
     config: TrainingActivityConfig,
     efficiencyModifier: number
-  ): TrainingResult[] {
+  ): Promise<TrainingResult[]> {
+    const state = useGameStore.getState();
     const results: TrainingResult[] = [];
 
-    // Process each player assignment
-    for (const assignment of config.assignments) {
-      if (assignment.action === 'train') {
-        // Validate required fields
-        if (!assignment.goal || !assignment.intensity) {
-          console.warn(
-            `Skipping training for player ${assignment.playerId} - missing goal or intensity`
-          );
-          continue;
+    // Separate training assignments from skip assignments
+    const trainingAssignments = config.assignments.filter(a => a.action === 'train');
+    const skipAssignments = config.assignments.filter(a => a.action === 'skip');
+
+    // Process skip assignments (main thread - requires store access)
+    for (const assignment of skipAssignments) {
+      this.applyRestMoraleBoost(assignment.playerId);
+    }
+
+    // Early return if no training to do
+    if (trainingAssignments.length === 0) {
+      return results;
+    }
+
+    // Get coach bonus (same for all players on the team)
+    const playerTeamId = state.playerTeamId;
+    const coachBonus = this.getCoachBonus(playerTeamId);
+
+    // Build batch input for worker
+    const batchInput: TrainingBatchInput = {
+      assignments: [],
+    };
+
+    // Collect player data and build worker input
+    for (const assignment of trainingAssignments) {
+      // Validate required fields
+      if (!assignment.goal || !assignment.intensity) {
+        console.warn(
+          `Skipping training for player ${assignment.playerId} - missing goal or intensity`
+        );
+        continue;
+      }
+
+      const player = state.players[assignment.playerId];
+      if (!player) {
+        console.warn(`Player ${assignment.playerId} not found - skipping training`);
+        continue;
+      }
+
+      // Add to batch input
+      batchInput.assignments.push({
+        player,
+        goal: assignment.goal,
+        intensity: assignment.intensity,
+        coachBonus,
+      });
+    }
+
+    // Send batch to worker if we have valid assignments
+    if (batchInput.assignments.length === 0) {
+      return results;
+    }
+
+    try {
+      // Execute training in worker
+      const workerResults = await simulationWorkerService.trainBatch(batchInput);
+
+      // Apply results to store
+      for (let i = 0; i < workerResults.length; i++) {
+        const result = workerResults[i];
+        const assignment = batchInput.assignments[i];
+        const player = assignment.player;
+
+        // Scale stat improvements by efficiency modifier
+        const scaledResult = { ...result };
+        scaledResult.statImprovements = this.scaleStatImprovements(
+          result.statImprovements,
+          efficiencyModifier
+        );
+
+        // Apply the scaled improvements to the player
+        const updatedStats = { ...player.stats };
+        for (const [stat, improvement] of Object.entries(scaledResult.statImprovements)) {
+          if (stat in updatedStats) {
+            (updatedStats as any)[stat] = Math.min(
+              100,
+              Math.max(0, ((updatedStats as any)[stat] || 0) + improvement)
+            );
+          }
         }
 
-        // Execute training via existing service
+        const updatedMorale = Math.min(
+          100,
+          Math.max(0, player.morale + result.moraleChange)
+        );
+
+        // Update the player in the store
+        state.updatePlayer(player.id, {
+          stats: updatedStats,
+          morale: updatedMorale,
+        });
+
+        results.push(scaledResult);
+      }
+    } catch (error) {
+      console.error('Training batch failed in worker:', error);
+      // Fallback to synchronous training if worker fails
+      console.warn('Falling back to synchronous training');
+
+      for (const assignment of trainingAssignments) {
+        if (!assignment.goal || !assignment.intensity) continue;
+
         const trainResult = trainingService.trainPlayerWithGoal(
           assignment.playerId,
           assignment.goal,
@@ -55,22 +151,17 @@ export class ActivityResolutionService {
         );
 
         if (trainResult.success && trainResult.result) {
-          // Scale stat improvements by efficiency modifier
           const scaledResult = { ...trainResult.result };
           scaledResult.statImprovements = this.scaleStatImprovements(
             trainResult.result.statImprovements,
             efficiencyModifier
           );
-
           results.push(scaledResult);
         } else {
           console.warn(
             `Training failed for player ${assignment.playerId}: ${trainResult.error}`
           );
         }
-      } else if (assignment.action === 'skip') {
-        // Apply morale boost for resting player
-        this.applyRestMoraleBoost(assignment.playerId);
       }
     }
 
@@ -173,7 +264,7 @@ export class ActivityResolutionService {
           result.skippedTraining = true;
         }
 
-        const trainingResults = this.resolveTrainingConfig(config, efficiencyModifier);
+        const trainingResults = await this.resolveTrainingConfig(config, efficiencyModifier);
         result.trainingResults.push(...trainingResults);
       } else if (config.type === 'scrim') {
         if (config.action === 'skip') {
@@ -243,6 +334,24 @@ export class ActivityResolutionService {
     }
 
     return scaled;
+  }
+
+  /**
+   * Get coach bonus for a team
+   */
+  private getCoachBonus(teamId: string | null): number {
+    if (!teamId) return 0;
+
+    const state = useGameStore.getState();
+    const team = state.teams[teamId];
+
+    if (!team || team.coachIds.length === 0) {
+      return 0;
+    }
+
+    // Future: Look up actual coach stats
+    // For now, give a flat bonus if team has coaches
+    return 5;
   }
 
   /**
