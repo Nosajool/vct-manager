@@ -2,7 +2,7 @@
 // Connects the pure MatchSimulator engine with Zustand store
 
 import { useGameStore } from '../store';
-import { matchSimulator } from '../engine/match';
+import { simulationWorkerService } from './SimulationWorkerService';
 import { tournamentService } from './TournamentService';
 import { progressTrackingService } from './ProgressTrackingService';
 import type { Match, MatchResult, Player, Team } from '../types';
@@ -13,7 +13,7 @@ export class MatchService {
   /**
    * Simulate a match and update all related state
    */
-  simulateMatch(matchId: string): MatchResult | null {
+  async simulateMatch(matchId: string): Promise<MatchResult | null> {
     const state = useGameStore.getState();
     const match = state.matches[matchId];
 
@@ -51,20 +51,20 @@ export class MatchService {
     const strategyA = snapshotA?.strategy ?? state.getTeamStrategy(match.teamAId);
     const strategyB = snapshotB?.strategy ?? state.getTeamStrategy(match.teamBId);
 
-    // Run simulation with strategies
-    const result = matchSimulator.simulate(
+    // Run simulation in worker with strategies
+    const result = await simulationWorkerService.simulateMatch({
       teamA,
       teamB,
       playersA,
       playersB,
       strategyA,
-      strategyB
-    );
+      strategyB,
+    });
 
     // Update result's matchId to the actual match
     result.matchId = matchId;
 
-// Apply all updates to the store
+    // Apply all updates to the store
     this.applyMatchResult(match, result, playersA, playersB);
 
     // Store round data for detailed viewing
@@ -472,7 +472,7 @@ export class MatchService {
         );
       }
 
-      const result = this.simulateMatch(matchId);
+      const result = await this.simulateMatch(matchId);
       if (result) {
         results.push(result);
       }

@@ -230,7 +230,7 @@ export class CalendarService {
         }
 
         // Simulate today's matches before advancing
-        const result = this.simulateMatchEvent(event);
+        const result = await this.simulateMatchEvent(event);
         if (result) {
           simulatedMatches.push(result);
           processedEvents.push(event);
@@ -429,7 +429,7 @@ export class CalendarService {
    * Simulate a match from a calendar event
    * Returns the match result if successful, null otherwise
    */
-  simulateMatchEvent(event: CalendarEvent): MatchResult | null {
+  async simulateMatchEvent(event: CalendarEvent): Promise<MatchResult | null> {
     const state = useGameStore.getState();
     const data = event.data as MatchEventData;
 
@@ -440,7 +440,7 @@ export class CalendarService {
     }
 
     // Try to simulate the match
-    const result = matchService.simulateMatch(data.matchId);
+    const result = await matchService.simulateMatch(data.matchId);
 
     if (result) {
       // Mark calendar event as processed

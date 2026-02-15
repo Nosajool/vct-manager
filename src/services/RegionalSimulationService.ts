@@ -156,10 +156,10 @@ export class RegionalSimulationService {
   /**
    * Simulate entire Masters tournament (Swiss + Playoffs)
    */
-  simulateMastersTournament(tournamentId: string): {
+  async simulateMastersTournament(tournamentId: string): Promise<{
     results: MatchResult[];
     champion: string | null;
-  } {
+  }> {
     const allResults: MatchResult[] = [];
     let champion: string | null = null;
 
@@ -178,13 +178,13 @@ export class RegionalSimulationService {
     // If it's a Swiss-to-Playoff tournament, simulate Swiss first
     if (isMultiStageTournament(tournament) && tournament.currentStage === 'swiss') {
       console.log('Simulating Masters Swiss Stage...');
-      const qualifiedTeams = tournamentService.simulateSwissStage(tournamentId);
+      const qualifiedTeams = await tournamentService.simulateSwissStage(tournamentId);
       console.log(`Swiss Stage complete. Qualified teams: ${qualifiedTeams.length}`);
     }
 
     // Now simulate playoffs (standard bracket simulation)
     console.log('Simulating Masters Playoffs...');
-    const { results, champion: playoffChampion } = tournamentService.simulateTournament(tournamentId);
+    const { results, champion: playoffChampion } = await tournamentService.simulateTournament(tournamentId);
     allResults.push(...results);
     champion = playoffChampion;
 

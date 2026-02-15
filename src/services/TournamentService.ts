@@ -171,7 +171,7 @@ export class TournamentService {
   /**
    * Simulate the next ready match in the tournament
    */
-  simulateNextMatch(tournamentId: string): MatchResult | null {
+  async simulateNextMatch(tournamentId: string): Promise<MatchResult | null> {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
@@ -216,7 +216,7 @@ export class TournamentService {
     }
 
     // Simulate the match
-    const result = matchService.simulateMatch(match.id);
+    const result = await matchService.simulateMatch(match.id);
 
     if (result) {
       // Advance the tournament bracket
@@ -229,7 +229,7 @@ export class TournamentService {
   /**
    * Simulate an entire tournament round
    */
-  simulateTournamentRound(tournamentId: string, withProgress?: boolean): MatchResult[] {
+  async simulateTournamentRound(tournamentId: string, withProgress?: boolean): Promise<MatchResult[]> {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
@@ -269,7 +269,7 @@ export class TournamentService {
         );
       }
 
-      const result = this.simulateNextMatch(tournamentId);
+      const result = await this.simulateNextMatch(tournamentId);
       if (result) {
         results.push(result);
       }
@@ -286,10 +286,10 @@ export class TournamentService {
   /**
    * Simulate entire tournament to completion
    */
-  simulateTournament(tournamentId: string, withProgress?: boolean): {
+  async simulateTournament(tournamentId: string, withProgress?: boolean): Promise<{
     results: MatchResult[];
     champion: string | null;
-  } {
+  }> {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
     
@@ -334,7 +334,7 @@ export class TournamentService {
         );
       }
 
-      const result = this.simulateNextMatch(tournamentId);
+      const result = await this.simulateNextMatch(tournamentId);
       if (result) {
         allResults.push(result);
       } else {
@@ -1450,7 +1450,7 @@ export class TournamentService {
    * Simulate entire Swiss stage to completion
    * Returns the 4 qualified teams
    */
-  simulateSwissStage(tournamentId: string): string[] {
+  async simulateSwissStage(tournamentId: string): Promise<string[]> {
     const state = useGameStore.getState();
     const initialTournament = state.tournaments[tournamentId];
 
@@ -1519,7 +1519,7 @@ export class TournamentService {
       }
 
       // Simulate the match
-      const result = this.simulateSwissMatch(tournamentId, nextMatch.matchId);
+      const result = await this.simulateSwissMatch(tournamentId, nextMatch.matchId);
       if (!result) {
         safetyCounter++;
         continue;
@@ -1541,7 +1541,7 @@ export class TournamentService {
   /**
    * Simulate a single Swiss match
    */
-  private simulateSwissMatch(tournamentId: string, matchId: string): MatchResult | null {
+  private async simulateSwissMatch(tournamentId: string, matchId: string): Promise<MatchResult | null> {
     const state = useGameStore.getState();
     const tournament = state.tournaments[tournamentId];
 
@@ -1576,7 +1576,7 @@ export class TournamentService {
     }
 
     // Simulate the match
-    const result = matchService.simulateMatch(matchId);
+    const result = await matchService.simulateMatch(matchId);
 
     if (result) {
       // Advance the Swiss stage
