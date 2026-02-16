@@ -8,6 +8,8 @@ import { useGameStore } from '../../store';
 import { contractService } from '../../services/ContractService';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { lineupOptimizer } from '../../engine/team/LineupOptimizer';
+import type { LineupResult } from '../../engine/team/LineupOptimizer';
 
 interface RosterListProps {
   team: Team;
@@ -71,8 +73,25 @@ function Toast({
 export function RosterList({ team, players, onReleasePlayer }: RosterListProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [optimizationResult, setOptimizationResult] = useState<LineupResult | null>(null);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const isPlayerTeam = team.id === playerTeamId;
+
+  // Check for lineup optimization opportunities
+  useEffect(() => {
+    // Only check if this is the player's team and there are reserves
+    if (isPlayerTeam && players.length > 5) {
+      const result = lineupOptimizer.findOptimalLineup(team, players);
+      // Only set result if improvement is meaningful (> 3%)
+      if (result.improvementPercent > 3) {
+        setOptimizationResult(result);
+      } else {
+        setOptimizationResult(null);
+      }
+    } else {
+      setOptimizationResult(null);
+    }
+  }, [isPlayerTeam, team, players]);
 
   // Split into active and reserve
   const activePlayers = players.filter((p) => team.playerIds.includes(p.id));
@@ -111,6 +130,48 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
       onReleasePlayer(selectedPlayer.id);
       setSelectedPlayer(null);
     }
+  };
+
+  // Handler for setting optimal lineup
+  const handleSetOptimalLineup = () => {
+    if (!optimizationResult) return;
+
+    const { swapsNeeded } = optimizationResult;
+
+    // First move players to reserve
+    for (const playerId of swapsNeeded.toReserve) {
+      const result = contractService.movePlayerPosition(playerId, 'reserve');
+      if (!result.success) {
+        setToast({ type: 'error', text: result.error || 'Failed to optimize lineup' });
+        return;
+      }
+    }
+
+    // Then promote optimal players to active
+    for (const playerId of swapsNeeded.toActive) {
+      const result = contractService.movePlayerPosition(playerId, 'active');
+      if (!result.success) {
+        setToast({ type: 'error', text: result.error || 'Failed to optimize lineup' });
+        return;
+      }
+    }
+
+    // Build summary message
+    const movedToReserve = swapsNeeded.toReserve.map(id =>
+      players.find(p => p.id === id)?.name || 'Unknown'
+    );
+    const promoted = swapsNeeded.toActive.map(id =>
+      players.find(p => p.id === id)?.name || 'Unknown'
+    );
+
+    const improvement = optimizationResult.improvementPercent.toFixed(1);
+    let message = `Optimal lineup set (+${improvement}% strength)`;
+    if (promoted.length > 0 && movedToReserve.length > 0) {
+      message += ` • Promoted: ${promoted.join(', ')} • Benched: ${movedToReserve.join(', ')}`;
+    }
+
+    setToast({ type: 'success', text: message });
+    setOptimizationResult(null); // Clear optimization state
   };
 
   return (
@@ -163,6 +224,18 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
               `}>
                 {activePlayers.length}/5
               </span>
+              {isPlayerTeam && optimizationResult && (
+                <button
+                  onClick={handleSetOptimalLineup}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors flex items-center gap-1.5"
+                  title={`Optimize lineup for +${optimizationResult.improvementPercent.toFixed(1)}% strength`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Set Optimal Lineup
+                </button>
+              )}
             </div>
             {isPlayerTeam && slotsAvailable > 0 && reservePlayers.length > 0 && (
               <span className="text-xs text-vct-gray">

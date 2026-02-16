@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { LineupOptimizer } from '../LineupOptimizer';
-import type { Player, Team, TeamChemistry } from '../../../types';
+import type { Player, Team } from '../../../types';
 
 // Helper function to create a mock player with specified stats
 function createMockPlayer(
@@ -23,9 +23,11 @@ function createMockPlayer(
     name,
     age: 20,
     nationality: 'US',
-    region: 'NA',
-    role: null,
+    region: 'Americas',
+    teamId: 'test-team',
     form,
+    morale: 70,
+    potential: 70,
     stats: {
       mechanics: stats.mechanics ?? 50,
       igl: stats.igl ?? 50,
@@ -35,41 +37,43 @@ function createMockPlayer(
       support: stats.support ?? 50,
       lurking: stats.lurking ?? 50,
       vibes: stats.vibes ?? 50,
+      stamina: 70,
     },
     contract: {
-      teamId: 'test-team',
-      startDate: '2024-01-01',
-      endDate: '2025-01-01',
       salary: 5000,
-      signOnBonus: 0,
-      releaseClause: 10000,
+      bonusPerWin: 100,
+      yearsRemaining: 1,
+      endDate: '2025-01-01',
     },
     careerStats: {
       matchesPlayed: 0,
       wins: 0,
       losses: 0,
-      averageKD: 1.0,
-      headshots: 0,
-      aces: 0,
-      clutchesWon: 0,
+      avgKills: 15,
+      avgDeaths: 15,
+      avgAssists: 5,
+      tournamentsWon: 0,
     },
     seasonStats: {
+      season: 1,
       matchesPlayed: 0,
       wins: 0,
       losses: 0,
-      averageKD: 1.0,
-      headshots: 0,
-      aces: 0,
-      clutchesWon: 0,
+      avgKills: 15,
+      avgDeaths: 15,
+      avgAssists: 5,
+      tournamentsWon: 0,
     },
     agentPreferences: {
       preferredAgents: ['Jett', 'Raze', 'Phoenix'],
-      flexRoles: ['Duelist', 'Initiator'],
+      primaryRole: 'Duelist',
+      flexRoles: ['Initiator'],
     },
     preferences: {
-      minSalary: 5000,
-      preferredRegions: ['NA'],
-      willingToRelocate: true,
+      salaryImportance: 50,
+      teamQualityImportance: 50,
+      regionLoyalty: 50,
+      preferredTeammates: [],
     },
   };
 }
@@ -79,22 +83,12 @@ function createMockTeam(playerIds: string[], chemistry: number = 70): Team {
   return {
     id: 'test-team',
     name: 'Test Team',
-    region: 'NA',
+    region: 'Americas',
     playerIds,
-    coachId: null,
-    strategy: {
-      defaultComposition: {
-        Duelist: 2,
-        Initiator: 1,
-        Controller: 1,
-        Sentinel: 1,
-      },
-      playstyle: 'balanced',
-      economyDiscipline: 'balanced',
-      ultUsageStyle: 'balanced',
-      ecoThreshold: 20000,
-      forceThreshold: 30000,
-    },
+    reservePlayerIds: [],
+    coachIds: [],
+    organizationValue: 100000,
+    fanbase: 10000,
     chemistry: {
       overall: chemistry,
       pairs: {},
@@ -103,24 +97,25 @@ function createMockTeam(playerIds: string[], chemistry: number = 70): Team {
       balance: 100000,
       monthlyRevenue: {
         sponsorships: 10000,
-        prizeMoney: 0,
         merchandise: 5000,
-        streaming: 2000,
+        prizeWinnings: 0,
+        fanDonations: 2000,
       },
       monthlyExpenses: {
-        salaries: 25000,
+        playerSalaries: 25000,
+        coachSalaries: 5000,
         facilities: 5000,
         travel: 3000,
-        marketing: 2000,
       },
+      pendingTransactions: [],
+      loans: [],
     },
-    standing: {
+    standings: {
       wins: 0,
       losses: 0,
       roundDiff: 0,
-      matchPoints: 0,
+      currentStreak: 0,
     },
-    reputation: 50,
   };
 }
 
