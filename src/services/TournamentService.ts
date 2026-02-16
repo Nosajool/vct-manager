@@ -1971,6 +1971,13 @@ export class TournamentService {
         if (bracketMatch.status !== 'ready') continue;
         if (!bracketMatch.teamAId || !bracketMatch.teamBId) continue;
 
+        // Remove corresponding placeholder event if it exists
+        const placeholderId = `event-placeholder-${bracketMatch.matchId}`;
+        const existingPlaceholder = state.calendar.scheduledEvents.find(e => e.id === placeholderId);
+        if (existingPlaceholder) {
+          state.removeCalendarEvent(placeholderId);
+        }
+
         // Check if calendar event already exists
         const eventId = `event-match-${bracketMatch.matchId}`;
         const existingEvent = state.calendar.scheduledEvents.find(e => e.id === eventId);
