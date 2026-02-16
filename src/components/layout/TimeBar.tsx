@@ -31,7 +31,8 @@ import type { DramaEventInstance, DramaChoice } from '../../types/drama';
 import { PreAdvanceValidationModal } from '../today/PreAdvanceValidationModal';
 import { trainingService } from '../../services/TrainingService';
 import { scrimService } from '../../services/ScrimService';
-import type { CalendarEvent } from '../../types/calendar';
+import { DayScheduleService } from '../../services/DayScheduleService';
+import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
 
 /**
@@ -163,16 +164,40 @@ export function TimeBar() {
     const hasUnconfigured = state.hasUnconfiguredActivities();
 
     if (hasUnconfigured) {
-      // Get unconfigured event IDs
-      const unconfiguredEventIds = state.getUnconfiguredActivities();
+      // Get unconfigured IDs (may include "unscheduled:training" sentinel values)
+      const unconfiguredIds = state.getUnconfiguredActivities();
 
-      // Map to full CalendarEvent objects
-      const events = calendar.scheduledEvents.filter(event =>
-        unconfiguredEventIds.includes(event.id)
+      // Auto-schedule any available-but-unscheduled activities so they get CalendarEvents
+      const dayScheduleService = new DayScheduleService();
+      const today = state.calendar?.currentDate;
+      const newlyScheduledEvents: CalendarEvent[] = [];
+
+      for (const id of unconfiguredIds) {
+        if (id.startsWith('unscheduled:') && today) {
+          const activityType = id.replace('unscheduled:', '') as SchedulableActivityType;
+          try {
+            const event = dayScheduleService.scheduleActivity(today, activityType);
+            newlyScheduledEvents.push(event);
+          } catch {
+            // Activity couldn't be scheduled (e.g., blocked), skip it
+          }
+        }
+      }
+
+      // Now collect ALL unconfigured CalendarEvents (existing + newly created)
+      const freshState = useGameStore.getState();
+      const freshUnconfiguredIds = freshState.getUnconfiguredActivities();
+      const events = freshState.calendar.scheduledEvents.filter(event =>
+        freshUnconfiguredIds.includes(event.id)
       );
 
-      setUnconfiguredEvents(events);
-      setShowValidationModal(true);
+      if (events.length > 0) {
+        setUnconfiguredEvents(events);
+        setShowValidationModal(true);
+      } else {
+        // All resolved after auto-scheduling - proceed normally
+        handleTimeAdvance(() => calendarService.advanceDay(true));
+      }
     } else {
       // All configured - proceed normally
       handleTimeAdvance(() => calendarService.advanceDay(true));

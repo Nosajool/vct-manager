@@ -5,6 +5,15 @@ import type { StateCreator } from 'zustand';
 import type { ActivityConfig } from '../../types/activityPlan';
 import { featureGateService } from '../../services/FeatureGateService';
 import type { FeatureType } from '../../data/featureUnlocks';
+import { DayScheduleService } from '../../services/DayScheduleService';
+import type { SchedulableActivityType } from '../../types/calendar';
+
+const ACTIVITY_TO_EVENT_TYPE: Record<string, string> = {
+  training: 'scheduled_training',
+  scrim: 'scheduled_scrim',
+};
+
+const CONFIGURABLE_ACTIVITY_TYPES: SchedulableActivityType[] = ['training', 'scrim'];
 
 /**
  * Map event types to their corresponding feature gates
@@ -118,15 +127,28 @@ export const createActivityPlanSlice: StateCreator<
 
     const configs = get().activityConfigs;
 
-    // Filter out locked features before checking configuration status
-    return todaysEvents.some((event: any) => {
+    // Check 1: Scheduled events without config
+    const hasUnconfiguredScheduled = todaysEvents.some((event: any) => {
       const feature = getFeatureForEventType(event.type);
       if (feature && !featureGateService.isFeatureUnlocked(feature)) {
-        return false; // Ignore locked features
+        return false;
       }
 
       const config = Object.values(configs).find((c) => c.eventId === event.id);
       return !config || config.status === 'needs_setup';
+    });
+
+    if (hasUnconfiguredScheduled) return true;
+
+    // Check 2: Available activity types that haven't been scheduled at all
+    const dayScheduleService = new DayScheduleService();
+    const daySchedule = dayScheduleService.getDaySchedule(today);
+    const scheduledEventTypes = new Set(todaysEvents.map((e: any) => e.type));
+
+    return CONFIGURABLE_ACTIVITY_TYPES.some((activityType) => {
+      if (!daySchedule.availableActivityTypes.includes(activityType)) return false;
+      const eventType = ACTIVITY_TO_EVENT_TYPE[activityType];
+      return !scheduledEventTypes.has(eventType);
     });
   },
 
@@ -144,17 +166,33 @@ export const createActivityPlanSlice: StateCreator<
 
     const configs = get().activityConfigs;
 
-    // Filter out locked features before checking configuration status
-    return todaysEvents
+    // Existing scheduled events without config
+    const unconfiguredEventIds = todaysEvents
       .filter((event: any) => {
         const feature = getFeatureForEventType(event.type);
         if (feature && !featureGateService.isFeatureUnlocked(feature)) {
-          return false; // Ignore locked features
+          return false;
         }
 
         const config = Object.values(configs).find((c) => c.eventId === event.id);
         return !config || config.status === 'needs_setup';
       })
       .map((event: any) => event.id);
+
+    // Also include available-but-unscheduled activity types as sentinel values
+    // These use the format "unscheduled:training" / "unscheduled:scrim"
+    const dayScheduleService = new DayScheduleService();
+    const daySchedule = dayScheduleService.getDaySchedule(today);
+    const scheduledEventTypes = new Set(todaysEvents.map((e: any) => e.type));
+
+    for (const activityType of CONFIGURABLE_ACTIVITY_TYPES) {
+      if (!daySchedule.availableActivityTypes.includes(activityType)) continue;
+      const eventType = ACTIVITY_TO_EVENT_TYPE[activityType];
+      if (!scheduledEventTypes.has(eventType)) {
+        unconfiguredEventIds.push(`unscheduled:${activityType}`);
+      }
+    }
+
+    return unconfiguredEventIds;
   },
 });
