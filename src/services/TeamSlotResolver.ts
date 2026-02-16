@@ -665,11 +665,20 @@ export class TeamSlotResolver {
     // Update tournament with bracket
     state.updateBracket(tournamentId, bracket);
 
+    // Remove all placeholder matches for this tournament — they'll be replaced by real match events
+    // Note: we must do this before createMatchEntitiesForBracket because placeholder bracketMatchIds
+    // use original IDs that no longer match the prefixed IDs in the regenerated bracket
+    const placeholderEvents = state.calendar.scheduledEvents.filter(
+      (event) =>
+        event.type === 'placeholder_match' &&
+        (event.data as any).tournamentId === tournamentId
+    );
+    for (const placeholder of placeholderEvents) {
+      state.removeCalendarEvent(placeholder.id);
+    }
+
     // Create Match entities for ready matches
     this.createMatchEntitiesForBracket(tournamentId, bracket);
-
-    // Convert any placeholder matches to real matches
-    this.convertPlaceholderMatchesToRealMatches(tournamentId);
   }
 
   /**
