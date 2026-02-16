@@ -109,6 +109,7 @@ export function TimeBar() {
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
+  const setActiveView = useGameStore((state) => state.setActiveView);
 
   // Modal state from UISlice
   const isModalOpen = useGameStore((state) => state.isModalOpen);
@@ -322,6 +323,7 @@ export function TimeBar() {
     // Close modal and return to Today page (user can configure manually)
     setShowValidationModal(false);
     setUnconfiguredEvents([]);
+    setActiveView('today');
   };
 
   const handleCancelValidation = () => {
