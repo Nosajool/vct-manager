@@ -24,3 +24,9 @@ export {
   chemistryCalculator,
   type ChemistryUpdate,
 } from './ChemistryCalculator';
+
+export {
+  LineupOptimizer,
+  lineupOptimizer,
+  type LineupResult,
+} from './LineupOptimizer';
