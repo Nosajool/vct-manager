@@ -6,6 +6,7 @@
 import { useGameStore } from '../store';
 import { DayScheduleService } from './DayScheduleService';
 import { featureGateService } from './FeatureGateService';
+import { lineupOptimizer } from '../engine/team/LineupOptimizer';
 import type { DayPlan, DayPlanItem, ActivityState } from '../types/dayPlan';
 import type { CalendarEvent, SchedulableActivityType } from '../types/calendar';
 
@@ -431,18 +432,30 @@ export class DayPlanService {
       });
     }
 
-    // Team chemistry info
-    if (team.chemistry && team.chemistry.overall < 60) {
-      items.push({
-        id: 'info-team-chemistry',
-        category: 'info',
-        label: 'Team Chemistry',
-        description: 'Team chemistry is below optimal. Consider team activities or roster adjustments.',
-        priority: PRIORITY.LOW,
-        completed: false,
-        severity: 'info',
-        action: { view: 'team' },
-      });
+    // Lineup optimization check - only if team has reserves
+    if (team.reservePlayerIds && team.reservePlayerIds.length > 0) {
+      // Get all players (active + reserves)
+      const allPlayerIds = [...team.playerIds, ...team.reservePlayerIds];
+      const allPlayers = allPlayerIds
+        .map(id => state.players[id])
+        .filter(p => p !== undefined);
+
+      // Run lineup optimizer
+      const result = lineupOptimizer.findOptimalLineup(team, allPlayers);
+
+      // Show notification if improvement > 3%
+      if (result.improvementPercent > 3) {
+        items.push({
+          id: 'info-optimal-lineup',
+          category: 'info',
+          label: 'Optimize Lineup',
+          description: `Lineup improvements available (+${result.improvementPercent.toFixed(1)}% team strength). Consider roster adjustments.`,
+          priority: PRIORITY.LOW,
+          completed: false,
+          severity: 'info',
+          action: { view: 'team' },
+        });
+      }
     }
 
     // Review strategy info (feature gated)
