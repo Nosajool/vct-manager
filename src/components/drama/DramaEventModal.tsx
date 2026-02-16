@@ -18,6 +18,8 @@ interface DramaEventModalProps {
   choices: DramaChoice[];
   /** Called when player makes a choice */
   onChoose: (choiceId: string) => void;
+  /** Called when the user closes the modal (clicks Continue) */
+  onClose: () => void;
   /** Whether the modal is open */
   isOpen: boolean;
 }
@@ -82,6 +84,7 @@ export function DramaEventModal({
   event,
   choices,
   onChoose,
+  onClose,
   isOpen,
 }: DramaEventModalProps) {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
@@ -109,6 +112,9 @@ export function DramaEventModal({
     setShowOutcome(false);
     setOutcomeText('');
     setOutcomeEffects('');
+
+    // Close the modal
+    onClose();
   };
 
   return (

@@ -231,18 +231,18 @@ export function TimeBar() {
 
     // Resolve the event through the drama service
     dramaService.resolveEvent(currentMajorEvent.id, choiceId);
+  };
 
-    // After a brief delay to show the outcome, close and check queue
-    setTimeout(() => {
-      setCurrentMajorEvent(null);
+  const handleDramaClose = () => {
+    // Close current modal
+    setCurrentMajorEvent(null);
 
-      // Check if there are more major events to show
-      if (majorEventQueue.length > 0) {
-        const [nextEvent, ...rest] = majorEventQueue;
-        setCurrentMajorEvent(nextEvent);
-        setMajorEventQueue(rest);
-      }
-    }, 2000); // Give user time to read the outcome
+    // Check if there are more major events to show
+    if (majorEventQueue.length > 0) {
+      const [nextEvent, ...rest] = majorEventQueue;
+      setCurrentMajorEvent(nextEvent);
+      setMajorEventQueue(rest);
+    }
   };
 
   const handleDismissDramaToast = (index: number) => {
@@ -515,6 +515,7 @@ export function TimeBar() {
           event={enrichedMajorEvent}
           choices={getChoicesForEvent(currentMajorEvent!)}
           onChoose={handleDramaChoice}
+          onClose={handleDramaClose}
           isOpen={true}
         />
       )}
