@@ -24,6 +24,7 @@ export interface DayPlanItemAction {
     matchId?: string;
     tournamentId?: string;
     playerId?: string;
+    tab?: string;
   };
   /** Modal to open instead of navigating */
   openModal?: 'training' | 'scrim' | 'strategy';

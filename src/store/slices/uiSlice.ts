@@ -35,6 +35,10 @@ export interface UISlice {
 
   // Navigation
   activeView: ActiveView;
+  teamTab: string | null;
+
+  // Day plan acknowledged items (info items marked as "done" by clicking)
+  acknowledgedDayPlanItems: Set<string>;
 
   // Error handling
   error: string | null;
@@ -57,6 +61,11 @@ export interface UISlice {
 
   // Navigation actions
   setActiveView: (view: ActiveView) => void;
+  setTeamTab: (tab: string | null) => void;
+
+  // Day plan actions
+  acknowledgeDayPlanItem: (itemId: string) => void;
+  resetAcknowledgedItems: () => void;
 
   // Error actions
   setError: (error: string) => void;
@@ -85,6 +94,8 @@ export const createUISlice: StateCreator<
   selectedMatchId: null,
   selectedTournamentId: null,
   activeView: 'today',
+  teamTab: null,
+  acknowledgedDayPlanItems: new Set<string>(),
   error: null,
   isSimulating: false,
   bulkSimulation: null,
@@ -113,6 +124,19 @@ export const createUISlice: StateCreator<
   // Navigation actions
   setActiveView: (view) =>
     set({ activeView: view }),
+
+  setTeamTab: (tab) =>
+    set({ teamTab: tab }),
+
+  acknowledgeDayPlanItem: (itemId) =>
+    set((state) => {
+      const next = new Set(state.acknowledgedDayPlanItems);
+      next.add(itemId);
+      return { acknowledgedDayPlanItems: next };
+    }),
+
+  resetAcknowledgedItems: () =>
+    set({ acknowledgedDayPlanItems: new Set<string>() }),
 
   // Error actions
   setError: (error) =>

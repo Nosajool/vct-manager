@@ -1,6 +1,6 @@
 // Team Page - Manage team roster and browse free agents
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../store';
 import { useFeatureUnlocked } from '../hooks/useFeatureGate';
 import { RosterList } from '../components/roster/RosterList';
@@ -26,6 +26,16 @@ export function Roster() {
   const [releasingPlayer, setReleasingPlayer] = useState<Player | null>(null);
 
   const gameStarted = useGameStore((state) => state.gameStarted);
+  const teamTab = useGameStore((state) => state.teamTab);
+  const setTeamTab = useGameStore((state) => state.setTeamTab);
+
+  // Pick up teamTab from store (set by navigation from other pages)
+  useEffect(() => {
+    if (teamTab) {
+      setActiveTab(teamTab as TeamTab);
+      setTeamTab(null);
+    }
+  }, [teamTab, setTeamTab]);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);

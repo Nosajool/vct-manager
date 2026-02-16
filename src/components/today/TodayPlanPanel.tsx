@@ -16,10 +16,17 @@ import {
 export function TodayPlanPanel() {
   const currentDate = useGameStore((state) => state.calendar.currentDate);
   const setActiveView = useGameStore((state) => state.setActiveView);
+  const setTeamTab = useGameStore((state) => state.setTeamTab);
+  const acknowledgeDayPlanItem = useGameStore((state) => state.acknowledgeDayPlanItem);
   const dayPlan = useDayPlan(currentDate);
   const modals = useActivityModals();
 
   const handleItemClick = (item: (typeof dayPlan.items)[0]) => {
+    // Acknowledge info/alert items on click (shows checkmark)
+    if ((item.category === 'info' || item.category === 'alert') && !item.completed) {
+      acknowledgeDayPlanItem(item.id);
+    }
+
     if (!item.action) return;
 
     // Handle available activities - schedule first, then open modal
@@ -56,11 +63,19 @@ export function TodayPlanPanel() {
 
     // Handle navigation
     if (item.action.view) {
+      if (item.action.data?.tab) {
+        setTeamTab(item.action.data.tab);
+      }
       setActiveView(item.action.view);
     }
   };
 
-  if (dayPlan.items.length === 0) {
+  // Filter out unavailable activities - no need to show these to the player
+  const visibleItems = dayPlan.items.filter(
+    (item) => item.activityState !== 'unavailable'
+  );
+
+  if (visibleItems.length === 0) {
     return (
       <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
         <h3 className="text-sm font-semibold text-vct-gray mb-3">Today's Plan</h3>
@@ -75,7 +90,7 @@ export function TodayPlanPanel() {
         <h3 className="text-sm font-semibold text-vct-gray mb-3">Today's Plan</h3>
 
         <div className="space-y-2">
-          {dayPlan.items.map((item) => (
+          {visibleItems.map((item) => (
             <DayPlanItemCard
               key={item.id}
               item={item}

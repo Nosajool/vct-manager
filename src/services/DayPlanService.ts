@@ -469,7 +469,7 @@ export class DayPlanService {
         completed: false,
         severity: 'info',
         activityType: 'strategy',
-        action: { view: 'team' },
+        action: { view: 'team', data: { tab: 'strategy' } },
       });
     }
 

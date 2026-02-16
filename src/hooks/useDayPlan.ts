@@ -38,8 +38,24 @@ export function useDayPlan(date: string): DayPlan {
   // The service internally calls useGameStore.getState() to read current state
   useGameStore();
 
+  const acknowledged = useGameStore((state) => state.acknowledgedDayPlanItems);
+
   // Get day plan from service
-  return dayPlanService.getDayPlan(date);
+  const plan = dayPlanService.getDayPlan(date);
+
+  // Merge acknowledged state into items
+  if (acknowledged.size > 0) {
+    return {
+      ...plan,
+      items: plan.items.map((item) =>
+        !item.completed && acknowledged.has(item.id)
+          ? { ...item, completed: true }
+          : item
+      ),
+    };
+  }
+
+  return plan;
 }
 
 /**
