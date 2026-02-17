@@ -33,7 +33,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'player_morale_below',
-        threshold: 50,
+        threshold: 60,
         playerSelector: 'any',
       },
     ],
@@ -156,7 +156,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         playerSelector: 'star_player',
       },
     ],
-    probability: 25,
+    probability: 35,
     cooldownDays: 10,
     choices: [
       {
@@ -334,10 +334,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'team_chemistry_below',
-        threshold: 40,
+        threshold: 55,
       },
     ],
-    probability: 40,
+    probability: 50,
     cooldownDays: 10,
     choices: [
       {
@@ -438,10 +438,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'team_loss_streak',
-        streakLength: 2,
+        streakLength: 1,
       },
     ],
-    probability: 50,
+    probability: 60,
     cooldownDays: 10,
     choices: [
       {
@@ -622,7 +622,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         flag: 'training_effectiveness_penalty_{playerId}',
       },
     ],
-    probability: 50,
+    probability: 60,
     cooldownDays: 10,
     choices: [
       {
