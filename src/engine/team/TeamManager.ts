@@ -127,7 +127,11 @@ export class TeamManager {
       reservePlayerIds,
       coachIds: [],
       organizationValue: template.orgValue,
-      fanbase: template.fanbase,
+      reputation: {
+        fanbase: template.fanbase,
+        hypeLevel: 30,
+        sponsorTrust: 50,
+      },
       chemistry: this.generateChemistry(),
       finances,
       standings: {

@@ -89,7 +89,7 @@ export class ContractNegotiator {
   private calculateTeamQuality(team: Team): number {
     // Factors: organization value, fanbase, standings
     const orgScore = Math.min(100, team.organizationValue / 10000000 * 50);
-    const fanScore = team.fanbase / 100 * 30;
+    const fanScore = team.reputation.fanbase / 100 * 30;
 
     const winRate = team.standings.wins + team.standings.losses > 0
       ? team.standings.wins / (team.standings.wins + team.standings.losses)

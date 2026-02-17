@@ -389,8 +389,8 @@ export class DramaService {
               overall: newChemistry,
             });
           } else if (effect.field === 'fanbase') {
-            // Handle fanbase updates
-            const currentFanbase = team.fanbase;
+            // Handle fanbase updates (stored in reputation.fanbase)
+            const currentFanbase = team.reputation.fanbase;
 
             let newFanbase: number;
             if (effect.absoluteValue !== undefined) {
@@ -404,7 +404,9 @@ export class DramaService {
             // Clamp fanbase
             newFanbase = Math.max(0, Math.min(100, newFanbase));
 
-            state.updateTeam(playerTeamId, { fanbase: newFanbase });
+            state.updateTeam(playerTeamId, {
+              reputation: { ...team.reputation, fanbase: newFanbase },
+            });
           }
           break;
         }

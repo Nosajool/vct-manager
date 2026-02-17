@@ -69,6 +69,12 @@ export interface TeamStandings {
   currentStreak: number;
 }
 
+export interface OrgReputation {
+  fanbase: number;       // 0-100, affects sponsorships
+  hypeLevel: number;     // 0-100, decays 5/week
+  sponsorTrust: number;  // 0-100, affects sponsor offer frequency/value
+}
+
 export interface Team {
   id: string;
   name: string;
@@ -81,7 +87,7 @@ export interface Team {
 
   // Organization strength
   organizationValue: number;  // Starting wealth
-  fanbase: number;            // Affects sponsorships
+  reputation: OrgReputation;  // Fanbase, hype, and sponsor trust
 
   // Chemistry
   chemistry: TeamChemistry;

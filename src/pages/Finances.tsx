@@ -405,7 +405,7 @@ function SponsorshipsTab({ team, formatCurrency, onShowOffers }: SponsorshipsTab
 
         <div className="mt-6 grid grid-cols-2 gap-4 text-center">
           <div>
-            <p className="text-xl font-semibold text-vct-light">{team.fanbase}</p>
+            <p className="text-xl font-semibold text-vct-light">{team.reputation.fanbase}</p>
             <p className="text-sm text-vct-gray">Fanbase Score</p>
           </div>
           <div>

@@ -270,7 +270,7 @@ export class EconomyEngine {
     team: Team
   ): number {
     // Fanbase factor (0.5 to 1.5)
-    const fanbaseFactor = 0.5 + (team.fanbase / 100);
+    const fanbaseFactor = 0.5 + (team.reputation.fanbase / 100);
 
     // Org value factor (0.7 to 1.3)
     const orgValueFactor = 0.7 + (team.organizationValue / 5000000) * 0.6;
@@ -296,7 +296,7 @@ export class EconomyEngine {
     expiryDate.setDate(expiryDate.getDate() + 14); // 2 weeks to decide
 
     // Determine tier based on team strength
-    const totalStrength = team.organizationValue + team.fanbase * 10000;
+    const totalStrength = team.organizationValue + team.reputation.fanbase * 10000;
     let tierPool: { name: string; baseValue: number }[];
 
     if (totalStrength > 4000000) {
@@ -359,8 +359,8 @@ export class EconomyEngine {
   ): { met: boolean; failures: string[] } {
     const failures: string[] = [];
 
-    if (requirements.minFanbase && team.fanbase < requirements.minFanbase) {
-      failures.push(`Fanbase too low (${team.fanbase} < ${requirements.minFanbase})`);
+    if (requirements.minFanbase && team.reputation.fanbase < requirements.minFanbase) {
+      failures.push(`Fanbase too low (${team.reputation.fanbase} < ${requirements.minFanbase})`);
     }
 
     if (requirements.minWinRate) {

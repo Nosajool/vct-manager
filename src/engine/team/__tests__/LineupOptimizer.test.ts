@@ -88,7 +88,7 @@ function createMockTeam(playerIds: string[], chemistry: number = 70): Team {
     reservePlayerIds: [],
     coachIds: [],
     organizationValue: 100000,
-    fanbase: 10000,
+    reputation: { fanbase: 10, hypeLevel: 30, sponsorTrust: 50 },
     chemistry: {
       overall: chemistry,
       pairs: {},
