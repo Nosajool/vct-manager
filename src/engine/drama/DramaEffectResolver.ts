@@ -223,6 +223,24 @@ function resolvePlayerEffect(
 // ============================================================================
 
 /**
+ * Calculates overall player rating from stats
+ */
+function calculatePlayerRating(stats: DramaGameStateSnapshot['players'][number]['stats']): number {
+  const statValues = [
+    stats.mechanics,
+    stats.igl,
+    stats.mental,
+    stats.clutch,
+    stats.vibes,
+    stats.lurking,
+    stats.entry,
+    stats.support,
+    stats.stamina,
+  ];
+  return statValues.reduce((sum, val) => sum + val, 0) / statValues.length;
+}
+
+/**
  * Resolves player selector into concrete player IDs
  */
 function resolvePlayerSelector(
@@ -244,9 +262,35 @@ function resolvePlayerSelector(
     case 'specific':
       return playerId ? [playerId] : [];
 
+    case 'all':
     case 'all_team': {
       // All players in the snapshot
       return snapshot.players.map(p => p.id);
+    }
+
+    case 'star_player': {
+      // Player with highest overall rating
+      if (snapshot.players.length === 0) {
+        return [];
+      }
+
+      const starPlayer = snapshot.players.reduce((best, current) => {
+        const currentRating = calculatePlayerRating(current.stats);
+        const bestRating = calculatePlayerRating(best.stats);
+        return currentRating > bestRating ? current : best;
+      }, snapshot.players[0]);
+
+      return [starPlayer.id];
+    }
+
+    case 'random': {
+      // Random player from team
+      if (snapshot.players.length === 0) {
+        return [];
+      }
+
+      const randomIndex = Math.floor(Math.random() * snapshot.players.length);
+      return [snapshot.players[randomIndex].id];
     }
 
     case 'random_teammate': {
