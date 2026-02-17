@@ -29,9 +29,12 @@ export interface ResolvedEffect {
  */
 type EffectPlayerSelector =
   | 'triggering'      // First player in involvedPlayerIds
+  | 'all'             // All players in snapshot (alias for all_team)
   | 'all_team'        // All players in snapshot
   | 'random_teammate' // Random player excluding triggering player
   | 'specific'        // Specific player by ID
+  | 'star_player'     // Highest rated player
+  | 'random'          // Random player from team
   | 'any';            // Random player (resolved from involvedPlayerIds)
 
 // ============================================================================
