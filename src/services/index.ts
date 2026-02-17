@@ -33,3 +33,8 @@ export {
   progressTrackingService,
 } from './ProgressTrackingService';
 export { DramaService, dramaService } from './DramaService';
+export {
+  ReputationService,
+  reputationService,
+  type ReputationDelta,
+} from './ReputationService';
