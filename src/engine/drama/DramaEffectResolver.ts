@@ -78,6 +78,23 @@ export function resolveEffects(
 // ============================================================================
 
 /**
+ * Resolves placeholders in flag names
+ * Substitutes {playerId} and {teamId} with actual IDs
+ */
+function resolveFlagPlaceholders(
+  flagTemplate: string,
+  involvedPlayerIds: string[],
+  snapshot: DramaGameStateSnapshot
+): string {
+  let resolved = flagTemplate;
+  if (involvedPlayerIds.length > 0) {
+    resolved = resolved.replace(/\{playerId\}/g, involvedPlayerIds[0]);
+  }
+  resolved = resolved.replace(/\{teamId\}/g, snapshot.playerTeamId);
+  return resolved;
+}
+
+/**
  * Resolves a single DramaEffect into one or more ResolvedEffects
  */
 function resolveEffect(
@@ -89,17 +106,19 @@ function resolveEffect(
 
   // Handle flag operations
   if (target === 'set_flag') {
+    const resolvedFlag = resolveFlagPlaceholders(effect.flag!, involvedPlayerIds, snapshot);
     return [{
       type: 'set_flag',
-      flag: effect.flag!,
+      flag: resolvedFlag,
       flagDuration: effect.flagDuration,
     }];
   }
 
   if (target === 'clear_flag') {
+    const resolvedFlag = resolveFlagPlaceholders(effect.flag!, involvedPlayerIds, snapshot);
     return [{
       type: 'clear_flag',
-      flag: effect.flag!,
+      flag: resolvedFlag,
     }];
   }
 
