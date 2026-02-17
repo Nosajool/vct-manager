@@ -346,10 +346,19 @@ export interface DramaEvaluationResult {
  * Configuration constants for the drama system
  */
 export const DRAMA_CONSTANTS = {
+  // Cadence control limits (aligned with DramaEngine.ts)
+  cadenceLimits: {
+    minorEventsPerWeek: 5,        // Max 5 minor events per week
+    majorEventIntervalDays: 2,    // Min 2 days between major events
+    maxEventsPerDay: 3,            // Max 3 events per day total
+    categoryBoostDays: 5,          // Boost probability if category hasn't fired in 5+ days
+    categoryBoostMultiplier: 2.0,  // Probability multiplier for boost
+  },
+
   // Event frequency targets (events per phase)
   frequencyTargets: {
-    minor: 2,  // Target 2 minor events per phase
-    major: 1,  // Target 1 major event per phase
+    minor: 5,  // Target 5 minor events per phase (increased from 2)
+    major: 3,  // Target 3 major events per phase (increased from 1)
   },
 
   // Default escalation timeframes
@@ -365,13 +374,14 @@ export const DRAMA_CONSTANTS = {
   },
 
   // Default cooldown periods per category (in days)
+  // Reduced from 14-30 days to 5-10 days to increase event frequency
   cooldownDefaults: {
-    player_ego: 14,
-    team_synergy: 21,
-    external_pressure: 14,
-    practice_burnout: 28,
-    breakthrough: 30,
-    meta_rumors: 7,
+    player_ego: 7,          // Reduced from 14
+    team_synergy: 7,        // Reduced from 21
+    external_pressure: 10,  // Reduced from 14
+    practice_burnout: 5,    // Reduced from 28
+    breakthrough: 7,        // Reduced from 30
+    meta_rumors: 7,         // Unchanged
   },
 
   // Effect magnitude defaults

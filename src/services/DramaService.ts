@@ -247,12 +247,21 @@ export class DramaService {
     const dramaState = {
       activeEvents: state.activeEvents,
       eventHistory: state.eventHistory,
-      activeFlags: Object.entries(state.activeFlags).reduce((acc, [flag, date]) => {
-        acc[flag] = {
-          setDate: date,
-          expiresDate: undefined, // Could be enhanced to track expiry
-          value: undefined,
-        };
+      activeFlags: Object.entries(state.activeFlags).reduce((acc, [flag, data]) => {
+        // Handle both old (string) and new (object) formats for backwards compatibility
+        if (typeof data === 'string') {
+          acc[flag] = {
+            setDate: data,
+            expiresDate: undefined,
+            value: undefined,
+          };
+        } else {
+          acc[flag] = {
+            setDate: data.setDate,
+            expiresDate: data.expiresDate,
+            value: undefined,
+          };
+        }
         return acc;
       }, {} as DramaGameStateSnapshot['dramaState']['activeFlags']),
       cooldowns: state.cooldowns as Record<string, string | null>,
@@ -405,10 +414,19 @@ export class DramaService {
 
           const currentDate = state.calendar.currentDate;
 
-          // Note: Current store only stores setDate as string, not full object
-          // Flag expiry tracking would be enhanced here if the store supported it
-          // For now, we just set the flag with the current date
-          state.setDramaFlag(effect.flag, currentDate);
+          // Compute expiry date if flagDuration is specified
+          let expiresDate: string | undefined = undefined;
+          if (effect.flagDuration !== undefined && effect.flagDuration > 0) {
+            const currentDateObj = new Date(currentDate);
+            const expiryDateObj = new Date(currentDateObj);
+            expiryDateObj.setDate(expiryDateObj.getDate() + effect.flagDuration);
+            expiresDate = expiryDateObj.toISOString();
+          }
+
+          state.setDramaFlag(effect.flag, {
+            setDate: currentDate,
+            expiresDate,
+          });
           break;
         }
 

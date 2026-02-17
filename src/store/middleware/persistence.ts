@@ -33,7 +33,7 @@ interface MinimalGameState {
   drama?: {
     activeEvents: unknown[];
     eventHistory: unknown[];
-    activeFlags: Record<string, string>;
+    activeFlags: Record<string, string | { setDate: string; expiresDate?: string }>;
     cooldowns: Record<string, string>;
     lastEventByCategory: Record<string, string>;
     totalEventsTriggered: number;
@@ -351,6 +351,22 @@ export function applyLoadedState<T extends MinimalGameState>(
     totalEventsTriggered: 0,
     totalMajorDecisions: 0,
   };
+
+  // Migrate old flag format (string) to new format (object with setDate/expiresDate)
+  const migratedFlags: Record<string, { setDate: string; expiresDate?: string }> = {};
+  for (const [flag, data] of Object.entries(dramaState.activeFlags)) {
+    if (typeof data === 'string') {
+      // Old format: string ISO date
+      migratedFlags[flag] = {
+        setDate: data,
+        expiresDate: undefined,
+      };
+    } else {
+      // New format: already an object
+      migratedFlags[flag] = data;
+    }
+  }
+  dramaState.activeFlags = migratedFlags;
 
   // Backwards compatibility: initialize empty activity configs if missing
   const activityConfigs = loadedState.activityConfigs || {};

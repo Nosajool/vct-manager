@@ -58,7 +58,7 @@ export interface SerializedGameState {
   drama?: {
     activeEvents: unknown[];
     eventHistory: unknown[];
-    activeFlags: Record<string, string>;
+    activeFlags: Record<string, string | { setDate: string; expiresDate?: string }>;
     cooldowns: Record<string, string>;
     lastEventByCategory: Record<string, string>;
     totalEventsTriggered: number;
