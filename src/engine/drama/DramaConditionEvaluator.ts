@@ -414,6 +414,33 @@ function evaluateCategoryCooldown(
 }
 
 /**
+ * Matches a flag pattern against active flags
+ * Converts {playerId}/{teamId} patterns to regex and checks for matches
+ */
+function matchesFlagPattern(
+  pattern: string,
+  activeFlags: Record<string, any>
+): string | null {
+  // If no placeholders, do direct lookup
+  if (!pattern.includes('{')) {
+    return pattern in activeFlags ? pattern : null;
+  }
+
+  // Convert pattern to regex
+  const regex = new RegExp(
+    '^' +
+    pattern
+      .replace(/\{playerId\}/g, '[^_]+')
+      .replace(/\{teamId\}/g, '[^_]+') +
+    '$'
+  );
+
+  // Find first matching flag
+  const match = Object.keys(activeFlags).find(flag => regex.test(flag));
+  return match || null;
+}
+
+/**
  * Evaluates flag active condition
  */
 function evaluateFlagActive(
@@ -424,7 +451,17 @@ function evaluateFlagActive(
     return false;
   }
 
-  const flagData = snapshot.dramaState.activeFlags[condition.flag];
+  // Find matching flag (supports patterns with {playerId}/{teamId})
+  const matchedFlag = matchesFlagPattern(
+    condition.flag,
+    snapshot.dramaState.activeFlags
+  );
+
+  if (!matchedFlag) {
+    return false;
+  }
+
+  const flagData = snapshot.dramaState.activeFlags[matchedFlag];
   if (!flagData) {
     return false;
   }
