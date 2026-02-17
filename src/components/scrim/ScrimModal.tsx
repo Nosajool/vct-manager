@@ -158,9 +158,21 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
     onClose();
   };
 
+  const handleAutoAssign = () => {
+    const config = scrimService.autoAssignScrim();
+    if (!config) return; // No partners available
+    setIsSkipping(false);
+    setActiveTier(config.partnerTier);
+    setSelectedPartner(config.partnerTeamId);
+    if (config.maps.length > 0) {
+      setSelectedMaps(new Set(config.maps));
+    }
+    setIntensity(config.intensity);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden">
+      <div className="bg-vct-darker rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between">
           <div>
@@ -177,7 +189,22 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+        {/* Auto-Assign Button */}
+        <div className="p-4 border-b border-vct-gray/20">
+          <button
+            onClick={handleAutoAssign}
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            title="Pre-fills weakest maps, best available partner, and intensity based on team morale"
+          >
+            <span className="text-lg">🎯</span>
+            <span>Auto-Assign Optimal Scrim</span>
+          </button>
+          <p className="text-xs text-vct-gray mt-2 text-center">
+            Selects weak maps, best partner, and intensity based on team morale
+          </p>
+        </div>
+
+        <div className="overflow-y-auto flex-1">
           {/* Scrim Configuration */}
           <div className="p-4 space-y-4">
             {/* Skip Scrim Toggle */}

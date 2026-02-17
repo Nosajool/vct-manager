@@ -14,8 +14,16 @@ import type {
   ScrimRelationship,
   ScrimEligibilityCheck,
   MapStrengthAttributes,
+  ScrimIntensity,
 } from '../types';
 import { SCRIM_CONSTANTS } from '../types/scrim';
+
+export interface OptimalScrimConfig {
+  partnerTeamId: string;
+  partnerTier: TeamTier;
+  maps: string[];
+  intensity: ScrimIntensity;
+}
 
 /**
  * ScrimService - Handles all scrim-related operations
@@ -89,6 +97,79 @@ export class ScrimService {
       focusMaps: strongestMaps.length > 0 ? strongestMaps.slice(0, 3) : undefined,
       intensity: 'moderate',
     };
+  }
+
+  /**
+   * Compute optimal scrim config for the "Auto-Assign" button
+   * Picks weakest maps, best available partner (scored by relationship/recency/tier/VOD risk),
+   * and intensity based on average team morale.
+   * Returns null if no partners are available.
+   */
+  autoAssignScrim(): OptimalScrimConfig | null {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    if (!playerTeamId) return null;
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) return null;
+
+    // Maps — weakest maps sorted weakest-first
+    const mapSummary = this.getMapPoolSummary();
+    const maps = mapSummary.weakestMaps.map(m => m.map);
+
+    // Partner — score all same-region candidates
+    const { t1Teams, t2Teams, t3Teams } = this.getAvailablePartners();
+    type Candidate = { id: string; tier: TeamTier };
+    const candidates: Candidate[] = [
+      ...t1Teams.map(t => ({ id: t.id, tier: 'T1' as TeamTier })),
+      ...t2Teams.map(t => ({ id: t.id, tier: 'T2' as TeamTier })),
+      ...t3Teams.map(t => ({ id: t.id, tier: 'T3' as TeamTier })),
+    ];
+    if (candidates.length === 0) return null;
+
+    const currentDate = state.calendar.currentDate;
+
+    const scored = candidates.map(c => {
+      const rel = playerTeam.scrimRelationships?.[c.id];
+      const relScore = rel?.relationshipScore ?? SCRIM_CONSTANTS.BASE_RELATIONSHIP.SAME_REGION;
+      const vodRisk = rel?.vodLeakRisk ?? 0;
+
+      // Recency bonus: reward partners not scrimmaged recently (diversify practice)
+      let recencyBonus = 70; // default for never-scrimmaged partner
+      if (rel?.lastScrimDate) {
+        const daysSince = Math.floor(
+          (new Date(currentDate).getTime() - new Date(rel.lastScrimDate).getTime()) / 86400000
+        );
+        recencyBonus = daysSince < 7 ? 0 : daysSince < 14 ? 50 : 100;
+      }
+
+      // Tier efficiency scaled 0-100
+      const tierBonus = SCRIM_CONSTANTS.TIER_EFFICIENCY[c.tier] * 100;
+
+      let score = relScore * 0.4 + recencyBonus * 0.35 + tierBonus * 0.25;
+
+      // Heavy penalty for high VOD leak risk
+      if (vodRisk > 50) score *= 0.3;
+
+      return { ...c, score };
+    });
+
+    const best = scored.sort((a, b) => b.score - a.score)[0];
+
+    // Intensity — based on average morale of starting 5
+    const players = playerTeam.playerIds
+      .map(id => state.players[id])
+      .filter((p): p is Player => p !== undefined);
+    const avgMorale = players.length > 0
+      ? players.reduce((sum, p) => sum + p.morale, 0) / players.length
+      : 70;
+
+    const intensity: ScrimIntensity =
+      avgMorale < 40 ? 'light' :
+      avgMorale < 65 ? 'moderate' :
+      'competitive';
+
+    return { partnerTeamId: best.id, partnerTier: best.tier, maps, intensity };
   }
 
   /**
