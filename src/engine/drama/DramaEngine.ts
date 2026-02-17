@@ -16,11 +16,11 @@ import type {
 
 /** Cadence control limits for event frequency */
 const CADENCE_LIMITS = {
-  MINOR_EVENTS_PER_WEEK: 4,        // Max 4 minor events per week
-  MAJOR_EVENT_INTERVAL_DAYS: 14,   // Min 14 days between major events
-  MAX_EVENTS_PER_DAY: 2,            // Max 2 events per day total
-  CATEGORY_BOOST_DAYS: 7,           // Boost probability if category hasn't fired in 7+ days
-  CATEGORY_BOOST_MULTIPLIER: 1.5,  // Probability multiplier for boost
+  MINOR_EVENTS_PER_WEEK: 5,        // Max 5 minor events per week
+  MAJOR_EVENT_INTERVAL_DAYS: 2,    // Min 2 days between major events
+  MAX_EVENTS_PER_DAY: 3,            // Max 3 events per day total
+  CATEGORY_BOOST_DAYS: 5,           // Boost probability if category hasn't fired in 5+ days
+  CATEGORY_BOOST_MULTIPLIER: 2.0,  // Probability multiplier for boost
 };
 
 // ============================================================================
