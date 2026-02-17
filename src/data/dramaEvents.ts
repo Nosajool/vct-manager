@@ -619,7 +619,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'flag_active',
-        flag: 'training_effectiveness_penalty',
+        flag: 'training_effectiveness_penalty_{playerId}',
       },
     ],
     probability: 50,
@@ -637,7 +637,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'clear_flag',
-            flag: 'training_effectiveness_penalty',
+            flag: 'training_effectiveness_penalty_{playerId}',
           },
           {
             target: 'set_flag',
