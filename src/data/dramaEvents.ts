@@ -831,4 +831,493 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // NEW MAJOR EVENTS (Enhanced Drama System)
+  // ==========================================================================
+
+  {
+    id: 'breakthrough_prodigy_moment',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'Prodigy Moment',
+    description: '{playerName} just pulled off an incredible play in scrims that has everyone talking. This could be their breakout moment.',
+    conditions: [
+      {
+        type: 'random_chance',
+        chance: 20,
+      },
+    ],
+    probability: 35,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'spotlight',
+        text: 'Put them in the spotlight',
+        description: 'Feature them in social media and team content',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 15,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mechanics',
+            playerSelector: 'any',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'prodigy_hype_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: '{playerName} thrives under the attention and continues to impress. The hype is building, but can they handle the pressure?',
+      },
+      {
+        id: 'keep_grounded',
+        text: 'Keep them grounded',
+        description: 'Downplay the hype and focus on fundamentals',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 5,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            playerSelector: 'any',
+            delta: 2,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'You remind {playerName} that one play doesn\'t make a career. They appreciate the level-headed approach and stay focused on improvement.',
+      },
+      {
+        id: 'team_credit',
+        text: 'Credit the team',
+        description: 'Emphasize team play over individual brilliance',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 2,
+          },
+        ],
+        outcomeText: 'You highlight how the team enabled the play. {playerName} stays humble, and the whole roster feels valued.',
+      },
+    ],
+  },
+
+  {
+    id: 'meta_shift_confirmed',
+    category: 'meta_rumors',
+    severity: 'major',
+    title: 'Meta Shift Confirmed',
+    description: 'Riot just dropped a major patch. The meta is shifting significantly and teams are scrambling to adapt.',
+    conditions: [
+      {
+        type: 'random_chance',
+        chance: 25,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'embrace_change',
+        text: 'Embrace the change',
+        description: 'Dive into the new meta immediately',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'meta_early_adopter',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'The team rallies around the challenge. You\'re among the first to master the new meta, gaining a competitive edge.',
+      },
+      {
+        id: 'wait_and_see',
+        text: 'Wait and see',
+        description: 'Let other teams experiment first',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'meta_conservative',
+            flagDuration: 10,
+          },
+        ],
+        outcomeText: 'You take a cautious approach. The team feels uncertain while watching others adapt faster, but you avoid costly early mistakes.',
+      },
+      {
+        id: 'hybrid_approach',
+        text: 'Hybrid approach',
+        description: 'Blend old fundamentals with new strategies',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 2,
+          },
+        ],
+        outcomeText: 'You find a balanced path forward. The team adapts at a measured pace, building on what already works.',
+      },
+    ],
+  },
+
+  {
+    id: 'pressure_rival_poaching',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Rival Poaching Attempt',
+    description: 'Word has leaked that a rival organization is trying to poach {playerName}. They\'re offering a significant contract upgrade.',
+    conditions: [
+      {
+        type: 'random_chance',
+        chance: 15,
+      },
+    ],
+    probability: 35,
+    cooldownDays: 10,
+    choices: [
+      {
+        id: 'counter_offer',
+        text: 'Make a counter-offer',
+        description: 'Match or exceed the rival offer',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 12,
+          },
+          {
+            target: 'team_budget',
+            delta: -8000,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'poaching_attempt_{playerId}',
+          },
+        ],
+        outcomeText: '{playerName} is thrilled with the new contract and commits long-term. It\'s expensive, but you\'ve secured a key player.',
+      },
+      {
+        id: 'appeal_loyalty',
+        text: 'Appeal to loyalty',
+        description: 'Remind them of team culture and goals',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'loyalty_tested_{playerId}',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: 'You make an emotional case for staying. {playerName} is moved by the pitch, but you can tell the rival offer is still tempting.',
+      },
+      {
+        id: 'wish_them_well',
+        text: 'Let them explore',
+        description: 'Give them freedom to make the best choice',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'poaching_decision_pending_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You take the high road and let {playerName} decide freely. They appreciate the respect, but the uncertainty lingers.',
+      },
+    ],
+  },
+
+  {
+    id: 'synergy_leadership_vacuum',
+    category: 'team_synergy',
+    severity: 'major',
+    title: 'Leadership Vacuum',
+    description: 'The team lacks clear leadership. Mid-round calls are inconsistent and players are unsure who to follow.',
+    conditions: [
+      {
+        type: 'team_chemistry_below',
+        threshold: 55,
+      },
+      {
+        type: 'random_chance',
+        chance: 20,
+      },
+    ],
+    probability: 45,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'appoint_leader',
+        text: 'Appoint a leader',
+        description: 'Designate someone as the clear IGL',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'player_stat',
+            stat: 'igl',
+            playerSelector: 'any',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'leadership_established',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: 'You designate a clear leader. The team rallies around them, and in-game communication becomes much crisper.',
+      },
+      {
+        id: 'democratic_calls',
+        text: 'Democratic approach',
+        description: 'Let leadership emerge naturally through discussion',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'You encourage collaborative decision-making. It takes longer to find clarity, but everyone feels heard.',
+      },
+      {
+        id: 'coach_calls',
+        text: 'Coach makes calls',
+        description: 'Take direct control of strategy calls',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: -2,
+          },
+          {
+            target: 'set_flag',
+            flag: 'coach_micromanaging',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You step in and make the calls yourself. It provides structure but some players feel stifled.',
+      },
+    ],
+  },
+
+  {
+    id: 'ego_social_media_incident',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Social Media Incident',
+    description: '{playerName} posted something controversial on social media. It\'s blowing up and reflects poorly on the team.',
+    conditions: [
+      {
+        type: 'random_chance',
+        chance: 15,
+      },
+    ],
+    probability: 35,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'damage_control',
+        text: 'Immediate damage control',
+        description: 'Issue an apology and delete the post',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: -5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'social_media_apology_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: '{playerName} issues an apology and deletes the post. The situation is contained, but they\'re embarrassed.',
+      },
+      {
+        id: 'stand_by_them',
+        text: 'Stand by them',
+        description: 'Support their right to express themselves',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'controversial_stance',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: 'You publicly back {playerName}. They\'re grateful, but sponsors are unhappy and some teammates question your judgment.',
+      },
+      {
+        id: 'private_reprimand',
+        text: 'Private reprimand',
+        description: 'Address it internally without public statement',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'any',
+            delta: -2,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 2,
+          },
+        ],
+        outcomeText: 'You handle it behind closed doors. {playerName} understands they crossed a line, and the team moves forward quietly.',
+      },
+    ],
+  },
+
+  {
+    id: 'burnout_wellness_check',
+    category: 'practice_burnout',
+    severity: 'major',
+    title: 'Wellness Check',
+    description: 'Multiple players are showing signs of serious burnout. Mental health is becoming a real concern.',
+    conditions: [
+      {
+        type: 'random_chance',
+        chance: 20,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 5,
+    choices: [
+      {
+        id: 'mandatory_break',
+        text: 'Mandatory team break',
+        description: 'Cancel practice for several days',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 15,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'set_flag',
+            flag: 'wellness_break_taken',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: 'You shut down practice and mandate rest. Players return refreshed and grateful for the intervention.',
+      },
+      {
+        id: 'bring_specialist',
+        text: 'Bring in a specialist',
+        description: 'Hire a sports psychologist',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: 8,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            playerSelector: 'all',
+            delta: 3,
+          },
+          {
+            target: 'team_budget',
+            delta: -3000,
+          },
+        ],
+        outcomeText: 'You bring in a mental health professional. The sessions help players develop better coping strategies.',
+      },
+      {
+        id: 'push_through',
+        text: 'Push through it',
+        description: 'Encourage mental toughness and perseverance',
+        effects: [
+          {
+            target: 'player_morale',
+            playerSelector: 'all',
+            delta: -10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'burnout_crisis_ignored',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You tell them to tough it out. Players are frustrated by the lack of support, and the burnout deepens.',
+      },
+    ],
+  },
 ];
