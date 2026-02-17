@@ -83,19 +83,9 @@ export class DramaService {
 
         // Add to store
         state.addDramaEvent(eventInstance);
-
-        // Update cooldown
-        if (template.cooldownDays) {
-          state.setCooldown(template.id, snapshot.currentDate);
-        }
       } else {
         // Handle major events: add as 'pending' (require player decision)
         state.addDramaEvent(eventInstance);
-
-        // Update cooldown
-        if (template.cooldownDays) {
-          state.setCooldown(template.id, snapshot.currentDate);
-        }
       }
 
       // Update last event by category
