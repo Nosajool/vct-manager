@@ -268,10 +268,17 @@ export class DramaService {
       cooldowns: state.cooldowns as Record<string, string | null>,
     };
 
-    // Get recent match results (if needed for conditions)
-    // This would require accessing match history from the store
-    // For now, we'll leave it undefined as it's optional
-    const recentMatchResults = undefined;
+    // Get recent match results for streak-based conditions
+    const matchHistory = state.getTeamMatchHistory(playerTeamId);
+    const recentMatchResults = matchHistory.map(result => {
+      const match = state.getMatch(result.matchId);
+      return {
+        matchId: result.matchId,
+        date: match?.scheduledDate || '',
+        won: result.winnerId === playerTeamId,
+        teamId: playerTeamId,
+      };
+    });
 
     return {
       currentDate: calendar.currentDate,
