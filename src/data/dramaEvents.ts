@@ -68,7 +68,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 21,
+    cooldownDays: 10,
     choices: [
       {
         id: 'accommodate',
@@ -157,7 +157,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 25,
-    cooldownDays: 28,
+    cooldownDays: 10,
     choices: [
       {
         id: 'lean_into_star',
@@ -238,7 +238,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 28,
+    cooldownDays: 10,
     choices: [
       {
         id: 'negotiate',
@@ -338,7 +338,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 21,
+    cooldownDays: 10,
     choices: [
       {
         id: 'mediate',
@@ -442,7 +442,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 14,
+    cooldownDays: 10,
     choices: [
       {
         id: 'public_confidence',
@@ -517,7 +517,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 30,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'player_morale',
@@ -567,7 +567,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 15,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'set_flag',
@@ -595,7 +595,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 20,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'player_morale',
@@ -623,7 +623,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 28,
+    cooldownDays: 10,
     choices: [
       {
         id: 'enforce_rest',
@@ -702,7 +702,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 20,
-    cooldownDays: 21,
+    cooldownDays: 10,
     effects: [
       {
         target: 'player_morale',
@@ -731,7 +731,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 10,
-    cooldownDays: 28,
+    cooldownDays: 10,
     effects: [
       {
         target: 'player_stat',
@@ -764,7 +764,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 12,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'player_morale',
@@ -799,7 +799,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 8,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'set_flag',
@@ -822,7 +822,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
     probability: 6,
-    cooldownDays: 14,
+    cooldownDays: 10,
     effects: [
       {
         target: 'set_flag',
