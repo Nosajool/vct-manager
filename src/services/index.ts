@@ -38,3 +38,8 @@ export {
   reputationService,
   type ReputationDelta,
 } from './ReputationService';
+export {
+  RivalryService,
+  rivalryService,
+  type RivalryDelta,
+} from './RivalryService';
