@@ -52,7 +52,7 @@ function sendProgress(id: string, stage: string, progress: number, details?: str
  * Handle match simulation request
  */
 function handleMatchSimulation(id: string, input: MatchSimInput): void {
-  const { teamA, teamB, playersA, playersB, strategyA, strategyB } = input;
+  const { teamA, teamB, playersA, playersB, strategyA, strategyB, rivalryIntensity } = input;
 
   sendProgress(id, 'Starting match simulation', 0);
 
@@ -62,7 +62,8 @@ function handleMatchSimulation(id: string, input: MatchSimInput): void {
     playersA,
     playersB,
     strategyA,
-    strategyB
+    strategyB,
+    rivalryIntensity
   );
 
   sendProgress(id, 'Match simulation complete', 100);

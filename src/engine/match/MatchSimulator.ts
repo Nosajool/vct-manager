@@ -50,7 +50,8 @@ export class MatchSimulator {
     playersA: Player[],
     playersB: Player[],
     strategyA?: TeamStrategy,
-    strategyB?: TeamStrategy
+    strategyB?: TeamStrategy,
+    rivalryIntensity?: number
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -59,8 +60,16 @@ export class MatchSimulator {
     const teamBStrategy = strategyB || this.getDefaultStrategy();
 
     // Calculate base team strengths
-    const strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
-    const strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall);
+    let strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
+    let strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall);
+
+    // Rivalry volatility: high-intensity rivalries (>70) add ±3% noise to both sides
+    if (rivalryIntensity !== undefined && rivalryIntensity > 70) {
+      const noiseA = 1 + (Math.random() * 0.06 - 0.03);
+      const noiseB = 1 + (Math.random() * 0.06 - 0.03);
+      strengthA *= noiseA;
+      strengthB *= noiseB;
+    }
 
     // Select maps for the match (pick 3 unique maps)
     const selectedMaps = this.selectMaps(3);

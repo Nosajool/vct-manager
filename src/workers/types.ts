@@ -33,6 +33,8 @@ export interface MatchSimInput {
   playersB: Player[];
   strategyA?: TeamStrategy;
   strategyB?: TeamStrategy;
+  /** Rivalry intensity (0-100). >70 applies ±3% strength volatility to both teams. */
+  rivalryIntensity?: number;
 }
 
 /** Input for training a single player */

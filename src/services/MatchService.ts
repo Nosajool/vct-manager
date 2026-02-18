@@ -51,6 +51,17 @@ export class MatchService {
     const strategyA = snapshotA?.strategy ?? state.getTeamStrategy(match.teamAId);
     const strategyB = snapshotB?.strategy ?? state.getTeamStrategy(match.teamBId);
 
+    // Look up rivalry intensity if this is a player team match
+    let rivalryIntensity: number | undefined;
+    if (state.playerTeamId) {
+      const opponentTeamId =
+        match.teamAId === state.playerTeamId ? match.teamBId : match.teamAId;
+      if (opponentTeamId !== state.playerTeamId) {
+        const rivalry = state.getRivalryByOpponent(opponentTeamId);
+        rivalryIntensity = rivalry?.intensity;
+      }
+    }
+
     // Run simulation in worker with strategies
     const result = await simulationWorkerService.simulateMatch({
       teamA,
@@ -59,6 +70,7 @@ export class MatchService {
       playersB,
       strategyA,
       strategyB,
+      rivalryIntensity,
     });
 
     // Update result's matchId to the actual match

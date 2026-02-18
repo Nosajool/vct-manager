@@ -11,6 +11,7 @@ import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
 import { reputationService, type ReputationDelta } from './ReputationService';
+import { rivalryService, type RivalryDelta } from './RivalryService';
 import { activityResolutionService } from './ActivityResolutionService';
 import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
@@ -37,6 +38,7 @@ export interface TimeAdvanceResult {
   dramaEvents: DramaEventInstance[]; // Drama events that triggered today
   activityResults?: ActivityResolutionResult; // Results from resolved training/scrim activities
   reputationDelta?: ReputationDelta; // Reputation change from player team matches today
+  rivalryDelta?: RivalryDelta;       // Rivalry change from player team matches today
 }
 
 /**
@@ -82,6 +84,7 @@ export class CalendarService {
     const skippedEvents: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
     let reputationDelta: ReputationDelta | undefined;
+    let rivalryDelta: RivalryDelta | undefined;
 
     // Setup progress tracking if requested
     if (withProgress && unprocessedEvents.length > 0) {
@@ -232,7 +235,7 @@ export class CalendarService {
           simulatedMatches.push(result);
           processedEvents.push(event);
 
-          // Process reputation for player team matches
+          // Process reputation and rivalry for player team matches
           if (matchData.isPlayerMatch && state.playerTeamId) {
             const playerTeam = state.teams[state.playerTeamId];
             if (playerTeam) {
@@ -246,6 +249,11 @@ export class CalendarService {
                 tournament?.type,
                 matchData.isPlayoffMatch,
               );
+              rivalryDelta = rivalryService.processMatchRivalry(
+                result,
+                state.playerTeamId,
+                matchData.isPlayoffMatch,
+              ) ?? undefined;
             }
           }
         }
@@ -388,6 +396,7 @@ export class CalendarService {
       dramaEvents,
       activityResults,
       reputationDelta,
+      rivalryDelta,
     };
   }
 
