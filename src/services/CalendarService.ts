@@ -240,8 +240,13 @@ export class CalendarService {
           simulatedMatches.push(result);
           processedEvents.push(event);
 
+          // Check if this is the player's team match (direct comparison instead of flag)
+          // TODO: Fix isPlayerMatch flag in tournament match events (tech debt)
+          const isPlayerMatch = (matchData.homeTeamId === state.playerTeamId || 
+                                 matchData.awayTeamId === state.playerTeamId);
+
           // Process reputation and rivalry for player team matches
-          if (matchData.isPlayerMatch && state.playerTeamId) {
+          if (isPlayerMatch && state.playerTeamId) {
             const playerTeam = state.teams[state.playerTeamId];
             if (playerTeam) {
               const tournament = matchData.tournamentId

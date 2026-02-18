@@ -11,7 +11,7 @@
 // 5. SimulationResultsModal shows what happened
 // 6. User is now at beginning of Day X+1
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { calendarService, interviewService, progressTrackingService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
