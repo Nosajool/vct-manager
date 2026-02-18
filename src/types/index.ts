@@ -296,3 +296,16 @@ export type {
 } from './drama';
 
 export { DRAMA_CONSTANTS } from './drama';
+
+// Interview types
+export type {
+  InterviewContext,
+  InterviewTone,
+  InterviewSubject,
+  InterviewCondition,
+  InterviewEffects,
+  InterviewOption,
+  InterviewTemplate,
+  PendingInterview,
+  InterviewHistoryEntry,
+} from './interview';
