@@ -9,8 +9,10 @@ import { useGameStore } from '../../store';
 import { MatchResult as MatchResultComponent } from '../match/MatchResult';
 import type { MatchResult, Match, Tournament, BracketStructure, BracketMatch } from '../../types';
 import type { TimeAdvanceResult, ReputationDelta } from '../../services';
+import type { RivalryDelta } from '../../services/RivalryService';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { RivalryIndicator } from '../narrative/RivalryIndicator';
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -290,6 +292,7 @@ export function SimulationResultsModal({
                     matchDetails={m}
                     isHighlighted
                     reputationDelta={result.reputationDelta}
+                    rivalryDelta={result.rivalryDelta}
                     onViewDetails={() => handleViewDetails(m.match)}
                   />
                 ))}
@@ -385,15 +388,23 @@ function MatchCard({
   matchDetails,
   isHighlighted = false,
   reputationDelta,
+  rivalryDelta,
   onViewDetails,
 }: {
   matchDetails: MatchWithDetails;
   isHighlighted?: boolean;
   reputationDelta?: ReputationDelta;
+  rivalryDelta?: RivalryDelta;
   onViewDetails: () => void;
 }) {
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
   const { match, result, teamAName, teamBName, matchLabel, isPlayerTeamMatch, playerTeamWon } =
     matchDetails;
+
+  // Resolve the opponent team id for RivalryIndicator
+  const opponentTeamId = isPlayerTeamMatch && playerTeamId
+    ? (match.teamAId === playerTeamId ? match.teamBId : match.teamAId)
+    : null;
 
   const teamAWon = result.winnerId === match.teamAId;
   const teamBWon = result.winnerId === match.teamBId;
@@ -429,6 +440,9 @@ function MatchCard({
               >
                 {teamAName}
               </span>
+              {isHighlighted && opponentTeamId && match.teamAId !== playerTeamId && (
+                <RivalryIndicator opponentTeamId={opponentTeamId} />
+              )}
               <GameImage
                 src={getTeamLogoUrl(teamAName)}
                 alt={teamAName}
@@ -464,6 +478,9 @@ function MatchCard({
                 alt={teamBName}
                 className="w-8 h-8"
               />
+              {isHighlighted && opponentTeamId && match.teamBId !== playerTeamId && (
+                <RivalryIndicator opponentTeamId={opponentTeamId} />
+              )}
               <span
                 className={`font-medium ${
                   teamBWon ? 'text-green-400' : 'text-vct-light'
@@ -529,6 +546,11 @@ function MatchCard({
           {reputationDelta && reputationDelta.hypeDelta > 0 && (
             <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-orange-500/20 text-orange-400">
               +{reputationDelta.hypeDelta} Hype
+            </span>
+          )}
+          {rivalryDelta && rivalryDelta.intensityDelta > 0 && (
+            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-orange-500/20 text-orange-400">
+              🔥 Rivalry +{rivalryDelta.intensityDelta}
             </span>
           )}
         </div>

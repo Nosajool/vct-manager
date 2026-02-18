@@ -10,6 +10,7 @@ import type { TeamSlot } from '../../types/competition';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { RivalryIndicator } from '../narrative/RivalryIndicator';
 
 interface BracketMatchProps {
   match: BracketMatchType;
@@ -136,6 +137,9 @@ export function BracketMatch({
             <span className="text-xs text-vct-gray/40 truncate">
               {display.description}
             </span>
+          )}
+          {isPlayerMatch && !isPlayerTeam && !display.isTbd && team?.id && (
+            <RivalryIndicator opponentTeamId={team.id} className="ml-1" />
           )}
         </div>
         {showScore && match.status === 'completed' && score !== undefined && (
