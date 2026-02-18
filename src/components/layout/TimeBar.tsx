@@ -11,13 +11,12 @@
 // 5. SimulationResultsModal shows what happened
 // 6. User is now at beginning of Day X+1
 
-import { useState, useMemo } from 'react';
-import { calendarService, type TimeAdvanceResult } from '../../services';
+import { useState, useMemo, useEffect } from 'react';
+import { calendarService, interviewService, progressTrackingService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { SimulationResultsModal, DayRecapModal, SimulationProgressModal } from '../calendar';
-import { progressTrackingService } from '../../services';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -150,18 +149,65 @@ export function TimeBar() {
         setMajorEventQueue(majorEvents);
       }
 
-      // Show results modal if matches were simulated
+      // Determine flow based on result
+      setSimulationResult(result);
+
       if (result.simulatedMatches.length > 0) {
-        setSimulationResult(result);
+        // Match day: show results first, then interview (if any), then day recap
         setShowResultsModal(true);
+        setShowDayRecapModal(false); // Don't show yet
       } else {
-        // Show day recap for non-match days
-        setSimulationResult(result);
+        // Non-match day: show day recap
+        setShowDayRecapModal(true);
       }
-      setShowDayRecapModal(true);
     } finally {
       setIsAdvancing(false);
     }
+  };
+
+  const checkAndShowPreMatchInterview = (): boolean => {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    if (!playerTeamId) return false;
+
+    // Get today's match (the match we're about to simulate)
+    const today = state.calendar.currentDate;
+    const matchEvents = state.calendar.scheduledEvents.filter(
+      (e) => e.type === 'match' && e.date === today && !e.processed
+    );
+
+    // Find player's match
+    const playerMatchEvent = matchEvents.find((e) => {
+      const data = e.data as { homeTeamId?: string; awayTeamId?: string };
+      return data.homeTeamId === playerTeamId || data.awayTeamId === playerTeamId;
+    });
+
+    console.log('Pre-match check:', { today, matchEvents: matchEvents.length, playerMatchEvent: !!playerMatchEvent });
+
+    if (!playerMatchEvent) return false;
+
+    const matchData = playerMatchEvent.data as { matchId?: string; isPlayoffMatch?: boolean };
+    const matchId = matchData.matchId;
+    if (!matchId) return false;
+
+    const team = state.teams[playerTeamId];
+    const isPlayoffMatch = matchData.isPlayoffMatch ?? false;
+
+    // Check for pre-match interview
+    const interview = interviewService.checkPreMatchInterview(
+      matchId,
+      playerTeamId,
+      team,
+      isPlayoffMatch
+    );
+
+    if (interview) {
+      state.setPendingInterview(interview);
+      setShowInterviewModal(true);
+      return true;
+    }
+
+    return false;
   };
 
   const handleAdvanceDay = () => {
@@ -201,26 +247,61 @@ export function TimeBar() {
         setUnconfiguredEvents(events);
         setShowValidationModal(true);
       } else {
-        // All resolved after auto-scheduling - proceed normally
-        handleTimeAdvance(() => calendarService.advanceDay(true));
+        // All resolved after auto-scheduling - check for pre-match interview
+        if (!checkAndShowPreMatchInterview()) {
+          handleTimeAdvance(() => calendarService.advanceDay(true));
+        }
       }
     } else {
-      // All configured - proceed normally
-      handleTimeAdvance(() => calendarService.advanceDay(true));
+      // All configured - check for pre-match interview
+      if (!checkAndShowPreMatchInterview()) {
+        handleTimeAdvance(() => calendarService.advanceDay(true));
+      }
     }
   };
 
    const handleCloseModal = () => {
      setShowResultsModal(false);
-     setSimulationResult(null);
      progressTrackingService.clearProgress();
 
-     // Show interview first if one is pending, then drama events
-     const storePendingInterview = useGameStore.getState().pendingInterview;
-     if (storePendingInterview) {
+     // Progress to next stage based on what we need to show
+     const pendingInterview = useGameStore.getState().pendingInterview;
+
+     if (pendingInterview) {
        setShowInterviewModal(true);
-       return;
+     } else {
+       // No interview, go directly to day recap
+       setShowDayRecapModal(true);
      }
+   };
+
+     const handleInterviewClose = () => {
+       const interviewContext = useGameStore.getState().pendingInterview?.context;
+       console.log('TimeBar: handleInterviewClose called', { interviewContext });
+
+       // Clear pending interview from store (effects were already applied via onChoose)
+       const state = useGameStore.getState();
+       state.clearPendingInterview();
+
+       setShowInterviewModal(false);
+
+       if (interviewContext === 'PRE_MATCH') {
+         // Pre-match interview resolved - now advance the day
+         console.log('TimeBar: calling handleTimeAdvance to simulate match');
+         handleTimeAdvance(() => calendarService.advanceDay(true));
+       } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
+         // Post-match interview resolved, now show crisis interview
+         state.setPendingInterview(simulationResult.crisisInterview);
+         setShowInterviewModal(true);
+       } else {
+         // No more interviews - show day recap
+         console.log('TimeBar: showing day recap');
+         setShowDayRecapModal(true);
+       }
+     };
+
+   const handleCloseDayRecap = () => {
+     setShowDayRecapModal(false);
 
      // Check if there are major drama events to show
      if (majorEventQueue.length > 0) {
@@ -229,21 +310,6 @@ export function TimeBar() {
        setMajorEventQueue(rest);
      }
    };
-
-  const handleInterviewClose = () => {
-    setShowInterviewModal(false);
-
-    // After interview, check for major drama events
-    if (majorEventQueue.length > 0) {
-      const [firstEvent, ...rest] = majorEventQueue;
-      setCurrentMajorEvent(firstEvent);
-      setMajorEventQueue(rest);
-    }
-  };
-
-  const handleCloseDayRecap = () => {
-    setShowDayRecapModal(false);
-  };
 
   const handleDismissUnlock = (index: number) => {
     setUnlockedFeatures((prev) => prev.filter((_, i) => i !== index));
@@ -536,6 +602,9 @@ export function TimeBar() {
       {showInterviewModal && pendingInterview && (
         <InterviewModal
           interview={pendingInterview}
+          onChoose={(choiceIndex) => {
+            interviewService.resolveInterview(pendingInterview, choiceIndex, useGameStore.getState().calendar.currentDate);
+          }}
           onClose={handleInterviewClose}
         />
       )}

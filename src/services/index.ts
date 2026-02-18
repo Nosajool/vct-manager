@@ -43,3 +43,7 @@ export {
   rivalryService,
   type RivalryDelta,
 } from './RivalryService';
+export {
+  InterviewService,
+  interviewService,
+} from './InterviewService';

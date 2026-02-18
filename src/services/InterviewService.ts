@@ -47,7 +47,7 @@ export class InterviewService {
       match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
 
     // Roll probability
-    let chance = 40;
+    let chance = 80;
     if (isPlayoffMatch) chance += 20;
 
     const lossStreak = team.standings.currentStreak < 0
@@ -56,7 +56,7 @@ export class InterviewService {
     if (lossStreak >= 2) chance += 15;
     if (isUpsetWin) chance += 15;
 
-    if (Math.random() * 100 > chance) return null;
+    if (Math.random() * 100 >= chance) return null;
 
     // Determine win/loss context
     const won = matchResult.winnerId === playerTeamId;
@@ -101,19 +101,41 @@ export class InterviewService {
   ): PendingInterview | null {
     const state = useGameStore.getState();
     const match = state.matches[matchId];
-    if (!match) return null;
+    
+    console.log('checkPreMatchInterview called:', { 
+      matchId, 
+      playerTeamId, 
+      isPlayoffMatch,
+      teamName: team.name,
+      currentStreak: team.standings.currentStreak,
+      hasMatch: !!match
+    });
+    
+    if (!match) {
+      console.log('checkPreMatchInterview: no match found');
+      return null;
+    }
 
     // Only tournament matches
-    if (!match.tournamentId) return null;
+    if (!match.tournamentId) {
+      console.log('checkPreMatchInterview: not a tournament match');
+      return null;
+    }
 
     const opponentTeamId =
       match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
 
     // Roll probability
-    let chance = 25;
+    let chance = 80;
     if (isPlayoffMatch) chance += 20;
 
-    if (Math.random() * 100 > chance) return null;
+    const roll = Math.random() * 100;
+    console.log('checkPreMatchInterview probability:', { chance, roll, passes: roll < chance });
+    
+    if (roll >= chance) {
+      console.log('checkPreMatchInterview: failed probability check');
+      return null;
+    }
 
     // Build condition flags
     const lossStreak = team.standings.currentStreak < 0
@@ -136,9 +158,20 @@ export class InterviewService {
       return false;
     });
 
-    const template = this.pickTemplate(candidates);
-    if (!template) return null;
+    console.log('checkPreMatchInterview candidates:', { 
+      candidateCount: candidates.length,
+      lossStreak, 
+      winStreak, 
+      hasRivalry 
+    });
 
+    const template = this.pickTemplate(candidates);
+    if (!template) {
+      console.log('checkPreMatchInterview: no template found');
+      return null;
+    }
+
+    console.log('checkPreMatchInterview: returning interview:', { templateId: template.id });
     return this.toPendingInterview(template, opponentTeamId);
   }
 
@@ -202,13 +235,16 @@ export class InterviewService {
     choiceIndex: number,
     currentDate: string,
   ): InterviewHistoryEntry & InterviewEffectResult {
+    console.log('InterviewService: resolveInterview START', { templateId: pending.templateId, choiceIndex, context: pending.context });
     const option: InterviewOption = pending.options[choiceIndex];
     const effects = option.effects;
+    console.log('InterviewService: effects:', effects);
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId!;
     const team = state.teams[playerTeamId];
 
     // 1. Morale delta — apply to all active roster players
+    console.log('InterviewService: applying morale delta...');
     const newMorale: Record<string, number> = {};
     if (effects.morale !== undefined && effects.morale !== 0) {
       for (const playerId of team.playerIds) {
@@ -221,6 +257,7 @@ export class InterviewService {
     }
 
     // 2. Reputation deltas — fanbase, hype, sponsorTrust
+    console.log('InterviewService: applying reputation deltas...');
     const rep = team.reputation;
     const repUpdate = {
       fanbase: effects.fanbase !== undefined
@@ -258,6 +295,7 @@ export class InterviewService {
     }
 
     // 5. Build history entry and commit to slice
+    console.log('InterviewService: building history entry...');
     const historyEntry: InterviewHistoryEntry = {
       date: currentDate,
       templateId: pending.templateId,
@@ -268,9 +306,11 @@ export class InterviewService {
 
     // Re-read state so we get the latest after prior mutations
     const latestState = useGameStore.getState();
+    console.log('InterviewService: adding to history...');
     latestState.addInterviewHistory(historyEntry);
-    latestState.clearPendingInterview();
+    // Note: clearPendingInterview is handled by the parent component after the modal closes
 
+    console.log('InterviewService: resolveInterview END');
     return {
       ...historyEntry,
       appliedEffects: effects,

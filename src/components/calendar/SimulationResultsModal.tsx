@@ -538,19 +538,35 @@ function MatchCard({
           >
             {playerTeamWon ? 'Victory' : 'Defeat'}
           </span>
-          {reputationDelta && reputationDelta.fanbaseDelta > 0 && (
-            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-vct-red/20 text-vct-red">
-              +{reputationDelta.fanbaseDelta} Fans
+          {reputationDelta && (
+            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+              reputationDelta.fanbaseDelta > 0
+                ? 'bg-green-500/20 text-green-400'
+                : reputationDelta.fanbaseDelta < 0
+                  ? 'bg-red-500/20 text-red-400'
+                  : 'bg-vct-gray/20 text-vct-gray'
+            }`}>
+              {reputationDelta.fanbaseDelta > 0 ? '+' : ''}{reputationDelta.fanbaseDelta} Fans
             </span>
           )}
-          {reputationDelta && reputationDelta.hypeDelta > 0 && (
-            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-orange-500/20 text-orange-400">
-              +{reputationDelta.hypeDelta} Hype
+          {reputationDelta && (
+            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+              reputationDelta.hypeDelta > 0
+                ? 'bg-green-500/20 text-green-400'
+                : reputationDelta.hypeDelta < 0
+                  ? 'bg-red-500/20 text-red-400'
+                  : 'bg-vct-gray/20 text-vct-gray'
+            }`}>
+              {reputationDelta.hypeDelta > 0 ? '+' : ''}{reputationDelta.hypeDelta} Hype
             </span>
           )}
-          {rivalryDelta && rivalryDelta.intensityDelta > 0 && (
-            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-orange-500/20 text-orange-400">
-              🔥 Rivalry +{rivalryDelta.intensityDelta}
+          {rivalryDelta && rivalryDelta.intensityDelta !== 0 && (
+            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+              rivalryDelta.intensityDelta > 0
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-red-500/20 text-red-400'
+            }`}>
+              🔥 Rivalry {rivalryDelta.intensityDelta > 0 ? '+' : ''}{rivalryDelta.intensityDelta}
             </span>
           )}
         </div>

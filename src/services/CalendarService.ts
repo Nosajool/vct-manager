@@ -42,6 +42,7 @@ export interface TimeAdvanceResult {
   reputationDelta?: ReputationDelta;   // Reputation change from player team matches today
   rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
   pendingInterview?: PendingInterview; // Interview to show after SimulationResultsModal
+  crisisInterview?: PendingInterview;  // Crisis interview to show (after post-match interview)
 }
 
 /**
@@ -391,6 +392,22 @@ export class CalendarService {
     // Evaluate drama events for today
     const dramaEvents = dramaService.evaluateDay();
 
+    // Check for crisis interview (daily - both match and non-match days)
+    let crisisInterview: PendingInterview | undefined;
+    if (state.playerTeamId) {
+      const playerTeam = state.teams[state.playerTeamId];
+      if (playerTeam) {
+        const dramaState = {
+          activeFlags: state.activeFlags,
+        };
+        crisisInterview = interviewService.checkCrisisInterview(
+          dramaState,
+          playerTeam,
+          currentDate,
+        ) ?? undefined;
+      }
+    }
+
     // Check if auto-save should trigger
     const autoSaveTriggered = timeProgression.shouldAutoSave(
       newDate,
@@ -416,6 +433,7 @@ export class CalendarService {
       reputationDelta,
       rivalryDelta,
       pendingInterview,
+      crisisInterview: crisisInterview ?? undefined,
     };
   }
 

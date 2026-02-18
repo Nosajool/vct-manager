@@ -3,14 +3,17 @@
 // No skip option — player must choose a response.
 // Shows context badge, subject badge, narrative prompt, and 3 option buttons.
 // After a choice, shows an effects summary before continuing.
+// Follows the same pattern as DramaEventModal.
 
 import { useState } from 'react';
 import { useGameStore } from '../../store';
-import { interviewService } from '../../services/InterviewService';
 import type { PendingInterview, InterviewContext, InterviewTone } from '../../types/interview';
 
 interface InterviewModalProps {
   interview: PendingInterview;
+  /** Called when player makes a choice - applies effects to game state */
+  onChoose: (choiceIndex: number) => void;
+  /** Called when the user closes the modal (clicks Continue) */
   onClose: () => void;
 }
 
@@ -62,11 +65,11 @@ function formatEffects(effects: PendingInterview['options'][number]['effects']):
 // Component
 // ============================================================================
 
-export function InterviewModal({ interview, onClose }: InterviewModalProps) {
+export function InterviewModal({ interview, onChoose, onClose }: InterviewModalProps) {
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
+  const [showOutcome, setShowOutcome] = useState(false);
   const [effectsSummary, setEffectsSummary] = useState('');
 
-  const currentDate = useGameStore((state) => state.calendar.currentDate);
   const players = useGameStore((state) => state.players);
 
   const contextMeta = CONTEXT_META[interview.context];
@@ -82,15 +85,23 @@ export function InterviewModal({ interview, onClose }: InterviewModalProps) {
     return 'PLAYER';
   })();
 
+  // Handle choice - show outcome first, then apply effects via parent
   const handleChoose = (index: number) => {
     const option = interview.options[index];
-    interviewService.resolveInterview(interview, index, currentDate);
-    setEffectsSummary(formatEffects(option.effects));
+    
+    // Show outcome view first (local state)
     setChosenIndex(index);
+    setShowOutcome(true);
+    setEffectsSummary(formatEffects(option.effects));
+    
+    // Then call parent to apply effects
+    onChoose(index);
   };
 
+  // Handle continue - reset state and close modal
   const handleContinue = () => {
     setChosenIndex(null);
+    setShowOutcome(false);
     setEffectsSummary('');
     onClose();
   };
@@ -101,7 +112,7 @@ export function InterviewModal({ interview, onClose }: InterviewModalProps) {
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col">
 
-        {chosenOption ? (
+        {showOutcome ? (
           // ── Outcome view ────────────────────────────────────────────────
           <>
             <div className="p-4 border-b border-vct-gray/20">
@@ -110,7 +121,7 @@ export function InterviewModal({ interview, onClose }: InterviewModalProps) {
 
             <div className="p-6 space-y-4">
               <p className="text-vct-light text-base italic leading-relaxed">
-                "{chosenOption.quote}"
+                "{chosenOption?.quote}"
               </p>
 
               <div className="pt-4 border-t border-vct-gray/20">
@@ -159,6 +170,7 @@ export function InterviewModal({ interview, onClose }: InterviewModalProps) {
               {interview.options.map((option, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={() => handleChoose(index)}
                   className="w-full text-left p-4 rounded-lg border border-vct-gray/20 hover:border-vct-gray/40 transition-all"
                 >
