@@ -10,6 +10,7 @@ import { teamSlotResolver } from './TeamSlotResolver';
 import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
+import { reputationService, type ReputationDelta } from './ReputationService';
 import { activityResolutionService } from './ActivityResolutionService';
 import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
@@ -35,6 +36,7 @@ export interface TimeAdvanceResult {
   newlyUnlockedFeatures: FeatureUnlock[]; // Features that unlocked as a result of this advance
   dramaEvents: DramaEventInstance[]; // Drama events that triggered today
   activityResults?: ActivityResolutionResult; // Results from resolved training/scrim activities
+  reputationDelta?: ReputationDelta; // Reputation change from player team matches today
 }
 
 /**
@@ -79,6 +81,7 @@ export class CalendarService {
     const processedEvents: CalendarEvent[] = [];
     const skippedEvents: CalendarEvent[] = [];
     const simulatedMatches: MatchResult[] = [];
+    let reputationDelta: ReputationDelta | undefined;
 
     // Setup progress tracking if requested
     if (withProgress && unprocessedEvents.length > 0) {
@@ -228,6 +231,23 @@ export class CalendarService {
         if (result) {
           simulatedMatches.push(result);
           processedEvents.push(event);
+
+          // Process reputation for player team matches
+          if (matchData.isPlayerMatch && state.playerTeamId) {
+            const playerTeam = state.teams[state.playerTeamId];
+            if (playerTeam) {
+              const tournament = matchData.tournamentId
+                ? state.tournaments[matchData.tournamentId]
+                : undefined;
+              reputationDelta = reputationService.processMatchReputation(
+                result,
+                state.playerTeamId,
+                playerTeam,
+                tournament?.type,
+                matchData.isPlayoffMatch,
+              );
+            }
+          }
         }
       } else if (timeProgression.isRequiredEventType(event.type)) {
         // Auto-mark as processed (informational)
@@ -334,6 +354,14 @@ export class CalendarService {
       }
     }
 
+    // Weekly hype decay — fire every Sunday
+    if (new Date(newDate).getDay() === 0 && state.playerTeamId) {
+      const playerTeam = state.teams[state.playerTeamId];
+      if (playerTeam) {
+        reputationService.processWeeklyHypeDecay(playerTeam, state.playerTeamId);
+      }
+    }
+
     // Evaluate drama events for today
     const dramaEvents = dramaService.evaluateDay();
 
@@ -359,6 +387,7 @@ export class CalendarService {
       newlyUnlockedFeatures: newlyUnlocked,
       dramaEvents,
       activityResults,
+      reputationDelta,
     };
   }
 

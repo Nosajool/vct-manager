@@ -403,20 +403,56 @@ function SponsorshipsTab({ team, formatCurrency, onShowOffers }: SponsorshipsTab
           <p className="text-vct-gray">Monthly Sponsorship Revenue</p>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-4 text-center">
+        <div className="mt-6 space-y-4">
+          {/* Fanbase */}
           <div>
-            <p className="text-xl font-semibold text-vct-light">{team.reputation.fanbase}</p>
-            <p className="text-sm text-vct-gray">Fanbase Score</p>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm text-vct-gray">Fanbase</span>
+              <span className="text-sm font-semibold text-vct-light">{team.reputation.fanbase}/100</span>
+            </div>
+            <div className="w-full h-2 bg-vct-gray/20 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-vct-red rounded-full transition-all"
+                style={{ width: `${team.reputation.fanbase}%` }}
+              />
+            </div>
           </div>
+
+          {/* Hype Level */}
           <div>
-            <p className="text-xl font-semibold text-vct-light">
-              {formatCurrency(team.organizationValue)}
-            </p>
-            <p className="text-sm text-vct-gray">Organization Value</p>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm text-vct-gray">Hype <span className="text-vct-gray/60 text-xs">(-5/week)</span></span>
+              <span className="text-sm font-semibold text-vct-light">{team.reputation.hypeLevel}/100</span>
+            </div>
+            <div className="w-full h-2 bg-vct-gray/20 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${team.reputation.hypeLevel > 60 ? 'bg-orange-400' : 'bg-blue-400'}`}
+                style={{ width: `${team.reputation.hypeLevel}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Sponsor Trust */}
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm text-vct-gray">Sponsor Trust</span>
+              <span className="text-sm font-semibold text-vct-light">{team.reputation.sponsorTrust}/100</span>
+            </div>
+            <div className="w-full h-2 bg-vct-gray/20 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-400 rounded-full transition-all"
+                style={{ width: `${team.reputation.sponsorTrust}%` }}
+              />
+            </div>
           </div>
         </div>
 
-        <p className="mt-6 text-sm text-vct-gray text-center">
+        <div className="mt-4 text-center">
+          <p className="text-xl font-semibold text-vct-light">{formatCurrency(team.organizationValue)}</p>
+          <p className="text-sm text-vct-gray">Organization Value</p>
+        </div>
+
+        <p className="mt-4 text-sm text-vct-gray text-center">
           Increase your fanbase and win more matches to attract better sponsors!
         </p>
       </div>

@@ -8,7 +8,7 @@ import { useState, useMemo } from 'react';
 import { useGameStore } from '../../store';
 import { MatchResult as MatchResultComponent } from '../match/MatchResult';
 import type { MatchResult, Match, Tournament, BracketStructure, BracketMatch } from '../../types';
-import type { TimeAdvanceResult } from '../../services';
+import type { TimeAdvanceResult, ReputationDelta } from '../../services';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
 
@@ -289,6 +289,7 @@ export function SimulationResultsModal({
                     key={m.match.id}
                     matchDetails={m}
                     isHighlighted
+                    reputationDelta={result.reputationDelta}
                     onViewDetails={() => handleViewDetails(m.match)}
                   />
                 ))}
@@ -383,10 +384,12 @@ export function SimulationResultsModal({
 function MatchCard({
   matchDetails,
   isHighlighted = false,
+  reputationDelta,
   onViewDetails,
 }: {
   matchDetails: MatchWithDetails;
   isHighlighted?: boolean;
+  reputationDelta?: ReputationDelta;
   onViewDetails: () => void;
 }) {
   const { match, result, teamAName, teamBName, matchLabel, isPlayerTeamMatch, playerTeamWon } =
@@ -506,9 +509,9 @@ function MatchCard({
         ))}
       </div>
 
-      {/* Player Team Result Badge */}
+      {/* Player Team Result Badge + Reputation Chips */}
       {isHighlighted && isPlayerTeamMatch && (
-        <div className="mt-2 text-center">
+        <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
           <span
             className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
               playerTeamWon
@@ -518,6 +521,16 @@ function MatchCard({
           >
             {playerTeamWon ? 'Victory' : 'Defeat'}
           </span>
+          {reputationDelta && reputationDelta.fanbaseDelta > 0 && (
+            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-vct-red/20 text-vct-red">
+              +{reputationDelta.fanbaseDelta} Fans
+            </span>
+          )}
+          {reputationDelta && reputationDelta.hypeDelta > 0 && (
+            <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-orange-500/20 text-orange-400">
+              +{reputationDelta.hypeDelta} Hype
+            </span>
+          )}
         </div>
       )}
     </div>
