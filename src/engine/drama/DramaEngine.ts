@@ -480,7 +480,7 @@ export function selectInvolvedPlayer(
 
   // Check template effects for player selector hints
   const playerEffects = (template.effects || []).filter(e =>
-    e.playerSelector !== undefined && e.playerSelector !== 'all'
+    e.effectPlayerSelector !== undefined && e.effectPlayerSelector !== 'all'
   );
 
   // Combine both sources
@@ -492,7 +492,7 @@ export function selectInvolvedPlayer(
   }
 
   // Use the first player condition or effect to select a player
-  const selector = playerConditions[0]?.playerSelector || playerEffects[0]?.playerSelector;
+  const selector = playerConditions[0]?.playerSelector || playerEffects[0]?.effectPlayerSelector;
   const condition = playerConditions[0];
 
   if (selector === 'specific') {

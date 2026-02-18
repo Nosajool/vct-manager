@@ -88,12 +88,12 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
   // Handle choice - show outcome first, then apply effects via parent
   const handleChoose = (index: number) => {
     const option = interview.options[index];
-    
+
     // Show outcome view first (local state)
     setChosenIndex(index);
     setShowOutcome(true);
     setEffectsSummary(formatEffects(option.effects));
-    
+
     // Then call parent to apply effects
     onChoose(index);
   };

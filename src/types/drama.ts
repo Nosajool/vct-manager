@@ -139,13 +139,26 @@ export type DramaEffectTarget =
   | 'escalate_event';
 
 /**
+ * Player selector for effects (extended for effect resolution needs)
+ */
+export type EffectPlayerSelector =
+  | 'triggering'      // First player in involvedPlayerIds
+  | 'all'             // All players in snapshot (alias for all_team)
+  | 'all_team'        // All players in snapshot
+  | 'random_teammate' // Random player excluding triggering player
+  | 'specific'        // Specific player by ID
+  | 'star_player'     // Highest rated player
+  | 'random'          // Random player from team
+  | 'any';            // Random player (resolved from involvedPlayerIds)
+
+/**
  * Effect that modifies game state when drama events occur
  */
 export interface DramaEffect {
   target: DramaEffectTarget;
 
   // Player targeting
-  playerSelector?: PlayerSelector;
+  effectPlayerSelector?: EffectPlayerSelector;
   playerId?: string; // Used with 'specific' selector
 
   // For stat/value modifications

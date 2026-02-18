@@ -101,7 +101,7 @@ export class InterviewService {
   ): PendingInterview | null {
     const state = useGameStore.getState();
     const match = state.matches[matchId];
-    
+
     console.log('checkPreMatchInterview called:', { 
       matchId, 
       playerTeamId, 
@@ -131,7 +131,7 @@ export class InterviewService {
 
     const roll = Math.random() * 100;
     console.log('checkPreMatchInterview probability:', { chance, roll, passes: roll < chance });
-    
+
     if (roll >= chance) {
       console.log('checkPreMatchInterview: failed probability check');
       return null;

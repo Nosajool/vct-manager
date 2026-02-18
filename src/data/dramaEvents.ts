@@ -42,8 +42,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'any',
-        delta: -3,
+        effectPlayerSelector: 'triggering',
+        delta: -10,
       },
       {
         target: 'set_flag',
@@ -66,6 +66,11 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         type: 'flag_active',
         flag: 'ego_underutilized_{playerId}',
       },
+      {
+        type: 'player_morale_below',
+        threshold: 50,
+        playerSelector: 'any',
+      },
     ],
     probability: 80,
     cooldownDays: 10,
@@ -77,7 +82,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'specific',
+            effectPlayerSelector: 'specific',
             delta: 10,
           },
           {
@@ -98,7 +103,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'specific',
+            effectPlayerSelector: 'specific',
             delta: -10,
           },
           {
@@ -121,7 +126,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'specific',
+            effectPlayerSelector: 'specific',
             delta: -3,
           },
           {
@@ -166,13 +171,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'star_player',
+            effectPlayerSelector: 'star_player',
             delta: 15,
           },
           {
             target: 'player_stat',
             stat: 'mechanics',
-            playerSelector: 'star_player',
+            effectPlayerSelector: 'star_player',
             delta: 3,
           },
           {
@@ -189,7 +194,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'star_player',
+            effectPlayerSelector: 'star_player',
             delta: -12,
           },
           {
@@ -206,13 +211,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'star_player',
+            effectPlayerSelector: 'star_player',
             delta: 5,
           },
           {
             target: 'player_stat',
             stat: 'mechanics',
-            playerSelector: 'star_player',
+            effectPlayerSelector: 'star_player',
             delta: 1,
           },
           {
@@ -236,6 +241,11 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         type: 'flag_active',
         flag: 'ego_role_demand_refused_{playerId}',
       },
+      {
+        type: 'player_morale_below',
+        threshold: 40,
+        playerSelector: 'any',
+      },
     ],
     probability: 60,
     cooldownDays: 10,
@@ -247,7 +257,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'specific',
+            effectPlayerSelector: 'triggering',
             delta: 8,
           },
           {
@@ -285,7 +295,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'specific',
+            effectPlayerSelector: 'triggering',
             delta: 5,
           },
           {
@@ -320,7 +330,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'team_chemistry',
-        delta: -3,
+        delta: -8,
       },
     ],
   },
@@ -351,7 +361,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 3,
           },
         ],
@@ -364,12 +374,17 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'team_chemistry',
-            delta: -2,
+            delta: -10,
           },
           {
             target: 'set_flag',
             flag: 'players_separated',
             flagDuration: 14,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -20,
           },
         ],
         outcomeText: 'You restructure practice to minimize their interactions. It reduces conflict but feels like a band-aid solution.',
@@ -381,12 +396,12 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'team_chemistry',
-            delta: -5,
+            delta: -20,
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
-            delta: -2,
+            effectPlayerSelector: 'all',
+            delta: -10,
           },
         ],
         outcomeText: 'You decide not to intervene. The tension persists and starts affecting other players. Maybe you should have acted sooner.',
@@ -415,12 +430,12 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'team_chemistry',
-        delta: 2,
+        delta: 10,
       },
       {
         target: 'player_morale',
-        playerSelector: 'all',
-        delta: 2,
+        effectPlayerSelector: 'all',
+        delta: 10,
       },
     ],
   },
@@ -451,7 +466,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 8,
           },
           {
@@ -469,7 +484,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 3,
           },
           {
@@ -486,7 +501,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: -5,
           },
           {
@@ -521,7 +536,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'all',
+        effectPlayerSelector: 'all',
         delta: -2,
       },
     ],
@@ -544,8 +559,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'all',
-        delta: 1,
+        effectPlayerSelector: 'all',
+        delta: 5,
       },
     ],
   },
@@ -564,6 +579,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 15,
+        playerSelector: 'any'
       },
     ],
     probability: 15,
@@ -576,8 +592,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
       {
         target: 'player_morale',
-        playerSelector: 'any',
-        delta: -2,
+        effectPlayerSelector: 'triggering',
+        delta: -20,
       },
     ],
   },
@@ -599,13 +615,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'random',
-        delta: -2,
+        effectPlayerSelector: 'random',
+        delta: -15,
       },
       {
         target: 'player_morale',
-        playerSelector: 'random',
-        delta: -2,
+        effectPlayerSelector: 'random',
+        delta: -15,
       },
     ],
   },
@@ -632,7 +648,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 10,
           },
           {
@@ -654,8 +670,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
-            delta: -8,
+            effectPlayerSelector: 'all',
+            delta: -50,
           },
           {
             target: 'set_flag',
@@ -672,7 +688,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 3,
           },
           {
@@ -699,6 +715,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 20,
+        playerSelector: 'any'
       },
     ],
     probability: 20,
@@ -706,14 +723,14 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'any',
-        delta: 3,
+        effectPlayerSelector: 'triggering',
+        delta: 10,
       },
       {
         target: 'player_stat',
         stat: 'mechanics',
-        playerSelector: 'any',
-        delta: 2,
+        effectPlayerSelector: 'triggering',
+        delta: 5,
       },
     ],
   },
@@ -728,6 +745,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 10,
+        playerSelector: 'any'
       },
     ],
     probability: 10,
@@ -736,13 +754,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         target: 'player_stat',
         stat: 'igl',
-        playerSelector: 'any',
-        delta: 2,
+        effectPlayerSelector: 'triggering',
+        delta: 5,
       },
       {
         target: 'player_morale',
-        playerSelector: 'any',
-        delta: 2,
+        effectPlayerSelector: 'triggering',
+        delta: 5,
       },
     ],
   },
@@ -768,12 +786,12 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     effects: [
       {
         target: 'player_morale',
-        playerSelector: 'all',
-        delta: 3,
+        effectPlayerSelector: 'all',
+        delta: 5,
       },
       {
         target: 'team_chemistry',
-        delta: 1,
+        delta: 5,
       },
     ],
   },
@@ -847,6 +865,11 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         type: 'random_chance',
         chance: 20,
       },
+      {
+        type: 'player_morale_above',
+        threshold: 50,
+        playerSelector: 'any',
+      },
     ],
     probability: 35,
     cooldownDays: 7,
@@ -858,13 +881,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 15,
           },
           {
             target: 'player_stat',
             stat: 'mechanics',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 3,
           },
           {
@@ -882,14 +905,14 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 5,
           },
           {
             target: 'player_stat',
             stat: 'mental',
-            playerSelector: 'any',
-            delta: 2,
+            effectPlayerSelector: 'triggering',
+            delta: 3,
           },
           {
             target: 'team_chemistry',
@@ -905,7 +928,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 8,
           },
           {
@@ -914,7 +937,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 2,
           },
         ],
@@ -945,7 +968,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 5,
           },
           {
@@ -963,7 +986,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: -3,
           },
           {
@@ -985,7 +1008,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 2,
           },
         ],
@@ -1004,6 +1027,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 15,
+        playerSelector: 'star_player'
       },
     ],
     probability: 35,
@@ -1016,7 +1040,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 12,
           },
           {
@@ -1037,7 +1061,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 5,
           },
           {
@@ -1059,7 +1083,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 3,
           },
           {
@@ -1104,7 +1128,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           {
             target: 'player_stat',
             stat: 'igl',
-            playerSelector: 'any',
+            effectPlayerSelector: 'any',
             delta: 5,
           },
           {
@@ -1126,7 +1150,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 3,
           },
         ],
@@ -1143,7 +1167,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: -2,
           },
           {
@@ -1167,6 +1191,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 15,
+        playerSelector: 'any'
       },
     ],
     probability: 35,
@@ -1179,7 +1204,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: -5,
           },
           {
@@ -1201,7 +1226,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: 10,
           },
           {
@@ -1223,7 +1248,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'any',
+            effectPlayerSelector: 'triggering',
             delta: -2,
           },
           {
@@ -1258,7 +1283,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 15,
           },
           {
@@ -1280,13 +1305,13 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 8,
           },
           {
             target: 'player_stat',
             stat: 'mental',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: 3,
           },
           {
@@ -1303,7 +1328,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            playerSelector: 'all',
+            effectPlayerSelector: 'all',
             delta: -10,
           },
           {
