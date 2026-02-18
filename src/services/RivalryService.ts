@@ -3,6 +3,7 @@
 
 import type { MatchResult } from '../types/match';
 import { useGameStore } from '../store';
+import { interviewService } from './InterviewService';
 
 /**
  * The intensity change resulting from a match
@@ -26,7 +27,6 @@ export class RivalryService {
     playerTeamId: string,
     isPlayoffMatch?: boolean,
     wasElimination?: boolean,
-    hadTrashTalk?: boolean,
   ): RivalryDelta | null {
     const state = useGameStore.getState();
 
@@ -57,8 +57,8 @@ export class RivalryService {
 
     if (wasEliminatedBy) delta += 15;
 
-    // Trash talk bonus — wired from interviewSlice in vct-manager-9kz8
-    if (hadTrashTalk) delta += 10;
+    // Trash talk bonus — read from interviewHistory via InterviewService
+    if (interviewService.hadTrashTalkBeforeMatch(opponentTeamId)) delta += 10;
 
     // Apply to store
     state.updateRivalryIntensity(opponentTeamId, delta);
