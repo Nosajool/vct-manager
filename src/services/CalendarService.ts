@@ -12,6 +12,8 @@ import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
 import { reputationService, type ReputationDelta } from './ReputationService';
 import { rivalryService, type RivalryDelta } from './RivalryService';
+import { interviewService } from './InterviewService';
+import type { PendingInterview } from '../types/interview';
 import { activityResolutionService } from './ActivityResolutionService';
 import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
@@ -37,8 +39,9 @@ export interface TimeAdvanceResult {
   newlyUnlockedFeatures: FeatureUnlock[]; // Features that unlocked as a result of this advance
   dramaEvents: DramaEventInstance[]; // Drama events that triggered today
   activityResults?: ActivityResolutionResult; // Results from resolved training/scrim activities
-  reputationDelta?: ReputationDelta; // Reputation change from player team matches today
-  rivalryDelta?: RivalryDelta;       // Rivalry change from player team matches today
+  reputationDelta?: ReputationDelta;   // Reputation change from player team matches today
+  rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
+  pendingInterview?: PendingInterview; // Interview to show after SimulationResultsModal
 }
 
 /**
@@ -85,6 +88,7 @@ export class CalendarService {
     const simulatedMatches: MatchResult[] = [];
     let reputationDelta: ReputationDelta | undefined;
     let rivalryDelta: RivalryDelta | undefined;
+    let pendingInterview: PendingInterview | undefined;
 
     // Setup progress tracking if requested
     if (withProgress && unprocessedEvents.length > 0) {
@@ -254,6 +258,20 @@ export class CalendarService {
                 state.playerTeamId,
                 matchData.isPlayoffMatch,
               ) ?? undefined;
+
+              // Check for post-match interview (at most one; first match wins)
+              if (!pendingInterview) {
+                const interview = interviewService.checkPostMatchInterview(
+                  result,
+                  state.playerTeamId,
+                  playerTeam,
+                  matchData.isPlayoffMatch,
+                );
+                if (interview) {
+                  pendingInterview = interview;
+                  state.setPendingInterview(interview);
+                }
+              }
             }
           }
         }
@@ -397,6 +415,7 @@ export class CalendarService {
       activityResults,
       reputationDelta,
       rivalryDelta,
+      pendingInterview,
     };
   }
 

@@ -23,6 +23,7 @@ import { MastersCompletionModal, type MastersCompletionModalData } from '../tour
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
 import { UnlockNotification } from '../today/UnlockNotification';
 import { DramaEventToast, DramaEventModal } from '../drama';
+import { InterviewModal } from '../narrative/InterviewModal';
 import { dramaService } from '../../services/DramaService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
@@ -85,6 +86,10 @@ export function TimeBar() {
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
+  const [showInterviewModal, setShowInterviewModal] = useState(false);
+
+  // Interview state from store
+  const pendingInterview = useGameStore((state) => state.pendingInterview);
 
   // Compute valid enriched drama toasts
   const validDramaToasts = useMemo(() => {
@@ -210,6 +215,13 @@ export function TimeBar() {
      setSimulationResult(null);
      progressTrackingService.clearProgress();
 
+     // Show interview first if one is pending, then drama events
+     const storePendingInterview = useGameStore.getState().pendingInterview;
+     if (storePendingInterview) {
+       setShowInterviewModal(true);
+       return;
+     }
+
      // Check if there are major drama events to show
      if (majorEventQueue.length > 0) {
        const [firstEvent, ...rest] = majorEventQueue;
@@ -217,6 +229,17 @@ export function TimeBar() {
        setMajorEventQueue(rest);
      }
    };
+
+  const handleInterviewClose = () => {
+    setShowInterviewModal(false);
+
+    // After interview, check for major drama events
+    if (majorEventQueue.length > 0) {
+      const [firstEvent, ...rest] = majorEventQueue;
+      setCurrentMajorEvent(firstEvent);
+      setMajorEventQueue(rest);
+    }
+  };
 
   const handleCloseDayRecap = () => {
     setShowDayRecapModal(false);
@@ -508,6 +531,14 @@ export function TimeBar() {
           onDismiss={() => handleDismissDramaToast(index)}
         />
       ))}
+
+      {/* Interview Modal - shown after SimulationResultsModal closes */}
+      {showInterviewModal && pendingInterview && (
+        <InterviewModal
+          interview={pendingInterview}
+          onClose={handleInterviewClose}
+        />
+      )}
 
       {/* Drama Event Modal - show major events */}
       {enrichedMajorEvent && (
