@@ -13,6 +13,8 @@ import { dramaService } from './DramaService';
 import { reputationService, type ReputationDelta } from './ReputationService';
 import { rivalryService, type RivalryDelta } from './RivalryService';
 import { interviewService } from './InterviewService';
+import { matchMoraleCalculator } from '../engine/match';
+import type { MatchMoraleResult } from '../types';
 import type { PendingInterview } from '../types/interview';
 import { activityResolutionService } from './ActivityResolutionService';
 import { trainingService } from './TrainingService';
@@ -43,6 +45,7 @@ export interface TimeAdvanceResult {
   rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
   pendingInterview?: PendingInterview; // Interview to show after SimulationResultsModal
   crisisInterview?: PendingInterview;  // Crisis interview to show (after post-match interview)
+  moraleChanges?: MatchMoraleResult;   // Morale changes from player team match
 }
 
 /**
@@ -90,6 +93,7 @@ export class CalendarService {
     let reputationDelta: ReputationDelta | undefined;
     let rivalryDelta: RivalryDelta | undefined;
     let pendingInterview: PendingInterview | undefined;
+    let moraleChanges: MatchMoraleResult | undefined;
 
     // Setup progress tracking if requested
     if (withProgress && unprocessedEvents.length > 0) {
@@ -265,6 +269,32 @@ export class CalendarService {
                 matchData.isPlayoffMatch,
               ) ?? undefined;
 
+              // Calculate morale changes for player team match
+              const opponentTeamId = result.winnerId === state.playerTeamId
+                ? result.loserId
+                : result.winnerId;
+              const opponentTeam = state.teams[opponentTeamId];
+              const rivalry = state.rivalries?.[opponentTeamId];
+
+              const playerRoster = (state.teams[state.playerTeamId]?.playerIds ?? [])
+                .map(id => state.players[id])
+                .filter(Boolean)
+                .map(p => ({ id: p.id, name: p.name, morale: p.morale }));
+
+              moraleChanges = matchMoraleCalculator.calculate({
+                matchResult: result,
+                playerTeamId: state.playerTeamId,
+                playerTeamPlayers: playerRoster,
+                rivalryIntensity: rivalry?.intensity ?? 0,
+                isPlayoffMatch: matchData.isPlayoffMatch ?? false,
+                opponentWinStreak: Math.max(0, opponentTeam?.standings?.currentStreak ?? 0),
+              });
+
+              // Apply morale changes to store
+              for (const change of moraleChanges.playerChanges) {
+                state.updatePlayer(change.playerId, { morale: change.newMorale });
+              }
+
               // Check for post-match interview (at most one; first match wins)
               if (!pendingInterview) {
                 const interview = interviewService.checkPostMatchInterview(
@@ -439,6 +469,7 @@ export class CalendarService {
       rivalryDelta,
       pendingInterview,
       crisisInterview: crisisInterview ?? undefined,
+      moraleChanges,
     };
   }
 
