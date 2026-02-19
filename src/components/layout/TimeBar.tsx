@@ -276,45 +276,45 @@ export function TimeBar() {
     }
   };
 
-   const handleCloseModal = () => {
-     setShowResultsModal(false);
-     progressTrackingService.clearProgress();
+  const handleSimulationResultsModalClose = () => {
+    setShowResultsModal(false);
+    progressTrackingService.clearProgress();
 
-     // Show the stacked modals (Interview, Morale, DayRecap)
-     showPostSimulationModals(simulationResult);
-   };
+    // Show the stacked modals (Interview, Morale, DayRecap)
+    showPostSimulationModals(simulationResult);
+  };
 
-     const handleInterviewClose = () => {
-       const interviewContext = useGameStore.getState().pendingInterview?.context;
+  const handleInterviewClose = () => {
+    const interviewContext = useGameStore.getState().pendingInterview?.context;
 
-       // Clear pending interview from store (effects were already applied via onChoose)
-       const state = useGameStore.getState();
-       state.clearPendingInterview();
+    // Clear pending interview from store (effects were already applied via onChoose)
+    const state = useGameStore.getState();
+    state.clearPendingInterview();
 
-       if (interviewContext === 'PRE_MATCH') {
-         // Pre-match interview resolved - now advance the day
-         handleTimeAdvance(() => calendarService.advanceDay(true));
-       } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
-         // Post-match interview resolved, now show crisis interview
-         state.setPendingInterview(simulationResult.crisisInterview);
-       }
-       // No else needed - MoraleChangeModal or DayRecapModal shows automatically
-     };
+    if (interviewContext === 'PRE_MATCH') {
+      // Pre-match interview resolved - now advance the day
+      handleTimeAdvance(() => calendarService.advanceDay(true));
+    } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
+      // Post-match interview resolved, now show crisis interview
+      state.setPendingInterview(simulationResult.crisisInterview);
+    }
+    // No else needed - MoraleChangeModal or DayRecapModal shows automatically
+  };
 
-   const handleMoraleModalClose = () => {
-     setShowMoraleModal(false);
-   };
+  const handleMoraleModalClose = () => {
+    setShowMoraleModal(false);
+  };
 
-   const handleCloseDayRecap = () => {
-     setShowDayRecapModal(false);
+  const handleCloseDayRecap = () => {
+    setShowDayRecapModal(false);
 
-     // Check if there are major drama events to show
-     if (majorEventQueue.length > 0) {
-       const [firstEvent, ...rest] = majorEventQueue;
-       setCurrentMajorEvent(firstEvent);
-       setMajorEventQueue(rest);
-     }
-   };
+    // Check if there are major drama events to show
+    if (majorEventQueue.length > 0) {
+      const [firstEvent, ...rest] = majorEventQueue;
+      setCurrentMajorEvent(firstEvent);
+      setMajorEventQueue(rest);
+    }
+  };
 
   const handleDismissUnlock = (index: number) => {
     setUnlockedFeatures((prev) => prev.filter((_, i) => i !== index));
@@ -539,7 +539,7 @@ export function TimeBar() {
       {/* Simulation Results Modal */}
       <SimulationResultsModal
         isOpen={showResultsModal}
-        onClose={handleCloseModal}
+        onClose={handleSimulationResultsModalClose}
         result={simulationResult}
       />
 
