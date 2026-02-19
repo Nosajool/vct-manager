@@ -5,6 +5,7 @@ import { useGameStore } from '../../store';
 import type { Player, MatchResult, Team, Match } from '../../types';
 import { MatchResult as MatchResultModal } from '../match/MatchResult';
 import { getMatchForResult } from '../../utils/matchResultUtils';
+import { formatKD } from '../../utils/formatNumber';
 
 interface TeamStatsViewProps {
   teamId?: string;
@@ -448,9 +449,9 @@ function MatchHistorySection({
               const avgAcs = maps > 0 ? Math.round(stat.acs / maps) : '-';
               const kd =
                 maps > 0 && stat.deaths > 0
-                  ? (stat.kills / stat.deaths).toFixed(2)
+                  ? formatKD(stat.kills / stat.deaths)
                   : maps > 0
-                  ? stat.kills.toFixed(2)
+                  ? formatKD(stat.kills)
                   : '-';
 
               return (
@@ -506,7 +507,7 @@ function KdBadge({ kd, show }: { kd: number; show: boolean }) {
     return 'text-red-400';
   };
 
-  return <span className={getColor(kd)}>{kd.toFixed(2)}</span>;
+  return <span className={getColor(kd)}>{formatKD(kd)}</span>;
 }
 
 // Time Period Filter Component

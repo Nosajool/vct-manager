@@ -4,6 +4,7 @@ import type { Player } from '../../types';
 import { playerGenerator } from '../../engine/player';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { formatRating } from '../../utils/formatNumber';
 
 interface PlayerCardProps {
   player: Player;
@@ -246,12 +247,12 @@ export function PlayerCard({
       <div className="mt-3 pt-3 border-t border-vct-gray/10">
         <div className="flex items-center justify-between text-xs mb-1">
           <span className="text-vct-gray">Potential</span>
-          <span className="text-vct-light">{player.potential}</span>
+          <span className="text-vct-light">{formatRating(player.potential)}</span>
         </div>
         <div className="h-1.5 bg-vct-dark rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-vct-red to-yellow-500 rounded-full"
-            style={{ width: `${player.potential}%` }}
+            style={{ width: `${formatRating(player.potential)}%` }}
           />
         </div>
 
@@ -259,12 +260,12 @@ export function PlayerCard({
         <div className="mt-2">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-vct-gray">Morale</span>
-            <span className="text-vct-light">{player.morale}</span>
+            <span className="text-vct-light">{formatRating(player.morale)}</span>
           </div>
           <div className="h-1.5 bg-vct-dark rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-purple-600 to-pink-400 rounded-full"
-              style={{ width: `${player.morale}%` }}
+              style={{ width: `${formatRating(player.morale)}%` }}
             />
           </div>
         </div>
@@ -284,7 +285,7 @@ function StatMini({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center gap-1">
       <span className="text-vct-gray">{label}</span>
-      <span className={getColor(value)}>{value}</span>
+      <span className={getColor(value)}>{formatRating(value)}</span>
     </div>
   );
 }

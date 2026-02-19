@@ -8,6 +8,7 @@ import { useGameStore } from '../../store';
 import { generateTrainingNarrative } from '../../engine/player/TrainingNarrative';
 import type { TimeAdvanceResult } from '../../services';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
+import { formatRating } from '../../utils/formatNumber';
 
 interface DayRecapModalProps {
   isOpen: boolean;
@@ -99,9 +100,9 @@ export function DayRecapModal({
                               return (
                                 <div key={stat} className="text-vct-gray">
                                   <span className="capitalize">{stat}</span>:{' '}
-                                  <span className="text-vct-light">{oldValue}</span>
+                                  <span className="text-vct-light">{formatRating(oldValue)}</span>
                                   {' → '}
-                                  <span className="text-green-400">{newValue.toFixed(1)}</span>
+                                  <span className="text-green-400">{formatRating(newValue)}</span>
                                   {' '}
                                   <span className="text-green-400">(+{value.toFixed(1)})</span>
                                 </div>

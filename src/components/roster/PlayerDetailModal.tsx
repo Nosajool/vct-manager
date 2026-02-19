@@ -5,6 +5,7 @@ import { playerGenerator } from '../../engine/player';
 import { useState } from 'react';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { formatRating, formatKD } from '../../utils/formatNumber';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -140,11 +141,11 @@ export function PlayerDetailModal({
                     <div className="flex-1 h-2 bg-vct-dark rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${getStatColor(value)}`}
-                        style={{ width: `${value}%` }}
+                        style={{ width: `${formatRating(value)}%` }}
                       />
                     </div>
                     <span className="w-8 text-right text-sm text-vct-light font-medium">
-                      {value}
+                      {formatRating(value)}
                     </span>
                   </div>
                 )
@@ -156,16 +157,16 @@ export function PlayerDetailModal({
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Form</p>
-              <p className="text-2xl font-bold text-vct-light">{player.form}</p>
+              <p className="text-2xl font-bold text-vct-light">{formatRating(player.form)}</p>
             </div>
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Morale</p>
-              <p className="text-2xl font-bold text-vct-light">{player.morale}</p>
+              <p className="text-2xl font-bold text-vct-light">{formatRating(player.morale)}</p>
             </div>
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Potential</p>
               <p className="text-2xl font-bold text-yellow-400">
-                {player.potential}
+                {formatRating(player.potential)}
               </p>
             </div>
           </div>
@@ -262,7 +263,7 @@ export function PlayerDetailModal({
                 <div>
                   <p className="text-lg font-bold text-vct-light">
                     {seasonStats.avgDeaths > 0
-                      ? (seasonStats.avgKills / seasonStats.avgDeaths).toFixed(2)
+                      ? formatKD(seasonStats.avgKills / seasonStats.avgDeaths)
                       : '-'}
                   </p>
                   <p className="text-vct-gray text-xs">K/D Ratio</p>
@@ -329,7 +330,7 @@ export function PlayerDetailModal({
                   <div>
                     <p className="text-lg font-bold text-vct-light">
                       {player.careerStats.avgDeaths > 0
-                        ? (player.careerStats.avgKills / player.careerStats.avgDeaths).toFixed(2)
+                        ? formatKD(player.careerStats.avgKills / player.careerStats.avgDeaths)
                         : '-'}
                     </p>
                     <p className="text-vct-gray text-xs">K/D Ratio</p>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { PlayerMapPerformance } from '../../types';
 import { GameImage } from '../shared/GameImage';
 import { getAgentImageUrl } from '../../utils/imageAssets';
+import { formatKD } from '../../utils/formatNumber';
 
 type SortKey = 'acs' | 'kills' | 'deaths' | 'assists' | 'kd' | 'adr' | 'kast' | 'firstKills';
 type SortDirection = 'asc' | 'desc';
@@ -231,7 +232,7 @@ function KdBadge({ kd }: { kd: number }) {
     return 'text-red-400';
   };
 
-  return <span className={getColor(kd)}>{kd.toFixed(2)}</span>;
+  return <span className={getColor(kd)}>{formatKD(kd)}</span>;
 }
 
 // ADR Badge with color coding
