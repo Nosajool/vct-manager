@@ -56,6 +56,12 @@ export type {
   KillEvent,
   PlantEvent,
   DefuseEvent,
+  // Morale change types
+  MoraleChangeReason,
+  PlayerMoraleChange,
+  SpecialMoraleEvent,
+  MatchMoraleResult,
+  MoraleCalculationInput,
 } from './match';
 
 // Weapon types

@@ -376,6 +376,45 @@ export interface MatchResult {
   duration: number;  // minutes
 }
 
+// ============================================
+// MORALE CHANGE TYPES
+// ============================================
+
+export interface MoraleChangeReason {
+  label: string;
+  delta: number;
+}
+
+export interface PlayerMoraleChange {
+  playerId: string;
+  playerName: string;
+  delta: number;
+  newMorale: number;
+  reasons: MoraleChangeReason[];
+}
+
+export interface SpecialMoraleEvent {
+  type: string;
+  label: string;
+  icon: string;
+  delta: number;
+}
+
+export interface MatchMoraleResult {
+  playerChanges: PlayerMoraleChange[];
+  specialEvents: SpecialMoraleEvent[];
+  isWin: boolean;
+}
+
+export interface MoraleCalculationInput {
+  matchResult: MatchResult;
+  playerTeamId: string;
+  playerTeamPlayers: { id: string; name: string; morale: number }[];
+  rivalryIntensity: number;
+  isPlayoffMatch: boolean;
+  opponentWinStreak: number;
+}
+
 export interface Match {
   id: string;
   tournamentId?: string;  // null for regular season
