@@ -245,6 +245,9 @@ function PlayerRegionView({
               <p className="text-red-300 text-sm">
                 Better luck next time! You can still watch Masters Santiago.
               </p>
+              <p className="text-red-300 text-sm mt-1">
+                Team morale: -8 for all players
+              </p>
             </div>
           )}
         </div>
