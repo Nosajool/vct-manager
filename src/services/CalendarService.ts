@@ -305,7 +305,6 @@ export class CalendarService {
                 );
                 if (interview) {
                   pendingInterview = interview;
-                  state.setPendingInterview(interview);
                 }
               }
             }

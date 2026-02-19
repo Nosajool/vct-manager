@@ -143,8 +143,11 @@ export function TimeBar() {
       setShowMoraleModal(true);
     }
 
-    // InterviewModal (top layer) is controlled by pendingInterview from store
-    // CalendarService sets it via state.setPendingInterview(), so it shows automatically
+    // Set post-match interview in store (top layer) - follows same pattern as crisisInterview
+    if (result?.pendingInterview) {
+      const state = useGameStore.getState();
+      state.setPendingInterview(result.pendingInterview);
+    }
   };
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {

@@ -82,7 +82,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            effectPlayerSelector: 'specific',
+            effectPlayerSelector: 'triggering',
             delta: 10,
           },
           {
@@ -103,7 +103,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            effectPlayerSelector: 'specific',
+            effectPlayerSelector: 'triggering',
             delta: -10,
           },
           {
@@ -126,7 +126,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         effects: [
           {
             target: 'player_morale',
-            effectPlayerSelector: 'specific',
+            effectPlayerSelector: 'triggering',
             delta: -3,
           },
           {
