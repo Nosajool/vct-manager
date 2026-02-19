@@ -504,6 +504,21 @@ export class TournamentService {
       return;
     }
 
+    // Apply morale penalty if player team did not qualify
+    const playerQualified = playerRegionQual.qualifiedTeams.some(
+      t => t.teamId === state.playerTeamId
+    );
+
+    if (!playerQualified && state.playerTeamId) {
+      const roster = state.teams[state.playerTeamId]?.playerIds ?? [];
+      for (const playerId of roster) {
+        const p = state.players[playerId];
+        if (p) {
+          state.updatePlayer(playerId, { morale: Math.max(0, p.morale - 8) });
+        }
+      }
+    }
+
     // Trigger modal via UISlice's existing system
     state.openModal('qualification', {
       phase: 'kickoff',
