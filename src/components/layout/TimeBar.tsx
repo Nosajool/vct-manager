@@ -134,6 +134,19 @@ export function TimeBar() {
     return null;
   }
 
+  const showPostSimulationModals = (result: TimeAdvanceResult | null) => {
+    // Always show day recap (bottom layer)
+    setShowDayRecapModal(true);
+
+    // Show morale modal if morale changes exist (middle layer)
+    if (result?.moraleChanges) {
+      setShowMoraleModal(true);
+    }
+
+    // InterviewModal (top layer) is controlled by pendingInterview from store
+    // CalendarService sets it via state.setPendingInterview(), so it shows automatically
+  };
+
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
 
@@ -157,16 +170,12 @@ export function TimeBar() {
       // Determine flow based on result
       setSimulationResult(result);
 
-      if (result.moraleChanges) {
-        setShowMoraleModal(true);
-      }
-
       if (result.simulatedMatches.length > 0) {
-        // Match day: show results first, then interview/morale/day recap
+        // Match day: show results first, other modals show after this closes
         setShowResultsModal(true);
       } else {
-        // Non-match day: show day recap
-        setShowDayRecapModal(true);
+        // Non-match day: show stacked modals immediately (no results modal)
+        showPostSimulationModals(result);
       }
     } finally {
       setIsAdvancing(false);
@@ -270,7 +279,9 @@ export function TimeBar() {
    const handleCloseModal = () => {
      setShowResultsModal(false);
      progressTrackingService.clearProgress();
-     // Other modals (InterviewModal, MoraleChangeModal, DayRecapModal) handle themselves
+
+     // Show the stacked modals (Interview, Morale, DayRecap)
+     showPostSimulationModals(simulationResult);
    };
 
      const handleInterviewClose = () => {
