@@ -23,6 +23,7 @@ import { StageCompletionModal, type StageCompletionModalData } from '../tourname
 import { UnlockNotification } from '../today/UnlockNotification';
 import { DramaEventToast, DramaEventModal } from '../drama';
 import { InterviewModal } from '../narrative/InterviewModal';
+import { MoraleChangeModal } from '../match/MoraleChangeModal';
 import { dramaService } from '../../services/DramaService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
@@ -85,7 +86,7 @@ export function TimeBar() {
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
-  const [showInterviewModal, setShowInterviewModal] = useState(false);
+  const [showMoraleModal, setShowMoraleModal] = useState(false);
 
   // Interview state from store
   const pendingInterview = useGameStore((state) => state.pendingInterview);
@@ -124,6 +125,10 @@ export function TimeBar() {
   // Use centralized match day detection
   const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
 
+  const playerTeamName = useGameStore((state) =>
+    state.playerTeamId ? state.teams[state.playerTeamId]?.name : ''
+  );
+
   // Don't show if game hasn't started
   if (!gameStarted) {
     return null;
@@ -152,10 +157,13 @@ export function TimeBar() {
       // Determine flow based on result
       setSimulationResult(result);
 
+      if (result.moraleChanges) {
+        setShowMoraleModal(true);
+      }
+
       if (result.simulatedMatches.length > 0) {
-        // Match day: show results first, then interview (if any), then day recap
+        // Match day: show results first, then interview/morale/day recap
         setShowResultsModal(true);
-        setShowDayRecapModal(false); // Don't show yet
       } else {
         // Non-match day: show day recap
         setShowDayRecapModal(true);
@@ -203,7 +211,6 @@ export function TimeBar() {
 
     if (interview) {
       state.setPendingInterview(interview);
-      setShowInterviewModal(true);
       return true;
     }
 
@@ -263,42 +270,29 @@ export function TimeBar() {
    const handleCloseModal = () => {
      setShowResultsModal(false);
      progressTrackingService.clearProgress();
-
-     // Progress to next stage based on what we need to show
-     const pendingInterview = useGameStore.getState().pendingInterview;
-
-     if (pendingInterview) {
-       setShowInterviewModal(true);
-     } else {
-       // No interview, go directly to day recap
-       setShowDayRecapModal(true);
-     }
+     // Other modals (InterviewModal, MoraleChangeModal, DayRecapModal) handle themselves
    };
 
      const handleInterviewClose = () => {
        const interviewContext = useGameStore.getState().pendingInterview?.context;
-       console.log('TimeBar: handleInterviewClose called', { interviewContext });
 
        // Clear pending interview from store (effects were already applied via onChoose)
        const state = useGameStore.getState();
        state.clearPendingInterview();
 
-       setShowInterviewModal(false);
-
        if (interviewContext === 'PRE_MATCH') {
          // Pre-match interview resolved - now advance the day
-         console.log('TimeBar: calling handleTimeAdvance to simulate match');
          handleTimeAdvance(() => calendarService.advanceDay(true));
        } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
          // Post-match interview resolved, now show crisis interview
          state.setPendingInterview(simulationResult.crisisInterview);
-         setShowInterviewModal(true);
-       } else {
-         // No more interviews - show day recap
-         console.log('TimeBar: showing day recap');
-         setShowDayRecapModal(true);
        }
+       // No else needed - MoraleChangeModal or DayRecapModal shows automatically
      };
+
+   const handleMoraleModalClose = () => {
+     setShowMoraleModal(false);
+   };
 
    const handleCloseDayRecap = () => {
      setShowDayRecapModal(false);
@@ -598,8 +592,18 @@ export function TimeBar() {
         />
       ))}
 
+      {/* Morale Change Modal - shows morale changes after match */}
+      {showMoraleModal && simulationResult?.moraleChanges && (
+        <MoraleChangeModal
+          isOpen={showMoraleModal}
+          onClose={handleMoraleModalClose}
+          result={simulationResult.moraleChanges}
+          teamName={playerTeamName}
+        />
+      )}
+
       {/* Interview Modal - shown after SimulationResultsModal closes */}
-      {showInterviewModal && pendingInterview && (
+      {pendingInterview && (
         <InterviewModal
           interview={pendingInterview}
           onChoose={(choiceIndex) => {
