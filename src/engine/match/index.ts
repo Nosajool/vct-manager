@@ -6,6 +6,7 @@ export { CompositionEngine, compositionEngine } from './CompositionEngine';
 export { RoundSimulator, roundSimulator } from './RoundSimulator';
 export { RoundStateMachine } from './RoundStateMachine';
 export { BuyPhaseGenerator, buyPhaseGenerator } from './BuyPhaseGenerator';
+export { MatchMoraleCalculator, matchMoraleCalculator } from './MatchMoraleCalculator';
 
 // Export types from engines
 export type { TeamEconomyState, EconomyUpdate } from './EconomyEngine';
