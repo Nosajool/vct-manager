@@ -93,6 +93,111 @@ export const VLR_TO_GAME_REGION: Record<VlrRegion, Region> = {
   cn: 'China',
 };
 
+/** Maps country names (from VLR player data) to game regions */
+export const COUNTRY_TO_REGION: Record<string, Region> = {
+  // Americas
+  'United States': 'Americas',
+  'Canada': 'Americas',
+  'Brazil': 'Americas',
+  'Argentina': 'Americas',
+  'Mexico': 'Americas',
+  'Colombia': 'Americas',
+  'Peru': 'Americas',
+  'Chile': 'Americas',
+  'Venezuela': 'Americas',
+  'Uruguay': 'Americas',
+  'Ecuador': 'Americas',
+  'Paraguay': 'Americas',
+  'Bolivia': 'Americas',
+  'Dominican Republic': 'Americas',
+  'Puerto Rico': 'Americas',
+  // EMEA
+  'Turkey': 'EMEA',
+  'France': 'EMEA',
+  'Germany': 'EMEA',
+  'United Kingdom': 'EMEA',
+  'Russia': 'EMEA',
+  'Ukraine': 'EMEA',
+  'Sweden': 'EMEA',
+  'Denmark': 'EMEA',
+  'Netherlands': 'EMEA',
+  'Spain': 'EMEA',
+  'Portugal': 'EMEA',
+  'Poland': 'EMEA',
+  'Finland': 'EMEA',
+  'Norway': 'EMEA',
+  'Belgium': 'EMEA',
+  'Israel': 'EMEA',
+  'Kazakhstan': 'EMEA',
+  'Georgia': 'EMEA',
+  'Czech Republic': 'EMEA',
+  'Romania': 'EMEA',
+  'Serbia': 'EMEA',
+  'Hungary': 'EMEA',
+  'Greece': 'EMEA',
+  'Bulgaria': 'EMEA',
+  'Austria': 'EMEA',
+  'Switzerland': 'EMEA',
+  'Italy': 'EMEA',
+  'Iceland': 'EMEA',
+  'North Macedonia': 'EMEA',
+  'Bosnia and Herzegovina': 'EMEA',
+  'Croatia': 'EMEA',
+  'Morocco': 'EMEA',
+  'South Africa': 'EMEA',
+  'Slovakia': 'EMEA',
+  'Lithuania': 'EMEA',
+  'Latvia': 'EMEA',
+  'Estonia': 'EMEA',
+  'Slovenia': 'EMEA',
+  'Albania': 'EMEA',
+  'Kosovo': 'EMEA',
+  'Montenegro': 'EMEA',
+  'Belarus': 'EMEA',
+  'Moldova': 'EMEA',
+  'Armenia': 'EMEA',
+  'Azerbaijan': 'EMEA',
+  'Egypt': 'EMEA',
+  'Tunisia': 'EMEA',
+  'Algeria': 'EMEA',
+  'Lebanon': 'EMEA',
+  'Jordan': 'EMEA',
+  'Saudi Arabia': 'EMEA',
+  'United Arab Emirates': 'EMEA',
+  // Pacific
+  'South Korea': 'Pacific',
+  'Japan': 'Pacific',
+  'Australia': 'Pacific',
+  'Philippines': 'Pacific',
+  'Thailand': 'Pacific',
+  'Indonesia': 'Pacific',
+  'Singapore': 'Pacific',
+  'Malaysia': 'Pacific',
+  'Vietnam': 'Pacific',
+  'New Zealand': 'Pacific',
+  'Taiwan': 'Pacific',
+  'Hong Kong': 'Pacific',
+  'India': 'Pacific',
+  'Myanmar': 'Pacific',
+  'Cambodia': 'Pacific',
+  'Laos': 'Pacific',
+  'Bangladesh': 'Pacific',
+  'Pakistan': 'Pacific',
+  'Sri Lanka': 'Pacific',
+  'Mongolia': 'Pacific',
+  // China
+  'China': 'China',
+};
+
+/**
+ * Infer a player's game region from their org or country.
+ * Falls back to 'Americas' if no match found.
+ */
+export function inferPlayerRegion(_org: string, country: string | undefined): Region {
+  if (country && COUNTRY_TO_REGION[country]) return COUNTRY_TO_REGION[country];
+  return 'Americas';
+}
+
 /**
  * Resolve a VLR org abbreviation to game team name.
  * Returns undefined if no mapping exists.

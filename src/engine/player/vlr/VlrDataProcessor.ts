@@ -4,7 +4,7 @@
 import type { Player, PlayerPersonality, PlayerStats, Region } from '@/types/player';
 import type { VlrPlayerStats } from '@/types/vlr';
 import { convertVlrToGameStats, calculateVlrOverall } from './statConverter';
-import { resolveOrgToTeamName, VLR_TO_GAME_REGION } from './orgMapping';
+import { resolveOrgToTeamName, VLR_TO_GAME_REGION, inferPlayerRegion } from './orgMapping';
 import type { VlrRegion } from '@/types/vlr';
 
 /** Result of processing VLR data */
@@ -133,7 +133,7 @@ export function processVlrSnapshot(
     if (!regionPlayers || regionPlayers.length === 0) continue;
 
     regionsProcessed.push(vlrRegion);
-    const gameRegion = VLR_TO_GAME_REGION[vlrRegion as VlrRegion] || 'Americas';
+    const knownRegion = VLR_TO_GAME_REGION[vlrRegion as VlrRegion];
 
     for (const vlrPlayer of regionPlayers) {
       const teamName = resolveOrgToTeamName(vlrPlayer.org);
@@ -145,6 +145,9 @@ export function processVlrSnapshot(
       const stats = convertVlrToGameStats(vlrPlayer);
       const vlrRating = parseFloat(vlrPlayer.rating) || 1.0;
       const overall = calculateVlrOverall(vlrPlayer);
+
+      // Use known region from VLR key, or infer per-player from country/org
+      const gameRegion = knownRegion ?? inferPlayerRegion(vlrPlayer.org, vlrPlayer.country);
 
       players.push({
         name: vlrPlayer.player,
