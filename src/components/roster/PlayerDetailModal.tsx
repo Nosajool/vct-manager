@@ -22,6 +22,8 @@ export function PlayerDetailModal({
   onClose,
   isOnPlayerTeam = false,
   rosterPosition,
+  onSign,
+  onRelease,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
@@ -337,6 +339,28 @@ export function PlayerDetailModal({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          {(onSign || onRelease) && (
+            <div className="flex gap-3 pt-2 border-t border-vct-gray/20">
+              {onSign && (
+                <button
+                  onClick={onSign}
+                  className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded transition-colors"
+                >
+                  Sign Player
+                </button>
+              )}
+              {onRelease && (
+                <button
+                  onClick={onRelease}
+                  className="flex-1 px-4 py-2 bg-red-600/80 hover:bg-red-700 text-white font-medium rounded transition-colors"
+                >
+                  Release Player
+                </button>
+              )}
             </div>
           )}
         </div>
