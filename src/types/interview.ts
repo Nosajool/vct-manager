@@ -33,6 +33,7 @@ export interface InterviewEffects {
   sponsorTrust?: number;  // Delta applied to reputation.sponsorTrust
   rivalryDelta?: number;  // Delta applied to rivalry intensity with opponent
   dramaChance?: number;   // 0-100 chance to trigger a random drama event
+  targetPlayerIds?: string[];  // If set, morale only applies to these players
 }
 
 export interface InterviewOption {

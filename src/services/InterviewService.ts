@@ -243,11 +243,12 @@ export class InterviewService {
     const playerTeamId = state.playerTeamId!;
     const team = state.teams[playerTeamId];
 
-    // 1. Morale delta — apply to all active roster players
+    // 1. Morale delta — apply to targeted players (or whole roster if no target)
     console.log('InterviewService: applying morale delta...');
     const newMorale: Record<string, number> = {};
     if (effects.morale !== undefined && effects.morale !== 0) {
-      for (const playerId of team.playerIds) {
+      const moraleTargets = effects.targetPlayerIds ?? team.playerIds;
+      for (const playerId of moraleTargets) {
         const player = state.players[playerId];
         if (!player) continue;
         const next = Math.max(0, Math.min(100, player.morale + effects.morale));
@@ -364,6 +365,16 @@ export class InterviewService {
       }
     }
 
+    // For player interviews, inject targetPlayerIds on options that have a morale effect
+    const options = template.subjectType === 'player' && subjectId
+      ? template.options.map((opt) => ({
+          ...opt,
+          effects: opt.effects.morale !== undefined
+            ? { ...opt.effects, targetPlayerIds: [subjectId as string] }
+            : opt.effects,
+        }))
+      : template.options;
+
     return {
       templateId: template.id,
       context: template.context,
@@ -371,7 +382,7 @@ export class InterviewService {
       subjectId,
       opponentTeamId,
       prompt: template.prompt,
-      options: template.options,
+      options,
     };
   }
 }

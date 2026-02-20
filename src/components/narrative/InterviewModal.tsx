@@ -73,6 +73,8 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
   const [effectsSummary, setEffectsSummary] = useState('');
 
   const players = useGameStore((state) => state.players);
+  const teams = useGameStore((state) => state.teams);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
 
   const contextMeta = CONTEXT_META[interview.context];
 
@@ -123,6 +125,17 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
 
   const chosenOption = chosenIndex !== null ? interview.options[chosenIndex] : null;
 
+  // Derive which players were affected by the chosen option's morale effect
+  const affectedPlayerIds = (() => {
+    if (!chosenOption) return [];
+    const { effects } = chosenOption;
+    if (effects.targetPlayerIds) return effects.targetPlayerIds;
+    if (effects.morale !== undefined) {
+      return (playerTeamId ? teams[playerTeamId]?.playerIds : undefined) ?? [];
+    }
+    return [];
+  })();
+
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col">
@@ -138,6 +151,29 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
               <p className="text-vct-light text-base italic leading-relaxed">
                 "{chosenOption?.quote}"
               </p>
+
+              {affectedPlayerIds.length > 0 && (
+                <div className="pt-4 border-t border-vct-gray/20">
+                  <h3 className="text-sm font-medium text-vct-gray mb-3">Players Affected:</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {affectedPlayerIds.map((id) => {
+                      const player = players[id];
+                      if (!player) return null;
+                      return (
+                        <div key={id} className="flex flex-col items-center gap-1">
+                          <GameImage
+                            src={getPlayerImageUrl(player.name)}
+                            alt={player.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                            fallbackClassName="w-10 h-10 rounded-full"
+                          />
+                          <span className="text-xs text-vct-gray">{player.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="pt-4 border-t border-vct-gray/20">
                 <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
