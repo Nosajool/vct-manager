@@ -52,6 +52,8 @@ export interface PlayerPreferences {
 
 export type Region = 'Americas' | 'EMEA' | 'Pacific' | 'China';
 
+export type PlayerPersonality = 'FAME_SEEKER' | 'TEAM_FIRST' | 'INTROVERT' | 'BIG_STAGE' | 'STABLE';
+
 export interface Player {
   id: string;
   name: string;
@@ -82,6 +84,9 @@ export interface Player {
 
   // Agent preferences (for match simulation)
   agentPreferences?: PlayerAgentPreferences;
+
+  // Personality archetype (for narrative system)
+  personality?: PlayerPersonality;
 }
 
 export type CoachType = 'Head Coach' | 'Assistant Coach' | 'Performance Coach';

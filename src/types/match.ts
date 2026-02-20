@@ -413,6 +413,7 @@ export interface MoraleCalculationInput {
   rivalryIntensity: number;
   isPlayoffMatch: boolean;
   opponentWinStreak: number;
+  hypeLevel?: number;
 }
 
 export interface Match {

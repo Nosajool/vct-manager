@@ -15,6 +15,7 @@ import type {
 } from '../../types';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
+import { NARRATIVE_CONSTANTS } from './constants';
 import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
 import { type DamageEvent, type RoundDamageEvents, type PlayerArmorState } from '../../types/match';
 import { RoundStateMachine } from './RoundStateMachine';
@@ -87,6 +88,8 @@ export interface TeamRoundContext {
   isAttacking: boolean;
   previousRoundLoadouts: Map<string, PlayerLoadout> | null;
   previousRoundSurvival: boolean[];
+  /** Optional narrative context for rivalry aggression boost */
+  narrativeContext?: { rivalryIntensity: number; isPlayoffMatch: boolean };
 }
 
 // ============================================
@@ -984,19 +987,27 @@ export class RoundSimulator {
     defenderCtx: TeamRoundContext,
     aliveDefenders: string[]
   ): string {
-    // Combine all alive players, weight by entry + mechanics
+    // When rivalry is high, aggressive/flanking players are more likely to initiate
+    const rivalryIntensity = attackerCtx.narrativeContext?.rivalryIntensity ?? 0;
+    const highRivalry = rivalryIntensity >= NARRATIVE_CONSTANTS.RIVALRY.AGGRESSION_THRESHOLD;
+    const aggressionBoost = 1.15;
+
     const candidates: Array<{ id: string; weight: number }> = [];
 
     for (const id of aliveAttackers) {
       const player = attackerCtx.players.find(p => p.id === id);
       if (player) {
-        candidates.push({ id, weight: player.stats.entry * 0.6 + player.stats.mechanics * 0.4 + 0.1 });
+        const entryW = highRivalry ? 0.6 * aggressionBoost : 0.6;
+        const lurkW  = highRivalry ? 0.2 * aggressionBoost : 0.0;
+        candidates.push({ id, weight: player.stats.entry * entryW + player.stats.mechanics * 0.4 + player.stats.lurking * lurkW + 0.1 });
       }
     }
     for (const id of aliveDefenders) {
       const player = defenderCtx.players.find(p => p.id === id);
       if (player) {
-        candidates.push({ id, weight: player.stats.entry * 0.6 + player.stats.mechanics * 0.4 + 0.1 });
+        const entryW = highRivalry ? 0.6 * aggressionBoost : 0.6;
+        const lurkW  = highRivalry ? 0.2 * aggressionBoost : 0.0;
+        candidates.push({ id, weight: player.stats.entry * entryW + player.stats.mechanics * 0.4 + player.stats.lurking * lurkW + 0.1 });
       }
     }
 

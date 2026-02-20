@@ -80,6 +80,34 @@ export class RivalryService {
   }
 
   /**
+   * Decay all rivalry intensities by 1 per 30 days without a match.
+   * Should be called weekly (every Sunday) from CalendarService.
+   */
+  processRivalryDecay(currentDate: string): void {
+    const state = useGameStore.getState();
+    const current = new Date(currentDate).getTime();
+
+    for (const [opponentTeamId, rivalry] of Object.entries(state.rivalries)) {
+      if (!rivalry.lastMatchDate || rivalry.intensity <= 0) continue;
+
+      const daysSince = Math.floor(
+        (current - new Date(rivalry.lastMatchDate).getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (daysSince < 30) continue;
+
+      // Decay by 1 and advance lastMatchDate by 30 days atomically
+      state.decayRivalryIntensity(opponentTeamId);
+
+      // Sync drama flag for updated intensity
+      const updated = useGameStore.getState().rivalries[opponentTeamId];
+      if (updated) {
+        this.syncRivalryFlag(opponentTeamId, updated.intensity, useGameStore.getState());
+      }
+    }
+  }
+
+  /**
    * Set or clear the rivalry_match drama flag based on intensity.
    * intensity > 40 → set flag; otherwise clear it.
    */

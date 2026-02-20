@@ -35,6 +35,12 @@ export interface MatchSimInput {
   strategyB?: TeamStrategy;
   /** Rivalry intensity (0-100). >70 applies ±3% strength volatility to both teams. */
   rivalryIntensity?: number;
+  /** Hype level (0-100) for team A, used for narrative modifiers. */
+  teamAHypeLevel?: number;
+  /** Hype level (0-100) for team B, used for narrative modifiers. */
+  teamBHypeLevel?: number;
+  /** Whether this is a playoff match, affects narrative intensity. */
+  isPlayoffMatch?: boolean;
 }
 
 /** Input for training a single player */

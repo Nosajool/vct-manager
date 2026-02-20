@@ -75,6 +75,16 @@ export interface OrgReputation {
   sponsorTrust: number;  // 0-100, affects sponsor offer frequency/value
 }
 
+export type ReputationTier = 'UNDERGROUND' | 'RISING' | 'ESTABLISHED' | 'POPULAR' | 'ICONIC';
+
+export function getReputationTier(fanbase: number): ReputationTier {
+  if (fanbase <= 20) return 'UNDERGROUND';
+  if (fanbase <= 40) return 'RISING';
+  if (fanbase <= 60) return 'ESTABLISHED';
+  if (fanbase <= 80) return 'POPULAR';
+  return 'ICONIC';
+}
+
 export interface Team {
   id: string;
   name: string;

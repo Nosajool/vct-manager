@@ -31,6 +31,7 @@ export function BracketMatch({
 }: BracketMatchProps) {
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const rivalries = useGameStore((state) => state.rivalries);
 
   const teamA = match.teamAId ? teams[match.teamAId] : null;
   const teamB = match.teamBId ? teams[match.teamBId] : null;
@@ -66,6 +67,15 @@ export function BracketMatch({
 
   const isPlayerMatch =
     match.teamAId === playerTeamId || match.teamBId === playerTeamId;
+
+  // Rivalry banner: show when player is in the match and opponent rivalry intensity >= 60
+  const opponentId = isPlayerMatch
+    ? match.teamAId === playerTeamId
+      ? match.teamBId
+      : match.teamAId
+    : null;
+  const rivalryIntensity = opponentId ? (rivalries[opponentId]?.intensity ?? 0) : 0;
+  const isRivalryMatch = isPlayerMatch && rivalryIntensity >= 60;
 
   const getStatusColor = () => {
     switch (match.status) {
@@ -227,10 +237,24 @@ export function BracketMatch({
   return (
     <div
       onClick={handleClick}
-      className={`bg-vct-darker border ${getStatusColor()} rounded-lg p-3 ${
+      className={`bg-vct-darker border ${getStatusColor()} rounded-lg overflow-hidden ${
         isPlayerMatch ? 'ring-1 ring-vct-red/30' : ''
-      } ${isClickable ? 'cursor-pointer hover:border-vct-gray/50 transition-colors' : ''}`}
+      } ${isRivalryMatch ? 'ring-1 ring-orange-500/50' : ''} ${
+        isClickable ? 'cursor-pointer hover:border-vct-gray/50 transition-colors' : ''
+      }`}
     >
+      {/* Rivalry Match Banner */}
+      {isRivalryMatch && (
+        <div className="bg-orange-500/20 border-b border-orange-500/30 px-3 py-1 flex items-center justify-between">
+          <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">
+            🔥 Rivalry Match
+          </span>
+          <span className="text-xs text-orange-400/70">{rivalryIntensity} intensity</span>
+        </div>
+      )}
+
+      {/* Main content with padding */}
+      <div className="p-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span
@@ -268,6 +292,7 @@ export function BracketMatch({
           score={match.result?.scoreTeamB}
           isCompact={false}
         />
+      </div>
       </div>
     </div>
   );

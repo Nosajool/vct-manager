@@ -64,8 +64,16 @@ export class ReputationService {
 
     const fanbaseDelta = Math.round(baseGain * hypeMultiplier) + winBonus + rivalryModifier;
 
-    // Hype gets a smaller boost per match (win = +3, loss = +1)
-    const hypeDelta = won ? 3 : 1;
+    // Hype boost per match (win = +3, loss = +1) plus playoff/championship bonuses
+    let playoffHypeBonus = 0;
+    if (won) {
+      if (tournamentType === 'champions') {
+        playoffHypeBonus = 10; // Championship win
+      } else if (isPlayoffMatch) {
+        playoffHypeBonus = 5;  // Playoff win
+      }
+    }
+    const hypeDelta = (won ? 3 : 1) + playoffHypeBonus;
 
     const newFanbase = Math.max(0, Math.min(100, fanbase + fanbaseDelta));
     const newHypeLevel = Math.max(0, Math.min(100, hypeLevel + hypeDelta));
@@ -82,12 +90,12 @@ export class ReputationService {
   }
 
   /**
-   * Apply weekly hype decay (-5 per 7 days, minimum 0).
+   * Apply weekly hype decay (-3 per 7 days, minimum 0).
    * Should be called from CalendarService once per week.
    */
   processWeeklyHypeDecay(team: Team, playerTeamId: string): void {
     const { hypeLevel } = team.reputation;
-    const newHypeLevel = Math.max(0, hypeLevel - 5);
+    const newHypeLevel = Math.max(0, hypeLevel - 3);
 
     if (newHypeLevel === hypeLevel) return; // Already at 0, nothing to do
 

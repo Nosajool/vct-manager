@@ -6,6 +6,7 @@ import { simulationWorkerService } from './SimulationWorkerService';
 import { tournamentService } from './TournamentService';
 import { progressTrackingService } from './ProgressTrackingService';
 import type { Match, MatchResult, Player, Team } from '../types';
+import type { MatchEventData } from '../types';
 import { isLeagueToPlayoffTournament } from '../types';
 import type { TournamentStandingsEntry, LeagueStage } from '../types/competition';
 
@@ -62,6 +63,18 @@ export class MatchService {
       }
     }
 
+    // Extract hype levels from team reputation
+    const teamAHypeLevel = teamA.reputation?.hypeLevel;
+    const teamBHypeLevel = teamB.reputation?.hypeLevel;
+
+    // Look up isPlayoffMatch from the calendar event associated with this match
+    const calendarEvent = state.calendar.scheduledEvents.find(
+      (e) => e.type === 'match' && (e.data as MatchEventData).matchId === matchId
+    );
+    const isPlayoffMatch = calendarEvent
+      ? ((calendarEvent.data as MatchEventData).isPlayoffMatch ?? false)
+      : false;
+
     // Run simulation in worker with strategies
     const result = await simulationWorkerService.simulateMatch({
       teamA,
@@ -71,6 +84,9 @@ export class MatchService {
       strategyA,
       strategyB,
       rivalryIntensity,
+      teamAHypeLevel,
+      teamBHypeLevel,
+      isPlayoffMatch,
     });
 
     // Update result's matchId to the actual match

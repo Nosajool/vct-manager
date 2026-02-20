@@ -12,7 +12,7 @@ import type {
 
 export class MatchMoraleCalculator {
   calculate(input: MoraleCalculationInput): MatchMoraleResult {
-    const { matchResult, playerTeamId, playerTeamPlayers } = input;
+    const { matchResult, playerTeamId, playerTeamPlayers, rivalryIntensity, hypeLevel } = input;
 
     const playerIds = new Set(playerTeamPlayers.map(p => p.id));
     const isWin = matchResult.winnerId === playerTeamId;
@@ -66,7 +66,26 @@ export class MatchMoraleCalculator {
       }
 
       const rawDelta = baseDelta + perfModifier + specialTotal;
-      const delta = this.clamp(rawDelta, -20, 20);
+
+      // Scale raw delta based on hype/rivalry context before clamping
+      let scaledDelta = rawDelta;
+      if (!isWin && (hypeLevel ?? 0) > 60 && rawDelta < 0) {
+        // High expectations amplify disappointment on loss
+        scaledDelta = rawDelta * 1.5;
+        const extraDelta = Math.round(scaledDelta - rawDelta);
+        if (extraDelta !== 0) {
+          reasons.push({ label: 'High Expectations', delta: extraDelta });
+        }
+      } else if (isWin && (rivalryIntensity ?? 0) >= 60 && rawDelta > 0) {
+        // Rivalry win amplifies positive swing
+        scaledDelta = rawDelta * 1.3;
+        const extraDelta = Math.round(scaledDelta - rawDelta);
+        if (extraDelta !== 0) {
+          reasons.push({ label: 'Rivalry Win Boost', delta: extraDelta });
+        }
+      }
+
+      const delta = this.clamp(scaledDelta, -20, 20);
       const newMorale = this.clamp(player.morale + delta, 0, 100);
 
       playerChanges.push({

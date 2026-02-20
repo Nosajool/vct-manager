@@ -1,6 +1,7 @@
 // PlayerCard Component - Displays a player's summary info
 
 import type { Player } from '../../types';
+import type { PlayerPersonality } from '../../types/player';
 import { playerGenerator } from '../../engine/player';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
@@ -214,6 +215,13 @@ export function PlayerCard({
             <span className="text-vct-light">{player.region}</span>
           </div>
 
+          {/* Personality Badge */}
+          {player.personality && (
+            <div className="mt-1.5">
+              <PersonalityBadge personality={player.personality} />
+            </div>
+          )}
+
           {/* Stats Preview */}
           <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
             <StatMini label="MEC" value={player.stats.mechanics} />
@@ -271,6 +279,30 @@ export function PlayerCard({
         </div>
       </div>
     </div>
+  );
+}
+
+// Personality badge config
+const PERSONALITY_CONFIG: Record<
+  PlayerPersonality,
+  { label: string; color: string; bg: string }
+> = {
+  FAME_SEEKER: { label: 'Fame Seeker', color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+  TEAM_FIRST:  { label: 'Team First',  color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/20'  },
+  INTROVERT:   { label: 'Introvert',   color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/20'    },
+  BIG_STAGE:   { label: 'Big Stage',   color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20'},
+  STABLE:      { label: 'Stable',      color: 'text-vct-gray',   bg: 'bg-vct-gray/10 border-vct-gray/20'   },
+};
+
+function PersonalityBadge({ personality }: { personality: PlayerPersonality }) {
+  const config = PERSONALITY_CONFIG[personality];
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide ${config.color} ${config.bg}`}
+      title={`Personality: ${config.label}`}
+    >
+      {config.label}
+    </span>
   );
 }
 

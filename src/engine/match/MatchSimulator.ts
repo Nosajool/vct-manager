@@ -13,7 +13,7 @@ import type {
 } from '../../types';
 import { MAPS } from '../../utils/constants';
 
-import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS } from './constants';
+import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS, NARRATIVE_CONSTANTS } from './constants';
 import { EconomyEngine } from './EconomyEngine';
 import { UltimateEngine } from './UltimateEngine';
 import { CompositionEngine } from './CompositionEngine';
@@ -51,7 +51,10 @@ export class MatchSimulator {
     playersB: Player[],
     strategyA?: TeamStrategy,
     strategyB?: TeamStrategy,
-    rivalryIntensity?: number
+    rivalryIntensity?: number,
+    teamAHypeLevel?: number,
+    teamBHypeLevel?: number,
+    isPlayoffMatch?: boolean
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -59,12 +62,32 @@ export class MatchSimulator {
     const teamAStrategy = strategyA || this.getDefaultStrategy();
     const teamBStrategy = strategyB || this.getDefaultStrategy();
 
-    // Calculate base team strengths
+    const hypeA = teamAHypeLevel ?? 0;
+    const hypeB = teamBHypeLevel ?? 0;
+    const rivalry = rivalryIntensity ?? 0;
+    const playoff = isPlayoffMatch ?? false;
+
+    // Calculate base team strengths (includes morale modifier)
     let strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
     let strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall);
 
+    // Apply narrative modifier (hype pressure + rivalry emotion + personality)
+    const narrativeA = this.calculateNarrativeModifier(playersA, hypeA, rivalry, playoff, teamA.chemistry.overall);
+    const narrativeB = this.calculateNarrativeModifier(playersB, hypeB, rivalry, playoff, teamB.chemistry.overall);
+    strengthA *= (1 + narrativeA);
+    strengthB *= (1 + narrativeB);
+
+    // Hype variance: crowds create unpredictability above threshold
+    const NC = NARRATIVE_CONSTANTS;
+    if (hypeA > NC.HYPE.VARIANCE_THRESHOLD) {
+      strengthA *= 1 + (hypeA - NC.HYPE.VARIANCE_THRESHOLD) * NC.HYPE.VARIANCE_PER_POINT * (Math.random() * 2 - 1);
+    }
+    if (hypeB > NC.HYPE.VARIANCE_THRESHOLD) {
+      strengthB *= 1 + (hypeB - NC.HYPE.VARIANCE_THRESHOLD) * NC.HYPE.VARIANCE_PER_POINT * (Math.random() * 2 - 1);
+    }
+
     // Rivalry volatility: high-intensity rivalries (>70) add ±3% noise to both sides
-    if (rivalryIntensity !== undefined && rivalryIntensity > 70) {
+    if (rivalry > 70) {
       const noiseA = 1 + (Math.random() * 0.06 - 0.03);
       const noiseB = 1 + (Math.random() * 0.06 - 0.03);
       strengthA *= noiseA;
@@ -89,7 +112,9 @@ export class MatchSimulator {
         playersA,
         playersB,
         teamAStrategy,
-        teamBStrategy
+        teamBStrategy,
+        rivalry,
+        playoff
       );
       maps.push(mapResult);
 
@@ -144,6 +169,10 @@ export class MatchSimulator {
       const formModifier = 1 + ((player.form - 70) / 100) * 0.1;
       playerStrength *= formModifier;
 
+      // Apply morale modifier (±5% max, baseline 70)
+      const moraleModifier = 1 + ((player.morale - NARRATIVE_CONSTANTS.MORALE.BASELINE) / 100) * NARRATIVE_CONSTANTS.MORALE.COEFFICIENT;
+      playerStrength *= moraleModifier;
+
       totalStrength += playerStrength;
     }
 
@@ -153,6 +182,84 @@ export class MatchSimulator {
     const chemistryBonus = 1 + (chemistryScore / 100) * MAX_CHEMISTRY_BONUS;
 
     return avgStrength * chemistryBonus;
+  }
+
+  /**
+   * Calculate the narrative modifier for a team (hype, rivalry, personality).
+   * Returns a fraction (e.g. 0.05 = +5%) capped at ±10%.
+   */
+  private calculateNarrativeModifier(
+    players: Player[],
+    hypeLevel: number,
+    rivalryIntensity: number,
+    isPlayoffMatch: boolean,
+    chemistryScore: number
+  ): number {
+    if (players.length === 0) return 0;
+
+    const hypeFraction = hypeLevel / 100;
+    const rivalryFraction = rivalryIntensity / 100;
+    const NC = NARRATIVE_CONSTANTS;
+    let totalModifier = 0;
+
+    for (const player of players) {
+      const { mental, igl, clutch } = player.stats;
+
+      // Hype pressure: high mental resists, high clutch thrives
+      const hypePressure =
+        (mental - NC.HYPE.MENTAL_BASELINE) * hypeFraction * NC.HYPE.MENTAL_COEFFICIENT;
+      const clutchInteraction =
+        (clutch - NC.HYPE.CLUTCH_BASELINE) * hypeFraction * NC.HYPE.CLUTCH_COEFFICIENT;
+      const hypeMod = Math.max(
+        -NC.HYPE.CAP,
+        Math.min(NC.HYPE.CAP, hypePressure + clutchInteraction)
+      );
+
+      // Rivalry emotional control: weighted mental + igl vs baseline
+      const emotionalControl =
+        (mental * NC.RIVALRY.MENTAL_WEIGHT + igl * NC.RIVALRY.IGL_WEIGHT) / 100;
+      const rivalryRaw =
+        (emotionalControl - NC.RIVALRY.CONTROL_BASELINE) * rivalryFraction * NC.RIVALRY.SCALE;
+      const rivalryMod = Math.max(-NC.RIVALRY.CAP, Math.min(NC.RIVALRY.CAP, rivalryRaw));
+
+      // Personality modifier
+      const personality = player.personality ?? 'STABLE';
+      let personalityMod = 0;
+
+      if (personality !== 'STABLE') {
+        const P = NC.PERSONALITY;
+        if (personality === 'BIG_STAGE') {
+          if (hypeLevel >= 70) personalityMod += P.BIG_STAGE.HIGH_HYPE_BONUS;
+          if (isPlayoffMatch) personalityMod += P.BIG_STAGE.PLAYOFF_BONUS;
+          if (rivalryIntensity >= NC.RIVALRY.AGGRESSION_THRESHOLD)
+            personalityMod += P.BIG_STAGE.RIVALRY_BONUS;
+        } else if (personality === 'TEAM_FIRST') {
+          if (chemistryScore >= 70) personalityMod += P.TEAM_FIRST.HIGH_CHEMISTRY_BONUS;
+          if (isPlayoffMatch) personalityMod += P.TEAM_FIRST.PLAYOFF_BONUS;
+        } else if (personality === 'FAME_SEEKER') {
+          if (hypeLevel >= 70) personalityMod += P.FAME_SEEKER.HIGH_HYPE_BONUS;
+          else if (hypeLevel < 30) personalityMod += P.FAME_SEEKER.LOW_HYPE_PENALTY;
+          if (isPlayoffMatch) personalityMod += P.FAME_SEEKER.PLAYOFF_BONUS;
+        } else if (personality === 'INTROVERT') {
+          if (hypeLevel < 30) personalityMod += P.INTROVERT.LOW_HYPE_BONUS;
+          else if (hypeLevel >= 70) personalityMod += P.INTROVERT.HIGH_HYPE_PENALTY;
+          if (rivalryIntensity >= NC.RIVALRY.AGGRESSION_THRESHOLD)
+            personalityMod += P.INTROVERT.RIVALRY_PENALTY;
+        }
+        personalityMod = Math.max(-P.CAP, Math.min(P.CAP, personalityMod));
+      }
+
+      // Combine; STABLE halves all modifiers
+      let playerMod = hypeMod + rivalryMod + personalityMod;
+      if (personality === 'STABLE') {
+        playerMod *= NC.PERSONALITY.STABLE_DAMPENING;
+      }
+
+      totalModifier += playerMod;
+    }
+
+    const avg = totalModifier / players.length;
+    return Math.max(-NC.CAPS.TOTAL, Math.min(NC.CAPS.TOTAL, avg));
   }
 
   /**
@@ -193,7 +300,9 @@ export class MatchSimulator {
     playersA: Player[],
     playersB: Player[],
     strategyA: TeamStrategy,
-    strategyB: TeamStrategy
+    strategyB: TeamStrategy,
+    rivalryIntensity: number = 0,
+    isPlayoffMatch: boolean = false
   ): MapResult {
     const adjustedStrengthA = teamAStrength;
     const adjustedStrengthB = teamBStrength;
@@ -256,6 +365,8 @@ export class MatchSimulator {
       const teamAAttacking = isFirstHalf; // Team A attacks first half
 
       // Create round contexts
+      const narrativeContext = { rivalryIntensity, isPlayoffMatch };
+
       const contextA: TeamRoundContext = {
         players: playersA,
         agents: agentsA,
@@ -267,6 +378,7 @@ export class MatchSimulator {
         isAttacking: teamAAttacking,
         previousRoundLoadouts: previousLoadoutsA,
         previousRoundSurvival: previousSurvivalA,
+        narrativeContext,
       };
 
       const contextB: TeamRoundContext = {
@@ -280,6 +392,7 @@ export class MatchSimulator {
         isAttacking: !teamAAttacking,
         previousRoundLoadouts: previousLoadoutsB,
         previousRoundSurvival: previousSurvivalB,
+        narrativeContext,
       };
 
       // Simulate the round

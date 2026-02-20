@@ -16,6 +16,12 @@ export interface RivalrySlice {
     wasEliminatedBy: boolean,
     didEliminate: boolean
   ) => void;
+  /**
+   * Apply one unit of time-based decay to a rivalry.
+   * Decrements intensity by 1 and advances lastMatchDate by 30 days
+   * so the same period isn't double-counted on the next weekly check.
+   */
+  decayRivalryIntensity: (opponentTeamId: string) => void;
 
   // Selectors
   getRivalryByOpponent: (opponentTeamId: string) => Rivalry | undefined;
@@ -71,6 +77,23 @@ export const createRivalrySlice: StateCreator<RivalrySlice, [], [], RivalrySlice
         eliminatedCount: base.eliminatedCount + (didEliminate ? 1 : 0),
       };
 
+      return { rivalries: { ...state.rivalries, [opponentTeamId]: updated } };
+    });
+  },
+
+  decayRivalryIntensity: (opponentTeamId) => {
+    set((state) => {
+      const existing = state.rivalries[opponentTeamId];
+      if (!existing) return state;
+
+      const newIntensity = Math.max(0, existing.intensity - 1);
+
+      // Advance lastMatchDate by 30 days so this period isn't double-counted
+      const prev = new Date(existing.lastMatchDate);
+      prev.setDate(prev.getDate() + 30);
+      const advancedDate = prev.toISOString().split('T')[0];
+
+      const updated: Rivalry = { ...existing, intensity: newIntensity, lastMatchDate: advancedDate };
       return { rivalries: { ...state.rivalries, [opponentTeamId]: updated } };
     });
   },

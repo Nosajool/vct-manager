@@ -21,7 +21,7 @@ import { MonthCalendar, DayDetailPanel, TrainingModal } from '../components/cale
 import { ScrimModal } from '../components/scrim';
 import { DayScheduleService } from '../services/DayScheduleService';
 import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
-import type { Region, TournamentRegion, Match } from '../types';
+import type { Region, TournamentRegion, Match, Team } from '../types';
 
 type TournamentTab = 'current' | 'schedule';
 type ViewMode = 'bracket' | 'standings' | 'swiss' | 'league';
@@ -369,6 +369,12 @@ export function TournamentPage() {
                 </div>
               )}
 
+              {/* Narrative Context Bar */}
+              <NarrativeContextBar
+                playerTeam={playerTeam}
+                tournamentTeamIds={currentTournament.teamIds}
+              />
+
               {/* Content based on view mode */}
               <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
                 {effectiveViewMode === 'swiss' && isSwissTournament && currentTournament.swissStage && (
@@ -541,6 +547,50 @@ export function TournamentPage() {
             : undefined
         }
       />
+    </div>
+  );
+}
+
+// Narrative context bar: shows rivalry and hype indicators for the player's team
+function NarrativeContextBar({
+  playerTeam,
+  tournamentTeamIds,
+}: {
+  playerTeam: Team | null;
+  tournamentTeamIds: string[];
+}) {
+  const getTopRivalries = useGameStore((state) => state.getTopRivalries);
+
+  if (!playerTeam) return null;
+
+  const playerInTournament = tournamentTeamIds.includes(playerTeam.id);
+  if (!playerInTournament) return null;
+
+  const topRivalry = getTopRivalries(1)[0] ?? null;
+  const isRivalryMatchup =
+    topRivalry &&
+    topRivalry.intensity >= 60 &&
+    tournamentTeamIds.includes(topRivalry.opponentTeamId);
+  const isHyped = playerTeam.reputation.hypeLevel > 70;
+
+  if (!isRivalryMatchup && !isHyped) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {isRivalryMatchup && (
+        <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 rounded-lg px-3 py-2">
+          <span className="text-orange-400 text-sm">🔥</span>
+          <span className="text-sm font-medium text-orange-300">Rivalry Match in This Tournament</span>
+          <span className="text-xs text-orange-400/60 ml-1">{topRivalry.intensity} intensity</span>
+        </div>
+      )}
+      {isHyped && (
+        <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-3 py-2">
+          <span className="text-yellow-400 text-sm">⚡</span>
+          <span className="text-sm font-medium text-yellow-300">Most Hyped Team</span>
+          <span className="text-xs text-yellow-400/60 ml-1">{playerTeam.reputation.hypeLevel} hype</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -269,8 +269,8 @@ export class EconomyEngine {
     baseValue: number,
     team: Team
   ): number {
-    // Fanbase factor (0.5 to 1.5)
-    const fanbaseFactor = 0.5 + (team.reputation.fanbase / 100);
+    // Fanbase factor (0.8 to 1.5) — smoother curve aligned to 0-100 fanbase scale
+    const fanbaseFactor = 0.8 + (team.reputation.fanbase / 100) * 0.7;
 
     // Org value factor (0.7 to 1.3)
     const orgValueFactor = 0.7 + (team.organizationValue / 5000000) * 0.6;

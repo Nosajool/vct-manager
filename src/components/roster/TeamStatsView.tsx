@@ -6,6 +6,8 @@ import type { Player, MatchResult, Team, Match } from '../../types';
 import { MatchResult as MatchResultModal } from '../match/MatchResult';
 import { getMatchForResult } from '../../utils/matchResultUtils';
 import { formatKD } from '../../utils/formatNumber';
+import { getReputationTier } from '../../types/team';
+import type { ReputationTier } from '../../types/team';
 
 interface TeamStatsViewProps {
   teamId?: string;
@@ -62,6 +64,9 @@ export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
       {/* Overview Cards */}
       <OverviewCards team={team} matchHistory={matchHistory} />
 
+      {/* Public Image */}
+      <PublicImageSection team={team} teams={teams} />
+
       {/* League Comparison */}
       <LeagueComparisonSection team={team} matchHistory={matchHistory} teams={teams} />
 
@@ -89,6 +94,132 @@ export function TeamStatsView({ teamId, compact = false }: TeamStatsViewProps) {
         players={activePlayers}
         matchHistory={matchHistory}
       />
+    </div>
+  );
+}
+
+// Public Image Section
+function PublicImageSection({
+  team,
+  teams,
+}: {
+  team: Team;
+  teams: Record<string, Team>;
+}) {
+  const getTopRivalries = useGameStore((state) => state.getTopRivalries);
+  const topRivalry = getTopRivalries(1)[0] ?? null;
+  const rivalTeam = topRivalry ? teams[topRivalry.opponentTeamId] : null;
+
+  const { hypeLevel, fanbase, sponsorTrust } = team.reputation;
+  const tier = getReputationTier(fanbase);
+
+  const tierConfig: Record<ReputationTier, { label: string; color: string }> = {
+    UNDERGROUND: { label: 'Underground', color: 'text-vct-gray' },
+    RISING: { label: 'Rising', color: 'text-blue-400' },
+    ESTABLISHED: { label: 'Established', color: 'text-cyan-400' },
+    POPULAR: { label: 'Popular', color: 'text-green-400' },
+    ICONIC: { label: 'Iconic', color: 'text-yellow-400' },
+  };
+
+  const hypeColor =
+    hypeLevel >= 70 ? 'bg-green-500' : hypeLevel >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+  const sponsorColor =
+    sponsorTrust >= 70 ? 'bg-green-500' : sponsorTrust >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+
+  return (
+    <div className="bg-vct-dark border border-vct-gray/20 rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b border-vct-gray/20">
+        <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">
+          Public Image
+        </h3>
+      </div>
+      <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Hype */}
+        <PublicImageStat
+          label="Hype"
+          value={hypeLevel}
+          barColor={hypeColor}
+          subtext={
+            hypeLevel >= 70 ? 'High buzz' : hypeLevel >= 40 ? 'Building momentum' : 'Low profile'
+          }
+        />
+
+        {/* Fanbase */}
+        <div className="bg-vct-darker rounded-lg p-4">
+          <div className="text-xs text-vct-gray uppercase mb-1">Fanbase</div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-vct-light">{fanbase}</span>
+            <span className={`text-xs font-semibold ${tierConfig[tier].color}`}>
+              {tierConfig[tier].label}
+            </span>
+          </div>
+          <ProgressBar value={fanbase} color="bg-vct-accent" />
+        </div>
+
+        {/* Sponsor Trust */}
+        <PublicImageStat
+          label="Sponsor Trust"
+          value={sponsorTrust}
+          barColor={sponsorColor}
+          subtext={
+            sponsorTrust >= 70
+              ? 'Reliable partner'
+              : sponsorTrust >= 40
+              ? 'Developing'
+              : 'Rebuilding trust'
+          }
+        />
+
+        {/* Biggest Rival */}
+        <div className="bg-vct-darker rounded-lg p-4">
+          <div className="text-xs text-vct-gray uppercase mb-1">Biggest Rival</div>
+          {rivalTeam && topRivalry ? (
+            <>
+              <div className="text-base font-bold text-vct-light truncate">{rivalTeam.name}</div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-red-500 rounded-full"
+                    style={{ width: `${topRivalry.intensity}%` }}
+                  />
+                </div>
+                <span className="text-xs text-vct-gray">{topRivalry.intensity}</span>
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-vct-gray mt-1">None yet</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PublicImageStat({
+  label,
+  value,
+  barColor,
+  subtext,
+}: {
+  label: string;
+  value: number;
+  barColor: string;
+  subtext: string;
+}) {
+  return (
+    <div className="bg-vct-darker rounded-lg p-4">
+      <div className="text-xs text-vct-gray uppercase mb-1">{label}</div>
+      <div className="text-2xl font-bold text-vct-light">{value}</div>
+      <ProgressBar value={value} color={barColor} />
+      <div className="text-xs text-vct-gray mt-1">{subtext}</div>
+    </div>
+  );
+}
+
+function ProgressBar({ value, color }: { value: number; color: string }) {
+  return (
+    <div className="mt-2 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+      <div className={`h-full ${color} rounded-full`} style={{ width: `${value}%` }} />
     </div>
   );
 }

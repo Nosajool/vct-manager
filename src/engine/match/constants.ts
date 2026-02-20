@@ -326,5 +326,114 @@ export const ASSIST_CONSTANTS = {
   } as const,
 } as const;
 
+// ============================================
+// NARRATIVE CONSTANTS
+// Coefficients for the narrative modifier layer:
+// hype pressure, rivalry emotion, personality archetypes, morale
+// ============================================
+
+export const NARRATIVE_CONSTANTS = {
+  // ------------------------------------------
+  // Hype pressure modifiers
+  // High mental resists crowd pressure; high clutch thrives under it
+  // ------------------------------------------
+  HYPE: {
+    /** Baseline mental score considered "neutral" for hype pressure */
+    MENTAL_BASELINE: 70,
+    /** Per-point mental deviation scaled by hype fraction (hype/100) */
+    MENTAL_COEFFICIENT: 0.1,
+    /** Baseline clutch score considered "neutral" for hype pressure */
+    CLUTCH_BASELINE: 65,
+    /** Per-point clutch deviation scaled by hype fraction (hype/100) */
+    CLUTCH_COEFFICIENT: 0.15,
+    /** Hype level above which crowd variance is applied */
+    VARIANCE_THRESHOLD: 70,
+    /** Random variance multiplier per hype point above threshold */
+    VARIANCE_PER_POINT: 0.01,
+    /** Maximum modifier from hype (±5%) */
+    CAP: 0.05,
+  },
+
+  // ------------------------------------------
+  // Rivalry emotional modifiers
+  // Emotional control (mental + igl) determines whether rivalry helps or hurts
+  // ------------------------------------------
+  RIVALRY: {
+    /** Weight of mental stat in emotional control calculation */
+    MENTAL_WEIGHT: 0.6,
+    /** Weight of igl stat in emotional control calculation */
+    IGL_WEIGHT: 0.4,
+    /** Emotional control fraction considered neutral (65%) */
+    CONTROL_BASELINE: 0.65,
+    /** Scale factor: (control - baseline) * (intensity/100) * scale */
+    SCALE: 10,
+    /** Rivalry intensity above which aggression boost is applied in round sim */
+    AGGRESSION_THRESHOLD: 60,
+    /** Maximum modifier from rivalry (±5%) */
+    CAP: 0.05,
+  },
+
+  // ------------------------------------------
+  // Personality archetype modifiers
+  // Applied per-player based on match context (hype, playoff, rivalry)
+  // STABLE halves all other narrative modifiers rather than having its own bonus
+  // ------------------------------------------
+  PERSONALITY: {
+    BIG_STAGE: {
+      /** Bonus when hype level is high (≥70) */
+      HIGH_HYPE_BONUS: 0.04,
+      /** Bonus in playoff matches */
+      PLAYOFF_BONUS: 0.03,
+      /** Bonus in high-intensity rivalry matches (intensity ≥60) */
+      RIVALRY_BONUS: 0.02,
+    },
+    TEAM_FIRST: {
+      /** Bonus when team chemistry is high (≥0.7 as fraction of max) */
+      HIGH_CHEMISTRY_BONUS: 0.03,
+      /** Small bonus in any playoff match (team cohesion under pressure) */
+      PLAYOFF_BONUS: 0.01,
+    },
+    FAME_SEEKER: {
+      /** Bonus when in the spotlight (hype ≥70) */
+      HIGH_HYPE_BONUS: 0.03,
+      /** Penalty when in low-key matches (hype <30) */
+      LOW_HYPE_PENALTY: -0.02,
+      /** Bonus in playoff matches (loves big moments) */
+      PLAYOFF_BONUS: 0.02,
+    },
+    INTROVERT: {
+      /** Bonus in low-hype, low-pressure matches (hype <30) */
+      LOW_HYPE_BONUS: 0.02,
+      /** Penalty when hype is high (≥70) */
+      HIGH_HYPE_PENALTY: -0.03,
+      /** Penalty in high-intensity rivalry matches */
+      RIVALRY_PENALTY: -0.02,
+    },
+    /** STABLE halves every other narrative modifier for that player */
+    STABLE_DAMPENING: 0.5,
+    /** Maximum modifier from personality (±3%) */
+    CAP: 0.03,
+  },
+
+  // ------------------------------------------
+  // Morale modifier
+  // Morale feeds into base team strength calculation
+  // ------------------------------------------
+  MORALE: {
+    /** Baseline morale considered neutral */
+    BASELINE: 70,
+    /** Coefficient: (morale - baseline) / 100 * coefficient = modifier */
+    COEFFICIENT: 0.05,
+  },
+
+  // ------------------------------------------
+  // Hard caps
+  // ------------------------------------------
+  CAPS: {
+    /** Hard cap on total narrative modifier (±10%) */
+    TOTAL: 0.10,
+  },
+} as const;
+
 // Type exports for consumers
 export type { Player, TeamChemistry } from '../../types';

@@ -9,6 +9,7 @@ export type {
   PlayerSeasonStats,
   PlayerPreferences,
   Player,
+  PlayerPersonality,
   Coach,
   CoachType,
   Region,

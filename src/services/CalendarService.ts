@@ -288,6 +288,7 @@ export class CalendarService {
                 rivalryIntensity: rivalry?.intensity ?? 0,
                 isPlayoffMatch: matchData.isPlayoffMatch ?? false,
                 opponentWinStreak: Math.max(0, opponentTeam?.standings?.currentStreak ?? 0),
+                hypeLevel: playerTeam.reputation?.hypeLevel,
               });
 
               // Apply morale changes to store
@@ -415,12 +416,13 @@ export class CalendarService {
       }
     }
 
-    // Weekly hype decay — fire every Sunday
+    // Weekly hype decay and rivalry decay — fire every Sunday
     if (new Date(newDate).getDay() === 0 && state.playerTeamId) {
       const playerTeam = state.teams[state.playerTeamId];
       if (playerTeam) {
         reputationService.processWeeklyHypeDecay(playerTeam, state.playerTeamId);
       }
+      rivalryService.processRivalryDecay(newDate);
     }
 
     // Evaluate drama events for today

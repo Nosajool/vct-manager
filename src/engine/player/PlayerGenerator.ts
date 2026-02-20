@@ -1,7 +1,7 @@
 // PlayerGenerator - Pure engine class for generating players
 // No React or store dependencies - pure functions only
 
-import type { Player, PlayerStats, Region } from '../../types';
+import type { Player, PlayerPersonality, PlayerStats, Region } from '../../types';
 import {
   FIRST_NAMES,
   LAST_NAMES,
@@ -317,6 +317,29 @@ export class PlayerGenerator {
   }
 
   /**
+   * Derive personality archetype from stats and age.
+   * Thresholds are set at 70 (above average) for primary traits.
+   */
+  generatePersonality(stats: PlayerStats, age: number): PlayerPersonality {
+    const { clutch, mental, vibes, support, mechanics, igl, entry } = stats;
+
+    if (clutch >= 70 && mental >= 70) return 'BIG_STAGE';
+    if (vibes >= 70 && support >= 70) return 'TEAM_FIRST';
+    if (mechanics >= 70 && age <= 21) return 'FAME_SEEKER';
+    if (igl >= 70 && entry < 55) return 'INTROVERT';
+    return 'STABLE';
+  }
+
+  /**
+   * Migration helper: assign personality to any player that is missing it.
+   * Call once on game load to back-fill existing saves.
+   */
+  assignMissingPersonality(player: Player): Player {
+    if (player.personality !== undefined) return player;
+    return { ...player, personality: this.generatePersonality(player.stats, player.age) };
+  }
+
+  /**
    * Generate a single player
    */
   generatePlayer(options: PlayerGeneratorOptions = {}): Player {
@@ -361,6 +384,7 @@ export class PlayerGenerator {
       careerStats: this.generateCareerStats(age),
       seasonStats: this.generateSeasonStats(),
       preferences: this.generatePreferences(),
+      personality: this.generatePersonality(stats, age),
     };
   }
 
