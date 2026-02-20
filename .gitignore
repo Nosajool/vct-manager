@@ -33,3 +33,6 @@ coverage
 
 # Claude code switcher
 ccswitch.sh
+
+# stats snapshots
+src/data/statsSnapshots/*
