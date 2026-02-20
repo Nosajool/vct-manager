@@ -101,11 +101,20 @@ export class DramaService {
       );
       if (!escalationTemplate) continue;
 
+      // Carry over the affected player from the original event
+      const fromEvent = snapshot.dramaState.activeEvents.find(
+        e => e.id === escalation.fromEventId
+      );
+      const originalPlayerId = fromEvent?.affectedPlayerIds?.[0];
+      const originalPlayer = originalPlayerId
+        ? snapshot.players.find(p => p.id === originalPlayerId) ?? null
+        : null;
+
       // Create escalated event instance
       const escalatedEvent = dramaEngine.createEventInstance(
         escalationTemplate,
         snapshot,
-        null
+        originalPlayer
       );
 
       // Apply escalation in store

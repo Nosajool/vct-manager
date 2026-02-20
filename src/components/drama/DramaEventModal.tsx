@@ -6,6 +6,9 @@
 
 import { useState } from 'react';
 import type { DramaCategory, DramaChoice, DramaEventInstance } from '../../types/drama';
+import { useGameStore } from '../../store';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (narrative) and choices from the template.
@@ -92,9 +95,17 @@ export function DramaEventModal({
   const [outcomeText, setOutcomeText] = useState('');
   const [outcomeEffects, setOutcomeEffects] = useState('');
 
+  const players = useGameStore((state) => state.players);
+
   if (!isOpen) return null;
 
   const metadata = CATEGORY_METADATA[event.category];
+
+  const affectedPlayer = event.affectedPlayerIds?.[0]
+    ? players[event.affectedPlayerIds[0]]
+    : null;
+  const playerImageUrl = affectedPlayer ? getPlayerImageUrl(affectedPlayer.name) : null;
+  const playerInitial = affectedPlayer ? affectedPlayer.name.charAt(0).toUpperCase() : '?';
 
   const handleChoose = (choice: DramaChoice) => {
     // Show the outcome first
@@ -171,10 +182,22 @@ export function DramaEventModal({
               <h2 className="text-xl font-bold text-vct-light">
                 Critical Decision Required
               </h2>
-              {event.affectedPlayerIds && event.affectedPlayerIds.length > 0 && (
-                <p className="text-sm text-vct-gray mt-1">
-                  Players involved: {event.affectedPlayerIds.length}
-                </p>
+              {affectedPlayer && (
+                <div className="flex items-center gap-3 mt-2">
+                  {playerImageUrl ? (
+                    <GameImage
+                      src={playerImageUrl}
+                      alt={affectedPlayer.name}
+                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                      fallbackClassName="w-10 h-10 rounded-full flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-base font-bold text-vct-gray">{playerInitial}</span>
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-vct-light">{affectedPlayer.name}</span>
+                </div>
               )}
             </div>
 
