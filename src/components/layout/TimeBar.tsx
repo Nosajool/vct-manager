@@ -16,7 +16,7 @@ import { calendarService, interviewService, progressTrackingService, type TimeAd
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
-import { SimulationResultsModal, DayRecapModal, SimulationProgressModal } from '../calendar';
+import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal } from '../calendar';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -35,6 +35,8 @@ import { scrimService } from '../../services/ScrimService';
 import { DayScheduleService } from '../../services/DayScheduleService';
 import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
+
+type PostSimulationModalType = 'training' | 'scrim' | 'morale' | 'interview';
 
 /**
  * Helper to enrich drama event with template data and substitute narrative placeholders
@@ -79,14 +81,14 @@ export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
-  const [showDayRecapModal, setShowDayRecapModal] = useState(false);
+  const [postModalQueue, setPostModalQueue] = useState<PostSimulationModalType[]>([]);
+  const [activePostModal, setActivePostModal] = useState<PostSimulationModalType | null>(null);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
   const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
-  const [showMoraleModal, setShowMoraleModal] = useState(false);
 
   // Interview state from store
   const pendingInterview = useGameStore((state) => state.pendingInterview);
@@ -134,20 +136,47 @@ export function TimeBar() {
     return null;
   }
 
+  const triggerDramaEvents = () => {
+    if (majorEventQueue.length > 0) {
+      const [firstEvent, ...rest] = majorEventQueue;
+      setCurrentMajorEvent(firstEvent);
+      setMajorEventQueue(rest);
+    }
+  };
+
+  const advancePostModals = (remaining: PostSimulationModalType[]) => {
+    const [next, ...rest] = remaining;
+    if (next) {
+      setActivePostModal(next);
+      setPostModalQueue(rest);
+    } else {
+      setActivePostModal(null);
+      setPostModalQueue([]);
+      triggerDramaEvents();
+    }
+  };
+
+  const handlePostModalClose = () => advancePostModals(postModalQueue);
+
   const showPostSimulationModals = (result: TimeAdvanceResult | null) => {
-    // Always show day recap (bottom layer)
-    setShowDayRecapModal(true);
+    const queue: PostSimulationModalType[] = [];
+    const activities = result?.activityResults;
 
-    // Show morale modal if morale changes exist (middle layer)
+    if (activities && (activities.trainingResults.length > 0 || activities.skippedTraining)) {
+      queue.push('training');
+    }
+    if (activities && (activities.scrimResult !== null || activities.skippedScrim)) {
+      queue.push('scrim');
+    }
     if (result?.moraleChanges) {
-      setShowMoraleModal(true);
+      queue.push('morale');
+    }
+    if (result?.pendingInterview) {
+      useGameStore.getState().setPendingInterview(result.pendingInterview);
+      queue.push('interview');
     }
 
-    // Set post-match interview in store (top layer) - follows same pattern as crisisInterview
-    if (result?.pendingInterview) {
-      const state = useGameStore.getState();
-      state.setPendingInterview(result.pendingInterview);
-    }
+    advancePostModals(queue);
   };
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
@@ -288,10 +317,10 @@ export function TimeBar() {
   };
 
   const handleInterviewClose = () => {
-    const interviewContext = useGameStore.getState().pendingInterview?.context;
+    const state = useGameStore.getState();
+    const interviewContext = state.pendingInterview?.context;
 
     // Clear pending interview from store (effects were already applied via onChoose)
-    const state = useGameStore.getState();
     state.clearPendingInterview();
 
     if (interviewContext === 'PRE_MATCH') {
@@ -300,22 +329,9 @@ export function TimeBar() {
     } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
       // Post-match interview resolved, now show crisis interview
       state.setPendingInterview(simulationResult.crisisInterview);
-    }
-    // No else needed - MoraleChangeModal or DayRecapModal shows automatically
-  };
-
-  const handleMoraleModalClose = () => {
-    setShowMoraleModal(false);
-  };
-
-  const handleCloseDayRecap = () => {
-    setShowDayRecapModal(false);
-
-    // Check if there are major drama events to show
-    if (majorEventQueue.length > 0) {
-      const [firstEvent, ...rest] = majorEventQueue;
-      setCurrentMajorEvent(firstEvent);
-      setMajorEventQueue(rest);
+      advancePostModals(['interview', ...postModalQueue]);
+    } else {
+      advancePostModals(postModalQueue);
     }
   };
 
@@ -546,13 +562,23 @@ export function TimeBar() {
         result={simulationResult}
       />
 
-      {/* Day Recap Modal - shown on non-match days */}
-      <DayRecapModal
-        isOpen={showDayRecapModal}
-        onClose={handleCloseDayRecap}
-        result={simulationResult}
-        activityResults={simulationResult?.activityResults}
-      />
+      {/* Post-simulation modal queue */}
+      {activePostModal === 'training' && simulationResult?.activityResults && (
+        <TrainingRecapModal
+          isOpen={true}
+          onClose={handlePostModalClose}
+          activityResults={simulationResult.activityResults}
+          date={simulationResult.newDate}
+        />
+      )}
+      {activePostModal === 'scrim' && simulationResult?.activityResults && (
+        <ScrimRecapModal
+          isOpen={true}
+          onClose={handlePostModalClose}
+          activityResults={simulationResult.activityResults}
+          date={simulationResult.newDate}
+        />
+      )}
 
       {/* Pre-Advance Validation Modal - shown when unconfigured activities exist */}
       <PreAdvanceValidationModal
@@ -606,18 +632,18 @@ export function TimeBar() {
         />
       ))}
 
-      {/* Morale Change Modal - shows morale changes after match */}
-      {showMoraleModal && simulationResult?.moraleChanges && (
+      {/* Morale Change Modal */}
+      {activePostModal === 'morale' && simulationResult?.moraleChanges && (
         <MoraleChangeModal
-          isOpen={showMoraleModal}
-          onClose={handleMoraleModalClose}
+          isOpen={true}
+          onClose={handlePostModalClose}
           result={simulationResult.moraleChanges}
           teamName={playerTeamName}
         />
       )}
 
-      {/* Interview Modal - shown after SimulationResultsModal closes */}
-      {pendingInterview && (
+      {/* Interview Modal - shown for queue-based (post-sim) or pre-match interviews */}
+      {pendingInterview && (activePostModal === 'interview' || activePostModal === null) && (
         <InterviewModal
           interview={pendingInterview}
           onChoose={(choiceIndex) => {

@@ -1,7 +1,7 @@
 // VLR Data Processor
 // Transforms VLR snapshot data into game Player entities
 
-import type { Player, PlayerStats, Region } from '@/types/player';
+import type { Player, PlayerPersonality, PlayerStats, Region } from '@/types/player';
 import type { VlrPlayerStats } from '@/types/vlr';
 import { convertVlrToGameStats, calculateVlrOverall } from './statConverter';
 import { resolveOrgToTeamName, VLR_TO_GAME_REGION } from './orgMapping';
@@ -107,6 +107,15 @@ function generatePreferences(): Player['preferences'] {
     regionLoyalty: 30 + Math.floor(Math.random() * 50),
     preferredTeammates: [],
   };
+}
+
+function generatePersonality(stats: PlayerStats, age: number): PlayerPersonality {
+  const { clutch, mental, vibes, support, mechanics, igl, entry } = stats;
+  if (clutch >= 70 && mental >= 70) return 'BIG_STAGE';
+  if (vibes >= 70 && support >= 70) return 'TEAM_FIRST';
+  if (mechanics >= 70 && age <= 21) return 'FAME_SEEKER';
+  if (igl >= 70 && entry < 55) return 'INTROVERT';
+  return 'STABLE';
 }
 
 /**
@@ -268,5 +277,6 @@ export function createPlayerFromVlr(
       tournamentsWon: 0,
     },
     preferences: generatePreferences(),
+    personality: generatePersonality(stats, age),
   };
 }
