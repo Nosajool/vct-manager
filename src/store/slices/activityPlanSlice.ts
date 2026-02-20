@@ -8,6 +8,9 @@ import type { FeatureType } from '../../data/featureUnlocks';
 import { DayScheduleService } from '../../services/DayScheduleService';
 import type { SchedulableActivityType } from '../../types/calendar';
 
+const isSameDay = (date1: string, date2: string): boolean =>
+  new Date(date1).toDateString() === new Date(date2).toDateString();
+
 const ACTIVITY_TO_EVENT_TYPE: Record<string, string> = {
   training: 'scheduled_training',
   scrim: 'scheduled_scrim',
@@ -87,7 +90,7 @@ export const createActivityPlanSlice: StateCreator<
       const remaining: Record<string, ActivityConfig> = {};
 
       for (const [configId, config] of Object.entries(state.activityConfigs)) {
-        if (config.date !== date) {
+        if (!isSameDay(config.date, date)) {
           remaining[configId] = config;
         }
       }
@@ -110,7 +113,7 @@ export const createActivityPlanSlice: StateCreator<
 
     const configs = get().activityConfigs;
 
-    return Object.values(configs).filter((config) => config.date === today);
+    return Object.values(configs).filter((config) => isSameDay(config.date, today));
   },
 
   hasUnconfiguredActivities: () => {
@@ -120,7 +123,7 @@ export const createActivityPlanSlice: StateCreator<
 
     const todaysEvents = fullState.calendar?.scheduledEvents?.filter(
       (event: any) =>
-        event.date === today &&
+        isSameDay(event.date, today) &&
         !event.processed &&
         (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
     ) || [];
@@ -159,7 +162,7 @@ export const createActivityPlanSlice: StateCreator<
 
     const todaysEvents = fullState.calendar?.scheduledEvents?.filter(
       (event: any) =>
-        event.date === today &&
+        isSameDay(event.date, today) &&
         !event.processed &&
         (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
     ) || [];
