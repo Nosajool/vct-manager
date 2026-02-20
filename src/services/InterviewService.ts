@@ -71,8 +71,8 @@ export class InterviewService {
     });
 
     // Prefer win/loss specific templates based on match result
-    const winIds = ['post_win_dominant', 'post_win_close', 'post_win_comeback', 'post_win_upset'];
-    const lossIds = ['post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination'];
+    const winIds = ['post_win_dominant', 'post_win_close', 'post_win_comeback', 'post_win_upset', 'post_coach_win', 'post_player_win'];
+    const lossIds = ['post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination', 'post_coach_loss', 'post_player_loss'];
 
     const relevant = candidates.filter((t) =>
       won ? winIds.includes(t.id) : lossIds.includes(t.id)
@@ -353,10 +353,22 @@ export class InterviewService {
     template: InterviewTemplate,
     opponentTeamId: string | undefined,
   ): PendingInterview {
+    let subjectId: string | undefined;
+
+    if (template.subjectType === 'player') {
+      const state = useGameStore.getState();
+      const team = state.teams[state.playerTeamId!];
+      const playerIds = team?.playerIds ?? [];
+      if (playerIds.length > 0) {
+        subjectId = playerIds[Math.floor(Math.random() * playerIds.length)];
+      }
+    }
+
     return {
       templateId: template.id,
       context: template.context,
       subjectType: template.subjectType,
+      subjectId,
       opponentTeamId,
       prompt: template.prompt,
       options: template.options,

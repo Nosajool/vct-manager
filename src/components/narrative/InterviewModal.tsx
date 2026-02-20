@@ -8,6 +8,8 @@
 import { useState } from 'react';
 import { useGameStore } from '../../store';
 import type { PendingInterview, InterviewContext, InterviewTone } from '../../types/interview';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface InterviewModalProps {
   interview: PendingInterview;
@@ -85,6 +87,19 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
     return 'PLAYER';
   })();
 
+  // Resolve avatar image for the subject
+  const { subjectImageUrl, subjectInitial } = (() => {
+    if (interview.subjectType === 'player' && interview.subjectId) {
+      const player = players[interview.subjectId];
+      if (player) return {
+        subjectImageUrl: getPlayerImageUrl(player.name),
+        subjectInitial: player.name.charAt(0).toUpperCase(),
+      };
+    }
+    const initial = interview.subjectType === 'manager' ? 'M' : 'C';
+    return { subjectImageUrl: null, subjectInitial: initial };
+  })();
+
   // Handle choice - show outcome first, then apply effects via parent
   const handleChoose = (index: number) => {
     const option = interview.options[index];
@@ -144,13 +159,27 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
           <>
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
-                  {contextMeta.label}
-                </span>
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-vct-gray/10 text-vct-gray border-vct-gray/30">
-                  {subjectLabel}
-                </span>
+              <div className="flex items-center gap-3 mb-2">
+                {subjectImageUrl ? (
+                  <GameImage
+                    src={subjectImageUrl}
+                    alt={subjectLabel}
+                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                    fallbackClassName="w-12 h-12 rounded-full flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-bold text-vct-gray">{subjectInitial}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
+                    {contextMeta.label}
+                  </span>
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-vct-gray/10 text-vct-gray border-vct-gray/30">
+                    {subjectLabel}
+                  </span>
+                </div>
               </div>
               <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
             </div>
