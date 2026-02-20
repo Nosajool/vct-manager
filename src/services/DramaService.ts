@@ -83,6 +83,8 @@ export class DramaService {
 
         // Add to store
         state.addDramaEvent(eventInstance);
+        // Auto-resolve immediately — minor events need no player decision
+        state.resolveDramaEvent(eventInstance.id, undefined, eventInstance.outcomeText, eventInstance.appliedEffects);
       } else {
         // Handle major events: add as 'pending' (require player decision)
         state.addDramaEvent(eventInstance);
