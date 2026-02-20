@@ -230,7 +230,7 @@ export const STAT_RANGES = {
 
   // Form and morale
   defaultForm: 70,
-  defaultMorale: 75,
+  defaultMorale: 30,
 };
 
 /**

@@ -253,7 +253,7 @@ export function createPlayerFromVlr(
     teamId,
     stats,
     form,
-    morale: 70 + Math.floor(Math.random() * 20),
+    morale: 30 + Math.floor(Math.random() * 20),
     potential,
     contract: teamId ? generateContract(overall) : null,
     careerStats: generateCareerStats(processed.vlrStats, age),
