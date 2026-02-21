@@ -4011,6 +4011,320 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // OPPONENT AWARENESS EVENTS (Phase 3 — 6 events)
+  // Conditions: flag_active (rivalry_scorched_earth), bracket_position,
+  //             elimination_risk, team_win_streak, tournament_active
+  // ==========================================================================
+
+  // 1. opponent_mental_edge — rivalry noise seeps into camp before lower bracket match
+  {
+    id: 'opponent_mental_edge',
+    category: 'external_pressure',
+    severity: 'minor',
+    title: 'Opponent Narrative in Your Camp',
+    description: 'The media won\'t let go of the rivalry. Your players are being asked about the rival organization in every post-match interview and social interaction. The opponent\'s narrative is starting to take up space inside {teamName}\'s mental preparation.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'rivalry_scorched_earth',
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'lower',
+      },
+    ],
+    probability: 55,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all_team',
+        delta: -5,
+      },
+      {
+        target: 'set_flag',
+        flag: 'rivalry_media_distraction',
+        flagDuration: 10,
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
+  // 2. revenge_match_tension — major choice when a player can't let go before elimination match
+  {
+    id: 'revenge_match_tension',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Revenge Match Pressure',
+    description: '{playerName} pulled you aside before practice. The upcoming match against the rival team is different for them — there\'s unfinished business they haven\'t been able to let go of. They want to channel it, but you can see the weight it\'s carrying.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'rivalry_scorched_earth',
+      },
+      {
+        type: 'elimination_risk',
+      },
+    ],
+    probability: 70,
+    cooldownDays: 30,
+    choices: [
+      {
+        id: 'channel_the_fire',
+        text: 'Channel the emotion into focus',
+        description: 'Help them use the rivalry tension as fuel rather than distraction',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_clutch_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'The conversation shifts something. {playerName} stops carrying it as a burden and starts carrying it as a purpose. They go into the match with a clarity that\'s almost frightening to watch.',
+      },
+      {
+        id: 'clear_the_slate',
+        text: 'Ask them to set the history aside',
+        description: 'Redirect focus entirely to execution, not the rivalry narrative',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'rivalry_narrative_managed',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: '{playerName} appreciates the honesty. The rivalry noise quiets. The locker room feels calmer going in — focused on rounds, not on payback.',
+      },
+      {
+        id: 'let_it_ride',
+        text: 'Give them space to manage it their own way',
+        description: 'Let them process the emotion privately — trust they know themselves',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -3,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 2,
+          },
+        ],
+        outcomeText: 'You give them the space. {playerName} heads into the match carrying everything they came in with. Whether it helps or hurts will become clear on the server.',
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
+  // 3. upset_victim_media_frenzy — momentum narrative builds after consecutive tournament wins
+  {
+    id: 'upset_victim_media_frenzy',
+    category: 'external_pressure',
+    severity: 'minor',
+    title: 'Upset Narrative Builds',
+    description: 'The media is running with the story. Analysts are calling the recent results one of the tournament\'s biggest surprises. The coverage is positive — but the sudden spotlight has a weight that {teamName} is only now beginning to feel.',
+    conditions: [
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+      {
+        type: 'tournament_active',
+      },
+    ],
+    probability: 45,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all_team',
+        delta: 5,
+      },
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_momentum',
+        flagDuration: 14,
+      },
+      {
+        target: 'set_flag',
+        flag: 'upset_narrative_active',
+        flagDuration: 10,
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
+  // 4. rematch_spotlight — major event when scorched-earth rivalry collides with lower bracket
+  {
+    id: 'rematch_spotlight',
+    category: 'external_pressure',
+    severity: 'major',
+    title: "The Rematch Everyone's Watching",
+    description: 'Word has gotten out that an opponent with major rivalry history is potentially on a collision course with {teamName} again. Fans, analysts, and broadcast are locked into the rematch narrative — and it hasn\'t even been confirmed yet.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'rivalry_scorched_earth',
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'lower',
+      },
+      {
+        type: 'random_chance',
+        chance: 60,
+      },
+    ],
+    probability: 80,
+    cooldownDays: 30,
+    choices: [
+      {
+        id: 'lean_into_narrative',
+        text: 'Embrace the spotlight',
+        description: 'Use the media attention to galvanize the team',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_momentum',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'The team leans into the story. There\'s something energizing about being at the center of the narrative — every player steps into the bracket feeling like they\'re playing in front of the whole world. The pressure becomes fuel.',
+      },
+      {
+        id: 'control_the_narrative',
+        text: 'Manage the media carefully',
+        description: 'Brief the team, control messaging, limit distraction',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'rivalry_narrative_managed',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You handle the press with care. The team stays focused and the external noise stays external. They go in grounded — no extra weight, just preparation and purpose.',
+      },
+      {
+        id: 'shut_it_out_completely',
+        text: 'Full media blackout',
+        description: 'No interviews, no engagement — complete silence',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: -5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'The blackout creates its own story — the silence becomes part of the narrative. Players feel protected from the noise, but some quietly wonder if the withdrawal signals anxiety rather than focus.',
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
+  // 5. lower_bracket_belief — consecutive lower bracket wins spark genuine team belief
+  {
+    id: 'lower_bracket_belief',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Lower Bracket Believers',
+    description: 'After consecutive wins in the lower bracket, something has shifted in {teamName}\'s energy. What started as survival mode has evolved into genuine belief. You can hear it in how they talk about the upcoming match — not "can we win" but "we\'re going to win."',
+    conditions: [
+      {
+        type: 'bracket_position',
+        bracketPosition: 'lower',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 60,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all_team',
+        delta: 8,
+      },
+      {
+        target: 'team_chemistry',
+        delta: 3,
+      },
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_resilient',
+        flagDuration: 21,
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
+  // 6. rival_eliminated_mixed_feelings — rival eliminated; satisfaction mixed with strange hollowness
+  {
+    id: 'rival_eliminated_mixed_feelings',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Rivals Out — Mixed Emotions',
+    description: 'Word spreads fast: the rival organization is out of the tournament. For some of your players it\'s pure satisfaction. For others there\'s a strange hollowness — they wanted to be the ones to do it, or they realize the rivalry had been sharpening their focus all along.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'rivalry_scorched_earth',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 50,
+    cooldownDays: 30,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all_team',
+        delta: 5,
+      },
+      {
+        target: 'set_flag',
+        flag: 'rival_eliminated_this_tournament',
+        flagDuration: 30,
+      },
+    ],
+    requiresPlayerTeam: true,
+  },
+
   {
     id: 'arc_resilience_forged',
     category: 'breakthrough',
@@ -4824,6 +5138,129 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           },
         ],
         outcomeText: 'You close the future conversation and bring everything back to now. {playerName} respects the discipline. For the next few matches, the legacy question goes quiet — and both of you feel lighter for it.',
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // TEAM IDENTITY (4 templates — Phase 4a)
+  // Sets team-level identity flags used by interview system and narrative events
+  // ==========================================================================
+
+  {
+    id: 'identity_star_carry_emerges',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Star Carry Identity Emerges',
+    description: '{playerName} is playing at a level well above their teammates right now. {teamName}\'s identity is crystallizing around carrying them to victories.',
+    conditions: [
+      {
+        type: 'player_form_above',
+        threshold: 75,
+        playerSelector: 'star_player',
+      },
+      {
+        type: 'team_chemistry_below',
+        threshold: 65,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'team_identity_star_carry',
+        flagDuration: 30,
+      },
+    ],
+  },
+
+  {
+    id: 'identity_balanced_recognized',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Balanced Team Identity Recognized',
+    description: '{teamName} is playing as a cohesive unit. No single star — just five players who make each other better. The results are showing.',
+    conditions: [
+      {
+        type: 'team_chemistry_above',
+        threshold: 70,
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'team_identity_balanced',
+        flagDuration: 30,
+      },
+    ],
+  },
+
+  {
+    id: 'identity_resilient_earned',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Resilient Identity Earned',
+    description: '{teamName} keeps finding ways to win from adversity. Everyone saw them as done — and they\'ve proven everyone wrong.',
+    conditions: [
+      {
+        type: 'bracket_position',
+        bracketPosition: 'lower',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 3,
+      },
+    ],
+    probability: 50,
+    cooldownDays: 21,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'team_identity_resilient',
+        flagDuration: 60,
+      },
+      {
+        target: 'clear_flag',
+        flag: 'team_identity_fragile',
+      },
+    ],
+  },
+
+  {
+    id: 'identity_fragile_exposed',
+    category: 'external_pressure',
+    severity: 'minor',
+    title: 'Fragile Identity Exposed',
+    description: '{teamName} came in with high expectations — and cracks are showing. The losses are exposing how much of this team\'s confidence was built on momentum.',
+    conditions: [
+      {
+        type: 'player_morale_below',
+        threshold: 45,
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'team_identity_fragile',
+        flagDuration: 30,
+      },
+      {
+        target: 'clear_flag',
+        flag: 'team_identity_balanced',
       },
     ],
   },
