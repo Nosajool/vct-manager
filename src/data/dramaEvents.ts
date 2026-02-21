@@ -3019,4 +3019,709 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // KICKOFF TOURNAMENT ARCS — DRAMA EVENTS
+  // ==========================================================================
+
+  // Arc 1: Veteran Legacy Pressure
+  {
+    id: 'veteran_legacy_reckoning',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'The Weight of Legacy',
+    description: "{playerName} has been reflecting publicly on what remains of their career — and now, facing what could be a defining moment, they've asked for a private meeting. The question in the room is unspoken but impossible to ignore: is this the run?",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'interview_veteran_legacy_hinted',
+      },
+      {
+        type: 'player_stat_above',
+        stat: 'mechanics',
+        threshold: 65,
+        playerSelector: 'star_player',
+      },
+    ],
+    probability: 85,
+    cooldownDays: 14,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'championship_commitment',
+        text: 'Make a public title pact',
+        description: "Announce publicly that you're committing everything to a championship run together. The spotlight will be enormous.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'set_flag',
+            flag: 'veteran_championship_pact',
+            flagDuration: 60,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_veteran_legacy_hinted',
+          },
+        ],
+        outcomeText: "{playerName} commits publicly to a final championship run. The fanbase erupts — but the pressure that comes with those words is now immense. Every result will be measured against this moment.",
+      },
+      {
+        id: 'private_support',
+        text: 'Back them quietly — no circus',
+        description: "Tell them they have your full support without making it a media event. Let results carry the story.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 4,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_veteran_legacy_hinted',
+          },
+        ],
+        outcomeText: "You and {playerName} share a quiet moment of understanding. No spotlight, no ceremony — just a handshake and renewed purpose. The team senses something settled without knowing what was said.",
+      },
+      {
+        id: 'honest_conversation',
+        text: 'Discuss a mentorship transition',
+        description: "Gently raise the idea of a player-coach role that uses their experience differently, reducing their competitive burden.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'veteran_considering_retirement',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: "{playerName} goes quiet. The idea clearly unsettles them — but they promise to think it over. The locker room senses that something shifted in that room, even if no one knows what.",
+      },
+    ],
+  },
+
+  // Arc 2: Breakout Star — Personal Sponsor Offer
+  {
+    id: 'prodigy_sponsor_offer',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Life-Changing Offer',
+    description: "A major brand has reached out directly to {playerName} with a personal sponsorship deal — independent of any team arrangement. They've brought it to you privately, excited but clearly uncertain how to navigate it. The number is serious.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'prodigy_hype_{playerId}',
+      },
+      {
+        type: 'player_stat_above',
+        stat: 'mechanics',
+        threshold: 70,
+        playerSelector: 'any',
+      },
+      {
+        type: 'random_chance',
+        chance: 45,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 14,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'negotiate_team_cut',
+        text: 'Require a team revenue share',
+        description: "Support the deal but make clear that an org percentage is standard. Keeps everyone aligned financially.",
+        effects: [
+          {
+            target: 'team_budget',
+            delta: 5000,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'prodigy_org_share_deal',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "The arrangement is negotiated — the org takes a cut. {playerName} accepts, though they aren't thrilled. The team benefits financially. The star feels slightly constrained, but the relationship remains intact.",
+      },
+      {
+        id: 'full_support',
+        text: 'Support them fully — no conditions',
+        description: "This is their moment. A happy, motivated star lifts the whole team.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'set_flag',
+            flag: 'ego_media_distraction_{playerId}',
+            flagDuration: 14,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'prodigy_hype_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName} is overwhelmed with gratitude. The deal is signed. Their profile skyrockets. For now the energy is contagious — though distractions may follow when the content calendar starts filling up.",
+      },
+      {
+        id: 'decline_carefully',
+        text: 'Encourage them to wait for a bigger moment',
+        description: "The timing isn't right. Once you win something real, the offers will be larger.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'prodigy_hype_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName} listens. Disappointment shows in their face for the rest of the day. A window that doesn't always stay open has been closed — you hope the championship you're promising them is worth it.",
+      },
+    ],
+  },
+
+  // Arc 3: Triple-Elimination Mental Fatigue
+  {
+    id: 'triple_elim_wall',
+    category: 'practice_burnout',
+    severity: 'major',
+    title: 'The Elimination Wall',
+    description: "After surviving multiple consecutive must-win matches, the team is visibly hitting a wall. {playerName} and others are showing signs of physical and mental fatigue — practice sessions are shorter, focus is fragmenting, and another must-win match looms.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'interview_mid_bracket_grind',
+      },
+      {
+        type: 'player_form_below',
+        threshold: 55,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 80,
+    cooldownDays: 10,
+    choices: [
+      {
+        id: 'forced_rest',
+        text: 'Cut practice — recovery only',
+        description: "No film sessions tonight. Rest, food, sleep. Go in fresh rather than over-prepared.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 8,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'set_flag',
+            flag: 'reduced_training_time',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: "The team visibly exhales. Morale lifts the moment they realize they're being treated like humans, not machines. The preparation is lighter — but the energy walking into that match is something different.",
+      },
+      {
+        id: 'mental_coach',
+        text: 'Bring in sports psychologist tonight',
+        description: "Call in the performance consultant. Tonight is about mindset, not mechanics.",
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_mid_bracket_grind',
+          },
+        ],
+        outcomeText: "The session is unexpectedly powerful. Players open up about pressure they've been carrying silently. It doesn't solve the fatigue, but it clears something heavy from the room. They arrive to match day lighter.",
+      },
+      {
+        id: 'grind_through',
+        text: 'Push through — the work matters most',
+        description: "You didn't survive three elimination rounds to go soft now. Keep reviewing, keep drilling.",
+        effects: [
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -6,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'burnout_risk_high',
+            flagDuration: 10,
+          },
+        ],
+        outcomeText: "The session runs late. Clips are reviewed, callouts are rehearsed, adjustments are made. The work is undeniably there — but so is the exhaustion. You'll know soon if the tradeoff was worth it.",
+      },
+    ],
+  },
+
+  // Arc 4: IGL Community Scapegoat
+  {
+    id: 'igl_community_scapegoat',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Public Villain',
+    description: "Fan forums, social media, and content creators have coalesced around a harsh verdict: your IGL is the reason the team is struggling. The pressure has become impossible to ignore — {playerName} arrived to practice looking hollow, visibly distracted by the discourse. Something has to be addressed.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'igl_authority_undermined',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 55,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 75,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'public_defense',
+        text: 'Defend them publicly',
+        description: "Issue a statement. Speak on stream. Your IGL has your complete confidence — say it loudly.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'set_flag',
+            flag: 'manager_backed_igl',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "Your backing generates controversy but gives {playerName} real breathing room. Some fans respect the loyalty. Others call it blind management. For now, {playerName} sits straighter in scrims and the team senses the clarity.",
+        triggersEventId: 'public_backing_backfire',
+      },
+      {
+        id: 'internal_protection',
+        text: 'Shield them internally — say nothing publicly',
+        description: "Don't feed the discourse. Check in daily and quietly adjust responsibilities to cover exposed weaknesses.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: "The silence reads as avoidance to the public — but the locker room knows differently. {playerName} plays with less weight this week. The team adapts quietly, covering gaps without announcing it.",
+      },
+      {
+        id: 'redistribute_quietly',
+        text: 'Quietly redistribute shot-calling duties',
+        description: "Without a public statement, shift more in-game calls to others. Protect the team result by reducing pressure on one person.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'igl_authority_undermined',
+          },
+          {
+            target: 'set_flag',
+            flag: 'igl_seeking_redemption',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "{playerName} notices the shift before you can frame it. The conversation is difficult. They don't quit — but something in their eyes changes. The team's calls are cleaner. The cost is still being calculated.",
+      },
+    ],
+  },
+
+  // Arc 5: Historic Win — Expectations Spike
+  {
+    id: 'historic_win_expectations_spike',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'The Weight of History',
+    description: "The historic result has set off a chain reaction. Sponsor calls are flooding in. Media requests have tripled. And in the locker room, an unspoken pressure has taken root — what if we can't do it again? {playerName} confided to a teammate: 'Everyone is watching us now.'",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'interview_historic_win',
+      },
+      {
+        type: 'tournament_active',
+      },
+    ],
+    probability: 85,
+    cooldownDays: 21,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'embrace_spotlight',
+        text: 'Embrace the spotlight — full media tour',
+        description: "Lean into the moment. The exposure builds the org's brand and demonstrates your arrival at the top.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: -5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'org_milestone_celebrated',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "The team becomes a household name overnight. The org is thrilled with the exposure. The players are exhausted and slightly overwhelmed — but for now the energy in every room they walk into is electric.",
+      },
+      {
+        id: 'protect_the_bubble',
+        text: 'Protect the team from distractions',
+        description: "Controlled media access only. The team that won needs to be the team that competes next week.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 6,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_historic_win',
+          },
+        ],
+        outcomeText: "You draw a line around the team. The press questions your handling. Inside the bubble, the team is calm, focused, and grateful. The work continues — and that normalcy is exactly what they needed.",
+      },
+      {
+        id: 'channel_hunger',
+        text: "Use history as fuel — raise the target immediately",
+        description: "One speech: 'Now that you know what winning feels like, is one enough?' Redirect the emotion forward.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 4,
+          },
+          {
+            target: 'set_flag',
+            flag: 'org_championship_mandate',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: "The room goes quiet after you speak. Then someone nods. The hunger is redirected — this team does not want to be a one-hit wonder. Training intensity lifts the next morning without you having to say another word.",
+      },
+    ],
+  },
+
+  // Arc 6: Underdog Miracle Run — minor spark event
+  {
+    id: 'elimination_survival_spark',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Backs Against the Wall',
+    description: "After surviving another must-win elimination match, something has visibly shifted in this team. The near-death experience of bracket play has lit a fire that regular-season pressure never could.",
+    conditions: [
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+      {
+        type: 'tournament_active',
+      },
+      {
+        type: 'random_chance',
+        chance: 35,
+      },
+    ],
+    probability: 50,
+    cooldownDays: 7,
+    effects: [
+      {
+        target: 'player_form',
+        effectPlayerSelector: 'all_team',
+        delta: 8,
+      },
+      {
+        target: 'team_chemistry',
+        delta: 5,
+      },
+      {
+        target: 'set_flag',
+        flag: 'elimination_run_momentum',
+        flagDuration: 10,
+      },
+    ],
+  },
+
+  // Arc 6: Underdog Miracle Run — major culmination
+  {
+    id: 'elimination_miracle_run',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'Miracle Run Territory',
+    description: "Multiple survival moments have crystallized into something tangible: this team genuinely believes they cannot be eliminated. {playerName} gave an impromptu speech before practice that had teammates in tears. Something rare is happening in this locker room and everyone can feel it.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'elimination_run_momentum',
+      },
+      {
+        type: 'team_chemistry_above',
+        threshold: 60,
+      },
+      {
+        type: 'tournament_active',
+      },
+    ],
+    probability: 70,
+    cooldownDays: 14,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'let_it_breathe',
+        text: 'Step back — let it grow on its own',
+        description: "Don't over-coach this moment. They found something themselves. Trust it.",
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 8,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'random',
+            delta: 12,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'elimination_run_momentum',
+          },
+        ],
+        outcomeText: "You step back and watch something rare unfold. Players organize their own film sessions. Everyone arrives early. The belief is self-sustaining — a managed fire that doesn't need your oxygen to keep burning.",
+      },
+      {
+        id: 'channel_into_structure',
+        text: 'Convert the belief into tactical discipline',
+        description: "Emotion is fuel. Now convert it into preparation that can survive deep bracket play.",
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'all_team',
+            delta: 8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'management_committed_to_roster',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "You redirect the energy into the most focused practice block the team has had all season. The belief is still burning — but now it has a blueprint. This team is dangerous and organized.",
+      },
+      {
+        id: 'make_bold_statement',
+        text: 'Declare publicly — this team is not going home',
+        description: "Announce your intent. Let everyone watching know what's about to happen.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'interview_historic_win',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "The statement lands across social media. Opponents take notice. Inside the team there's a mix of excitement and weight — 'now we have to back this up.' The pressure is chosen, and that makes all the difference.",
+      },
+    ],
+  },
+
+  // Arc 7: Regional Playstyle Identity Crisis
+  {
+    id: 'regional_playstyle_debate',
+    category: 'meta_rumors',
+    severity: 'major',
+    title: 'Foreign Meta Envy',
+    description: "After reviewing tournament footage, a vocal faction within the team — led by {playerName} — is pushing hard for a complete overhaul of your regional playstyle. 'We're playing last year's game. Look at what they're doing across regions — we need to adapt or we'll keep falling short.'",
+    conditions: [
+      {
+        type: 'tournament_active',
+      },
+      {
+        type: 'team_chemistry_below',
+        threshold: 65,
+      },
+      {
+        type: 'player_stat_above',
+        stat: 'igl',
+        threshold: 60,
+        playerSelector: 'any',
+      },
+      {
+        type: 'random_chance',
+        chance: 30,
+      },
+    ],
+    probability: 55,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'full_adoption',
+        text: 'Commit to the new approach entirely',
+        description: "Run full international-style practice blocks. Rebuild the system from the ground up.",
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: -10,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'meta_adaptation_in_progress',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "The overhaul begins. Players built on structure struggle. But {playerName} is energized, running sessions with an enthusiasm the team hasn't seen before. It will get messier before it gets better — the question is whether better comes in time.",
+      },
+      {
+        id: 'hybrid_merge',
+        text: 'Build a hybrid — adapt without abandoning identity',
+        description: "Take what works from their meta without throwing out your regional DNA.",
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 3,
+          },
+          {
+            target: 'player_stat',
+            stat: 'igl',
+            effectPlayerSelector: 'triggering',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'meta_adaptation_in_progress',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "You task {playerName} with proposing specific adaptations. The result is a creative hybrid that feels genuinely fresh — not a copy, not a rejection. Something that belongs to this team and no one else.",
+      },
+      {
+        id: 'trust_regional_identity',
+        text: 'Double down on your regional identity',
+        description: "You built something here for a reason. Evolution is constant, but chasing another region's success is a trap.",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all_team',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+        ],
+        outcomeText: "{playerName} accepts the decision without argument — but their disappointment is visible through the rest of practice. For now the team is more settled and cohesive. The debate about adaptation has only been postponed.",
+      },
+    ],
+  },
 ];

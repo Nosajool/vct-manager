@@ -372,6 +372,18 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `prodigy_hype_{playerId}` | `breakthrough_prodigy_moment` drama | future events |
 | `player_trade_requested_{playerId}` | `ego_trade_request` drama | future events |
 | `leadership_established` | `synergy_leadership_vacuum` drama | future events |
+| `interview_veteran_legacy_hinted` | `post_player_veteran_return` interview | `veteran_legacy_reckoning` drama |
+| `veteran_championship_pact` | `veteran_legacy_reckoning` drama, `historic_win_expectations_spike` drama | `pre_championship_pact_pressure` interview |
+| `veteran_considering_retirement` | `veteran_legacy_reckoning` drama | future events |
+| `ego_media_distraction_{playerId}` | `post_player_veteran_return` interview, `prodigy_sponsor_offer` drama | future events |
+| `prodigy_org_share_deal` | `prodigy_sponsor_offer` drama | future events |
+| `interview_mid_bracket_grind` | `pre_triple_elim_fatigue` interview | `triple_elim_wall` drama |
+| `igl_seeking_redemption` | `igl_community_scapegoat` drama, `post_igl_public_pressure` interview | `post_igl_redemption_chance` interview |
+| `interview_historic_win` | `post_win_historic_milestone` interview, `elimination_miracle_run` drama | `historic_win_expectations_spike` drama |
+| `org_milestone_celebrated` | `historic_win_expectations_spike` drama | future events |
+| `org_championship_mandate` | `historic_win_expectations_spike` drama | future events |
+| `elimination_run_momentum` | `elimination_survival_spark` drama | `elimination_miracle_run` drama |
+| `meta_adaptation_in_progress` | `regional_playstyle_debate` drama | future events |
 
 ---
 
