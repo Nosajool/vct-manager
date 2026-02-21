@@ -13,6 +13,7 @@ interface PlayerDetailModalProps {
   onSign?: () => void;
   onRelease?: () => void;
   isOnPlayerTeam?: boolean;
+  teamName?: string;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
 }
@@ -21,6 +22,7 @@ export function PlayerDetailModal({
   player,
   onClose,
   isOnPlayerTeam = false,
+  teamName,
   rosterPosition,
   onSign,
   onRelease,
@@ -115,6 +117,11 @@ export function PlayerDetailModal({
                 {player.age} years • {player.nationality}
               </p>
               <p className="text-sm text-vct-red font-medium">{player.region}</p>
+              {teamName && (
+                <p className="text-sm text-blue-400 font-medium mt-0.5">
+                  {teamName}
+                </p>
+              )}
             </div>
           </div>
 

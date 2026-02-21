@@ -5,7 +5,7 @@ import { useGameStore } from '../store';
 import { useFeatureUnlocked } from '../hooks/useFeatureGate';
 import { RosterList } from '../components/roster/RosterList';
 import { AllTeamsView } from '../components/roster/AllTeamsView';
-import { FreeAgentList } from '../components/roster/FreeAgentList';
+import { PlayerList } from '../components/roster/PlayerList';
 import { ContractNegotiationModal } from '../components/roster/ContractNegotiationModal';
 import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
 import { TeamStrategy } from '../components/roster/TeamStrategy';
@@ -162,7 +162,7 @@ export function Roster() {
               : 'text-vct-gray/40 border-transparent cursor-not-allowed'
           }`}
         >
-          Free Agents
+          Players
           {!transfersUnlocked && (
             <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 4</span>
           )}
@@ -235,7 +235,7 @@ export function Roster() {
           onReleasePlayer={handleReleasePlayer}
         />
       ) : activeTab === 'freeagents' ? (
-        <FreeAgentList players={allPlayers} onSignPlayer={handleSignPlayer} />
+        <PlayerList players={allPlayers} onSignPlayer={handleSignPlayer} />
       ) : activeTab === 'allteams' ? (
         <AllTeamsView />
       ) : activeTab === 'strategy' && playerTeamId ? (

@@ -13,6 +13,7 @@ interface PlayerCardProps {
   selected?: boolean;
   showContract?: boolean;
   compact?: boolean;
+  teamName?: string;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
   isPlayerTeam?: boolean;
@@ -27,6 +28,7 @@ export function PlayerCard({
   selected = false,
   showContract = false,
   compact = false,
+  teamName,
   rosterPosition,
   isPlayerTeam = false,
   canPromote = false,
@@ -241,6 +243,11 @@ export function PlayerCard({
                 <p className="text-vct-gray text-xs">
                   {player.contract.yearsRemaining}y left
                 </p>
+                {teamName && (
+                  <span className="inline-block mt-1 px-1.5 py-0.5 bg-blue-500/10 border border-blue-500/20 rounded text-[10px] text-blue-400 font-medium">
+                    {teamName}
+                  </span>
+                )}
               </>
             ) : (
               <span className="text-green-400 text-xs font-medium">
