@@ -1,6 +1,8 @@
 // Interview System Types
 // Part of the narrative layer (System 2: Interview System)
 
+import type { PlayerPersonality } from './player';
+
 export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS';
 
 export type InterviewTone =
@@ -34,6 +36,8 @@ export interface InterviewEffects {
   rivalryDelta?: number;  // Delta applied to rivalry intensity with opponent
   dramaChance?: number;   // 0-100 chance to trigger a random drama event
   targetPlayerIds?: string[];  // If set, morale only applies to these players
+  setsFlags?: Array<{ key: string; durationDays: number }>;  // Drama flags to set when this option is chosen
+  clearsFlags?: string[];  // Drama flags to remove when this option is chosen
 }
 
 export interface InterviewOption {
@@ -41,6 +45,11 @@ export interface InterviewOption {
   label: string;          // Short label shown in UI (e.g. "Stay confident")
   quote: string;          // What the manager/player says verbatim
   effects: InterviewEffects;
+  personalityWeights?: Partial<Record<PlayerPersonality, number>>;
+  // Weight per personality (0 = locked out, 1 = normal, 2 = preferred).
+  // Only applied when subjectType === 'player'. Manager/coach interviews ignore this.
+  requiresFlags?: string[];
+  // Option only shown if ALL these drama flags are currently active.
 }
 
 export interface InterviewTemplate {
@@ -50,6 +59,7 @@ export interface InterviewTemplate {
   condition?: InterviewCondition;
   prompt: string;         // The question posed by the reporter
   options: InterviewOption[]; // Always exactly 3 options
+  requiresActiveFlag?: string; // Template-level gate: only eligible if this drama flag is active
 }
 
 // A pending interview waiting for the player to respond

@@ -65,6 +65,7 @@ export class InterviewService {
     const context = 'POST_MATCH' as const;
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== context) return false;
+      if (!this.templateFlagGatePassed(t)) return false;
       if (!t.condition || t.condition === 'always') return true;
       if (t.condition === 'pre_playoff' && isPlayoffMatch) return true;
       return false;
@@ -150,6 +151,7 @@ export class InterviewService {
 
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'PRE_MATCH') return false;
+      if (!this.templateFlagGatePassed(t)) return false;
       if (!t.condition || t.condition === 'always') return true;
       if (t.condition === 'pre_playoff' && isPlayoffMatch) return true;
       if (t.condition === 'rivalry_active' && hasRivalry) return true;
@@ -204,6 +206,7 @@ export class InterviewService {
     // Pick matching template based on trigger reason
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'CRISIS') return false;
+      if (!this.templateFlagGatePassed(t)) return false;
       if (t.condition === 'loss_streak_3plus' && lossStreak >= 3) return true;
       if (t.condition === 'drama_active' && (anyLowMorale || hasCrisisFlag)) return true;
       if (t.condition === 'sponsor_trust_low' && hasSponsorFlag) return true;
@@ -295,6 +298,23 @@ export class InterviewService {
       useGameStore.setState({ pendingDramaBoost: current + dramaBoost });
     }
 
+    // 4.5. Set/clear drama flags from interview choice
+    if (effects.setsFlags?.length) {
+      const latestForFlags = useGameStore.getState();
+      for (const { key, durationDays } of effects.setsFlags) {
+        const expiryDate = new Date(currentDate);
+        expiryDate.setDate(expiryDate.getDate() + durationDays);
+        const expiresDate = expiryDate.toISOString().slice(0, 10);
+        latestForFlags.setDramaFlag(key, { setDate: currentDate, expiresDate });
+      }
+    }
+    if (effects.clearsFlags?.length) {
+      const latestForFlags = useGameStore.getState();
+      for (const key of effects.clearsFlags) {
+        latestForFlags.clearDramaFlag(key);
+      }
+    }
+
     // 5. Build history entry and commit to slice
     console.log('InterviewService: building history entry...');
     const historyEntry: InterviewHistoryEntry = {
@@ -350,14 +370,21 @@ export class InterviewService {
     return candidates[Math.floor(Math.random() * candidates.length)];
   }
 
+  /** Returns true if the template has no flag gate, or if the required flag is active */
+  private templateFlagGatePassed(template: InterviewTemplate): boolean {
+    if (!template.requiresActiveFlag) return true;
+    const activeFlags = useGameStore.getState().activeFlags;
+    return template.requiresActiveFlag in activeFlags;
+  }
+
   private toPendingInterview(
     template: InterviewTemplate,
     opponentTeamId: string | undefined,
   ): PendingInterview {
     let subjectId: string | undefined;
+    const state = useGameStore.getState();
 
     if (template.subjectType === 'player') {
-      const state = useGameStore.getState();
       const team = state.teams[state.playerTeamId!];
       const playerIds = team?.playerIds ?? [];
       if (playerIds.length > 0) {
@@ -366,14 +393,50 @@ export class InterviewService {
     }
 
     // For player interviews, inject targetPlayerIds on options that have a morale effect
-    const options = template.subjectType === 'player' && subjectId
+    let options = template.subjectType === 'player' && subjectId
       ? template.options.map((opt) => ({
           ...opt,
           effects: opt.effects.morale !== undefined
             ? { ...opt.effects, targetPlayerIds: [subjectId as string] }
             : opt.effects,
         }))
-      : template.options;
+      : [...template.options];
+
+    // For player interviews, filter options by personality weights
+    if (template.subjectType === 'player' && subjectId) {
+      const player = state.players[subjectId];
+      const personality = player?.personality;
+      if (personality) {
+        const filtered = options.filter((opt) => {
+          const weight = opt.personalityWeights?.[personality];
+          return weight === undefined || weight > 0;
+        });
+        // Only apply if at least 2 options survive
+        if (filtered.length >= 2) {
+          options = filtered;
+        }
+      }
+    }
+
+    // Filter options by requiresFlags — only show if ALL required flags are active
+    if (options.some((opt) => opt.requiresFlags?.length)) {
+      const activeFlags = state.activeFlags;
+      options = options.filter((opt) => {
+        if (!opt.requiresFlags?.length) return true;
+        return opt.requiresFlags.every((flag) => flag in activeFlags);
+      });
+      // Fallback: ensure at least 2 options remain
+      if (options.length < 2) {
+        options = template.subjectType === 'player' && subjectId
+          ? template.options.map((opt) => ({
+              ...opt,
+              effects: opt.effects.morale !== undefined
+                ? { ...opt.effects, targetPlayerIds: [subjectId as string] }
+                : opt.effects,
+            }))
+          : [...template.options];
+      }
+    }
 
     return {
       templateId: template.id,

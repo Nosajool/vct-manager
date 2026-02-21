@@ -76,7 +76,7 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         tone: 'TRASH_TALK',
         label: 'We have a score to settle',
         quote: "They know what they did. We haven't forgotten and we're going to remind them of that today on the server.",
-        effects: { hype: 6, rivalryDelta: 8, morale: 3, dramaChance: 15 },
+        effects: { hype: 6, rivalryDelta: 8, morale: 3, dramaChance: 15, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 14 }] },
       },
       {
         tone: 'RESPECTFUL',
@@ -293,6 +293,36 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         label: 'On to the next one',
         quote: "We're not going to dwell on a single result. There are still matches to play and we're focused forward.",
         effects: { morale: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_loss_blame_team',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    condition: 'always',
+    prompt: "That loss was hard to watch. Were you frustrated with how the team performed today?",
+    options: [
+      {
+        tone: 'BLAME_TEAM',
+        label: 'Some players need to step up',
+        quote: "Honestly? There are moments where I feel like I'm doing my part and others aren't. That needs to change.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 1.5, TEAM_FIRST: 0, INTROVERT: 0, STABLE: 0.5 },
+        effects: { morale: -3, dramaChance: 15, setsFlags: [{ key: 'interview_blamed_teammates', durationDays: 21 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It's on all of us",
+        quote: "We all have to be better. Losses like this happen when the whole team isn't executing, myself included.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 1 },
+        effects: { morale: 2, sponsorTrust: 1, fanbase: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "We move on together",
+        quote: "It wasn't our day. Pointing fingers doesn't help. We'll get back to work and fix it as a unit.",
+        effects: { morale: 1 },
       },
     ],
   },
@@ -724,12 +754,14 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         tone: 'CONFIDENT',
         label: 'I was reading the game well',
         quote: "Everything felt natural today. I was making the right calls, hitting my shots, trusting my instincts. These are the days you play for.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, TEAM_FIRST: 0.5, INTROVERT: 0.5, STABLE: 1 },
         effects: { morale: 4, hype: 4, fanbase: 2 },
       },
       {
         tone: 'HUMBLE',
         label: 'The team set me up to succeed',
         quote: "My teammates made my job way easier today. When everyone communicates and plays together like that, it lifts everyone's individual performance.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 4, fanbase: 3, sponsorTrust: 1 },
       },
       {
@@ -825,6 +857,97 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         label: "I have to raise my level",
         quote: "Part of getting out of a slump is being honest with yourself about where you're falling short. I'm looking at my own game hard right now.",
         effects: { morale: 2, fanbase: 2, hype: 2 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // FLAG-CONDITIONAL TEMPLATES (3 templates)
+  // Only surfaced when specific drama flags are active
+  // ==========================================================================
+
+  {
+    id: 'post_loss_igl_blamed',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'interview_blamed_teammates',
+    prompt: "One of your players seemed to imply the game plan was the issue. Is there a communication breakdown between you and your IGL?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'I back my IGL completely',
+        quote: "That player's comments don't reflect the team's view. Our IGL has my full confidence and the team's. We're aligned.",
+        effects: { morale: 2, sponsorTrust: 1, setsFlags: [{ key: 'manager_backed_igl', durationDays: 21 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'We had an internal conversation',
+        quote: "Every team has moments of friction. We addressed it internally and we're past it. I expect better communication from everyone going forward.",
+        effects: { morale: 1, fanbase: 1, dramaChance: 8 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Individual opinions happen in tough times',
+        quote: "Losses can make people say things in the heat of the moment. We don't assign blame publicly. That stays in the room.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_contract_pressure',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'always',
+    prompt: "With contract situations looming for some of your players, how do you keep the focus on winning rather than off-field noise?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We're aligned — extensions will come",
+        quote: "Contract talks are a normal part of team management. My players know they're valued here. We'll handle the business side when the time is right.",
+        effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'org_contract_confidence', durationDays: 14 }] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Focused on results, not contracts',
+        quote: "Contracts are between the org and the players. Right now we're focused on performing. Everything else is noise.",
+        effects: { morale: 1 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: 'We explore all our options',
+        quote: "I won't commit to anything publicly. We evaluate all options, including bringing in the right fit for the team's future.",
+        effects: { morale: -2, fanbase: 1, hype: 1, dramaChance: 10, setsFlags: [{ key: 'org_open_to_trade', durationDays: 21 }] },
+      },
+    ],
+  },
+
+  {
+    id: 'post_rivalry_trash_talk_loss',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'rivalry_active',
+    requiresActiveFlag: 'interview_trash_talked_rival',
+    prompt: "After your comments before the match, this loss must be painful. Any regrets about what you said?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "I stand by every word",
+        quote: "Nothing I said was wrong. Today's result doesn't change how I feel about that team. We'll meet again.",
+        effects: { morale: -5, rivalryDelta: 10, fanbase: 2, setsFlags: [{ key: 'rivalry_scorched_earth', durationDays: 30 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'I should have let the game talk',
+        quote: "In hindsight, the energy was better spent on preparation. Lesson learned. I'll keep my thoughts private going forward.",
+        effects: { morale: 1, fanbase: 2, sponsorTrust: 2, clearsFlags: ['interview_trash_talked_rival'] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Results speak louder than words",
+        quote: "We don't need to revisit what was said. We need to look at our own performance and come back better.",
+        effects: { morale: 2 },
       },
     ],
   },

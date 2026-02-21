@@ -88,6 +88,13 @@ export function evaluateCondition(
     case 'recent_event_count':
       return evaluateRecentEventCount(condition, snapshot);
 
+    // Player archetype checks
+    case 'player_personality':
+      return evaluatePlayerPersonalityCondition(condition, snapshot);
+
+    case 'player_contract_expiring':
+      return evaluatePlayerContractExpiringCondition(condition, snapshot);
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined
@@ -502,4 +509,42 @@ function evaluateRecentEventCount(
     : recentEvents;
 
   return filteredEvents.length >= condition.threshold;
+}
+
+/**
+ * Evaluates player_personality condition
+ * True if any player on the team matches the specified personality archetype
+ */
+function evaluatePlayerPersonalityCondition(
+  condition: DramaCondition,
+  snapshot: DramaGameStateSnapshot
+): boolean {
+  if (!condition.personality) {
+    return false;
+  }
+
+  const teamPlayers = snapshot.players.filter(
+    (p) => p.teamId === snapshot.playerTeamId
+  );
+
+  return teamPlayers.some((p) => p.personality === condition.personality);
+}
+
+/**
+ * Evaluates player_contract_expiring condition
+ * True if any player on the team has yearsRemaining <= contractYearsThreshold (default: 1)
+ */
+function evaluatePlayerContractExpiringCondition(
+  condition: DramaCondition,
+  snapshot: DramaGameStateSnapshot
+): boolean {
+  const threshold = condition.contractYearsThreshold ?? 1;
+
+  const teamPlayers = snapshot.players.filter(
+    (p) => p.teamId === snapshot.playerTeamId
+  );
+
+  return teamPlayers.some(
+    (p) => p.contract != null && p.contract.yearsRemaining <= threshold
+  );
 }

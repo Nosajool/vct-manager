@@ -1,7 +1,7 @@
 // Drama System Types
 // Defines narrative events, conditions, effects, and player/team dynamics
 
-import type { PlayerStats } from './player';
+import type { PlayerContract, PlayerPersonality, PlayerStats } from './player';
 import type { SeasonPhase } from './calendar';
 
 // ============================================================================
@@ -69,6 +69,10 @@ export type DramaConditionType =
   | 'flag_active'
   | 'recent_event_count'
 
+  // Player archetype checks
+  | 'player_personality'       // Player matches a specific personality archetype
+  | 'player_contract_expiring' // Player contract years remaining <= threshold
+
   // Random chance
   | 'random_chance';
 
@@ -110,6 +114,12 @@ export interface DramaCondition {
   // For player-specific conditions
   playerSelector?: PlayerSelector;
   playerId?: string; // Used with 'specific' selector
+
+  // For personality check
+  personality?: PlayerPersonality; // Used with player_personality type
+
+  // For contract expiry check
+  contractYearsThreshold?: number; // Used with player_contract_expiring (default: 1)
 }
 
 // ============================================================================
@@ -309,6 +319,8 @@ export interface DramaGameStateSnapshot {
     stats: PlayerStats;
     morale: number;         // 0-100
     form: number;           // 0-100
+    contract?: PlayerContract | null;
+    personality?: PlayerPersonality;
   }>;
 
   // Recent match results

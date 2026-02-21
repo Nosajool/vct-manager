@@ -1345,4 +1345,438 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // INTERVIEW-BRIDGE EVENTS (5 new events — interview flags → earned drama)
+  // ==========================================================================
+
+  {
+    id: 'igl_shotcalling_questioned',
+    category: 'team_synergy',
+    severity: 'major',
+    title: "IGL's Shot-Calling Under Scrutiny",
+    description: "A player's public comments about the game plan have put the IGL's shot-calling under the spotlight. The locker room is tense.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'interview_blamed_teammates',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 85,
+    cooldownDays: 14,
+    oncePerSeason: false,
+    choices: [
+      {
+        id: 'back_igl',
+        text: 'Back the IGL publicly',
+        description: 'Issue a statement of full confidence in their shot-calling',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'any',
+            delta: 15,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'manager_backed_igl',
+            flagDuration: 21,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_blamed_teammates',
+          },
+        ],
+        outcomeText: "You publicly affirm the IGL's authority. The IGL's confidence returns, though the player who made the comments feels sidelined.",
+      },
+      {
+        id: 'closed_door_meeting',
+        text: 'Call a closed-door meeting',
+        description: 'Address the tension privately with everyone present',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'interview_blamed_teammates',
+          },
+          {
+            target: 'trigger_event',
+            eventTemplateId: 'synergy_comms_breakdown',
+          },
+        ],
+        outcomeText: 'You bring the team together for a frank conversation. The air clears somewhat, though underlying tensions still simmer.',
+      },
+      {
+        id: 'reduce_igl_authority',
+        text: 'Quietly reduce IGL authority',
+        description: 'Shift more mid-round calling to the coach',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'any',
+            delta: -15,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -10,
+          },
+          {
+            target: 'set_flag',
+            flag: 'igl_authority_undermined',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: 'You shift calling duties away from the IGL. They notice immediately. The team dynamic grows fragile.',
+        triggersEventId: 'synergy_leadership_vacuum',
+      },
+    ],
+    escalateDays: 14,
+    escalationTemplateId: 'synergy_leadership_vacuum',
+  },
+
+  {
+    id: 'contract_year_ultimatum',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Contract Year Ultimatum',
+    description: "{playerName}'s agent has called mid-season citing market value and demanding a contract extension — at double the current salary.",
+    conditions: [
+      {
+        type: 'player_contract_expiring',
+        contractYearsThreshold: 1,
+      },
+      {
+        type: 'player_personality',
+        personality: 'FAME_SEEKER',
+      },
+      {
+        type: 'player_stat_above',
+        stat: 'mechanics',
+        threshold: 70,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 70,
+    cooldownDays: 21,
+    choices: [
+      {
+        id: 'extend_premium',
+        text: 'Extend at a premium',
+        description: 'Sign them to a new contract above market rate',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 20,
+          },
+          {
+            target: 'team_budget',
+            delta: -6000,
+          },
+          {
+            target: 'set_flag',
+            flag: 'contract_extended_{playerId}',
+            flagDuration: 60,
+          },
+        ],
+        outcomeText: '{playerName} signs a premium extension. They are locked in and energised. It cost you, but the roster is stable.',
+      },
+      {
+        id: 'promise_renegotiation',
+        text: 'Promise to renegotiate after the tournament',
+        description: 'Buy time — link extension talks to performance',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'contract_extension_promised_{playerId}',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: '{playerName} reluctantly agrees to wait. Their focus is divided, and every loss now carries extra weight.',
+      },
+      {
+        id: 'explore_trade_value',
+        text: 'Quietly explore trade value',
+        description: 'See what the market looks like before committing',
+        effects: [
+          {
+            target: 'set_flag',
+            flag: 'player_on_market_{playerId}',
+            flagDuration: 21,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+        ],
+        outcomeText: 'You discreetly probe the transfer market. If word leaks, the fallout could be severe.',
+        triggersEventId: 'pressure_rival_poaching',
+      },
+    ],
+  },
+
+  {
+    id: 'silent_tilt',
+    category: 'practice_burnout',
+    severity: 'major',
+    title: 'Silent Tilt',
+    description: 'No tweets. No complaints. But your assistant coach flags it: {playerName} seems mentally checked out. Stats are quietly declining.',
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'INTROVERT',
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 40,
+        playerSelector: 'any',
+      },
+      {
+        type: 'player_form_below',
+        threshold: 50,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 65,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'schedule_psychologist',
+        text: 'Schedule a sports psychologist',
+        description: 'Bring in professional mental health support',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'team_budget',
+            delta: -500,
+          },
+          {
+            target: 'set_flag',
+            flag: 'psych_support_given_{playerId}',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: '{playerName} quietly opens up in sessions. It takes time, but they begin to find their footing again.',
+      },
+      {
+        id: 'give_week_off',
+        text: 'Give them a week off practice',
+        description: 'Reduce training load and let them decompress',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'reduced_training_time',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: '{playerName} appreciates the space. They return calmer, if slightly rustier mechanically.',
+      },
+      {
+        id: 'push_harder',
+        text: 'Push harder — they will snap out of it',
+        description: 'Increase pressure to force a breakthrough',
+        effects: [
+          {
+            target: 'random_chance',
+          } as never,
+          {
+            target: 'set_flag',
+            flag: 'burnout_risk_high',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You demand more. Sometimes pressure breeds clarity — and sometimes it breaks people.',
+      },
+    ],
+  },
+
+  {
+    id: 'rival_trash_talk_escalation',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Trash Talk Escalation',
+    description: 'The rival team responded publicly to your pre-match comments. Social media is buzzing and both fanbases are fired up.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'interview_trash_talked_rival',
+      },
+    ],
+    probability: 90,
+    cooldownDays: 21,
+    choices: [
+      {
+        id: 'respond_aggressively',
+        text: 'Fire back harder',
+        description: 'Escalate the war of words',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'rivalry_scorched_earth',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: 'You double down and the internet explodes. Your fans are hyped — but if you lose the next match, the fall will be hard.',
+      },
+      {
+        id: 'stay_classy',
+        text: 'Stay classy, no comment',
+        description: 'Take the high road and focus on the game',
+        effects: [
+          {
+            target: 'clear_flag',
+            flag: 'interview_trash_talked_rival',
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 2,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'You rise above it. Some fans are disappointed, but the team feels more focused. The narrative dies down.',
+      },
+      {
+        id: 'meme_it',
+        text: 'Meme it — laugh it off',
+        description: 'Turn the situation into content',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'rivalry_scorched_earth',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'Your social team turns the rival response into comedy gold. Fanbase surges. The rival org is not amused.',
+      },
+    ],
+  },
+
+  {
+    id: 'rebuild_or_reload',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Rebuild or Reload?',
+    description: "After another early exit, your assistant coach sends you a private message: \"This roster has peaked. We need to think hard about the future.\"",
+    conditions: [
+      {
+        type: 'team_chemistry_below',
+        threshold: 45,
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 55,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'commit_to_roster',
+        text: 'Commit to the current roster',
+        description: 'Reaffirm belief in the team and push forward together',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'management_committed_to_roster',
+            flagDuration: 60,
+          },
+        ],
+        outcomeText: 'You send a message of full commitment. Players rally. Whether this was the right call will be answered on the server.',
+      },
+      {
+        id: 'evaluate_moves',
+        text: 'Begin evaluating roster moves',
+        description: 'Open the door to transfers and roster changes',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'transfer_window_scouting',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: 'You acknowledge the assistant coach\'s concerns. Uncertainty spreads through the roster — everyone wonders if they\'re on the chopping block.',
+      },
+      {
+        id: 'fire_assistant_coach',
+        text: 'Fire the assistant coach',
+        description: 'Remove the dissenting voice from the staff',
+        effects: [
+          {
+            target: 'team_budget',
+            delta: -3000,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -3,
+          },
+        ],
+        outcomeText: 'You let the assistant coach go. The message to the team is clear, but losing experienced staff always has a cost.',
+      },
+    ],
+  },
 ];

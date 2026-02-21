@@ -252,6 +252,8 @@ export class DramaService {
       stats: player.stats,
       morale: player.morale,
       form: player.form,
+      contract: player.contract,
+      personality: player.personality,
     }));
 
     // Build drama state for snapshot
