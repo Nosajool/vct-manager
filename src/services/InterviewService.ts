@@ -93,12 +93,16 @@ export class InterviewService {
       'comeback_lower_bracket_run', 'grand_final_post_win',
       // Opponent-awareness (Phase 3)
       'post_upset_momentum_shift', 'post_rivalry_win_elimination', 'post_lower_bracket_survival_player',
+      // Team identity (Phase 4b)
+      'post_resilient_lower_bracket', 'post_star_carry_spotlight',
     ];
     const lossIds = [
       'post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination',
       'post_coach_loss', 'post_player_loss',
       // Bracket-aware (Phase 1)
       'lower_bracket_dropped', 'grand_final_post_loss',
+      // Team identity (Phase 4b)
+      'post_fragile_elimination',
     ];
 
     const relevant = candidates.filter((t) =>
