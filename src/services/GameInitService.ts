@@ -316,7 +316,7 @@ export class GameInitService {
       .sort((a, b) => b.vlrRating - a.vlrRating); // Best players first
 
     // Take top players from each region as free agents
-    const freeAgentsPerRegion = 40; // Limit per region to keep pool manageable
+    const freeAgentsPerRegion = 500; // Limit per region to keep pool manageable
     const regionCounts: Record<Region, number> = {
       Americas: 0,
       EMEA: 0,
