@@ -3724,4 +3724,1107 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // ARC SYSTEM — ENTRY EVENTS (6 events)
+  // Sets primary arc flags. All minor (no choices), player-triggered.
+  // Arc flag conventions:
+  //   Primary (30-90 days, one per player): arc_redemption_{playerId},
+  //     arc_prodigy_{playerId}, arc_contender_{playerId},
+  //     arc_fallen_{playerId}, arc_veteran_legacy_{playerId},
+  //     arc_identity_{playerId}
+  // ==========================================================================
+
+  {
+    id: 'arc_entry_redemption',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Redemption Arc Begins',
+    description: '{playerName} is carrying the weight of recent losses personally. You can see it in how they carry themselves — they need something to prove.',
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'FAME_SEEKER',
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 21,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_redemption_{playerId}',
+        flagDuration: 45,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -8,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_entry_prodigy',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Prodigy Arc Recognized',
+    description: 'The hype around {playerName} has reached a tipping point. Analysts, fans, and opposing coaches are all tracking them. This is no longer a fluke — this is a rising star.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'prodigy_hype_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 70,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_prodigy_{playerId}',
+        flagDuration: 45,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 8,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_entry_contender',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Contender Arc Emerges',
+    description: '{playerName} has been one of the most consistent performers through this winning run. The narrative around them is shifting — they\'re no longer just a solid player, they\'re someone expected to carry.',
+    conditions: [
+      {
+        type: 'team_win_streak',
+        streakLength: 3,
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'upper',
+      },
+      {
+        type: 'player_morale_above',
+        threshold: 65,
+        playerSelector: 'star_player',
+      },
+    ],
+    probability: 55,
+    cooldownDays: 21,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_contender_{playerId}',
+        flagDuration: 60,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'star_player',
+        delta: 10,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_entry_fallen',
+    category: 'player_ego',
+    severity: 'minor',
+    title: 'Fallen Arc Sets In',
+    description: '{playerName} used to be the player everyone pointed to. Lately the numbers have dropped, the confidence is gone, and you can see they feel it. Something needs to shift before this gets worse.',
+    conditions: [
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 50,
+        playerSelector: 'star_player',
+      },
+    ],
+    probability: 45,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_fallen_{playerId}',
+        flagDuration: 30,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'star_player',
+        delta: -8,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_entry_veteran_legacy',
+    category: 'external_pressure',
+    severity: 'minor',
+    title: 'Veteran Legacy Arc Activated',
+    description: 'The tournament pressure has collided with everything {playerName} has been building toward. Everyone who\'s followed their career is watching. This feels like a final-chapter moment.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'veteran_championship_pact',
+      },
+      {
+        type: 'elimination_risk',
+      },
+    ],
+    probability: 80,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_veteran_legacy_{playerId}',
+        flagDuration: 60,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -5,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_entry_identity',
+    category: 'player_ego',
+    severity: 'minor',
+    title: 'Identity Crisis Arc',
+    description: '{playerName} looks lost right now — not from lack of effort but from lack of clarity. Their role, their voice on the team, their sense of where they fit: all of it feels uncertain.',
+    conditions: [
+      {
+        type: 'team_chemistry_below',
+        threshold: 50,
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 55,
+        playerSelector: 'any',
+      },
+      {
+        type: 'random_chance',
+        chance: 30,
+      },
+    ],
+    probability: 30,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_identity_{playerId}',
+        flagDuration: 30,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -5,
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // ARC SYSTEM — PROGRESSION EVENTS (9 events)
+  // Modifies existing arcs via modifier flags. Mix of minor and major.
+  // Modifier flags (14-30 days): arc_mod_momentum_{playerId},
+  //   arc_mod_fragile_{playerId}, arc_mod_resilient_{playerId},
+  //   arc_mod_underdog_{playerId}, arc_mod_clutch_{playerId}
+  // ==========================================================================
+
+  {
+    id: 'arc_momentum_surge',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Momentum Surge',
+    description: '{playerName}\'s redemption run has hit its stride. The wins are stacking up and you can see the weight lifting off them. Something has clicked.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_redemption_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 60,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_momentum_{playerId}',
+        flagDuration: 14,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 10,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_fragile_crack',
+    category: 'player_ego',
+    severity: 'minor',
+    title: 'Contender Shows Cracks',
+    description: '{playerName} has been handling the expectation of being the team\'s key performer, but back-to-back losses are exposing the pressure underneath. The confident exterior has started to slip.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_contender_{playerId}',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 55,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_fragile_{playerId}',
+        flagDuration: 14,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -10,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_resilience_forged',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Resilience Forged Under Fire',
+    description: '{playerName} was in a fragile headspace, and this was an elimination match. They could have cracked. They didn\'t. Something hardened in them today.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_mod_fragile_{playerId}',
+      },
+      {
+        type: 'elimination_risk',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_resilient_{playerId}',
+        flagDuration: 21,
+      },
+      {
+        target: 'clear_flag',
+        flag: 'arc_mod_fragile_{playerId}',
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 15,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_underdog_awakening',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Underdog Awakening',
+    description: '{playerName} has been written off by most of the scene. But these recent wins have reignited something. They\'re not playing with desperation anymore — they\'re playing with defiance.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_fallen_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 55,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_underdog_{playerId}',
+        flagDuration: 21,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 10,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_clutch_reputation',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Clutch Reputation Established',
+    description: '{playerName} keeps showing up in the moments that define matches. It\'s not luck — it\'s a pattern. The team has started looking to them when things are on the line.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_contender_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 3,
+      },
+    ],
+    probability: 45,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_clutch_{playerId}',
+        flagDuration: 21,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 8,
+      },
+      {
+        target: 'team_chemistry',
+        delta: 5,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_contender_to_fallen',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Contender Falls',
+    description: '{playerName} built real expectations this tournament and now three straight losses have eroded all of it. The team is struggling and so is their standing within it. How you handle this moment will define whether they have a path back.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_contender_{playerId}',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 3,
+      },
+    ],
+    probability: 70,
+    cooldownDays: 21,
+    choices: [
+      {
+        id: 'acknowledge_the_fall',
+        text: 'Have an honest conversation with them',
+        description: 'Acknowledge the slump openly and reset expectations together',
+        effects: [
+          {
+            target: 'clear_flag',
+            flag: 'arc_contender_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_fallen_{playerId}',
+            flagDuration: 30,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: '{playerName} appreciates the honesty. The standards conversation hurts, but they\'d rather have clarity than be strung along. They\'re not done — they just need to rebuild.',
+      },
+      {
+        id: 'protect_their_confidence',
+        text: 'Shield them from the pressure',
+        description: 'Keep expectations publicly high — protect their confidence privately',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_fragile_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'You hold the public line on their potential. Internally, {playerName} senses the gap between what\'s being said and what\'s being felt. The pressure hasn\'t disappeared — it\'s just been postponed.',
+      },
+      {
+        id: 'redistribute_burden',
+        text: 'Redistribute the team burden',
+        description: 'Take pressure off by elevating other players\' roles',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'arc_contender_{playerId}',
+          },
+        ],
+        outcomeText: 'The team responds well to the restructure. {playerName} feels demoted even if nothing official has changed. The team is more balanced, but something personal has shifted for them.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_prodigy_overexposure',
+    category: 'player_ego',
+    severity: 'minor',
+    title: 'Prodigy Overexposure',
+    description: '{playerName} has been the story all tournament. But losses have a way of flipping narratives fast. The same media building them up is now picking apart every round. The weight of expectation is showing.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_prodigy_{playerId}',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 1,
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 60,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 50,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'set_flag',
+        flag: 'arc_mod_fragile_{playerId}',
+        flagDuration: 14,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -12,
+      },
+    ],
+  },
+
+  {
+    id: 'arc_veteran_final_chapter',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Veteran\'s Final Chapter',
+    description: '{playerName} is still in the upper bracket, still contending, and everyone knows what this tournament represents for their career. The final chapter framing has taken over the conversation. You need to decide how to position it.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_veteran_legacy_{playerId}',
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'upper',
+      },
+    ],
+    probability: 65,
+    cooldownDays: 21,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'lean_into_legacy',
+        text: 'Lean into the legacy narrative',
+        description: 'Embrace the final chapter framing publicly',
+        effects: [
+          {
+            target: 'set_flag',
+            flag: 'interview_veteran_legacy_hinted',
+            flagDuration: 30,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+        ],
+        outcomeText: '{playerName} steps into the narrative with full conviction. The fanbase responds with intensity — but some teammates feel they\'re playing in someone else\'s story now. The energy is electric and fragile in equal measure.',
+      },
+      {
+        id: 'redirect_to_team',
+        text: 'Redirect the story to the team',
+        description: 'Deflect individual narrative, emphasize collective goal',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -3,
+          },
+        ],
+        outcomeText: '{playerName} publicly frames the tournament as a team mission. They carry that unsaid private weight themselves. The team bonds over the shared goal, and the legacy narrative recedes — for now.',
+      },
+      {
+        id: 'let_it_unfold',
+        text: 'Let it unfold naturally',
+        description: 'Don\'t position anything — just compete',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_momentum_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: '{playerName} plays without declared intent. The performances will say what words won\'t. There\'s something freeing about it — and dangerously compelling to watch.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_identity_clarification',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Identity Clarified',
+    description: '{playerName} has found their footing. The stretch of uncertainty is ending — their role on the team is clearer, their confidence is returning, and you can see it in how they move in practice.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_identity_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'clear_flag',
+        flag: 'arc_identity_{playerId}',
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 15,
+      },
+      {
+        target: 'team_chemistry',
+        delta: 5,
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // ARC SYSTEM — RESOLUTION EVENTS (5 events)
+  // Major events with meaningful choices that close or transform arcs.
+  // ==========================================================================
+
+  {
+    id: 'arc_redemption_moment',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'Redemption Within Reach',
+    description: '{playerName} has built real momentum through this tournament while carrying a redemption narrative. They\'re in the upper bracket, performing at their best, and the moment to close the story is close. They come to you privately: do they own the arc, or keep their head down?',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_redemption_{playerId}',
+      },
+      {
+        type: 'flag_active',
+        flag: 'arc_mod_momentum_{playerId}',
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'upper',
+      },
+    ],
+    probability: 75,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'claim_the_arc',
+        text: 'Tell them to own it',
+        description: 'Encourage them to publicly claim the redemption moment',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'arc_redemption_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_contender_{playerId}',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: '{playerName} steps forward with the conviction that something real has changed. The fanbase and media pick it up immediately. The redemption arc closes — and a contender arc opens. The story is just getting interesting.',
+      },
+      {
+        id: 'stay_humble',
+        text: 'Tell them to stay quiet and keep performing',
+        description: 'The work speaks — don\'t let the narrative distract',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_resilient_{playerId}',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: '{playerName} keeps their head down. The arc doesn\'t get its public moment — but their teammates respect the quiet conviction. Something is being built here that\'s more durable than a media narrative.',
+      },
+      {
+        id: 'credit_the_team',
+        text: 'Redirect — frame it as a team triumph',
+        description: 'Deflect the personal narrative onto collective achievement',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 10,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 4,
+          },
+        ],
+        outcomeText: '{playerName} channels their redemption energy into team pride. It\'s generous — maybe too generous. The arc doesn\'t close cleanly. Something personal is left unresolved, but the team is stronger for their selflessness.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_contender_championship_test',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'Contender\'s Championship Test',
+    description: '{playerName} has a clutch reputation and they\'re in the grand final. Every contender arc builds to a moment like this. The question isn\'t whether they belong here — it\'s whether they can finish it.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_contender_{playerId}',
+      },
+      {
+        type: 'flag_active',
+        flag: 'arc_mod_clutch_{playerId}',
+      },
+      {
+        type: 'bracket_position',
+        bracketPosition: 'upper',
+      },
+    ],
+    probability: 80,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'embrace_the_moment',
+        text: 'Tell them this is what they\'ve been built for',
+        description: 'Full confidence — put the weight of the moment on their shoulders',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_momentum_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: '{playerName} takes the weight with both hands. You can see it in warm-up — they\'re locked in like never before. Win or lose, they\'re going to make this moment count.',
+      },
+      {
+        id: 'distribute_the_pressure',
+        text: 'Tell them it\'s a team effort — don\'t carry it alone',
+        description: 'Lower individual stakes to keep them clear-headed',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+        ],
+        outcomeText: 'You ease the individual burden. {playerName} plays free — and that freedom transfers through the whole team. The contender arc won\'t get its singular heroic moment, but the performance might be even better for it.',
+      },
+      {
+        id: 'acknowledge_the_stakes',
+        text: 'Be honest — this is the moment that defines the arc',
+        description: 'Name what this match means clearly and trust them to handle it',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'interview_veteran_legacy_hinted',
+            flagDuration: 21,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'The conversation is direct and serious. {playerName} thanks you for not softening it. They walk into warm-up with clear eyes — and the weight of every match they\'ve played to get here sitting visibly on their shoulders.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_fallen_pivot',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Fallen Star at a Crossroads',
+    description: '{playerName} fought back from being written off and has built real resilience through this run. Now they\'re at a decision point: reinvent their identity on this team or consider whether a change of scenery is what they actually need.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_fallen_{playerId}',
+      },
+      {
+        type: 'flag_active',
+        flag: 'arc_mod_resilient_{playerId}',
+      },
+    ],
+    probability: 70,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'reinvent_role',
+        text: 'Build a new role for them here',
+        description: 'Work together to define a new identity within the team',
+        effects: [
+          {
+            target: 'clear_flag',
+            flag: 'arc_fallen_{playerId}',
+          },
+          {
+            target: 'clear_flag',
+            flag: 'arc_mod_resilient_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_identity_{playerId}',
+            flagDuration: 30,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+        ],
+        outcomeText: '{playerName} commits to the rebuild. It\'s not the version of themselves they imagined — but it\'s real, and it\'s theirs. The team has a player who chose to stay and fight for something. That matters.',
+      },
+      {
+        id: 'explore_options',
+        text: 'Acknowledge they might need a fresh start',
+        description: 'Open the conversation about a move elsewhere',
+        effects: [
+          {
+            target: 'set_flag',
+            flag: 'poaching_decision_pending_{playerId}',
+            flagDuration: 21,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+        ],
+        outcomeText: 'The conversation is respectful and honest. {playerName} doesn\'t feel pushed out — they feel seen. But the rest of the team senses something shifted. The uncertainty is real now.',
+      },
+      {
+        id: 'challenge_them_to_prove_it',
+        text: 'Challenge them — prove they belong here',
+        description: 'Raise the competitive standard rather than managing around it',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_underdog_{playerId}',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: 'The challenge stings. {playerName} is quiet in the days that follow — but practice intensity picks up. Something in them has decided to answer instead of walk away.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_prodigy_breakout',
+    category: 'breakthrough',
+    severity: 'major',
+    title: 'Prodigy Breakout Moment',
+    description: '{playerName} has strung together three straight wins while carrying a prodigy arc. The scene is watching closely. This is the moment where the narrative either crystallizes into something real or starts to fracture under scrutiny.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_prodigy_{playerId}',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 3,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'own_the_spotlight',
+        text: 'Tell them to embrace the moment',
+        description: 'Full send — let them step into the spotlight they\'ve earned',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_momentum_{playerId}',
+            flagDuration: 21,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'arc_prodigy_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_contender_{playerId}',
+            flagDuration: 45,
+          },
+        ],
+        outcomeText: '{playerName} steps forward and the room shifts around them. They\'ve crossed the threshold from prodigy to contender. Some teammates feel the change immediately. The prodigy arc is over — something bigger has started.',
+      },
+      {
+        id: 'stay_hungry',
+        text: 'Tell them the work isn\'t finished',
+        description: 'Keep them locked in — the prodigy phase isn\'t over yet',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 3,
+          },
+        ],
+        outcomeText: '{playerName} takes the advice seriously. No celebration, no grand declaration. The prodigy arc extends — deepening rather than resolving. There\'s something more dangerous being built here.',
+      },
+      {
+        id: 'protect_from_overexposure',
+        text: 'Limit their media exposure — protect the development',
+        description: 'Shield them from the hype cycle and keep the focus on performance',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'prodigy_hype_{playerId}',
+          },
+          {
+            target: 'player_stat',
+            stat: 'mechanics',
+            effectPlayerSelector: 'triggering',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'You run interference on the media cycle. {playerName} notices the protection and focuses entirely on the game. The hype fades slightly — and they quietly get better because of it.',
+      },
+    ],
+  },
+
+  {
+    id: 'arc_veteran_legacy_decision',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'The Legacy Decision',
+    description: '{playerName} has been riding a momentum wave through this tournament while carrying the weight of everything their career has built. Win or lose, conversations about next season are coming. They want to have the real one with you now.',
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'arc_veteran_legacy_{playerId}',
+      },
+      {
+        type: 'flag_active',
+        flag: 'arc_mod_momentum_{playerId}',
+      },
+    ],
+    probability: 75,
+    cooldownDays: 30,
+    oncePerSeason: true,
+    choices: [
+      {
+        id: 'commit_to_one_more_year',
+        text: 'Commit to extending the journey together',
+        description: 'Tell them you want them back and the chapter isn\'t finished',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'veteran_championship_pact',
+            flagDuration: 90,
+          },
+        ],
+        outcomeText: 'The room feels different after the conversation. {playerName} carries themselves with renewed purpose — not desperation, conviction. The rest of the team picks up on it. This chapter isn\'t over.',
+      },
+      {
+        id: 'honor_their_decision',
+        text: 'Let them decide on their own terms',
+        description: 'Give them full autonomy over the legacy question',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'poaching_decision_pending_{playerId}',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: 'You tell {playerName} the decision belongs to them entirely. They appreciate the respect. The rest of the team doesn\'t know what was discussed — and that ambiguity has a weight of its own.',
+      },
+      {
+        id: 'make_it_about_the_team',
+        text: 'Redirect the conversation to this tournament first',
+        description: 'Table the legacy talk — focus on winning now',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'interview_lower_bracket_narrative',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: 'You close the future conversation and bring everything back to now. {playerName} respects the discipline. For the next few matches, the legacy question goes quiet — and both of you feel lighter for it.',
+      },
+    ],
+  },
 ];

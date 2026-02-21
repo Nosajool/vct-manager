@@ -1658,6 +1658,331 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // ARC-AWARE INTERVIEW TEMPLATES (Phase 2 — 10 templates)
+  // All gated by requiresActiveFlag using arc flag conventions.
+  // Arc flags: arc_redemption_{playerId}, arc_prodigy_{playerId},
+  //   arc_contender_{playerId}, arc_fallen_{playerId},
+  //   arc_veteran_legacy_{playerId}, arc_identity_{playerId}
+  // Modifiers: arc_mod_momentum_{playerId}, arc_mod_fragile_{playerId},
+  //   arc_mod_resilient_{playerId}, arc_mod_underdog_{playerId},
+  //   arc_mod_clutch_{playerId}
+  // ==========================================================================
+
+  {
+    id: 'pre_arc_redemption_push',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'pre_playoff',
+    requiresActiveFlag: 'arc_redemption_{playerId}',
+    prompt: "You've spoken about wanting to prove yourself this season. With the playoffs here, does that motivation feel like fuel — or pressure?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "This is exactly what I needed",
+        quote: "I've been waiting for this. The regular season built toward something and I feel it. Pressure turns into fuel when you believe in what you're doing — and right now I believe completely.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 1 },
+        effects: { morale: 4, hype: 4, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I try not to think about it that way",
+        quote: "Honestly, I try not to frame it as proving anything. When you play for validation you make bad decisions. I just want to play the best version of my game and let that be enough.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'll show you when I play",
+        quote: "I'd rather not talk about what I need to prove. The match is where that conversation happens. Everything else is just noise until the server goes live.",
+        personalityWeights: { INTROVERT: 2.5, STABLE: 1, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 2, hype: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_arc_fragile_honesty',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    condition: 'loss_streak_2plus',
+    requiresActiveFlag: 'arc_mod_fragile_{playerId}',
+    prompt: "You've had a difficult stretch and this was another tough result. There's a visible weight on you right now. How are you actually doing?",
+    options: [
+      {
+        tone: 'BLAME_SELF',
+        label: "I'm not where I need to be",
+        quote: "I won't hide it. I'm not performing the way this team needs. I know what I'm capable of and I'm not hitting it right now. That's on me to fix and I'm working on it.",
+        personalityWeights: { STABLE: 2, TEAM_FIRST: 1.5, INTROVERT: 1, BIG_STAGE: 0.5, FAME_SEEKER: 0.5 },
+        effects: { morale: 2, fanbase: 3, hype: 2, setsFlags: [{ key: 'arc_mod_resilient_{playerId}', durationDays: 7 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm going through something but I'm still here",
+        quote: "It's been a rough stretch. I'm not going to pretend otherwise. But I keep showing up because this team deserves that from me. I trust the process — I've just got to keep at it.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 2, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Focus on the team, not me",
+        quote: "I appreciate the question but this isn't about me. The team needs better results and I need to contribute more to that. What's going on inside? That stays private.",
+        personalityWeights: { INTROVERT: 3, TEAM_FIRST: 1, STABLE: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_arc_contender_expectations',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'elimination_risk',
+    requiresActiveFlag: 'arc_contender_{playerId}',
+    prompt: "Your team came in with championship expectations. Now you're one loss from going home. How do you manage expectations when the gap between narrative and reality is this sharp?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Expectations don't change — we deliver today",
+        quote: "We don't renegotiate standards because the path got harder. This team came here to win a championship and we're still capable of doing that. Today starts that answer.",
+        effects: { hype: 4, morale: 4, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We refocus on what we can control",
+        quote: "Expectations are conversation for the offseason. Right now there's one match in front of us and we're going to pour everything into it. The narrative takes care of itself if we perform.",
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 2 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I set expectations — it's on me to back them up",
+        quote: "I was vocal about what I believed this team could achieve. That pressure lives with me as the manager. My players shouldn't feel that weight today. I'll carry it — they just need to compete.",
+        effects: { fanbase: 4, sponsorTrust: 2, morale: 3 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_arc_momentum_confidence',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    condition: 'win_streak_2plus',
+    requiresActiveFlag: 'arc_mod_momentum_{playerId}',
+    prompt: "You've been in outstanding form. There's a real feeling right now that something special is happening. What does this stretch feel like from the inside?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Everything is clicking right now",
+        quote: "Honestly? I feel unstoppable. I know that sounds like a lot but every decision I'm making is the right one. I'm in a rhythm and I want to protect it by not overthinking it.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { morale: 4, hype: 5, fanbase: 3, setsFlags: [{ key: 'arc_mod_momentum_{playerId}', durationDays: 7 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm focused on not wasting it",
+        quote: "When form hits like this, the worst thing you can do is talk about it. I just want to stay in the moment and keep delivering. The team is counting on this version of me right now.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'm just playing my game",
+        quote: "I haven't changed anything. Same prep, same mindset. I just try to play as simply as possible and trust that my reads are right. When you stop second-guessing yourself, things start clicking.",
+        personalityWeights: { INTROVERT: 2, STABLE: 2, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
+        effects: { morale: 3, hype: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_arc_underdog_chip',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'always',
+    requiresActiveFlag: 'arc_mod_underdog_{playerId}',
+    prompt: "Not many people expected you to still be here. Has that changed how you think about yourself — or this tournament?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "The doubt was the best thing for me",
+        quote: "Everyone who counted us out? I've kept a list. Not out of bitterness — out of gratitude. You needed that to wake something up in me. I play differently when no one believes in me.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, TEAM_FIRST: 0.5, INTROVERT: 0 },
+        effects: { morale: 4, hype: 5, fanbase: 2, rivalryDelta: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I stopped caring about what others expect",
+        quote: "At a certain point you let go of the outside narrative and play for yourself and your teammates. That was freeing. I'm not trying to prove anyone wrong — I'm just here to compete.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I try not to focus on other people's narratives",
+        quote: "The expectations others have for me are noise. I don't play for predictions or rankings. I play because I want to win. Everything else is irrelevant the moment the match starts.",
+        personalityWeights: { INTROVERT: 2.5, STABLE: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 3 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_arc_resilient_pride',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'lower_bracket',
+    requiresActiveFlag: 'arc_mod_resilient_{playerId}',
+    prompt: "You've watched one of your players come back from real adversity through this tournament run. What have you seen in them that the stats don't capture?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "Their character showed when things were hardest",
+        quote: "The numbers will never tell you what it took for them to keep showing up when everything was against them. That kind of mental strength — you can't coach it. I'm incredibly proud of who they've been through this.",
+        effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "I always believed they'd find this version of themselves",
+        quote: "I never stopped believing in them, even when it looked rough from the outside. The player I've seen in this tournament is the one I signed up for. They've finally given themselves permission to be that.",
+        effects: { morale: 5, hype: 3, fanbase: 3 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Let them tell that story — it's not mine to tell",
+        quote: "I'm not going to narrate their journey for them. What they've done through this tournament has been remarkable and they deserve to own it entirely. Ask them.",
+        effects: { morale: 3, fanbase: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_arc_prodigy_pressure',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'pre_playoff',
+    requiresActiveFlag: 'arc_prodigy_{playerId}',
+    prompt: "Everyone has been calling you the next big thing since this tournament started. Heading into a playoff match — does the label help or does it start to feel like a weight?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "I want to live up to it and then some",
+        quote: "I've heard the comparisons and the predictions and honestly? I want to exceed every single one of them. The label is motivation. Let people expect great things — I'll deliver them.",
+        personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { morale: 4, hype: 5, fanbase: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I try not to think about what people call me",
+        quote: "Prodigy, breakout star — whatever. Labels come and go. What matters is what I do in the rounds. I just focus on competing and let others write the story.",
+        personalityWeights: { TEAM_FIRST: 1.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "It's noise I've learned to tune out",
+        quote: "Early on it got in my head a little, but I've learned to turn the noise off. My process is the same today as it was in scrims last month. The stakes don't change the preparation.",
+        personalityWeights: { INTROVERT: 2, STABLE: 2, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 3, hype: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_arc_veteran_legacy_focus',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'grand_final',
+    requiresActiveFlag: 'arc_veteran_legacy_{playerId}',
+    prompt: "You've been chasing something like this for a long time. Standing at the grand final — what does this moment feel like compared to everything that came before?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Everything I've built has led here",
+        quote: "Every tournament, every season, every time I had to start over — it all pointed to a moment like this. I'm not nervous. I'm grateful. And I'm going to make sure it counts.",
+        personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 1, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { morale: 5, hype: 6, fanbase: 4, setsFlags: [{ key: 'interview_veteran_legacy_hinted', durationDays: 21 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm trying not to make it bigger than the match",
+        quote: "You don't want to be so absorbed in the weight of the moment that you forget to actually compete. I'm aware of what this means, but right now the only thing that matters is this match.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, BIG_STAGE: 0.5, FAME_SEEKER: 0 },
+        effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'll process it after. Right now I just want to play",
+        quote: "The career retrospective can wait until after the trophy is decided. I've spent a lot of years getting here and I'm not going to let the emotion of the moment take me out of competing. We win first. Then we reflect.",
+        personalityWeights: { INTROVERT: 2, STABLE: 2, TEAM_FIRST: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0 },
+        effects: { morale: 4, hype: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_arc_fallen_reflection',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    condition: 'loss_streak_2plus',
+    requiresActiveFlag: 'arc_fallen_{playerId}',
+    prompt: "This has been a difficult stretch for you personally. Some are saying this might not be the same player we saw a year ago. How do you respond to that?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "They're going to be wrong",
+        quote: "Anyone writing my career summary right now is going to have to update it. I know who I am and what I'm capable of. This stretch isn't the definition — it's a detour. I'll get back to where I belong.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { morale: 3, hype: 3, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm being honest with myself about where I'm at",
+        quote: "I'm not going to argue with the results. I haven't been playing well enough. But I've been through hard patches before and I know what it takes to come out the other side. I'm still fighting.",
+        personalityWeights: { TEAM_FIRST: 1.5, STABLE: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "They're not wrong — and that's going to change",
+        quote: "The form isn't there right now. I know it, the team knows it, and apparently the whole scene knows it. I'm not going to defend a performance level I haven't been hitting. But this version of me isn't the final version.",
+        personalityWeights: { STABLE: 2, TEAM_FIRST: 1.5, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 2, fanbase: 4, hype: 2, setsFlags: [{ key: 'arc_mod_underdog_{playerId}', durationDays: 14 }] },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_arc_clutch_expectation',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'always',
+    requiresActiveFlag: 'arc_mod_clutch_{playerId}',
+    prompt: "You've built a reputation for delivering in the biggest moments this tournament. Does knowing that change how you approach pressure situations — or does it just add to the weight?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "I want the ball in the clutch",
+        quote: "Put me in. Seriously. I've been in those situations enough now that they don't feel like pressure — they feel like opportunity. I want to be the one making the calls when it matters most.",
+        personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { morale: 4, hype: 4, fanbase: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The team delivers — I just try to do my part",
+        quote: "Clutch reputation is a team thing. I'm in positions to make big plays because my teammates set them up. I'd rather be known as someone who made everyone else better in the key moments.",
+        personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Reputation doesn't win rounds — execution does",
+        quote: "People talk about clutch moments but the truth is you just try to make the right call every time. Whether it's a pressure situation or not, the preparation is the same. Execute the fundamentals.",
+        personalityWeights: { STABLE: 2, INTROVERT: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0 },
+        effects: { morale: 3, sponsorTrust: 1 },
+      },
+    ],
+  },
+
   // Arc 5: Historic First Title — seed interview
   {
     id: 'post_win_historic_milestone',
