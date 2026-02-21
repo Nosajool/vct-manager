@@ -137,6 +137,23 @@ export function DramaEventModal({
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
               <h2 className="text-xl font-bold text-vct-light">Decision Made</h2>
+              {affectedPlayer && (
+                <div className="flex items-center gap-3 mt-2">
+                  {playerImageUrl ? (
+                    <GameImage
+                      src={playerImageUrl}
+                      alt={affectedPlayer.name}
+                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                      fallbackClassName="w-10 h-10 rounded-full flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-base font-bold text-vct-gray">{playerInitial}</span>
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-vct-light">{affectedPlayer.name}</span>
+                </div>
+              )}
             </div>
 
             {/* Outcome Content */}

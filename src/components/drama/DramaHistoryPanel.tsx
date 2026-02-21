@@ -6,6 +6,8 @@
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import type { DramaCategory, DramaEventInstance } from '../../types/drama';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface DramaHistoryPanelProps {
   /** Maximum number of events to show (default: 20) */
@@ -93,6 +95,7 @@ function truncateText(text: string, maxLength: number = 80): string {
 
 export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
   const getEventHistory = useGameStore((state) => state.getEventHistory);
+  const players = useGameStore((state) => state.players);
 
   // Get recent events (they come in chronological order, newest last)
   const allEvents = getEventHistory(limit);
@@ -126,6 +129,9 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
           const effectSummary = formatEffectSummary(event.appliedEffects);
           const effectColor = getEffectColor(event.appliedEffects);
           const dateFormatted = timeProgression.formatDateShort(event.triggeredDate);
+          const affectedPlayer = event.affectedPlayerIds?.[0]
+            ? players[event.affectedPlayerIds[0]]
+            : null;
 
           return (
             <div
@@ -149,9 +155,19 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
               </div>
 
               {/* Narrative - truncated to 1 line */}
-              <p className="text-sm text-vct-light mb-2 line-clamp-1">
-                {event.outcomeText || 'Event occurred'}
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                {affectedPlayer && (
+                  <GameImage
+                    src={getPlayerImageUrl(affectedPlayer.name)}
+                    alt={affectedPlayer.name}
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                    fallbackClassName="w-8 h-8 rounded-full flex-shrink-0"
+                  />
+                )}
+                <p className="text-sm text-vct-light line-clamp-1">
+                  {event.outcomeText || 'Event occurred'}
+                </p>
+              </div>
 
               {/* Bottom row: Outcome + Effects */}
               <div className="flex items-center justify-between text-xs">

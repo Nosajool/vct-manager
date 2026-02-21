@@ -5,6 +5,9 @@
 
 import { useEffect, useState } from 'react';
 import type { DramaCategory, DramaEventInstance } from '../../types/drama';
+import { useGameStore } from '../../store';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (title, narrative) before being passed as props.
@@ -94,6 +97,12 @@ export function DramaEventToast({
 }: DramaEventToastProps) {
   const [isVisible, setIsVisible] = useState(false);
 
+  const players = useGameStore((state) => state.players);
+  const affectedPlayer = event.affectedPlayerIds?.[0]
+    ? players[event.affectedPlayerIds[0]]
+    : null;
+  const playerImageUrl = affectedPlayer ? getPlayerImageUrl(affectedPlayer.name) : null;
+
   const metadata = CATEGORY_METADATA[event.category];
   const effectSummary = formatEffectSummary(event.appliedEffects);
   const effectColor = getEffectColor(event.appliedEffects);
@@ -138,9 +147,18 @@ export function DramaEventToast({
         `}
       >
         <div className="flex items-start gap-3">
-          {/* Category Icon */}
-          <div className="flex-shrink-0">
-            <div className="text-2xl mb-1">{metadata.icon}</div>
+          {/* Category Icon / Player Image */}
+          <div className="flex-shrink-0 flex flex-col items-center">
+            {affectedPlayer ? (
+              <GameImage
+                src={playerImageUrl!}
+                alt={affectedPlayer.name}
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0 mb-1"
+                fallbackClassName="w-10 h-10 rounded-full flex-shrink-0 mb-1"
+              />
+            ) : (
+              <div className="text-2xl mb-1">{metadata.icon}</div>
+            )}
             <span className="text-xs font-medium text-vct-gray">
               {metadata.label}
             </span>

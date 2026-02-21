@@ -3,6 +3,9 @@
 
 import { useEffect } from 'react';
 import type { MatchMoraleResult } from '../../types/match';
+import { useGameStore } from '../../store';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface MoraleChangeModalProps {
   isOpen: boolean;
@@ -12,6 +15,8 @@ interface MoraleChangeModalProps {
 }
 
 export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModalProps) {
+  const players = useGameStore((state) => state.players);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -72,12 +77,23 @@ export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModal
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-2">
-            {sortedPlayers.map((player) => (
+            {sortedPlayers.map((player) => {
+              const playerData = players[player.playerId];
+              return (
               <div
                 key={player.playerId}
                 className="flex items-center justify-between p-3 bg-vct-dark rounded-lg border border-vct-gray/20"
               >
-                <div className="flex-1">
+                <div className="flex items-center gap-3 flex-1">
+                  {playerData && (
+                    <GameImage
+                      src={getPlayerImageUrl(playerData.name)}
+                      alt={playerData.name}
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                      fallbackClassName="w-8 h-8 rounded-full flex-shrink-0"
+                    />
+                  )}
+                  <div>
                   <p className="font-medium text-vct-light">{player.playerName}</p>
                   <p className="text-sm text-vct-gray">
                     {player.reasons
@@ -85,6 +101,7 @@ export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModal
                       .map((r) => r.label)
                       .join(', ')}
                   </p>
+                  </div>
                 </div>
                 <div
                   className={`text-right font-bold ${
@@ -95,7 +112,8 @@ export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModal
                   {player.delta} {player.delta >= 0 ? '▲' : '▼'}
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
 
