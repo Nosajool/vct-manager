@@ -1779,4 +1779,1244 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // CHAIN CLOSERS — Consuming orphaned flags from earlier decisions
+  // ==========================================================================
+
+  {
+    id: 'ego_role_demand_resurfaced',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Deferred Demand Resurfaces',
+    description: "{playerName} hasn't forgotten the conversation you put off. They're back — and this time they're not asking politely.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'ego_role_demand_delayed_{playerId}',
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 45,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 85,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'accommodate_now',
+        text: 'Accommodate now — late is better than never',
+        description: 'Give them the role change they originally asked for',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'ego_role_demand_delayed_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName} is relieved, though the delay still stings. They accept the role change and get back to work. Chemistry takes a small hit as teammates adjust.",
+      },
+      {
+        id: 'refuse_again',
+        text: 'Refuse again — hold the line',
+        description: 'Stick to your original decision',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -15,
+          },
+          {
+            target: 'set_flag',
+            flag: 'ego_role_demand_refused_{playerId}',
+            flagDuration: 21,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'ego_role_demand_delayed_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName}'s frustration turns to resentment. You've drawn a line, but it may cost you later.",
+        triggersEventId: 'ego_trade_request',
+      },
+      {
+        id: 'offer_compromise',
+        text: 'Offer a middle ground',
+        description: 'Find a hybrid that gives them partial what they need',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 2,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'ego_role_demand_delayed_{playerId}',
+          },
+        ],
+        outcomeText: "You carve out space for {playerName} to shine in specific scenarios. It's not exactly what they wanted, but it's enough to keep the peace for now.",
+      },
+    ],
+  },
+
+  {
+    id: 'ego_promise_broken',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Broken Promise',
+    description: "{playerName} is watching. You promised changes weeks ago — but nothing has shifted. They're done being patient.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'ego_promise_made_{playerId}',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 75,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'make_changes_now',
+        text: 'Deliver on the promise immediately',
+        description: 'Follow through — better late than never',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'ego_promise_made_{playerId}',
+          },
+        ],
+        outcomeText: "You finally deliver on your word. {playerName} appreciates it, though they remember how long they had to wait. The team adjusts.",
+      },
+      {
+        id: 'apologize_and_delay',
+        text: 'Apologize and ask for more time',
+        description: 'Acknowledge the failure and buy one last extension',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -3,
+          },
+        ],
+        outcomeText: "{playerName} listens, but you can see the trust fading. This is the last extension they'll give you.",
+        triggersEventId: 'ego_trade_request',
+      },
+      {
+        id: 'deny_the_promise',
+        text: 'Claim circumstances have changed',
+        description: "Revisit whether the original promise was ever realistic",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -20,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'ego_promise_made_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'ego_role_demand_refused_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "{playerName} is furious. You've torched whatever goodwill remained. Expect a formal trade request soon.",
+        triggersEventId: 'ego_trade_request',
+      },
+    ],
+  },
+
+  {
+    id: 'roster_departure_shockwave',
+    category: 'team_synergy',
+    severity: 'minor',
+    title: 'Departure Shockwave',
+    description: "The locker room hasn't processed {playerName}'s exit. Everyone is quieter than usual — and wondering if they're next.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'player_trade_requested_{playerId}',
+      },
+    ],
+    probability: 90,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'team_chemistry',
+        delta: -10,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all',
+        delta: -8,
+      },
+      {
+        target: 'set_flag',
+        flag: 'roster_instability',
+        flagDuration: 14,
+      },
+    ],
+  },
+
+  {
+    id: 'separation_boiling_point',
+    category: 'team_synergy',
+    severity: 'major',
+    title: "Separation Isn't Working",
+    description: "Keeping the two players apart has only let the tension fester. The rest of the team is visibly choosing sides.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'players_separated',
+      },
+      {
+        type: 'team_chemistry_below',
+        threshold: 50,
+      },
+    ],
+    probability: 80,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'force_reconciliation',
+        text: 'Force a reconciliation',
+        description: 'Lock them in a room until they work it out',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 12,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'players_separated',
+          },
+        ],
+        outcomeText: "It's uncomfortable, but the forced conversation clears the air. They won't be best friends, but they can compete on the same server again.",
+      },
+      {
+        id: 'transfer_one',
+        text: 'Move one player out',
+        description: 'Accept that this relationship is unrecoverable',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'players_separated',
+          },
+          {
+            target: 'set_flag',
+            flag: 'roster_instability',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "You part ways with one of them. The immediate tension dissolves, but the team needs time to find its rhythm again.",
+      },
+      {
+        id: 'restructure_hierarchy',
+        text: 'Restructure team hierarchy',
+        description: 'Give each player clearly defined lanes to reduce overlap',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 7,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 3,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'players_separated',
+          },
+        ],
+        outcomeText: "By clearly defining roles, the two players no longer need to compete for the same space. The tension doesn't vanish, but it becomes manageable.",
+      },
+    ],
+  },
+
+  {
+    id: 'burnout_crisis_breaking_point',
+    category: 'practice_burnout',
+    severity: 'major',
+    title: 'Breaking Point',
+    description: "{playerName} has hit a wall. After weeks of relentless grinding, your assistant coach flags it: they can't continue at this pace.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'burnout_risk_high',
+      },
+      {
+        type: 'random_chance',
+        chance: 40,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 65,
+    cooldownDays: 10,
+    choices: [
+      {
+        id: 'immediate_rest',
+        text: 'Pull them from practice immediately',
+        description: 'Mandatory rest — no negotiations',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'burnout_risk_high',
+          },
+          {
+            target: 'set_flag',
+            flag: 'wellness_break_taken',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: "{playerName} steps back from practice. A week later, they return quieter but steadier. Sometimes slowing down is the fastest way forward.",
+      },
+      {
+        id: 'bring_in_psychologist',
+        text: 'Bring in a sports psychologist',
+        description: 'Address the root cause with professional support',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_budget',
+            delta: -2000,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'burnout_risk_high',
+          },
+          {
+            target: 'set_flag',
+            flag: 'psych_support_given_{playerId}',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: "The sessions reveal patterns {playerName} wasn't even aware of. It's an investment in the long game — and it shows.",
+      },
+      {
+        id: 'push_through_anyway',
+        text: "Remind them what's at stake",
+        description: 'Keep the pressure on — results are on the line',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -20,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: -10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+        ],
+        outcomeText: "{playerName} grits through it, but something breaks. You can see it in their play. The short-term work rate isn't worth what you're watching.",
+      },
+    ],
+  },
+
+  {
+    id: 'coach_credibility_crisis',
+    category: 'team_synergy',
+    severity: 'major',
+    title: 'Coach Credibility Crisis',
+    description: "Players are openly questioning the coaching staff's involvement in shot-calling. After another loss, the murmurs have reached you directly.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'coach_micromanaging',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 70,
+    cooldownDays: 10,
+    choices: [
+      {
+        id: 'restore_player_agency',
+        text: 'Restore player autonomy',
+        description: 'Step back and trust the players to make the calls',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'coach_micromanaging',
+          },
+        ],
+        outcomeText: "You loosen the reins. The team exhales. In the next practice, the energy is noticeably different — players are calling with conviction again.",
+      },
+      {
+        id: 'double_down',
+        text: 'Defend the system publicly',
+        description: "Stand firm — the process is correct, the results aren't there yet",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'igl_authority_undermined',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "You stand firm. Players go quiet — not because they agree, but because they've stopped fighting it. That silence is more worrying than the complaints.",
+      },
+      {
+        id: 'hybrid_delegation',
+        text: 'Delegate by situation type',
+        description: 'Coach handles macro strategy; players handle mid-round',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 3,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'coach_micromanaging',
+          },
+          {
+            target: 'set_flag',
+            flag: 'leadership_established',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "You draw clearer lines. Players feel trusted where it counts most — mid-round. The structure isn't perfect, but the locker room settles.",
+      },
+    ],
+  },
+
+  {
+    id: 'public_backing_backfire',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Public Backing Backfired',
+    description: "You put yourself on the line publicly — and then the team lost. The same fans who nodded along are now using your words against you.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'public_backing_risk',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 80,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'double_down',
+        text: 'Stay the course — one loss changes nothing',
+        description: "Refuse to walk back your public stance",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'public_backing_risk',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: "You refuse to flinch. Players respect the loyalty, but the media is circling. You're all-in now — another loss and it gets ugly.",
+      },
+      {
+        id: 'temper_expectations',
+        text: 'Recalibrate the narrative publicly',
+        description: 'Acknowledge the loss and walk back the bold claims',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -3,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -2,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'public_backing_risk',
+          },
+        ],
+        outcomeText: "You dial back the rhetoric. It feels like a step back, but the pressure lifts. Players quietly appreciate the breathing room.",
+      },
+      {
+        id: 'redirect_to_motivation',
+        text: 'Channel the criticism into fuel',
+        description: 'Use the backlash to galvanize the room internally',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'public_backing_risk',
+          },
+        ],
+        outcomeText: "You read the worst posts in a team meeting. The room goes from embarrassed to galvanized. Sometimes the best motivator is a hater with a platform.",
+      },
+    ],
+  },
+
+  {
+    id: 'loyalty_decision_deadline',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Loyalty Test: Decision Time',
+    description: "The rival org's offer window is closing. {playerName} needs to give them an answer — and they've come to you first asking what staying would look like.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'loyalty_tested_{playerId}',
+      },
+    ],
+    probability: 85,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'match_the_offer',
+        text: 'Match the rival offer',
+        description: 'Show with numbers that you value them',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 15,
+          },
+          {
+            target: 'team_budget',
+            delta: -5000,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'loyalty_tested_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'contract_extended_{playerId}',
+            flagDuration: 60,
+          },
+        ],
+        outcomeText: "{playerName} signs the new deal. They feel valued. The org feels the financial strain — but the roster stays intact and focused.",
+      },
+      {
+        id: 'let_them_go',
+        text: 'Wish them well',
+        description: 'Let them take the rival offer',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: -12,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -8,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'loyalty_tested_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'roster_instability',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "{playerName} departs for the rival org. The handshake is warm but the room is stunned. Now you need to rebuild around the gap they leave.",
+      },
+      {
+        id: 'appeal_once_more',
+        text: 'Make one final emotional appeal',
+        description: 'Remind them what this team means beyond the money',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'loyalty_tested_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName} stays — for now. They turned down the money, but you'd better make sure they don't regret the choice.",
+      },
+    ],
+  },
+
+  {
+    id: 'contract_promise_ultimatum',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Contract Promise Expires',
+    description: "The deadline you implicitly agreed to has passed. {playerName}'s agent has sent a final notice: extend now, or they explore the open market.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'contract_extension_promised_{playerId}',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 1,
+      },
+    ],
+    probability: 80,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'extend_now',
+        text: 'Sign the extension now',
+        description: 'Honor the original spirit of the promise',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 18,
+          },
+          {
+            target: 'team_budget',
+            delta: -4000,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'contract_extension_promised_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'contract_extended_{playerId}',
+            flagDuration: 60,
+          },
+        ],
+        outcomeText: "{playerName} signs the extension. The distraction is gone. They play with a visible weight lifted off their shoulders.",
+      },
+      {
+        id: 'link_to_results',
+        text: 'Link the deal to upcoming performance',
+        description: 'Demand a strong result before committing',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+        ],
+        outcomeText: "{playerName} is frustrated but accepts the conditional terms. Every match now carries contract implications — the pressure is palpable.",
+        triggersEventId: 'contract_year_ultimatum',
+      },
+      {
+        id: 'explore_replacements',
+        text: 'Quietly scout for replacements',
+        description: 'See if the market has better value at their position',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -15,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -10,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'contract_extension_promised_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'player_on_market_{playerId}',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "Word leaks, as it always does. {playerName} finds out you were shopping replacements. The fallout is immediate.",
+        triggersEventId: 'ego_trade_request',
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // PERSONALITY-DRIVEN EVENTS
+  // ==========================================================================
+
+  {
+    id: 'big_stage_anxiety',
+    category: 'practice_burnout',
+    severity: 'minor',
+    title: 'Regular Season Malaise',
+    description: "{playerName} plays their best when everything is on the line — but regular season matches have them visibly disengaged. They're saving themselves for the moments that matter.",
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'BIG_STAGE',
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 65,
+        playerSelector: 'any',
+      },
+      {
+        type: 'random_chance',
+        chance: 35,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 40,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -8,
+      },
+      {
+        target: 'player_form',
+        effectPlayerSelector: 'triggering',
+        delta: -5,
+      },
+      {
+        target: 'set_flag',
+        flag: 'big_stage_disengaged_{playerId}',
+        flagDuration: 10,
+      },
+    ],
+  },
+
+  {
+    id: 'big_stage_playoff_ignition',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Playoff Mode Activated',
+    description: "The moment the bracket was set, something flipped in {playerName}. Practice intensity is up, focus is sharp. They're exactly who you need them to be right now.",
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'BIG_STAGE',
+      },
+      {
+        type: 'season_phase',
+        phase: 'stage1_playoffs',
+      },
+      {
+        type: 'random_chance',
+        chance: 50,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 60,
+    cooldownDays: 30,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 15,
+      },
+      {
+        target: 'player_form',
+        effectPlayerSelector: 'triggering',
+        delta: 10,
+      },
+      {
+        target: 'player_stat',
+        stat: 'mental',
+        effectPlayerSelector: 'triggering',
+        delta: 3,
+      },
+    ],
+  },
+
+  {
+    id: 'stable_player_roster_resistance',
+    category: 'player_ego',
+    severity: 'major',
+    title: 'Stability Pushback',
+    description: "{playerName} is one of the most grounded players on your roster — and they've heard about the scouting activity. They come to you directly: am I part of this team's future?",
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'STABLE',
+      },
+      {
+        type: 'flag_active',
+        flag: 'transfer_window_scouting',
+      },
+    ],
+    probability: 70,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'reassure_them',
+        text: "Reassure them — they're not going anywhere",
+        description: 'Give a direct, honest answer',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+        ],
+        outcomeText: "{playerName} nods, satisfied. Their groundedness steadies the whole room. Other players notice you were straight with them and respect it.",
+      },
+      {
+        id: 'acknowledge_uncertainty',
+        text: 'Be honest — all options remain open',
+        description: "Tell them the truth even if it's uncomfortable",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'team_chemistry',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'loyalty_tested_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "{playerName} takes it with grace — that's who they are. But you can see them recalibrate internally. A STABLE player forced into instability is a slow-burning risk.",
+      },
+      {
+        id: 'give_leadership_role',
+        text: 'Offer them a leadership role',
+        description: "Make them an anchor for what you're building",
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 18,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'leadership_established',
+            flagDuration: 30,
+          },
+        ],
+        outcomeText: "You ask {playerName} to be the steady center this team needs. They light up quietly — that's exactly the kind of purpose they play for.",
+      },
+    ],
+  },
+
+  {
+    id: 'team_first_leadership_moment',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Team Player Steps Up',
+    description: "{playerName} pulled aside two struggling teammates after practice and ran a private session with them. No announcement. No fanfare. Just work.",
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'TEAM_FIRST',
+      },
+      {
+        type: 'team_chemistry_above',
+        threshold: 60,
+      },
+      {
+        type: 'random_chance',
+        chance: 20,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 30,
+    cooldownDays: 14,
+    effects: [
+      {
+        target: 'team_chemistry',
+        delta: 8,
+      },
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'all',
+        delta: 5,
+      },
+      {
+        target: 'player_stat',
+        stat: 'mental',
+        effectPlayerSelector: 'triggering',
+        delta: 3,
+      },
+    ],
+  },
+
+  {
+    id: 'introvert_confidence_crisis',
+    category: 'practice_burnout',
+    severity: 'major',
+    title: 'Public Criticism Hits Different',
+    description: "Public criticism rarely lands the same way for everyone. For {playerName}, it's clearly landed hard — your assistant coach reports they've been isolating themselves and their play has quietly regressed.",
+    conditions: [
+      {
+        type: 'player_personality',
+        personality: 'INTROVERT',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+      {
+        type: 'random_chance',
+        chance: 30,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 55,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'private_check_in',
+        text: 'Have a quiet one-on-one',
+        description: 'No agenda, no pressure — just check in',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 12,
+          },
+          {
+            target: 'player_stat',
+            stat: 'mental',
+            effectPlayerSelector: 'triggering',
+            delta: 4,
+          },
+        ],
+        outcomeText: "The conversation is short, but it lands. {playerName} didn't need advice — they needed to feel seen. You gave them that.",
+      },
+      {
+        id: 'shield_from_media',
+        text: 'Shield them from external noise',
+        description: 'Limit their media obligations and social media exposure',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 8,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'set_flag',
+            flag: 'psych_support_given_{playerId}',
+            flagDuration: 21,
+          },
+        ],
+        outcomeText: "You reduce their public exposure. Shielded from the noise, {playerName} slowly finds their footing again. Their play quietly returns to form.",
+      },
+      {
+        id: 'push_through_together',
+        text: 'Encourage them to confront it',
+        description: 'Believe public confidence-building will help',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: -8,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+        ],
+        outcomeText: "For most players, facing it head-on works. For {playerName}, it's too much too fast. The public confidence-building backfires, and they retreat further.",
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // STAT-BASED EVENTS
+  // ==========================================================================
+
+  {
+    id: 'igl_effectiveness_crisis',
+    category: 'team_synergy',
+    severity: 'major',
+    title: 'Shot-Calling in Crisis',
+    description: "Mid-round calls have been consistently wrong for weeks. Players are hesitating on comms, second-guessing every decision. The team is playing scared.",
+    conditions: [
+      {
+        type: 'player_stat_below',
+        stat: 'igl',
+        threshold: 45,
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'targeted_igl_coaching',
+        text: 'Invest in targeted IGL coaching',
+        description: 'Bring in a specialist to improve their decision-making',
+        effects: [
+          {
+            target: 'player_stat',
+            stat: 'igl',
+            effectPlayerSelector: 'any',
+            delta: 8,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_budget',
+            delta: -2000,
+          },
+        ],
+        outcomeText: "The specialist sessions are demanding, but {playerName} is a sharper caller by the end of it. The team starts trusting the calls again.",
+      },
+      {
+        id: 'rotate_igl',
+        text: 'Try rotating shot-callers',
+        description: 'Let the team find who calls best under pressure',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: -5,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'igl_authority_undermined',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "Different voices emerge. Some calls are better, some worse. The instability is real, but so is the talent you're uncovering.",
+      },
+      {
+        id: 'simplify_playbook',
+        text: 'Simplify the calling system',
+        description: 'Reduce cognitive load with fewer, clearer options',
+        effects: [
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 2,
+          },
+          {
+            target: 'player_stat',
+            stat: 'igl',
+            effectPlayerSelector: 'any',
+            delta: 3,
+          },
+        ],
+        outcomeText: "A simpler system means fewer catastrophic call failures. Progress is measured, but the team stops imploding on itself mid-round.",
+      },
+    ],
+  },
+
+  {
+    id: 'mental_fortitude_tested',
+    category: 'practice_burnout',
+    severity: 'minor',
+    title: 'Mental Fortitude Tested',
+    description: "{playerName} has been tilting hard after close losses. The mental side of the game is becoming a liability.",
+    conditions: [
+      {
+        type: 'player_stat_below',
+        stat: 'mental',
+        threshold: 40,
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 55,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -12,
+      },
+      {
+        target: 'player_form',
+        effectPlayerSelector: 'triggering',
+        delta: -8,
+      },
+      {
+        target: 'set_flag',
+        flag: 'mental_tilt_{playerId}',
+        flagDuration: 7,
+      },
+    ],
+  },
+
+  {
+    id: 'clutch_player_pressure_moment',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Clutch Factor Emerging',
+    description: "{playerName} has been delivering in the moments that matter most. Their ability to perform under pressure is becoming a defining trait.",
+    conditions: [
+      {
+        type: 'player_stat_above',
+        stat: 'clutch',
+        threshold: 70,
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 40,
+    cooldownDays: 10,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: 10,
+      },
+      {
+        target: 'player_stat',
+        stat: 'clutch',
+        effectPlayerSelector: 'triggering',
+        delta: 2,
+      },
+      {
+        target: 'team_chemistry',
+        delta: 5,
+      },
+    ],
+  },
 ];

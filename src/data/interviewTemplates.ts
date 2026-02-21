@@ -951,4 +951,220 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // ADDITIONAL FLAG-CONDITIONAL TEMPLATES
+  // Surfaces when specific drama flags are active — closes orphaned flag chains
+  // ==========================================================================
+
+  {
+    id: 'crisis_transfer_window_active',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'transfer_window_scouting',
+    prompt: "Reports suggest your org is actively scouting the transfer market. How do your current players square with that?",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "Every org evaluates constantly",
+        quote: "Evaluating options is normal professional practice. My players know where I stand — we talk internally. Reading too much into this helps nobody.",
+        effects: { morale: -1, fanbase: 1 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "The core of this team isn't going anywhere",
+        quote: "We look at the market like any competitive org does. But I want to be clear: the players I believe in know they have my full support. That doesn't change.",
+        effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'management_committed_to_roster', durationDays: 30 }] },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "We're building a winner — whatever it takes",
+        quote: "I'm not going to apologize for wanting to win. If there are moves that make this team better, I'm going to look at them. That's the job.",
+        effects: { morale: -3, hype: 2, dramaChance: 12 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_burnout_pressure',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'burnout_risk_high',
+    prompt: "There are concerns that your team's training schedule is affecting player health and wellbeing. How do you respond?",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "The players set the pace",
+        quote: "No one is forcing anyone to stay late. These players have an extraordinary work ethic and I respect that. We monitor everyone closely.",
+        effects: { morale: -2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We're making adjustments",
+        quote: "Honestly, we may have pushed too hard. Player health is non-negotiable. We're re-evaluating our practice structure starting this week.",
+        effects: { morale: 4, fanbase: 2, sponsorTrust: 3 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Elite competition requires sacrifice",
+        quote: "Winning at this level demands everything. Every player on this roster signed up for that challenge. We're building something real, and that takes commitment.",
+        effects: { morale: -5, hype: 3, dramaChance: 15 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_roster_exploration_fallout',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'org_open_to_trade',
+    prompt: "Players are reportedly unsettled following your earlier comments about roster flexibility. Looking back, was that a mistake?",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "My words were taken out of context",
+        quote: "What I said was about building the best team possible long-term. That's always been our goal. I regret that it was misread.",
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I should have framed that better",
+        quote: "Looking back, that wasn't the right time or language. My players deserve better clarity from me. I'll be speaking with each of them individually.",
+        effects: { morale: 5, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "Good players don't worry about their spots",
+        quote: "If you're performing, there's nothing to be unsettled about. That's true of every team at every level. Focus on winning and the rest takes care of itself.",
+        effects: { morale: -4, hype: 2, dramaChance: 10 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_igl_authority_undermined',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'igl_authority_undermined',
+    prompt: "Reports suggest your IGL's shot-calling authority has been significantly reduced. How does that change your team's dynamic?",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "Shot-calling structures always evolve",
+        quote: "We're always refining how we make in-game decisions. That's not specific to one player — it's about finding what works best for the team at any given moment.",
+        effects: { morale: 1 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "We made the right call for the team",
+        quote: "When something isn't producing results, you adjust. Our IGL is still a core part of what we do — just in a more clearly defined role now.",
+        effects: { morale: -2, hype: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We're working through a transition",
+        quote: "It's been an adjustment for everyone. I take responsibility for navigating it. We're committed to finding the right structure and I have full faith in our process.",
+        effects: { morale: 3, fanbase: 2, dramaChance: 5 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_burnout_crisis_ignored_fallout',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'drama_active',
+    requiresActiveFlag: 'burnout_crisis_ignored',
+    prompt: "Multiple sources suggest your team pushed through serious burnout warning signs. Players weren't given adequate support — what happened?",
+    options: [
+      {
+        tone: 'BLAME_SELF',
+        label: "I got it wrong — I should have acted sooner",
+        quote: "In hindsight, I prioritized results over people. That's a mistake I own entirely. We're making immediate changes to how we support our players.",
+        effects: { fanbase: 4, morale: 3, sponsorTrust: 2, dramaChance: 5 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Players had every resource available to them",
+        quote: "We offered support structures and they were available to anyone who needed them. I can't force players to ask for help — but we'll review our approach.",
+        effects: { morale: -2, sponsorTrust: -1 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "The team is stronger for it",
+        quote: "Elite teams go through hard stretches. We came out the other side and I believe that process built something real. The players understand that too.",
+        effects: { morale: -3, hype: 2, dramaChance: 12 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // PLAYER — PLAYOFF / PERSONALITY-WEIGHTED (2 templates)
+  // ==========================================================================
+
+  {
+    id: 'pre_player_big_stage',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    condition: 'pre_playoff',
+    prompt: "This is a playoff match. Some players feel the pressure differently — how does a high-stakes environment affect you personally?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "This is where I belong",
+        quote: "Honestly? I've been waiting for this all season. Regular matches are fine but this — the crowd, everything on the line — this is when I come alive.",
+        personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 1 },
+        effects: { morale: 4, hype: 5, fanbase: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Pressure is a privilege",
+        quote: "Being here — in a playoff match — is something a lot of players work their whole careers toward. I don't take that lightly. I just want to do it justice.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1.5, BIG_STAGE: 0.5, FAME_SEEKER: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I treat it like any other match",
+        quote: "The more I think about the stakes, the more I overthink. So I run the same prep, the same warmup, the same mindset. Trust the routine and let the game happen.",
+        personalityWeights: { INTROVERT: 2, STABLE: 1.5, TEAM_FIRST: 1, BIG_STAGE: 0, FAME_SEEKER: 0.5 },
+        effects: { morale: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_player_loss_introvert',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    condition: 'loss_streak_2plus',
+    prompt: "You've been quiet through this rough stretch. How are you really processing what's happening with the team right now?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "I'm working through it privately",
+        quote: "I don't process things out loud. I go home, I review the footage, I figure out where I failed and I fix it. That's how I'm built.",
+        personalityWeights: { INTROVERT: 3, STABLE: 2, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
+        effects: { morale: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I haven't been good enough",
+        quote: "I'm not going to make excuses. My numbers don't reflect what I'm capable of. I owe this team better and I'm going to deliver it.",
+        personalityWeights: { STABLE: 1.5, TEAM_FIRST: 2, INTROVERT: 1, BIG_STAGE: 0.5, FAME_SEEKER: 0.5 },
+        effects: { morale: 2, fanbase: 3, hype: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The team doesn't need me to talk — it needs me to play",
+        quote: "My job isn't to give speeches. It's to show up and perform. That's what I'm focused on. Everything else is noise.",
+        personalityWeights: { INTROVERT: 2.5, STABLE: 1, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 2 },
+      },
+    ],
+  },
 ];
