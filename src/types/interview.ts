@@ -26,7 +26,17 @@ export type InterviewCondition =
   | 'win_streak_2plus'
   | 'loss_streak_3plus'
   | 'drama_active'
-  | 'sponsor_trust_low';
+  | 'sponsor_trust_low'
+  // Tournament bracket conditions (Phase 1)
+  | 'lower_bracket'
+  | 'upper_bracket'
+  | 'elimination_risk'
+  | 'grand_final'
+  | 'opponent_dropped_from_upper'
+  // Team identity conditions (Phase 4)
+  | 'team_identity_star_carry'
+  | 'team_identity_resilient'
+  | 'team_identity_fragile';
 
 export interface InterviewEffects {
   morale?: number;        // Delta applied to all player morale
@@ -71,6 +81,19 @@ export interface PendingInterview {
   opponentTeamId?: string;  // Relevant for PRE_MATCH and POST_MATCH
   prompt: string;
   options: InterviewOption[];
+}
+
+// Tournament context passed into interview evaluation
+export interface TournamentMatchContext {
+  bracketPosition: 'upper' | 'lower' | null; // null for group stage / non-bracket
+  eliminationRisk: boolean;                   // one more loss = out
+  isGrandFinal: boolean;
+  opponent?: {
+    teamId: string;
+    droppedFromUpper: boolean;  // opponent just came from upper bracket
+    recentWinStreak: number;    // consecutive wins coming in
+    rivalryLevel: number;       // 0-100 from RivalrySlice
+  };
 }
 
 // Historical record of a completed interview choice

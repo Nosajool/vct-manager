@@ -73,6 +73,10 @@ export type DramaConditionType =
   | 'player_personality'       // Player matches a specific personality archetype
   | 'player_contract_expiring' // Player contract years remaining <= threshold
 
+  // Tournament bracket checks (Phase 1)
+  | 'bracket_position'   // Check upper/lower bracket; uses bracketPosition field
+  | 'elimination_risk'   // Team faces elimination with next loss
+
   // Random chance
   | 'random_chance';
 
@@ -120,6 +124,9 @@ export interface DramaCondition {
 
   // For contract expiry check
   contractYearsThreshold?: number; // Used with player_contract_expiring (default: 1)
+
+  // For bracket_position check
+  bracketPosition?: 'upper' | 'lower'; // Used with bracket_position type
 }
 
 // ============================================================================
@@ -333,6 +340,13 @@ export interface DramaGameStateSnapshot {
 
   // Drama state
   dramaState: DramaState;
+
+  // Tournament context (Phase 1 — populated when team is in a tournament bracket)
+  tournamentContext?: {
+    bracketPosition: 'upper' | 'lower' | null;
+    eliminationRisk: boolean;
+    isGrandFinal: boolean;
+  };
 }
 
 /**

@@ -12,6 +12,7 @@ import type {
   DramaEventTemplate,
   DramaChoice,
 } from '../types/drama';
+import type { BracketStructure, BracketRound, BracketMatch, Tournament } from '../types/competition';
 
 /**
  * DramaService - Handles all drama event operations
@@ -292,6 +293,9 @@ export class DramaService {
       };
     });
 
+    // Compute tournament context — find the active tournament the player team is in
+    const tournamentContext = this.computeTournamentContext(playerTeamId, state.tournaments);
+
     return {
       currentDate: calendar.currentDate,
       currentSeason: calendar.currentSeason,
@@ -301,6 +305,53 @@ export class DramaService {
       players: playersSnapshot,
       recentMatchResults,
       dramaState,
+      tournamentContext,
+    };
+  }
+
+  /**
+   * Compute tournament context for the drama snapshot.
+   * Looks for an in-progress bracket tournament where the player team participates,
+   * then finds the team's next pending/ready match to determine bracket position.
+   */
+  private computeTournamentContext(
+    playerTeamId: string,
+    tournaments: Record<string, Tournament>
+  ): DramaGameStateSnapshot['tournamentContext'] {
+    // Find the active tournament containing this team
+    const activeTournament = Object.values(tournaments).find(
+      (t) =>
+        t.status === 'in_progress' &&
+        t.teamIds.includes(playerTeamId) &&
+        (t.bracket.upper.length > 0 || (t.bracket.lower?.length ?? 0) > 0)
+    );
+
+    if (!activeTournament) return undefined;
+
+    const bracket = activeTournament.bracket;
+
+    // Check if team is in grand final
+    const gf = bracket.grandfinal;
+    if (
+      gf &&
+      (gf.teamAId === playerTeamId || gf.teamBId === playerTeamId) &&
+      (gf.status === 'pending' || gf.status === 'ready' || gf.status === 'in_progress')
+    ) {
+      return {
+        bracketPosition: 'upper',
+        eliminationRisk: gf.loserDestination.type === 'eliminated',
+        isGrandFinal: true,
+      };
+    }
+
+    // Search upper and lower bracket rounds for the team's next match
+    const result = findTeamCurrentBracketMatch(bracket, playerTeamId);
+    if (!result) return undefined;
+
+    return {
+      bracketPosition: result.round.bracketType === 'lower' ? 'lower' : 'upper',
+      eliminationRisk: result.match.loserDestination.type === 'eliminated',
+      isGrandFinal: false,
     };
   }
 
@@ -499,6 +550,39 @@ export class DramaService {
     const template = this.getTemplate(templateId);
     return template?.choices?.find(c => c.id === choiceId);
   }
+}
+
+// ============================================================================
+// Bracket navigation helpers (module-private)
+// ============================================================================
+
+/**
+ * Find a team's next pending/ready match in the bracket.
+ * Returns the match and its parent round, or null if not found.
+ */
+function findTeamCurrentBracketMatch(
+  bracket: BracketStructure,
+  teamId: string
+): { match: BracketMatch; round: BracketRound } | null {
+  const roundGroups: BracketRound[][] = [
+    bracket.upper,
+    ...(bracket.lower ? [bracket.lower] : []),
+    ...(bracket.middle ? [bracket.middle] : []),
+  ];
+
+  for (const rounds of roundGroups) {
+    for (const round of rounds) {
+      for (const match of round.matches) {
+        if (
+          (match.teamAId === teamId || match.teamBId === teamId) &&
+          (match.status === 'pending' || match.status === 'ready' || match.status === 'in_progress')
+        ) {
+          return { match, round };
+        }
+      }
+    }
+  }
+  return null;
 }
 
 // Export singleton instance

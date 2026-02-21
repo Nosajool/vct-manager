@@ -10,6 +10,7 @@ import type {
   InterviewTemplate,
   PendingInterview,
   InterviewHistoryEntry,
+  TournamentMatchContext,
 } from '../types/interview';
 import { INTERVIEW_TEMPLATES } from '../data/interviewTemplates';
 import { useGameStore } from '../store';
@@ -38,6 +39,7 @@ export class InterviewService {
     team: Team,
     isPlayoffMatch?: boolean,
     isUpsetWin?: boolean,
+    context?: TournamentMatchContext,
   ): PendingInterview | null {
     const state = useGameStore.getState();
     const match = state.matches[matchResult.matchId];
@@ -62,18 +64,42 @@ export class InterviewService {
     const won = matchResult.winnerId === playerTeamId;
 
     // Filter templates by context and conditions
-    const context = 'POST_MATCH' as const;
+    const interviewContext = 'POST_MATCH' as const;
+    const activeFlags = useGameStore.getState().activeFlags;
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
-      if (t.context !== context) return false;
+      if (t.context !== interviewContext) return false;
       if (!this.templateFlagGatePassed(t)) return false;
       if (!t.condition || t.condition === 'always') return true;
       if (t.condition === 'pre_playoff' && isPlayoffMatch) return true;
+      // Tournament bracket conditions
+      if (t.condition === 'lower_bracket' && context?.bracketPosition === 'lower') return true;
+      if (t.condition === 'upper_bracket' && context?.bracketPosition === 'upper') return true;
+      if (t.condition === 'elimination_risk' && context?.eliminationRisk) return true;
+      if (t.condition === 'grand_final' && context?.isGrandFinal) return true;
+      if (t.condition === 'opponent_dropped_from_upper' && context?.opponent?.droppedFromUpper) return true;
+      // Team identity conditions (flag-driven)
+      if (t.condition === 'team_identity_star_carry' && 'team_identity_star_carry' in activeFlags) return true;
+      if (t.condition === 'team_identity_resilient' && 'team_identity_resilient' in activeFlags) return true;
+      if (t.condition === 'team_identity_fragile' && 'team_identity_fragile' in activeFlags) return true;
       return false;
     });
 
-    // Prefer win/loss specific templates based on match result
-    const winIds = ['post_win_dominant', 'post_win_close', 'post_win_comeback', 'post_win_upset', 'post_coach_win', 'post_player_win'];
-    const lossIds = ['post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination', 'post_coach_loss', 'post_player_loss'];
+    // Prefer win/loss specific templates based on match result.
+    // Includes bracket-aware and Phase 3 opponent-awareness templates so they can fire.
+    const winIds = [
+      'post_win_dominant', 'post_win_close', 'post_win_comeback', 'post_win_upset',
+      'post_coach_win', 'post_player_win',
+      // Bracket-aware (Phase 1)
+      'comeback_lower_bracket_run', 'grand_final_post_win',
+      // Opponent-awareness (Phase 3)
+      'post_upset_momentum_shift', 'post_rivalry_win_elimination', 'post_lower_bracket_survival_player',
+    ];
+    const lossIds = [
+      'post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination',
+      'post_coach_loss', 'post_player_loss',
+      // Bracket-aware (Phase 1)
+      'lower_bracket_dropped', 'grand_final_post_loss',
+    ];
 
     const relevant = candidates.filter((t) =>
       won ? winIds.includes(t.id) : lossIds.includes(t.id)
@@ -99,6 +125,7 @@ export class InterviewService {
     playerTeamId: string,
     team: Team,
     isPlayoffMatch?: boolean,
+    context?: TournamentMatchContext,
   ): PendingInterview | null {
     const state = useGameStore.getState();
     const match = state.matches[matchId];
@@ -149,6 +176,7 @@ export class InterviewService {
     const rivalry = state.rivalries[opponentTeamId];
     const hasRivalry = rivalry && rivalry.intensity > 0;
 
+    const preFlagState = useGameStore.getState().activeFlags;
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'PRE_MATCH') return false;
       if (!this.templateFlagGatePassed(t)) return false;
@@ -157,6 +185,16 @@ export class InterviewService {
       if (t.condition === 'rivalry_active' && hasRivalry) return true;
       if (t.condition === 'loss_streak_2plus' && lossStreak >= 2) return true;
       if (t.condition === 'win_streak_2plus' && winStreak >= 2) return true;
+      // Tournament bracket conditions
+      if (t.condition === 'lower_bracket' && context?.bracketPosition === 'lower') return true;
+      if (t.condition === 'upper_bracket' && context?.bracketPosition === 'upper') return true;
+      if (t.condition === 'elimination_risk' && context?.eliminationRisk) return true;
+      if (t.condition === 'grand_final' && context?.isGrandFinal) return true;
+      if (t.condition === 'opponent_dropped_from_upper' && context?.opponent?.droppedFromUpper) return true;
+      // Team identity conditions (flag-driven)
+      if (t.condition === 'team_identity_star_carry' && 'team_identity_star_carry' in preFlagState) return true;
+      if (t.condition === 'team_identity_resilient' && 'team_identity_resilient' in preFlagState) return true;
+      if (t.condition === 'team_identity_fragile' && 'team_identity_fragile' in preFlagState) return true;
       return false;
     });
 

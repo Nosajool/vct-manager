@@ -21,6 +21,8 @@ import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
 import { eventLifecycleManager } from '../engine/scheduling/EventLifecycleManager';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
+import type { BracketMatch, BracketRound, BracketStructure, Tournament } from '../types/competition';
+import type { TournamentMatchContext } from '../types/interview';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
 import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
@@ -298,11 +300,19 @@ export class CalendarService {
 
               // Check for post-match interview (at most one; first match wins)
               if (!pendingInterview) {
+                const tournamentContext = this.computeTournamentMatchContext(
+                  result,
+                  state.playerTeamId,
+                  matchData.tournamentId,
+                  state.tournaments,
+                );
                 const interview = interviewService.checkPostMatchInterview(
                   result,
                   state.playerTeamId,
                   playerTeam,
                   matchData.isPlayoffMatch,
+                  undefined, // isUpsetWin
+                  tournamentContext,
                 );
                 if (interview) {
                   pendingInterview = interview;
@@ -838,6 +848,87 @@ export class CalendarService {
   }
 
   /**
+   * Compute TournamentMatchContext from the just-completed match's bracket data.
+   * Used to enrich post-match interviews with bracket awareness.
+   */
+  private computeTournamentMatchContext(
+    matchResult: MatchResult,
+    playerTeamId: string,
+    tournamentId: string | undefined,
+    tournaments: Record<string, Tournament>,
+  ): TournamentMatchContext | undefined {
+    if (!tournamentId) return undefined;
+    const tournament = tournaments[tournamentId];
+    if (!tournament) return undefined;
+
+    const bracket = tournament.bracket;
+
+    // Find the BracketMatch corresponding to this match result
+    const bracketEntry = findBracketMatchById(bracket, matchResult.matchId);
+    if (!bracketEntry) {
+      // Could be grand final
+      const gf = bracket.grandfinal;
+      if (gf && gf.matchId === matchResult.matchId) {
+        const opponentTeamId = gf.teamAId === playerTeamId ? gf.teamBId : gf.teamAId;
+        return {
+          bracketPosition: 'upper',
+          eliminationRisk: gf.loserDestination.type === 'eliminated',
+          isGrandFinal: true,
+          opponent: opponentTeamId
+            ? this.buildOpponentContext(opponentTeamId, bracket, matchResult.matchId, tournaments)
+            : undefined,
+        };
+      }
+      return undefined;
+    }
+
+    const { match, round } = bracketEntry;
+    const bracketPosition: 'upper' | 'lower' = round.bracketType === 'lower' ? 'lower' : 'upper';
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+
+    return {
+      bracketPosition,
+      eliminationRisk: match.loserDestination.type === 'eliminated',
+      isGrandFinal: false,
+      opponent: opponentTeamId
+        ? this.buildOpponentContext(opponentTeamId, bracket, matchResult.matchId, tournaments)
+        : undefined,
+    };
+  }
+
+  /**
+   * Build opponent sub-context: whether they dropped from upper bracket,
+   * their recent win streak, and rivalry level.
+   */
+  private buildOpponentContext(
+    opponentTeamId: string,
+    bracket: BracketStructure,
+    currentMatchId: string,
+    _tournaments: Record<string, Tournament>,
+  ): TournamentMatchContext['opponent'] {
+    const state = useGameStore.getState();
+
+    const droppedFromUpper = didTeamDropFromUpper(bracket, opponentTeamId);
+
+    // Compute opponent recent win streak from their match history (excluding current match)
+    const opponentHistory = state.getTeamMatchHistory(opponentTeamId);
+    let recentWinStreak = 0;
+    for (const result of opponentHistory) {
+      if (result.matchId === currentMatchId) continue;
+      if (result.winnerId === opponentTeamId) {
+        recentWinStreak++;
+      } else {
+        break;
+      }
+    }
+
+    const rivalry = state.rivalries?.[opponentTeamId];
+    const rivalryLevel = rivalry?.intensity ?? 0;
+
+    return { teamId: opponentTeamId, droppedFromUpper, recentWinStreak, rivalryLevel };
+  }
+
+  /**
    * Handle tournament completion - resolve qualifications
    */
   private handleTournamentCompletion(tournamentId: string): void {
@@ -858,4 +949,47 @@ export class CalendarService {
 
 // Export singleton instance
 export const calendarService = new CalendarService();
+
+// ============================================================================
+// Bracket navigation helpers (module-private)
+// ============================================================================
+
+/**
+ * Find a BracketMatch by its matchId across all bracket rounds.
+ * Returns the match and its parent BracketRound, or null if not found.
+ */
+function findBracketMatchById(
+  bracket: BracketStructure,
+  matchId: string,
+): { match: BracketMatch; round: BracketRound } | null {
+  const roundGroups: BracketRound[][] = [
+    bracket.upper,
+    ...(bracket.lower ? [bracket.lower] : []),
+    ...(bracket.middle ? [bracket.middle] : []),
+  ];
+
+  for (const rounds of roundGroups) {
+    for (const round of rounds) {
+      for (const match of round.matches) {
+        if (match.matchId === matchId) return { match, round };
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Returns true if the given team has ever been the loser of an upper bracket match
+ * in the provided bracket (i.e., they dropped from upper to lower).
+ */
+function didTeamDropFromUpper(bracket: BracketStructure, teamId: string): boolean {
+  for (const round of bracket.upper) {
+    for (const match of round.matches) {
+      if (match.loserId === teamId && match.status === 'completed') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 

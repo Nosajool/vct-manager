@@ -95,6 +95,13 @@ export function evaluateCondition(
     case 'player_contract_expiring':
       return evaluatePlayerContractExpiringCondition(condition, snapshot);
 
+    // Tournament bracket checks
+    case 'bracket_position':
+      return evaluateBracketPositionCondition(condition, snapshot);
+
+    case 'elimination_risk':
+      return snapshot.tournamentContext?.eliminationRisk === true;
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined
@@ -528,6 +535,20 @@ function evaluatePlayerPersonalityCondition(
   );
 
   return teamPlayers.some((p) => p.personality === condition.personality);
+}
+
+/**
+ * Evaluates bracket_position condition
+ * True if the team's current bracket position matches the required position
+ */
+function evaluateBracketPositionCondition(
+  condition: DramaCondition,
+  snapshot: DramaGameStateSnapshot
+): boolean {
+  if (!condition.bracketPosition) return false;
+  const ctx = snapshot.tournamentContext;
+  if (!ctx || ctx.bracketPosition === null) return false;
+  return ctx.bracketPosition === condition.bracketPosition;
 }
 
 /**
