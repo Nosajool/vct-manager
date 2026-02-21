@@ -5,7 +5,7 @@ import type { Region } from '../../types';
 import { ManagerStoryStep } from './ManagerStoryStep';
 import { RegionSelectStep } from './RegionSelectStep';
 import { TeamSelectStep } from './TeamSelectStep';
-import { DifficultySelectStep, type Difficulty } from './DifficultySelectStep';
+import { type Difficulty } from './DifficultySelectStep';
 
 export interface SetupOptions {
   region: Region;
@@ -18,7 +18,7 @@ interface SetupWizardProps {
   onCancel?: () => void;
 }
 
-type Step = 0 | 1 | 2 | 3;
+type Step = 0 | 1 | 2;
 
 interface SetupState {
   step: Step;
@@ -45,16 +45,11 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
 
   // Step 2: Team selected
   const handleTeamSelect = (teamName: string) => {
-    setState((prev) => ({ ...prev, teamName, step: 3 }));
-  };
-
-  // Step 3: Difficulty selected
-  const handleDifficultySelect = (difficulty: Difficulty) => {
-    if (state.region && state.teamName) {
+    if (state.region) {
       onComplete({
         region: state.region,
-        teamName: state.teamName,
-        difficulty,
+        teamName,
+        difficulty: 'normal',
       });
     }
   };
@@ -74,7 +69,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
         {state.step > 0 && (
           <div className="p-6 border-b border-vct-gray/20">
             <div className="flex items-center justify-center gap-2">
-              {[1, 2, 3].map((stepNum) => (
+              {[1, 2].map((stepNum) => (
                 <div key={stepNum} className="flex items-center">
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
@@ -85,7 +80,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
                   >
                     {stepNum}
                   </div>
-                  {stepNum < 3 && (
+                  {stepNum < 2 && (
                     <div
                       className={`w-12 h-0.5 mx-1 ${
                         state.step > stepNum ? 'bg-vct-red' : 'bg-vct-gray/30'
@@ -98,7 +93,6 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
             <div className="flex justify-center gap-8 mt-2 text-xs text-vct-gray">
               <span className={state.step >= 1 ? 'text-vct-light' : ''}>Region</span>
               <span className={state.step >= 2 ? 'text-vct-light' : ''}>Team</span>
-              <span className={state.step >= 3 ? 'text-vct-light' : ''}>Difficulty</span>
             </div>
           </div>
         )}
@@ -128,15 +122,6 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
             />
           )}
 
-          {state.step === 3 && state.region && state.teamName && (
-            <DifficultySelectStep
-              region={state.region}
-              teamName={state.teamName}
-              onSelect={handleDifficultySelect}
-              onBack={handleBack}
-              onCancel={onCancel}
-            />
-          )}
         </div>
       </div>
     </div>
