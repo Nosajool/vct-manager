@@ -33,11 +33,10 @@ export const VLR_ORG_TO_TEAM_NAME: Record<string, string> = {
   NAVI: 'NAVI',
   FUT: 'FUT Esports',
   BBL: 'BBL Esports',
-  GIA: 'Giants Gaming',
-  KOI: 'KOI',
+  GX: 'GIANTX',
   M8: 'Gentle Mates',
-  GX: 'Gentle Mates', // Alternative abbreviation
-  APK: 'Apeks',
+  ULF: 'ULF Esports',
+  PCF: 'PCIFIC Esports',
 
   // Pacific
   PRX: 'Paper Rex',
@@ -46,7 +45,7 @@ export const VLR_ORG_TO_TEAM_NAME: Record<string, string> = {
   GEN: 'Gen.G',
   GENG: 'Gen.G',
   ZETA: 'ZETA DIVISION',
-  DFM: 'DetonatioN Gaming',
+  DFM: 'DetonatioN FocusMe',
   GE: 'Global Esports',
   TS: 'Team Secret',
   TLN: 'Talon Esports',

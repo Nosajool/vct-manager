@@ -13314,8 +13314,8 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
     ],
     "scrapedAt": "2026-02-15T05:39:02.130Z"
   },
-  "Giants Gaming": {
-    "teamName": "Giants Gaming",
+  "GIANTX": {
+    "teamName": "GIANTX",
     "vlrTeamId": 14419,
     "players": [
       "cloud",
@@ -13422,8 +13422,8 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
     ],
     "scrapedAt": "2026-02-15T05:39:25.121Z"
   },
-  "DetonatioN Gaming": {
-    "teamName": "DetonatioN Gaming",
+  "DetonatioN FocusMe": {
+    "teamName": "DetonatioN FocusMe",
     "vlrTeamId": 278,
     "players": [
       "meiy",

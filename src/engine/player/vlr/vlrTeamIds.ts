@@ -31,10 +31,10 @@ export const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'NAVI': 4915,
     'FUT Esports': 1184,
     'BBL Esports': 397,
-    'Giants Gaming': 14419, // GIANTX
-    'KOI': 7035,
+    'GIANTX': 14419,
     'Gentle Mates': 12694,
-    'Apeks': 11479,
+    'ULF Esports': 18019,
+    'PCIFIC Esports': 3478,
   },
   Pacific: {
     'Paper Rex': 624,
@@ -42,7 +42,7 @@ export const VLR_TEAM_IDS: Record<Region, Record<string, number>> = {
     'T1': 14,
     'Gen.G': 17,
     'ZETA DIVISION': 5448,
-    'DetonatioN Gaming': 278, // DetonatioN FocusMe
+    'DetonatioN FocusMe': 278,
     'Global Esports': 918,
     'Team Secret': 6199,
     'Talon Esports': 8304,
