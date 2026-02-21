@@ -757,8 +757,9 @@ export class GlobalTournamentScheduler {
   }
 
   /**
-   * Schedule all matches in a bracket by round
-   * Earlier rounds get earlier dates, all matches in same round share same date
+   * Schedule all matches in a bracket by round using CPM Late Start ordering.
+   * Rounds are interleaved across brackets based on dependency order, matching
+   * the real VCT schedule pattern (e.g. UR1 → UR2 → MR1 → MR2+LR1 → ...).
    */
   scheduleAllBracketMatches(
     bracket: BracketStructure,
@@ -768,64 +769,142 @@ export class GlobalTournamentScheduler {
   ): void {
     const matchDays = this.getMatchDays(region);
 
-    // Collect all rounds in order: upper R1, R2..., middle R1, R2..., lower R1, R2...
-    const allRounds: BracketRound[] = [];
+    // Step 1: Collect all rounds
+    const allRounds: BracketRound[] = [
+      ...bracket.upper,
+      ...(bracket.middle ?? []),
+      ...(bracket.lower ?? []),
+    ];
 
-    // Upper bracket rounds
-    for (const round of bracket.upper) {
-      allRounds.push(round);
+    // Treat grand final as a synthetic round so it participates in CPM sorting
+    type RoundEntry = BracketRound | { roundId: string; roundNumber: number; bracketType: 'upper'; matches: BracketMatch[] };
+    let rounds: RoundEntry[] = [...allRounds];
+    if (bracket.grandfinal) {
+      rounds.push({
+        roundId: bracket.grandfinal.roundId,
+        roundNumber: 999,
+        bracketType: 'upper' as const,
+        matches: [bracket.grandfinal],
+      });
     }
 
-    // Middle bracket rounds (if exists - for triple elim)
-    if (bracket.middle) {
-      for (const round of bracket.middle) {
-        allRounds.push(round);
+    if (rounds.length === 0) return;
+
+    // Step 2: Build matchId → roundId map
+    const matchToRound = new Map<string, string>();
+    for (const round of rounds) {
+      for (const match of round.matches) {
+        matchToRound.set(match.matchId, round.roundId);
       }
     }
 
-    // Lower bracket rounds
-    if (bracket.lower) {
-      for (const round of bracket.lower) {
-        allRounds.push(round);
+    // Step 3: Build predecessor/successor dependency graph
+    const predecessors = new Map<string, Set<string>>();
+    const successors = new Map<string, Set<string>>();
+    for (const round of rounds) {
+      if (!predecessors.has(round.roundId)) predecessors.set(round.roundId, new Set());
+      if (!successors.has(round.roundId)) successors.set(round.roundId, new Set());
+    }
+    for (const round of rounds) {
+      for (const match of round.matches) {
+        for (const source of [match.teamASource, match.teamBSource]) {
+          if ((source.type === 'winner' || source.type === 'loser') && 'matchId' in source) {
+            const predRoundId = matchToRound.get(source.matchId);
+            if (predRoundId && predRoundId !== round.roundId) {
+              predecessors.get(round.roundId)!.add(predRoundId);
+              successors.get(predRoundId)!.add(round.roundId);
+            }
+          }
+        }
       }
     }
 
-    // Calculate how many match days we have in the range
-    const totalRounds = allRounds.length;
-    if (totalRounds === 0) return;
+    // Step 4: Forward levels via Kahn's topological sort
+    const forwardLevel = new Map<string, number>();
+    const inDegree = new Map<string, number>();
+    for (const round of rounds) {
+      inDegree.set(round.roundId, predecessors.get(round.roundId)!.size);
+    }
+    const queue: string[] = [];
+    for (const round of rounds) {
+      if (inDegree.get(round.roundId) === 0) queue.push(round.roundId);
+    }
+    const topologicalOrder: string[] = [];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      topologicalOrder.push(current);
+      const level = forwardLevel.get(current) ?? 0;
+      for (const succ of successors.get(current)!) {
+        const newLevel = Math.max(forwardLevel.get(succ) ?? 0, level + 1);
+        forwardLevel.set(succ, newLevel);
+        const newDegree = inDegree.get(succ)! - 1;
+        inDegree.set(succ, newDegree);
+        if (newDegree === 0) queue.push(succ);
+      }
+    }
 
-    // Start from the first valid match day on or after startDate
+    // Cycle detection fallback: revert to sequential ordering
+    if (topologicalOrder.length < rounds.length) {
+      console.warn('[Scheduler] Cycle detected in bracket dependency graph; falling back to sequential ordering');
+      const fallbackRounds = allRounds;
+      let currentDate = this.getNextMatchDay(new Date(startDate), matchDays);
+      const lastMatchDay = this.getLastMatchDayBefore(new Date(endDate), matchDays);
+      for (const round of fallbackRounds) {
+        if (currentDate > lastMatchDay) currentDate = new Date(lastMatchDay);
+        for (const match of round.matches) match.scheduledDate = currentDate.toISOString();
+        const nextDay = new Date(currentDate);
+        nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+        currentDate = this.getNextMatchDay(nextDay, matchDays);
+      }
+      if (bracket.grandfinal) bracket.grandfinal.scheduledDate = lastMatchDay.toISOString();
+      return;
+    }
+
+    // Step 5: Reverse depth via reverse topological traversal
+    const reverseDepth = new Map<string, number>();
+    for (let i = topologicalOrder.length - 1; i >= 0; i--) {
+      const roundId = topologicalOrder[i];
+      const succs = successors.get(roundId)!;
+      if (succs.size === 0) {
+        reverseDepth.set(roundId, 0);
+      } else {
+        let maxSuccDepth = 0;
+        for (const succ of succs) {
+          maxSuccDepth = Math.max(maxSuccDepth, reverseDepth.get(succ) ?? 0);
+        }
+        reverseDepth.set(roundId, 1 + maxSuccDepth);
+      }
+    }
+
+    // Step 6: Late Start = maxLevel - reverseDepth
+    const maxLevel = Math.max(...forwardLevel.values(), 0);
+    const lateStart = new Map<string, number>();
+    for (const round of rounds) {
+      lateStart.set(round.roundId, maxLevel - (reverseDepth.get(round.roundId) ?? 0));
+    }
+
+    // Step 7: Sort by LS ascending; tie-break: upper < middle < lower, then roundNumber
+    const bracketOrder: Record<string, number> = { upper: 0, middle: 1, lower: 2 };
+    const sortedRounds = [...rounds].sort((a, b) => {
+      const lsDiff = (lateStart.get(a.roundId) ?? 0) - (lateStart.get(b.roundId) ?? 0);
+      if (lsDiff !== 0) return lsDiff;
+      const typeDiff = (bracketOrder[a.bracketType] ?? 0) - (bracketOrder[b.bracketType] ?? 0);
+      if (typeDiff !== 0) return typeDiff;
+      return a.roundNumber - b.roundNumber;
+    });
+
+    // Step 8: Assign consecutive match days
     let currentDate = this.getNextMatchDay(new Date(startDate), matchDays);
-
-    // Calculate roughly how many match days we need to spread rounds
-    // Leave the last match day for grand final
     const lastMatchDay = this.getLastMatchDayBefore(new Date(endDate), matchDays);
 
-    // Distribute rounds across available match days
-    for (let roundIndex = 0; roundIndex < totalRounds; roundIndex++) {
-      const round = allRounds[roundIndex];
-
-      // Ensure we don't exceed tournament end date
-      if (currentDate > lastMatchDay) {
-        currentDate = new Date(lastMatchDay);
-        currentDate.setUTCDate(currentDate.getUTCDate() - 1);
-        currentDate = this.getLastMatchDayBefore(currentDate, matchDays);
-      }
-
-      // Assign same date to all matches in round (they can be played in parallel)
+    for (const round of sortedRounds) {
+      if (currentDate > lastMatchDay) currentDate = new Date(lastMatchDay);
       for (const match of round.matches) {
         match.scheduledDate = currentDate.toISOString();
       }
-
-      // Move to next match day for next round
       const nextDay = new Date(currentDate);
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       currentDate = this.getNextMatchDay(nextDay, matchDays);
-    }
-
-    // Grand final on last match day before endDate
-    if (bracket.grandfinal) {
-      bracket.grandfinal.scheduledDate = lastMatchDay.toISOString();
     }
   }
 
