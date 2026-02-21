@@ -1362,6 +1362,302 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // BRACKET-AWARE TEMPLATES (Phase 1 — 10 templates)
+  // Conditions: lower_bracket, upper_bracket, elimination_risk, grand_final,
+  //             opponent_dropped_from_upper
+  // ==========================================================================
+
+  // 1. lower_bracket_dropped — POST_MATCH after falling to lower bracket
+  {
+    id: 'lower_bracket_dropped',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'lower_bracket',
+    prompt: "You've been sent to the lower bracket. No more safety net. How does the team regroup from here?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Lower bracket is where legends are made",
+        quote: "Every great run has a detour through adversity. We needed this wake-up call. You'll see a different side of this team from here on out.",
+        effects: { hype: 4, morale: 3, fanbase: 2, setsFlags: [{ key: 'interview_lower_bracket_narrative', durationDays: 21 }] },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "That was on me — we'll be ready",
+        quote: "The game plan didn't hold up and I take that on myself. I owe this team a better performance from the coaching side. We'll be sharper starting with the next match.",
+        effects: { fanbase: 3, sponsorTrust: 2, morale: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We reset and earn our way back",
+        quote: "The upper bracket path is closed for us now. That's fine. We earn our way back one match at a time, and every team we beat along the way will know we meant business.",
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
+      },
+    ],
+  },
+
+  // 2. lower_bracket_survival — PRE_MATCH when surviving in lower bracket on a streak
+  {
+    id: 'lower_bracket_survival',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'lower_bracket',
+    prompt: "You've kept your tournament run alive through consecutive wins in the lower bracket. What's driving this team right now?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We've found something down here",
+        quote: "The lower bracket strips everything away. No comfort zone, no margin for error. And somehow this team keeps answering. I genuinely believe we're hitting our peak at the right time.",
+        effects: { hype: 5, morale: 4, fanbase: 2, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 14 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "One match, one mindset",
+        quote: "We're not thinking about the journey — just the next match. That's the only thing that keeps you alive in lower bracket: absolute focus on what's directly in front of you.",
+        effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'arc_mod_resilient', durationDays: 14 }] },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "We thrive when the stakes are highest",
+        quote: "Some teams crumble when every match is elimination. Not us. This environment brings out the version of this team that I always knew existed.",
+        effects: { hype: 6, fanbase: 3, rivalryDelta: 1, dramaChance: 8 },
+      },
+    ],
+  },
+
+  // 3. elimination_risk_pre — PRE_MATCH must-win framing
+  {
+    id: 'elimination_risk_pre',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'elimination_risk',
+    prompt: "One more loss and your tournament is over. How do you prepare a team for a match with everything on the line?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Must-win matches are our specialty",
+        quote: "We've been in do-or-die situations before and we know what it takes. I'd rather be in this position — backs against the wall — than cruise through to a final we haven't earned.",
+        effects: { hype: 5, morale: 4, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We're going to give everything we have",
+        quote: "There's a simplicity to elimination matches that I actually appreciate. You go out and play your absolute best. No overthinking. Just compete.",
+        effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'interview_lower_bracket_narrative', durationDays: 14 }] },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "Elimination doesn't scare us",
+        quote: "We didn't come to this tournament to go home quietly. Every player in that room knows what's at stake. They'll show you what they're made of today.",
+        effects: { hype: 6, fanbase: 3, morale: 3, dramaChance: 8 },
+      },
+    ],
+  },
+
+  // 4. grand_final_pre — PRE_MATCH legacy/history framing
+  {
+    id: 'grand_final_pre',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'grand_final',
+    prompt: "This is the grand final. You've made it to the biggest match of the tournament. What does it mean to stand here?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We earned this — now we take it",
+        quote: "Every match we've played, every decision we've made this tournament has pointed to today. We're ready. I don't want to say much more than that — let the match do the talking.",
+        effects: { hype: 6, morale: 5, fanbase: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It's a privilege and a responsibility",
+        quote: "For some of these players, this is the biggest match of their careers. I want them to soak in that feeling and then channel it. We've worked too long for this to be paralyzed by it.",
+        effects: { morale: 4, sponsorTrust: 3, fanbase: 4 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "We didn't come this far to lose now",
+        quote: "This team has clawed through everything this tournament threw at us. There is no version of today where we don't fight for every single round. We're leaving everything on the server.",
+        effects: { hype: 7, morale: 4, rivalryDelta: 2, dramaChance: 5 },
+      },
+    ],
+  },
+
+  // 5. grand_final_post_win — POST_MATCH triumph framing
+  {
+    id: 'grand_final_post_win',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'grand_final',
+    prompt: "You're champions. After everything this team went through to get here — what does this moment mean?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "This is exactly who we are",
+        quote: "People will remember what happened today. We weren't just here to compete — we came here to win. And we did. This is the standard we hold ourselves to from now on.",
+        effects: { hype: 9, fanbase: 8, morale: 6, setsFlags: [{ key: 'interview_grand_final_champion', durationDays: 30 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm just so proud of this group",
+        quote: "I keep looking around at these players. They gave everything — not just today, but all season. This championship belongs to every person who fought for this team. I couldn't be prouder.",
+        effects: { fanbase: 9, morale: 6, sponsorTrust: 5 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Let this sink in before we talk about what's next",
+        quote: "There will be time to analyze this. Right now I just want these players to feel it. Moments like this are why you dedicate your career to this game.",
+        effects: { fanbase: 7, morale: 5, hype: 4 },
+      },
+    ],
+  },
+
+  // 6. grand_final_post_loss — POST_MATCH gracious defeat / revenge setup
+  {
+    id: 'grand_final_post_loss',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'grand_final',
+    prompt: "You made the grand final and fell short at the last step. How do you walk away from something like this?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "We'll be back for this",
+        quote: "This is the hardest thing to process — knowing how close we came. But I refuse to let this team feel like they failed. They made the grand final. That matters. And we'll be back.",
+        effects: { fanbase: 5, morale: 4, sponsorTrust: 3 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "This pain becomes our fuel",
+        quote: "Remember this feeling. I want every player on this team to carry it. Because next time we're in this position, we're going to know exactly what it cost us to lose — and we won't let it happen again.",
+        effects: { hype: 4, morale: 4, fanbase: 3, setsFlags: [{ key: 'interview_grand_final_loss_fuel', durationDays: 30 }] },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I owe this team a championship",
+        quote: "These players deserved to lift that trophy today. I'll spend a long time thinking about what I could have done differently. I owe them that honesty — and I owe them another shot.",
+        effects: { fanbase: 4, sponsorTrust: 3, morale: 2, dramaChance: 8 },
+      },
+    ],
+  },
+
+  // 7. upper_bracket_confidence — PRE_MATCH commanding narrative
+  {
+    id: 'upper_bracket_confidence',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'upper_bracket',
+    prompt: "You're still in the upper bracket with an extra life if you need it. How do you keep the team hungry without getting comfortable?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Upper bracket is where we belong",
+        quote: "This is where we want to be. The comfort we have isn't complacency — it's confidence built from results. We stay up here by being better than everyone else in front of us.",
+        effects: { hype: 4, morale: 4, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We're not looking past anyone",
+        quote: "I don't talk about the safety net. The moment you start thinking about what happens if you lose is the moment you start losing. We're focused completely on what's ahead.",
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "We want to stay on this side of the bracket",
+        quote: "Nobody in this building wants to go to the lower bracket. That's the honest truth. It's not fear — it's hunger. We're going to fight to stay where we are.",
+        effects: { hype: 5, morale: 3, rivalryDelta: 1, dramaChance: 5 },
+      },
+    ],
+  },
+
+  // 8. opponent_dropped_from_upper_pre — PRE_MATCH psychological edge framing
+  {
+    id: 'opponent_dropped_from_upper_pre',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'opponent_dropped_from_upper',
+    prompt: "Your next opponent just dropped from the upper bracket. They're experienced and hungry — does that change your approach at all?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "They're wounded — we finish it",
+        quote: "Teams that drop from the upper bracket come in desperate. That desperation is an edge they have — but it's also a weakness we can exploit. We've prepared for exactly this kind of opponent.",
+        effects: { hype: 5, rivalryDelta: 3, morale: 2, dramaChance: 10 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "Desperation makes them dangerous",
+        quote: "You don't underestimate a team with their back against the wall. They'll play with nothing to lose and everything to gain. We have to match that intensity and be sharper in every key moment.",
+        effects: { morale: 3, fanbase: 2, hype: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Same preparation regardless of where they came from",
+        quote: "We prepare the same way every match. Where they came from in the bracket doesn't change how we approach the film or the practice sessions. We focus on our game.",
+        effects: { morale: 2 },
+      },
+    ],
+  },
+
+  // 9. lower_bracket_vs_dropped_opponent — PRE_MATCH both teams desperate
+  {
+    id: 'lower_bracket_vs_dropped_opponent',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'lower_bracket',
+    prompt: "You're in the lower bracket, and your opponent just dropped from the upper. Two teams under the gun — what does that dynamic bring out?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We've been surviving longer — we're ready for this",
+        quote: "We've been living in elimination pressure since we dropped. They're just getting introduced to it. That experience matters. We're conditioned for exactly this kind of match.",
+        effects: { hype: 5, morale: 4, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "No favors in a match like this",
+        quote: "Two teams who both needed to fight to stay alive. Neither side is getting a gift today. I expect everything from my players — because we'll need everything to get through.",
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "They fell — we stayed alive. That gap matters.",
+        quote: "There's a reason they're on this side of the bracket now. We're going to use every bit of the momentum we've built. Today we show the difference between a team that belongs here and one that slipped.",
+        effects: { hype: 6, rivalryDelta: 3, morale: 3, dramaChance: 10 },
+      },
+    ],
+  },
+
+  // 10. comeback_lower_bracket_run — POST_MATCH iron will narrative after extended lower bracket run
+  {
+    id: 'comeback_lower_bracket_run',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'lower_bracket',
+    prompt: "Match after match, elimination on the line each time — and this team keeps winning. How do you describe what you've witnessed from this roster through this lower bracket run?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "This is what we're built for",
+        quote: "Every match they've played down here has required everything they had. And they've delivered. This isn't a fluke — this is who we are. Every team left in this tournament should be watching.",
+        effects: { hype: 7, morale: 5, fanbase: 4, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 21 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The bracket tested us and we didn't break",
+        quote: "I've coached teams that found reasons to fold under this kind of pressure. These players never even considered it. What they've shown through this run — I'll be honest, it's exceeded everything I hoped for.",
+        effects: { morale: 5, sponsorTrust: 3, fanbase: 5, setsFlags: [{ key: 'arc_mod_resilient', durationDays: 21 }] },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "Nobody believed in us — and we didn't need them to",
+        quote: "People wrote us off when we dropped to lower bracket. That's fine. We play for each other, not for outside validation. And we are still here. Every team we've beaten can tell you what that looks like up close.",
+        effects: { hype: 8, fanbase: 5, morale: 4, rivalryDelta: 1 },
+      },
+    ],
+  },
+
   // Arc 5: Historic First Title — seed interview
   {
     id: 'post_win_historic_milestone',
