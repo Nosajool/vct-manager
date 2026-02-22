@@ -1290,6 +1290,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         type: 'random_chance',
         chance: 20,
       },
+      {
+        type: 'min_season_day',
+        threshold: 20,
+      }
     ],
     probability: 40,
     cooldownDays: 5,

@@ -3,6 +3,7 @@
 // Shows a scrollable list of past drama events with category badges,
 // outcomes, and effects summary
 
+import { useState } from 'react';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import type { DramaCategory, DramaEventInstance } from '../../types/drama';
@@ -85,17 +86,10 @@ function getEffectColor(effects: DramaEventInstance['appliedEffects']): string {
   return 'text-vct-gray';
 }
 
-/**
- * Truncate text to single line with ellipsis
- */
-function truncateText(text: string, maxLength: number = 80): string {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
-}
-
 export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
   const getEventHistory = useGameStore((state) => state.getEventHistory);
   const players = useGameStore((state) => state.players);
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
   // Get recent events (they come in chronological order, newest last)
   const allEvents = getEventHistory(limit);
@@ -133,12 +127,15 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
             ? players[event.affectedPlayerIds[0]]
             : null;
 
+          const isExpanded = expandedEventId === event.id;
+
           return (
             <div
               key={event.id}
-              className="bg-vct-dark/50 rounded-lg border border-vct-gray/20 p-3 hover:border-vct-gray/40 transition-colors"
+              className="bg-vct-dark/50 rounded-lg border border-vct-gray/20 p-3 hover:border-vct-gray/40 transition-colors cursor-pointer"
+              onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
             >
-              {/* Header: Category + Date */}
+              {/* Header: Category + Date + Chevron */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${metadata.dotColor}`} />
@@ -151,11 +148,21 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-vct-gray/60">{dateFormatted}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-vct-gray/60">{dateFormatted}</span>
+                  <svg
+                    className={`w-4 h-4 text-vct-gray/60 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
 
-              {/* Narrative - truncated to 1 line */}
-              <div className="flex items-center gap-2 mb-2">
+              {/* Narrative */}
+              <div className="flex items-start gap-2 mb-2">
                 {affectedPlayer && (
                   <GameImage
                     src={getPlayerImageUrl(affectedPlayer.name)}
@@ -164,7 +171,7 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
                     fallbackClassName="w-8 h-8 rounded-full flex-shrink-0"
                   />
                 )}
-                <p className="text-sm text-vct-light line-clamp-1">
+                <p className={`text-sm text-vct-light ${!isExpanded ? 'line-clamp-1' : ''}`}>
                   {event.outcomeText || 'Event occurred'}
                 </p>
               </div>
@@ -189,7 +196,7 @@ export function DramaHistoryPanel({ limit = 20 }: DramaHistoryPanelProps) {
 
                 {/* Effects */}
                 <span className={`font-medium ${effectColor}`}>
-                  {truncateText(effectSummary, 40)}
+                  {isExpanded ? effectSummary : effectSummary.length > 40 ? effectSummary.substring(0, 40) + '...' : effectSummary}
                 </span>
               </div>
             </div>

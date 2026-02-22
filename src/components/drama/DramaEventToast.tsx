@@ -96,6 +96,7 @@ export function DramaEventToast({
   autoCloseMs = 5000,
 }: DramaEventToastProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const players = useGameStore((state) => state.players);
   const affectedPlayer = event.affectedPlayerIds?.[0]
@@ -107,26 +108,31 @@ export function DramaEventToast({
   const effectSummary = formatEffectSummary(event.appliedEffects);
   const effectColor = getEffectColor(event.appliedEffects);
 
+  // Show effect: runs once on mount
   useEffect(() => {
-    // Slide in after a brief delay
     const showTimer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(showTimer);
+  }, []);
 
-    // Auto-dismiss after specified time
+  // Dismiss effect: paused when expanded
+  useEffect(() => {
+    if (isExpanded) return;
+
     const dismissTimer = setTimeout(() => {
       setIsVisible(false);
-      // Wait for slide-out animation before calling onDismiss
       setTimeout(onDismiss, 300);
     }, autoCloseMs);
 
-    return () => {
-      clearTimeout(showTimer);
-      clearTimeout(dismissTimer);
-    };
-  }, [autoCloseMs, onDismiss]);
+    return () => clearTimeout(dismissTimer);
+  }, [autoCloseMs, onDismiss, isExpanded]);
 
   const handleManualDismiss = () => {
     setIsVisible(false);
     setTimeout(onDismiss, 300);
+  };
+
+  const handleToggleExpand = () => {
+    setIsExpanded(true);
   };
 
   return (
@@ -147,34 +153,45 @@ export function DramaEventToast({
         `}
       >
         <div className="flex items-start gap-3">
-          {/* Category Icon / Player Image */}
-          <div className="flex-shrink-0 flex flex-col items-center">
-            {affectedPlayer ? (
-              <GameImage
-                src={playerImageUrl!}
-                alt={affectedPlayer.name}
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0 mb-1"
-                fallbackClassName="w-10 h-10 rounded-full flex-shrink-0 mb-1"
-              />
-            ) : (
-              <div className="text-2xl mb-1">{metadata.icon}</div>
-            )}
-            <span className="text-xs font-medium text-vct-gray">
-              {metadata.label}
-            </span>
-          </div>
+          {/* Clickable content area */}
+          <div
+            className={`flex items-start gap-3 flex-1 min-w-0 ${!isExpanded ? 'cursor-pointer' : ''}`}
+            onClick={!isExpanded ? handleToggleExpand : undefined}
+          >
+            {/* Category Icon / Player Image */}
+            <div className="flex-shrink-0 flex flex-col items-center">
+              {affectedPlayer ? (
+                <GameImage
+                  src={playerImageUrl!}
+                  alt={affectedPlayer.name}
+                  className="w-10 h-10 rounded-full object-cover flex-shrink-0 mb-1"
+                  fallbackClassName="w-10 h-10 rounded-full flex-shrink-0 mb-1"
+                />
+              ) : (
+                <div className="text-2xl mb-1">{metadata.icon}</div>
+              )}
+              <span className="text-xs font-medium text-vct-gray">
+                {metadata.label}
+              </span>
+            </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-vct-light mb-1">
-              {event.title}
-            </h3>
-            <p className="text-sm text-vct-gray mb-2 line-clamp-2">
-              {event.narrative}
-            </p>
-            {/* Effect Summary */}
-            <div className={`text-xs font-medium ${effectColor}`}>
-              {effectSummary}
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-1 mb-1">
+                <h3 className="text-lg font-bold text-vct-light">
+                  {event.title}
+                </h3>
+                {isExpanded && (
+                  <span className="text-xs text-vct-gray/60 ml-1">Paused</span>
+                )}
+              </div>
+              <p className={`text-sm text-vct-gray mb-2 ${!isExpanded ? 'line-clamp-2' : ''}`}>
+                {event.narrative}
+              </p>
+              {/* Effect Summary */}
+              <div className={`text-xs font-medium ${effectColor}`}>
+                {effectSummary}
+              </div>
             </div>
           </div>
 
