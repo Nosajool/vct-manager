@@ -92,6 +92,8 @@ export class InterviewService {
       'post_upset_momentum_shift', 'post_rivalry_win_elimination', 'post_lower_bracket_survival_player',
       // Team identity (Phase 4b)
       'post_resilient_lower_bracket', 'post_star_carry_spotlight',
+      // Kickoff flag consequences
+      'post_win_development_focus',
     ];
     const lossIds = [
       'post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination',

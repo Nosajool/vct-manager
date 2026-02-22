@@ -2501,4 +2501,125 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // KICKOFF FLAG CONSEQUENCES (4 templates — gate on org_high_expectations,
+  // manager_development_focused, manager_underdog_mindset)
+  // ==========================================================================
+
+  {
+    id: 'pre_high_expectations_pressure',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'always',
+    requiresActiveFlag: 'org_high_expectations',
+    prompt: "You set a high bar at the start of the season. Does that statement feel like motivation or pressure heading into today's match?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "The standard hasn't changed",
+        quote: "We said what we said. Every match is a step toward that goal. Today is no different.",
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "It's fuel, not pressure",
+        quote: "We don't carry it as pressure. The team uses it as a north star. That's how it was always intended.",
+        effects: { morale: 3, dramaChance: 5 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'We take it one match at a time',
+        quote: "The season goal is there. But you can't win the whole thing in one match. So today, we focus on today.",
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_win_development_focus',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    condition: 'always',
+    requiresActiveFlag: 'manager_development_focused',
+    prompt: "You've talked about a development-first philosophy this season. Does a win like this feel like validation of that approach?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'This is what patient development looks like',
+        quote: "Exactly. We didn't rush. We trusted the process and the players. Wins like this are the payoff.",
+        effects: { morale: 3, fanbase: 2, hype: 2 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: 'The players deserve the credit',
+        quote: "I believe in the approach, but it's the players who actually put it into practice. This is their win.",
+        effects: { morale: 4, sponsorTrust: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'One step at a time',
+        quote: "We still have a long way to go. This is encouraging but we're not getting ahead of ourselves.",
+        effects: { morale: 2, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_underdog_narrative',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    condition: 'always',
+    requiresActiveFlag: 'manager_underdog_mindset',
+    prompt: "Most analysts aren't picking your team to go deep this season. How do you use that heading into today?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "We like it that way",
+        quote: "Low expectations? Fine by us. We'll keep our heads down and let the bracket tell the story.",
+        effects: { morale: 4, hype: 2, dramaChance: 5 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "They'll change their minds",
+        quote: "They're welcome to keep sleeping on us. Every time we prove a doubter wrong, this team gets stronger.",
+        effects: { hype: 5, morale: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "We don't watch the analysis",
+        quote: "I genuinely don't follow what analysts say about us. We're too busy preparing. That's probably why we're still here.",
+        effects: { morale: 3, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_championship_mandate_streak',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    condition: 'loss_streak_3plus',
+    requiresActiveFlag: 'org_high_expectations',
+    prompt: "You declared you'd be in the finals at the start of the season. Three straight losses in — how do you justify that statement now?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "The season isn't over",
+        quote: "Three losses doesn't erase a full season of work. The standard is still there. We'll get back to it.",
+        effects: { morale: 3, hype: 2, dramaChance: 15 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We need to earn it, not declare it",
+        quote: "Looking back, maybe we spoke too soon. We need to show it on the server — not in press conferences.",
+        effects: { morale: 2, fanbase: -1, clearsFlags: ['org_high_expectations'] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'm focused on the next match",
+        quote: "I'm not going to re-litigate what I said months ago. There are matches left. That's where my head is.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
 ];

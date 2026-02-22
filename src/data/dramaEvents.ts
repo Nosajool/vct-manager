@@ -5838,4 +5838,120 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       },
     ],
   },
+
+  // ==========================================================================
+  // KICKOFF FLAG CONSEQUENCES (3 events — consume org_high_expectations,
+  // manager_development_focused, manager_underdog_mindset)
+  // ==========================================================================
+
+  {
+    id: 'pressure_championship_mandate',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'The Mandate Questioned',
+    description: 'After declaring championship-or-bust ambitions at the start of the season, {teamName}\'s stumble has the media demanding answers.',
+    conditions: [
+      { type: 'flag_active', flag: 'org_high_expectations' },
+      { type: 'team_loss_streak', streakLength: 1 },
+    ],
+    probability: 50,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'reaffirm',
+        text: 'Stand by the standard',
+        description: 'Publicly double down on championship expectations',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
+          { target: 'set_flag', flag: 'org_pressure_doubled', flagDuration: 21 },
+        ],
+        outcomeText: 'The boldness lands with the fanbase and the team rallies around it — but now there\'s nowhere to hide if results don\'t come.',
+      },
+      {
+        id: 'reframe',
+        text: 'Reframe as a process goal',
+        description: 'Acknowledge the standard while shifting focus to the journey',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
+          { target: 'team_chemistry', delta: 3 },
+          { target: 'clear_flag', flag: 'org_high_expectations' },
+        ],
+        outcomeText: 'The adjustment in tone takes pressure off the roster. You\'ve traded some of the hype for steadiness.',
+      },
+      {
+        id: 'deflect',
+        text: 'Redirect to the next match',
+        description: 'Refuse to engage with the narrative pressure',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 2 },
+        ],
+        outcomeText: 'The press conference ends without resolution. The question doesn\'t go away — it just waits for the next result.',
+      },
+    ],
+  },
+
+  {
+    id: 'development_breakthrough_moment',
+    category: 'breakthrough',
+    severity: 'minor',
+    title: 'Development Paying Off',
+    description: 'The practice focus is showing results. {playerName} has been putting in the work and it\'s starting to translate.',
+    conditions: [
+      { type: 'flag_active', flag: 'manager_development_focused' },
+      { type: 'scrim_count_min', threshold: 5 },
+      { type: 'no_recent_match' },
+    ],
+    probability: 40,
+    cooldownDays: 10,
+    effects: [
+      { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
+      { target: 'team_chemistry', delta: 5 },
+      { target: 'set_flag', flag: 'development_visible_progress', flagDuration: 14 },
+    ],
+  },
+
+  {
+    id: 'underdog_media_doubt',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'The Analysts Write Them Off',
+    description: 'Multiple analysts and casters are publicly dismissing {teamName}\'s playoff chances. The underdog tag has become a punchline.',
+    conditions: [
+      { type: 'flag_active', flag: 'manager_underdog_mindset' },
+      { type: 'team_loss_streak', streakLength: 1 },
+    ],
+    probability: 45,
+    cooldownDays: 14,
+    choices: [
+      {
+        id: 'use_as_fuel',
+        text: 'Use it as fuel',
+        description: 'Channel the disrespect into motivation',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 8 },
+          { target: 'set_flag', flag: 'underdog_chip_active', flagDuration: 21 },
+        ],
+        outcomeText: 'The locker room comes alive. Everyone has seen the takes. That energy is real — now it needs results to sustain it.',
+      },
+      {
+        id: 'acknowledge',
+        text: 'Acknowledge the doubts honestly',
+        description: 'Validate the criticism and commit to earned respect',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: -2 },
+          { target: 'team_chemistry', delta: 7 },
+        ],
+        outcomeText: 'The honesty lands well internally. Players appreciate not being fed false confidence. The chemistry in practice improves.',
+      },
+      {
+        id: 'stay_quiet',
+        text: 'Say nothing publicly',
+        description: 'Ignore the noise and stay in your own lane',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
+        ],
+        outcomeText: 'No bulletin board material given or taken. The team continues in quiet focus.',
+      },
+    ],
+  },
 ];

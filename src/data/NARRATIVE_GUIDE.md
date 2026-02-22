@@ -667,9 +667,12 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `arc_mod_momentum` | bracket-aware interview options (team-level) | future events |
 | `arc_mod_resilient` | bracket-aware interview options (team-level) | future events |
 | **Team identity flags (Phase 4)** | | |
-| `org_high_expectations` | `kickoff_season_opener` CONFIDENT option | future external pressure events |
-| `manager_development_focused` | `kickoff_season_opener` RESPECTFUL option | future player arc/growth events |
-| `manager_underdog_mindset` | `kickoff_season_opener` HUMBLE option | future resilience/comeback events |
+| `org_high_expectations` | `kickoff_season_opener` CONFIDENT option | `pressure_championship_mandate` drama, `pre_high_expectations_pressure` interview, `crisis_championship_mandate_streak` interview |
+| `manager_development_focused` | `kickoff_season_opener` RESPECTFUL option | `development_breakthrough_moment` drama, `post_win_development_focus` interview |
+| `manager_underdog_mindset` | `kickoff_season_opener` HUMBLE option | `underdog_media_doubt` drama, `pre_underdog_narrative` interview |
+| `org_pressure_doubled` | `pressure_championship_mandate` "Stand by" choice | future external pressure events |
+| `development_visible_progress` | `development_breakthrough_moment` minor event | future player growth events |
+| `underdog_chip_active` | `underdog_media_doubt` "Use as fuel" choice | future resilience/comeback events |
 | `team_identity_star_carry` | `kickoff_season_opener` CONFIDENT option, `identity_star_carry_emerges` drama | `star_carry_friction`, `identity_shift_star_to_balanced`, interview templates |
 | `team_identity_balanced` | `kickoff_season_opener` RESPECTFUL option, `identity_balanced_recognized` drama | `balanced_team_tested`, `balanced_chemistry_peak`, interview templates |
 | `team_identity_resilient` | `kickoff_season_opener` HUMBLE option, `identity_resilient_earned` drama | `resilient_spirit_moment`, `identity_media_resilient`, interview templates |
