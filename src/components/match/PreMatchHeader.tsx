@@ -4,17 +4,23 @@
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { getMatchRoundName } from '../../utils/matchRoundName';
 
 interface PreMatchHeaderProps {
-  playerTeamId: string;
-  opponentTeamId: string;
-  matchRoundName?: string;
+  matchId: string;
 }
 
-export function PreMatchHeader({ playerTeamId, opponentTeamId, matchRoundName }: PreMatchHeaderProps) {
+export function PreMatchHeader({ matchId }: PreMatchHeaderProps) {
+  const match = useGameStore((state) => state.matches[matchId]);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+
+  if (!match || !playerTeamId) return null;
+
+  const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
   const playerTeam = teams[playerTeamId];
   const opponentTeam = teams[opponentTeamId];
+  const matchRoundName = getMatchRoundName(matchId);
 
   if (!playerTeam || !opponentTeam) return null;
 

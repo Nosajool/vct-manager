@@ -66,30 +66,17 @@ function formatEffects(effects: PendingInterview['options'][number]['effects']):
 }
 
 // ============================================================================
-// Matchup header — renders PostMatchHeader or PreMatchHeader depending on context
+// Matchup header — renders PostMatchHeader or PreMatchHeader depending on match status
 // ============================================================================
 
-function MatchupHeader({ playerTeamId, interview }: { playerTeamId: string | null; interview: PendingInterview }) {
-  if (!playerTeamId || !interview.opponentTeamId) return null;
-  if (interview.matchScore) {
-    return (
-      <PostMatchHeader
-        context={{
-          playerTeamId,
-          opponentTeamId: interview.opponentTeamId,
-          matchRoundName: interview.matchRoundName,
-          matchScore: interview.matchScore,
-        }}
-      />
-    );
+function MatchupHeader({ interview }: { interview: PendingInterview }) {
+  const match = useGameStore((state) => interview.matchId ? state.matches[interview.matchId] : undefined);
+  if (!interview.matchId || !match) return null;
+
+  if (match.status === 'completed') {
+    return <PostMatchHeader matchId={interview.matchId} />;
   }
-  return (
-    <PreMatchHeader
-      playerTeamId={playerTeamId}
-      opponentTeamId={interview.opponentTeamId}
-      matchRoundName={interview.matchRoundName}
-    />
-  );
+  return <PreMatchHeader matchId={interview.matchId} />;
 }
 
 // ============================================================================
@@ -176,7 +163,7 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
               <h2 className="text-xl font-bold text-vct-light">Response Delivered</h2>
             </div>
 
-            <MatchupHeader playerTeamId={playerTeamId} interview={interview} />
+            <MatchupHeader interview={interview} />
 
             <div className="p-6 space-y-4">
               <p className="text-vct-light text-base italic leading-relaxed">
@@ -252,7 +239,7 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
             </div>
 
             {/* Matchup context header (pre-match: VS, post-match: score) */}
-            <MatchupHeader playerTeamId={playerTeamId} interview={interview} />
+            <MatchupHeader interview={interview} />
 
             {/* Prompt */}
             <div className="p-6 bg-vct-darker/50">
