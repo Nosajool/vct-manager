@@ -42,13 +42,13 @@ export interface FeatureUnlock {
 export const FEATURE_UNLOCKS: FeatureUnlock[] = [
   {
     feature: 'training',
-    condition: { type: 'day', day: 4 },
-    description: 'Training unlocks on day 4 - develop your team and improve player skills',
+    condition: { type: 'day', day: 8 },
+    description: 'Training unlocks on day 8 (week 2) - develop your team and improve player skills',
   },
   {
     feature: 'scrims',
-    condition: { type: 'day', day: 10 },
-    description: 'Scrims unlock on day 10 (week 2) - practice matches become available',
+    condition: { type: 'day', day: 15 },
+    description: 'Scrims unlock on day 15 (week 3) - practice matches become available',
   },
   {
     feature: 'transfers',
