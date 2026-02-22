@@ -89,6 +89,7 @@ export function TimeBar() {
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
+  const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
 
   // Interview state from store
   const pendingInterview = useGameStore((state) => state.pendingInterview);
@@ -270,47 +271,45 @@ export function TimeBar() {
   };
 
   const handleAdvanceDay = () => {
-    // Check for unconfigured activities before advancing
+    // Check for roster and unconfigured activities before advancing
     const state = useGameStore.getState();
+    const team = playerTeamId ? state.teams[playerTeamId] : null;
+    const rosterShort = team ? team.playerIds.length < 5 : false;
     const hasUnconfigured = state.hasUnconfiguredActivities();
 
-    if (hasUnconfigured) {
-      // Get unconfigured IDs (may include "unscheduled:training" sentinel values)
-      const unconfiguredIds = state.getUnconfiguredActivities();
+    if (rosterShort || hasUnconfigured) {
+      let events: CalendarEvent[] = [];
 
-      // Auto-schedule any available-but-unscheduled activities so they get CalendarEvents
-      const dayScheduleService = new DayScheduleService();
-      const today = state.calendar?.currentDate;
-      const newlyScheduledEvents: CalendarEvent[] = [];
+      if (hasUnconfigured) {
+        // Get unconfigured IDs (may include "unscheduled:training" sentinel values)
+        const unconfiguredIds = state.getUnconfiguredActivities();
 
-      for (const id of unconfiguredIds) {
-        if (id.startsWith('unscheduled:') && today) {
-          const activityType = id.replace('unscheduled:', '') as SchedulableActivityType;
-          try {
-            const event = dayScheduleService.scheduleActivity(today, activityType);
-            newlyScheduledEvents.push(event);
-          } catch {
-            // Activity couldn't be scheduled (e.g., blocked), skip it
+        // Auto-schedule any available-but-unscheduled activities so they get CalendarEvents
+        const dayScheduleService = new DayScheduleService();
+        const today = state.calendar?.currentDate;
+
+        for (const id of unconfiguredIds) {
+          if (id.startsWith('unscheduled:') && today) {
+            const activityType = id.replace('unscheduled:', '') as SchedulableActivityType;
+            try {
+              dayScheduleService.scheduleActivity(today, activityType);
+            } catch {
+              // Activity couldn't be scheduled (e.g., blocked), skip it
+            }
           }
         }
+
+        // Now collect ALL unconfigured CalendarEvents (existing + newly created)
+        const freshState = useGameStore.getState();
+        const freshUnconfiguredIds = freshState.getUnconfiguredActivities();
+        events = freshState.calendar.scheduledEvents.filter(event =>
+          freshUnconfiguredIds.includes(event.id)
+        );
       }
 
-      // Now collect ALL unconfigured CalendarEvents (existing + newly created)
-      const freshState = useGameStore.getState();
-      const freshUnconfiguredIds = freshState.getUnconfiguredActivities();
-      const events = freshState.calendar.scheduledEvents.filter(event =>
-        freshUnconfiguredIds.includes(event.id)
-      );
-
-      if (events.length > 0) {
-        setUnconfiguredEvents(events);
-        setShowValidationModal(true);
-      } else {
-        // All resolved after auto-scheduling - check for pre-match interview
-        if (!checkAndShowPreMatchInterview()) {
-          handleTimeAdvance(() => calendarService.advanceDay(true));
-        }
-      }
+      setUnconfiguredEvents(events);
+      setHasInsufficientRoster(rosterShort);
+      setShowValidationModal(true);
     } else {
       // All configured - check for pre-match interview
       if (!checkAndShowPreMatchInterview()) {
@@ -377,6 +376,27 @@ export function TimeBar() {
     // Generate auto-configs for all unconfigured events
     const state = useGameStore.getState();
 
+    // Step 1: Auto-fill roster if insufficient
+    if (hasInsufficientRoster && playerTeamId) {
+      const team = state.teams[playerTeamId];
+      const needed = 5 - team.playerIds.length;
+
+      const available = team.reservePlayerIds
+        .filter(id => !(`visa_delayed_${id}` in state.activeFlags))
+        .map(id => state.players[id])
+        .filter(Boolean)
+        .sort((a, b) => {
+          const scoreA = Object.values(a.stats).reduce((s: number, v) => s + (v as number), 0);
+          const scoreB = Object.values(b.stats).reduce((s: number, v) => s + (v as number), 0);
+          return scoreB - scoreA;
+        });
+
+      for (const player of available.slice(0, needed)) {
+        state.movePlayerToActive(playerTeamId, player.id);
+      }
+    }
+
+    // Step 2: Configure activities
     for (const event of unconfiguredEvents) {
       if (event.type === 'scheduled_training') {
         // Auto-configure training
@@ -440,20 +460,24 @@ export function TimeBar() {
     // Close modal and proceed with day advancement
     setShowValidationModal(false);
     setUnconfiguredEvents([]);
+    setHasInsufficientRoster(false);
     handleTimeAdvance(() => calendarService.advanceDay(true));
   };
 
   const handleReviewEvents = () => {
-    // Close modal and return to Today page (user can configure manually)
+    // Navigate to roster view if roster is the issue, otherwise Today
+    const goToRoster = hasInsufficientRoster;
     setShowValidationModal(false);
     setUnconfiguredEvents([]);
-    setActiveView('today');
+    setHasInsufficientRoster(false);
+    setActiveView(goToRoster ? 'team' : 'today');
   };
 
   const handleCancelValidation = () => {
     // Just close the modal
     setShowValidationModal(false);
     setUnconfiguredEvents([]);
+    setHasInsufficientRoster(false);
   };
 
   // Helper: Get choices for an event from its template with substituted outcome texts
@@ -591,10 +615,14 @@ export function TimeBar() {
         />
       )}
 
-      {/* Pre-Advance Validation Modal - shown when unconfigured activities exist */}
+      {/* Pre-Advance Validation Modal - shown when unconfigured activities or roster issue */}
       <PreAdvanceValidationModal
         isOpen={showValidationModal}
         unconfiguredEvents={unconfiguredEvents}
+        hasInsufficientRoster={hasInsufficientRoster}
+        activeRosterCount={
+          playerTeamId ? useGameStore.getState().teams[playerTeamId]?.playerIds.length ?? 0 : 0
+        }
         onAutoConfigAll={handleAutoConfigAll}
         onReview={handleReviewEvents}
         onCancel={handleCancelValidation}
