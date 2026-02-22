@@ -31,6 +31,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Feeling Underutilized',
     description: '{playerName} feels they\'re not being utilized effectively in scrims and wants more opportunities to shine.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'player_morale_below',
         threshold: 60,
@@ -150,6 +151,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Star Player Mentality',
     description: '{playerName} has been dominating in practice. Now they want the team to build strategies around their playstyle and hero pool.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'player_stat_above',
         stat: 'mechanics',
@@ -321,6 +323,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Communication Breakdown',
     description: 'Scrims have been sloppy lately. Players are talking over each other and missing crucial callouts.',
     conditions: [
+      { type: 'no_recent_match' },
       { type: 'team_chemistry_below', threshold: 60 },
       { type: 'scrim_count_min', threshold: 10 },
     ],
@@ -415,6 +418,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Team Momentum',
     description: 'Practice has been electric. {teamName} is playing with exceptional chemistry and energy right now.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'team_chemistry_above',
         threshold: 70,
@@ -575,6 +579,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Signs of Burnout',
     description: '{playerName} is showing signs of mental fatigue. They look drained after recent practice sessions.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'random_chance',
         chance: 15,
@@ -604,6 +609,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Motivation Dip',
     description: 'The team is going through the motions. Practice lacks the usual energy and focus.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'random_chance',
         chance: 20,
@@ -632,6 +638,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Unhealthy Grind Culture',
     description: 'Late-night practice sessions have become the norm. Players are burning the midnight oil, but at what cost?',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'flag_active',
         flag: 'training_effectiveness_penalty_{playerId}',
@@ -771,6 +778,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Scrim Upset Victory',
     description: '{teamName} just dominated a scrim against a much stronger opponent. The energy is infectious.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'team_chemistry_above',
         threshold: 50,
@@ -861,6 +869,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Prodigy Moment',
     description: '{playerName} just pulled off an incredible play in scrims that has everyone talking. This could be their breakout moment.',
     conditions: [
+      { type: 'no_recent_match' },
       {
         type: 'random_chance',
         chance: 20,

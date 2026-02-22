@@ -79,6 +79,7 @@ export type DramaConditionType =
 
   // Scrim history checks
   | 'scrim_count_min'   // Team has completed at least N total scrims
+  | 'no_recent_match'   // No match played within threshold days (default 1)
 
   // Random chance
   | 'random_chance';

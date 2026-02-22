@@ -73,6 +73,9 @@ export function evaluateCondition(
       // Check if there's a recent match result (within last 3 days)
       return hasRecentMatchResult(snapshot);
 
+    case 'no_recent_match':
+      return !hasRecentMatchResult(snapshot, condition.threshold ?? 1);
+
     case 'player_injured':
       // Check if any player on the team is injured
       // Note: This requires injury tracking in PlayerStats which may not exist yet
@@ -393,20 +396,20 @@ function calculateCurrentStreak(snapshot: DramaGameStateSnapshot): number {
 }
 
 /**
- * Checks if there's a recent match result (within last 3 days)
+ * Checks if there's a recent match result within the specified number of days
  */
-function hasRecentMatchResult(snapshot: DramaGameStateSnapshot): boolean {
+function hasRecentMatchResult(snapshot: DramaGameStateSnapshot, days = 3): boolean {
   if (!snapshot.recentMatchResults || snapshot.recentMatchResults.length === 0) {
     return false;
   }
 
   const currentDate = new Date(snapshot.currentDate);
-  const threeDaysAgo = new Date(currentDate);
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const cutoff = new Date(currentDate);
+  cutoff.setDate(cutoff.getDate() - days);
 
   return snapshot.recentMatchResults.some((result) => {
     const resultDate = new Date(result.date);
-    return resultDate >= threeDaysAgo && result.teamId === snapshot.playerTeamId;
+    return resultDate >= cutoff && result.teamId === snapshot.playerTeamId;
   });
 }
 
