@@ -102,6 +102,11 @@ export function evaluateCondition(
     case 'elimination_risk':
       return snapshot.tournamentContext?.eliminationRisk === true;
 
+    case 'scrim_count_min':
+      return condition.threshold !== undefined
+        ? (snapshot.scrimCount ?? 0) >= condition.threshold
+        : false;
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined

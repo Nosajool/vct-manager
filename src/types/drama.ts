@@ -77,6 +77,9 @@ export type DramaConditionType =
   | 'bracket_position'   // Check upper/lower bracket; uses bracketPosition field
   | 'elimination_risk'   // Team faces elimination with next loss
 
+  // Scrim history checks
+  | 'scrim_count_min'   // Team has completed at least N total scrims
+
   // Random chance
   | 'random_chance';
 
@@ -337,6 +340,9 @@ export interface DramaGameStateSnapshot {
     won: boolean;
     teamId: string;
   }>;
+
+  // Scrim history
+  scrimCount?: number;   // Total number of completed scrims
 
   // Drama state
   dramaState: DramaState;

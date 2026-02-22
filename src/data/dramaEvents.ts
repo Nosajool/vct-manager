@@ -36,6 +36,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         threshold: 60,
         playerSelector: 'any',
       },
+      { type: 'scrim_count_min', threshold: 3 },
     ],
     probability: 30,
     cooldownDays: 7,
@@ -320,10 +321,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Communication Breakdown',
     description: 'Scrims have been sloppy lately. Players are talking over each other and missing crucial callouts.',
     conditions: [
-      {
-        type: 'team_chemistry_below',
-        threshold: 60,
-      },
+      { type: 'team_chemistry_below', threshold: 60 },
+      { type: 'scrim_count_min', threshold: 10 },
     ],
     probability: 35,
     cooldownDays: 7,
@@ -776,6 +775,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         type: 'team_chemistry_above',
         threshold: 50,
       },
+      { type: 'scrim_count_min', threshold: 5 },
       {
         type: 'random_chance',
         chance: 12,
@@ -870,6 +870,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         threshold: 50,
         playerSelector: 'any',
       },
+      { type: 'scrim_count_min', threshold: 8 },
     ],
     probability: 35,
     cooldownDays: 7,

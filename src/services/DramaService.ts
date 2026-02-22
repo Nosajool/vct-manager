@@ -281,6 +281,8 @@ export class DramaService {
       cooldowns: state.cooldowns as Record<string, string | null>,
     };
 
+    const scrimCount = state.scrimHistory.length;
+
     // Get recent match results for streak-based conditions
     const matchHistory = state.getTeamMatchHistory(playerTeamId);
     const recentMatchResults = matchHistory.map(result => {
@@ -304,6 +306,7 @@ export class DramaService {
       playerTeamChemistry: playerTeam.chemistry.overall,
       players: playersSnapshot,
       recentMatchResults,
+      scrimCount,
       dramaState,
       tournamentContext,
     };
