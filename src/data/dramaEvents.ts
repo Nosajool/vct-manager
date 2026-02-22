@@ -816,8 +816,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     description: 'Word on the street is that Riot might be changing some agent balance. Teams are speculating about the meta shift.',
     conditions: [
       {
-        type: 'season_phase',
-        phase: 'stage1',
+        type: 'min_season_day',
+        threshold: 20,
       },
       {
         type: 'random_chance',
@@ -845,6 +845,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 6,
+      },
+      {
+        type: 'min_season_day',
+        threshold: 30,
       },
     ],
     probability: 6,
@@ -966,6 +970,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'random_chance',
         chance: 25,
+      },
+      {
+        type: 'min_season_day',
+        threshold: 30,
       },
     ],
     probability: 40,
@@ -1462,6 +1470,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Contract Year Ultimatum',
     description: "{playerName}'s agent has called mid-season citing market value and demanding a contract extension — at double the current salary.",
     conditions: [
+      {
+        type: 'min_season_day',
+        threshold: 8,  // Can't fire in first 7 days (week 1)
+      },
       {
         type: 'player_contract_expiring',
         contractYearsThreshold: 1,

@@ -197,6 +197,9 @@ PRE_MATCH and CRISIS templates are not filtered this way — they use all passin
 { type: 'bracket_position', bracketPosition: 'upper' | 'lower' }
 { type: 'elimination_risk' }   // true if snapshot.tournamentContext.eliminationRisk
 
+// Season timing checks
+{ type: 'min_season_day', threshold: 8 }  // Day 1 = first day of season; blocks event in week 1
+
 // Random
 { type: 'random_chance', chance: 20 }  // 0-100
 ```

@@ -110,6 +110,16 @@ export function evaluateCondition(
         ? (snapshot.scrimCount ?? 0) >= condition.threshold
         : false;
 
+    case 'min_season_day': {
+      const seasonYear = 2025 + snapshot.currentSeason;
+      const seasonStart = new Date(`${seasonYear}-01-01T00:00:00.000Z`);
+      const current = new Date(snapshot.currentDate);
+      const dayOfSeason = Math.floor(
+        (current.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1; // day 1-indexed
+      return dayOfSeason >= (condition.threshold ?? 1);
+    }
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined

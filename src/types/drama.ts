@@ -81,6 +81,9 @@ export type DramaConditionType =
   | 'scrim_count_min'   // Team has completed at least N total scrims
   | 'no_recent_match'   // No match played within threshold days (default 1)
 
+  // Season timing checks
+  | 'min_season_day'    // Season day >= threshold (day 1 = first day of season)
+
   // Random chance
   | 'random_chance';
 
