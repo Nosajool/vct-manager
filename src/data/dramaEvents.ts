@@ -3551,7 +3551,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'major',
     title: 'Miracle Run Territory',
-    description: "Multiple survival moments have crystallized into something tangible: this team genuinely believes they cannot be eliminated. {playerName} gave an impromptu speech before practice that had teammates in tears. Something rare is happening in this locker room and everyone can feel it.",
+    description: "Multiple survival moments have crystallized into something tangible: this team genuinely believes they cannot be eliminated. {playerName} gave an impromptu speech before practice that had teammates in tears. Something rare is happening in this prac room and everyone can feel it.",
     conditions: [
       {
         type: 'flag_active',
@@ -3560,6 +3560,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'team_chemistry_above',
         threshold: 60,
+        playerSelector: 'any',
       },
       {
         type: 'tournament_active',
@@ -5303,6 +5304,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'team_identity_star_carry',
+        playerSelector: 'star_player',
       },
       {
         type: 'player_personality',
@@ -5982,11 +5984,11 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Visa Processing Warning',
     description: "{teamName}'s org has flagged potential delays in {playerName}'s tournament travel documentation. Admin is monitoring the situation.",
     conditions: [
-      { type: 'tournament_active' },
-      { type: 'min_season_day', threshold: 14 },
-      { type: 'random_chance', chance: 20 },
+      { type: 'tournament_active', playerSelector: 'any' },
+      { type: 'min_season_day', threshold: 1 },
+      { type: 'player_is_import' },
     ],
-    probability: 15,
+    probability: 75,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     cooldownDays: 30,
@@ -6016,7 +6018,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'visa_application_pending_{playerId}' },
       { type: 'tournament_active' },
     ],
-    probability: 75,
+    probability: 90,
     escalateDays: 7,
     escalationTemplateId: 'visa_tournament_missed',
     choices: [

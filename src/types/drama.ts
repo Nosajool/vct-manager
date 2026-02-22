@@ -1,7 +1,7 @@
 // Drama System Types
 // Defines narrative events, conditions, effects, and player/team dynamics
 
-import type { PlayerContract, PlayerPersonality, PlayerStats } from './player';
+import type { PlayerContract, PlayerPersonality, PlayerStats, Region } from './player';
 import type { SeasonPhase } from './calendar';
 
 // ============================================================================
@@ -83,6 +83,9 @@ export type DramaConditionType =
 
   // Season timing checks
   | 'min_season_day'    // Season day >= threshold (day 1 = first day of season)
+
+  // Player origin checks
+  | 'player_is_import'  // Any player's home region differs from the team's league region
 
   // Random chance
   | 'random_chance';
@@ -341,7 +344,10 @@ export interface DramaGameStateSnapshot {
     form: number;           // 0-100
     contract?: PlayerContract | null;
     personality?: PlayerPersonality;
+    region?: Region;        // Player's home region (for import detection)
   }>;
+
+  playerTeamRegion?: Region;  // The team's (league) region
 
   // Recent match results
   recentMatchResults?: Array<{

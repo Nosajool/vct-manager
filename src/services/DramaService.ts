@@ -255,6 +255,7 @@ export class DramaService {
       form: player.form,
       contract: player.contract,
       personality: player.personality,
+      region: player.region,
     }));
 
     // Build drama state for snapshot
@@ -309,6 +310,7 @@ export class DramaService {
       scrimCount,
       dramaState,
       tournamentContext,
+      playerTeamRegion: playerTeam.region,
     };
   }
 

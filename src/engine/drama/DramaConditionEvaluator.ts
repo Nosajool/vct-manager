@@ -60,6 +60,7 @@ export function evaluateCondition(
     case 'tournament_active':
       // Tournament is active if currentPhase is one of the tournament phases
       return (
+        snapshot.currentPhase === 'kickoff' ||
         snapshot.currentPhase === 'stage1' ||
         snapshot.currentPhase === 'stage1_playoffs' ||
         snapshot.currentPhase === 'stage2' ||
@@ -118,6 +119,16 @@ export function evaluateCondition(
         (current.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24)
       ) + 1; // day 1-indexed
       return dayOfSeason >= (condition.threshold ?? 1);
+    }
+
+    case 'player_is_import': {
+      if (!snapshot.playerTeamRegion) return false;
+      const teamPlayers = snapshot.players.filter(
+        (p) => p.teamId === snapshot.playerTeamId
+      );
+      return teamPlayers.some(
+        (p) => p.region !== undefined && p.region !== snapshot.playerTeamRegion
+      );
     }
 
     // Random chance
