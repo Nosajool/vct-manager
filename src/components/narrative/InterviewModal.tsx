@@ -10,6 +10,8 @@ import { useGameStore } from '../../store';
 import type { PendingInterview, InterviewContext, InterviewTone } from '../../types/interview';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { PostMatchHeader } from '../match/PostMatchHeader';
+import { PreMatchHeader } from '../match/PreMatchHeader';
 
 interface InterviewModalProps {
   interview: PendingInterview;
@@ -61,6 +63,33 @@ function formatEffects(effects: PendingInterview['options'][number]['effects']):
   if (effects.sponsorTrust) parts.push(`${effects.sponsorTrust > 0 ? '+' : ''}${effects.sponsorTrust} Sponsor Trust`);
   if (effects.rivalryDelta) parts.push(`${effects.rivalryDelta > 0 ? '+' : ''}${effects.rivalryDelta} Rivalry`);
   return parts.length > 0 ? parts.join(', ') : 'No immediate effects';
+}
+
+// ============================================================================
+// Matchup header — renders PostMatchHeader or PreMatchHeader depending on context
+// ============================================================================
+
+function MatchupHeader({ playerTeamId, interview }: { playerTeamId: string | null; interview: PendingInterview }) {
+  if (!playerTeamId || !interview.opponentTeamId) return null;
+  if (interview.matchScore) {
+    return (
+      <PostMatchHeader
+        context={{
+          playerTeamId,
+          opponentTeamId: interview.opponentTeamId,
+          matchRoundName: interview.matchRoundName,
+          matchScore: interview.matchScore,
+        }}
+      />
+    );
+  }
+  return (
+    <PreMatchHeader
+      playerTeamId={playerTeamId}
+      opponentTeamId={interview.opponentTeamId}
+      matchRoundName={interview.matchRoundName}
+    />
+  );
 }
 
 // ============================================================================
@@ -147,6 +176,8 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
               <h2 className="text-xl font-bold text-vct-light">Response Delivered</h2>
             </div>
 
+            <MatchupHeader playerTeamId={playerTeamId} interview={interview} />
+
             <div className="p-6 space-y-4">
               <p className="text-vct-light text-base italic leading-relaxed">
                 "{chosenOption?.quote}"
@@ -219,6 +250,9 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
               </div>
               <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
             </div>
+
+            {/* Matchup context header (pre-match: VS, post-match: score) */}
+            <MatchupHeader playerTeamId={playerTeamId} interview={interview} />
 
             {/* Prompt */}
             <div className="p-6 bg-vct-darker/50">

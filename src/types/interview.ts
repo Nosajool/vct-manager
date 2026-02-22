@@ -79,6 +79,16 @@ export interface PendingInterview {
   subjectType: InterviewSubject;
   subjectId?: string;       // playerId or coachId if subject is player/coach
   opponentTeamId?: string;  // Relevant for PRE_MATCH and POST_MATCH
+  matchRoundName?: string;  // e.g. "Upper Final", "Grand Final", "Lower R2"
+  matchScore?: {            // POST_MATCH only
+    playerTeamScore: number;
+    opponentScore: number;
+    maps: Array<{
+      map: string;
+      playerTeamScore: number;
+      opponentScore: number;
+    }>;
+  };
   prompt: string;
   options: InterviewOption[];
 }

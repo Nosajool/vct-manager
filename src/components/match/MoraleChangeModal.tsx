@@ -6,15 +6,17 @@ import type { MatchMoraleResult } from '../../types/match';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { PostMatchHeader, type MatchDisplayContext } from './PostMatchHeader';
 
 interface MoraleChangeModalProps {
   isOpen: boolean;
   onClose: () => void;
   result: MatchMoraleResult;
   teamName: string;
+  matchContext?: MatchDisplayContext;
 }
 
-export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModalProps) {
+export function MoraleChangeModal({ isOpen, onClose, result, matchContext }: MoraleChangeModalProps) {
   const players = useGameStore((state) => state.players);
 
   useEffect(() => {
@@ -55,6 +57,8 @@ export function MoraleChangeModal({ isOpen, onClose, result }: MoraleChangeModal
             </span>
           </div>
         </div>
+
+        {matchContext && <PostMatchHeader context={matchContext} />}
 
         {result.specialEvents.length > 0 && (
           <div className="p-4 bg-vct-dark/50 border-b border-vct-gray/20">

@@ -117,7 +117,20 @@ export class InterviewService {
     const template = this.pickTemplate(pool.length > 0 ? pool : relevant);
     if (!template) return null;
 
-    return this.toPendingInterview(template, opponentTeamId);
+    const matchRoundName = this.getMatchRoundName(matchResult.matchId);
+
+    const isPlayerTeamA = match.teamAId === playerTeamId;
+    const matchScore: PendingInterview['matchScore'] = {
+      playerTeamScore: isPlayerTeamA ? matchResult.scoreTeamA : matchResult.scoreTeamB,
+      opponentScore: isPlayerTeamA ? matchResult.scoreTeamB : matchResult.scoreTeamA,
+      maps: matchResult.maps.map((m) => ({
+        map: m.map,
+        playerTeamScore: isPlayerTeamA ? m.teamAScore : m.teamBScore,
+        opponentScore: isPlayerTeamA ? m.teamBScore : m.teamAScore,
+      })),
+    };
+
+    return this.toPendingInterview(template, opponentTeamId, matchRoundName, matchScore);
   }
 
   /**
@@ -215,8 +228,9 @@ export class InterviewService {
       return null;
     }
 
+    const matchRoundName = this.getMatchRoundName(matchId);
     console.log('checkPreMatchInterview: returning interview:', { templateId: template.id });
-    return this.toPendingInterview(template, opponentTeamId);
+    return this.toPendingInterview(template, opponentTeamId, matchRoundName);
   }
 
   /**
@@ -422,6 +436,8 @@ export class InterviewService {
   private toPendingInterview(
     template: InterviewTemplate,
     opponentTeamId: string | undefined,
+    matchRoundName?: string,
+    matchScore?: PendingInterview['matchScore'],
   ): PendingInterview {
     let subjectId: string | undefined;
     const state = useGameStore.getState();
@@ -486,9 +502,59 @@ export class InterviewService {
       subjectType: template.subjectType,
       subjectId,
       opponentTeamId,
+      matchRoundName,
+      matchScore,
       prompt: template.prompt,
       options,
     };
+  }
+
+  /**
+   * Determine a human-readable round name for a given matchId by scanning
+   * the tournament bracket that contains it.
+   */
+  private getMatchRoundName(matchId: string): string | undefined {
+    const state = useGameStore.getState();
+    const match = state.matches[matchId];
+    if (!match?.tournamentId) return undefined;
+
+    const tournament = state.tournaments[match.tournamentId];
+    if (!tournament) return undefined;
+
+    const bracket = tournament.bracket;
+
+    // Check grand final first
+    if (bracket.grandfinal?.matchId === matchId) {
+      return 'Grand Final';
+    }
+
+    const roundNames: Record<string, Record<number, string>> = {
+      upper: { 1: 'Upper R1', 2: 'Upper R2', 3: 'Upper Final', 4: 'Upper Final' },
+      middle: { 1: 'Beta R1', 2: 'Beta R2', 3: 'Beta Final' },
+      lower: { 1: 'Lower R1', 2: 'Lower R2', 3: 'Lower R3', 4: 'Lower Final' },
+    };
+
+    const bracketSections: Array<{ rounds: typeof bracket.upper; type: string }> = [
+      { rounds: bracket.upper, type: 'upper' },
+    ];
+    if (bracket.middle) bracketSections.push({ rounds: bracket.middle, type: 'middle' });
+    if (bracket.lower) bracketSections.push({ rounds: bracket.lower, type: 'lower' });
+
+    for (const { rounds, type } of bracketSections) {
+      for (const round of rounds) {
+        for (const m of round.matches) {
+          if (m.matchId === matchId) {
+            const rn = round.roundNumber;
+            return (
+              roundNames[type]?.[rn] ||
+              `${type.charAt(0).toUpperCase() + type.slice(1)} R${rn}`
+            );
+          }
+        }
+      }
+    }
+
+    return undefined;
   }
 }
 

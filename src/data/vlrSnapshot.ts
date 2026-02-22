@@ -13309,8 +13309,8 @@ export const VLR_TEAM_ROSTERS: VlrRosterData = {
       "crewen",
       "lar0k",
       "loita",
-      "ros",
-      "lovers-rock"
+      "rosé",
+      "lovers rock"
     ],
     "scrapedAt": "2026-02-15T05:39:02.130Z"
   },

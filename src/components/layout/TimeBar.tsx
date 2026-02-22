@@ -35,6 +35,7 @@ import { scrimService } from '../../services/ScrimService';
 import { DayScheduleService } from '../../services/DayScheduleService';
 import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
+import type { MatchDisplayContext } from '../match/PostMatchHeader';
 
 type PostSimulationModalType = 'training' | 'scrim' | 'morale' | 'interview';
 
@@ -130,6 +131,36 @@ export function TimeBar() {
   const playerTeamName = useGameStore((state) =>
     state.playerTeamId ? state.teams[state.playerTeamId]?.name : ''
   );
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
+
+  // Derive match context for MoraleChangeModal from the simulated player match
+  const moraleMatchContext = useMemo((): MatchDisplayContext | undefined => {
+    if (!simulationResult || !playerTeamId) return undefined;
+    const state = useGameStore.getState();
+    const playerMatchResult = simulationResult.simulatedMatches.find((mr) => {
+      const m = state.matches[mr.matchId];
+      return m && (m.teamAId === playerTeamId || m.teamBId === playerTeamId);
+    });
+    if (!playerMatchResult) return undefined;
+    const match = state.matches[playerMatchResult.matchId];
+    if (!match) return undefined;
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+    const isTeamA = match.teamAId === playerTeamId;
+    return {
+      playerTeamId,
+      opponentTeamId,
+      matchRoundName: simulationResult.pendingInterview?.matchRoundName,
+      matchScore: {
+        playerTeamScore: isTeamA ? playerMatchResult.scoreTeamA : playerMatchResult.scoreTeamB,
+        opponentScore: isTeamA ? playerMatchResult.scoreTeamB : playerMatchResult.scoreTeamA,
+        maps: playerMatchResult.maps.map((m) => ({
+          map: m.map,
+          playerTeamScore: isTeamA ? m.teamAScore : m.teamBScore,
+          opponentScore: isTeamA ? m.teamBScore : m.teamAScore,
+        })),
+      },
+    };
+  }, [simulationResult, playerTeamId]);
 
   // Don't show if game hasn't started
   if (!gameStarted) {
@@ -639,6 +670,7 @@ export function TimeBar() {
           onClose={handlePostModalClose}
           result={simulationResult.moraleChanges}
           teamName={playerTeamName}
+          matchContext={moraleMatchContext}
         />
       )}
 
