@@ -152,6 +152,12 @@ export type DramaEffectTarget =
   // Team modifications
   | 'team_chemistry'
   | 'team_budget'
+  | 'team_hype'
+  | 'team_sponsor_trust'
+
+  // Roster position changes
+  | 'move_to_reserve'  // Bench a player: removes from active, adds to reserve
+  | 'move_to_active'   // Return a player: removes from reserve, adds to active
 
   // State modifications
   | 'set_flag'

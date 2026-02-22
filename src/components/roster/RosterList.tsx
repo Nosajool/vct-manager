@@ -75,7 +75,11 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [optimizationResult, setOptimizationResult] = useState<LineupResult | null>(null);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const activeFlags = useGameStore((state) => state.activeFlags);
   const isPlayerTeam = team.id === playerTeamId;
+
+  const isPlayerRestricted = (playerId: string) =>
+    `visa_delayed_${playerId}` in activeFlags;
 
   // Check for lineup optimization opportunities
   useEffect(() => {
@@ -294,6 +298,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
                   rosterPosition="reserve"
                   isPlayerTeam={isPlayerTeam}
                   canPromote={canPromote}
+                  isRestricted={isPlayerRestricted(player.id)}
                   onMoveToActive={handleMoveToActive}
                 />
               ))}

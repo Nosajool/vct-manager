@@ -11,7 +11,7 @@ import type { DramaEffect, DramaGameStateSnapshot, EffectPlayerSelector } from '
  * Concrete mutation to apply to game state
  */
 export interface ResolvedEffect {
-  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag';
+  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active';
 
   // Player updates
   playerId?: string;
@@ -112,8 +112,22 @@ function resolveEffect(
     }];
   }
 
+  // Handle roster position changes
+  if (target === 'move_to_reserve' || target === 'move_to_active') {
+    const playerIds = resolvePlayerSelector(
+      effect.effectPlayerSelector,
+      effect.playerId,
+      snapshot,
+      involvedPlayerIds
+    );
+    return playerIds.map(playerId => ({
+      type: target as 'move_to_reserve' | 'move_to_active',
+      playerId,
+    }));
+  }
+
   // Handle team modifications
-  if (target === 'team_chemistry' || target === 'team_budget') {
+  if (target === 'team_chemistry' || target === 'team_budget' || target === 'team_hype' || target === 'team_sponsor_trust') {
     return resolveTeamEffect(effect);
   }
 
@@ -137,7 +151,12 @@ function resolveEffect(
 function resolveTeamEffect(effect: DramaEffect): ResolvedEffect[] {
   const { target, delta, absoluteValue } = effect;
 
-  const field = target === 'team_chemistry' ? 'chemistry' : 'fanbase';
+  const field =
+    target === 'team_chemistry' ? 'chemistry' :
+    target === 'team_budget' ? 'budget' :
+    target === 'team_hype' ? 'hype' :
+    target === 'team_sponsor_trust' ? 'sponsorTrust' :
+    'fanbase';
   const resolved: ResolvedEffect = {
     type: 'update_team',
     field,

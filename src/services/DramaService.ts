@@ -474,7 +474,56 @@ export class DramaService {
             state.updateTeam(playerTeamId, {
               reputation: { ...team.reputation, fanbase: newFanbase },
             });
+          } else if (effect.field === 'budget') {
+            // Handle budget updates via updateTeamBalance
+            if (effect.delta !== undefined) {
+              state.updateTeamBalance(playerTeamId, effect.delta);
+            }
+          } else if (effect.field === 'hype') {
+            const currentHype = team.reputation.hypeLevel;
+            let newHype: number;
+            if (effect.absoluteValue !== undefined) {
+              newHype = effect.absoluteValue;
+            } else if (effect.delta !== undefined) {
+              newHype = currentHype + effect.delta;
+            } else {
+              continue;
+            }
+            newHype = Math.max(0, Math.min(100, newHype));
+            state.updateTeam(playerTeamId, {
+              reputation: { ...team.reputation, hypeLevel: newHype },
+            });
+          } else if (effect.field === 'sponsorTrust') {
+            const currentSponsorTrust = team.reputation.sponsorTrust;
+            let newSponsorTrust: number;
+            if (effect.absoluteValue !== undefined) {
+              newSponsorTrust = effect.absoluteValue;
+            } else if (effect.delta !== undefined) {
+              newSponsorTrust = currentSponsorTrust + effect.delta;
+            } else {
+              continue;
+            }
+            newSponsorTrust = Math.max(0, Math.min(100, newSponsorTrust));
+            state.updateTeam(playerTeamId, {
+              reputation: { ...team.reputation, sponsorTrust: newSponsorTrust },
+            });
           }
+          break;
+        }
+
+        case 'move_to_reserve': {
+          if (!effect.playerId) continue;
+          const playerTeamId = state.playerTeamId;
+          if (!playerTeamId) continue;
+          state.movePlayerToReserve(playerTeamId, effect.playerId);
+          break;
+        }
+
+        case 'move_to_active': {
+          if (!effect.playerId) continue;
+          const playerTeamId = state.playerTeamId;
+          if (!playerTeamId) continue;
+          state.movePlayerToActive(playerTeamId, effect.playerId);
           break;
         }
 

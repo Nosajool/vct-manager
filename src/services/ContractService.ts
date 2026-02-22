@@ -269,6 +269,11 @@ export class ContractService {
       if (team.playerIds.length >= 5) {
         return { success: false, error: 'Active roster is full (5/5)' };
       }
+      // Check for visa restriction — player cannot be promoted while visa is pending
+      const isRestricted = `visa_delayed_${playerId}` in state.activeFlags;
+      if (isRestricted) {
+        return { success: false, error: 'Player is unavailable — visa processing still pending' };
+      }
       // Move from reserve to active
       state.movePlayerToActive(player.teamId, playerId);
     } else {

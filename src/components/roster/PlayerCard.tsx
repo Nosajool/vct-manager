@@ -18,6 +18,7 @@ interface PlayerCardProps {
   rosterPosition?: 'active' | 'reserve';
   isPlayerTeam?: boolean;
   canPromote?: boolean;
+  isRestricted?: boolean;
   onMoveToActive?: (playerId: string) => void;
   onMoveToReserve?: (playerId: string) => void;
 }
@@ -32,6 +33,7 @@ export function PlayerCard({
   rosterPosition,
   isPlayerTeam = false,
   canPromote = false,
+  isRestricted = false,
   onMoveToActive,
   onMoveToReserve,
 }: PlayerCardProps) {
@@ -113,7 +115,8 @@ export function PlayerCard({
 
   // Determine if we should show roster actions
   const showRosterActions = isPlayerTeam && rosterPosition;
-  const canMoveToActive = rosterPosition === 'reserve' && canPromote && onMoveToActive;
+  const canMoveToActive = rosterPosition === 'reserve' && canPromote && onMoveToActive && !isRestricted;
+  const showRestrictedPromote = rosterPosition === 'reserve' && isPlayerTeam && isRestricted;
   const canMoveToReserve = rosterPosition === 'active' && onMoveToReserve;
 
   return (
@@ -146,7 +149,7 @@ export function PlayerCard({
       )}
 
       {/* Quick Action Button - appears on hover */}
-      {showRosterActions && (canMoveToActive || canMoveToReserve) && (
+      {showRosterActions && (canMoveToActive || canMoveToReserve || showRestrictedPromote) && (
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           {canMoveToActive && (
             <button
@@ -160,6 +163,20 @@ export function PlayerCard({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
               Promote
+            </button>
+          )}
+          {showRestrictedPromote && (
+            <button
+              disabled
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md
+                         bg-gray-700/90 text-gray-400 cursor-not-allowed
+                         shadow-lg backdrop-blur-sm"
+              title="Player unavailable — visa processing pending"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              VISA
             </button>
           )}
           {canMoveToReserve && (

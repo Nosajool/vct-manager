@@ -32,6 +32,7 @@ export interface TeamSlice {
   removePlayerFromTeam: (teamId: string, playerId: string) => void;
   addPlayerToReserve: (teamId: string, playerId: string) => void;
   movePlayerToActive: (teamId: string, playerId: string) => void;
+  movePlayerToReserve: (teamId: string, playerId: string) => void;
 
   // Finance updates
   updateTeamFinances: (teamId: string, finances: Partial<TeamFinances>) => void;
@@ -199,6 +200,26 @@ export const createTeamSlice: StateCreator<
             ...team,
             playerIds: [...team.playerIds, playerId],
             reservePlayerIds: team.reservePlayerIds.filter((id) => id !== playerId),
+          },
+        },
+      };
+    }),
+
+  movePlayerToReserve: (teamId, playerId) =>
+    set((state) => {
+      const team = state.teams[teamId];
+      if (!team) return state;
+
+      // Remove from active, add to reserve (atomic operation)
+      return {
+        teams: {
+          ...state.teams,
+          [teamId]: {
+            ...team,
+            playerIds: team.playerIds.filter((id) => id !== playerId),
+            reservePlayerIds: team.reservePlayerIds.includes(playerId)
+              ? team.reservePlayerIds
+              : [...team.reservePlayerIds, playerId],
           },
         },
       };

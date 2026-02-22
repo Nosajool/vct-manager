@@ -94,6 +94,8 @@ export class InterviewService {
       'post_resilient_lower_bracket', 'post_star_carry_spotlight',
       // Kickoff flag consequences
       'post_win_development_focus',
+      // Visa arc
+      'post_sub_win_depth_shown', 'post_main_player_returns',
     ];
     const lossIds = [
       'post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination',
@@ -102,6 +104,8 @@ export class InterviewService {
       'lower_bracket_dropped', 'grand_final_post_loss',
       // Team identity (Phase 4b)
       'post_fragile_elimination',
+      // Visa arc
+      'post_sub_loss_pressure_mounts', 'post_main_player_returns',
     ];
 
     const relevant = candidates.filter((t) =>
@@ -239,8 +243,11 @@ export class InterviewService {
 
     const hasCrisisFlag = 'crisis_active' in dramaState.activeFlags;
     const hasSponsorFlag = 'sponsor_trust_low' in dramaState.activeFlags;
+    const hasVisaDelayFlag = Object.keys(dramaState.activeFlags).some(
+      flag => flag.startsWith('visa_delayed_')
+    );
 
-    if (lossStreak < 3 && !anyLowMorale && !hasCrisisFlag && !hasSponsorFlag) {
+    if (lossStreak < 3 && !anyLowMorale && !hasCrisisFlag && !hasSponsorFlag && !hasVisaDelayFlag) {
       return null;
     }
 
@@ -251,6 +258,7 @@ export class InterviewService {
       if (t.condition === 'loss_streak_3plus' && lossStreak >= 3) return true;
       if (t.condition === 'drama_active' && (anyLowMorale || hasCrisisFlag)) return true;
       if (t.condition === 'sponsor_trust_low' && hasSponsorFlag) return true;
+      if (t.condition === 'visa_delay_active' && hasVisaDelayFlag) return true;
       return false;
     });
 
@@ -411,10 +419,15 @@ export class InterviewService {
     return candidates[Math.floor(Math.random() * candidates.length)];
   }
 
-  /** Returns true if the template has no flag gate, or if the required flag is active */
+  /** Returns true if the template has no flag gate, or if the required flag is active.
+   * Supports {playerId} placeholder — checks if any active flag matches the pattern prefix. */
   private templateFlagGatePassed(template: InterviewTemplate): boolean {
     if (!template.requiresActiveFlag) return true;
     const activeFlags = useGameStore.getState().activeFlags;
+    if (template.requiresActiveFlag.includes('{playerId}')) {
+      const prefix = template.requiresActiveFlag.split('{playerId}')[0];
+      return Object.keys(activeFlags).some(flag => flag.startsWith(prefix));
+    }
     return template.requiresActiveFlag in activeFlags;
   }
 
@@ -426,10 +439,22 @@ export class InterviewService {
     const state = useGameStore.getState();
 
     if (template.subjectType === 'player') {
-      const team = state.teams[state.playerTeamId!];
-      const playerIds = team?.playerIds ?? [];
-      if (playerIds.length > 0) {
-        subjectId = playerIds[Math.floor(Math.random() * playerIds.length)];
+      // If template gates on a flag with {playerId}, extract the player ID from the active flag
+      if (template.requiresActiveFlag?.includes('{playerId}')) {
+        const prefix = template.requiresActiveFlag.split('{playerId}')[0];
+        const matchingFlag = Object.keys(state.activeFlags).find(f => f.startsWith(prefix));
+        if (matchingFlag) {
+          subjectId = matchingFlag.substring(prefix.length);
+        }
+      }
+
+      // Fallback: pick random from active roster
+      if (!subjectId) {
+        const team = state.teams[state.playerTeamId!];
+        const playerIds = team?.playerIds ?? [];
+        if (playerIds.length > 0) {
+          subjectId = playerIds[Math.floor(Math.random() * playerIds.length)];
+        }
       }
     }
 

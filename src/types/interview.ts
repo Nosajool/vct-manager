@@ -36,7 +36,9 @@ export type InterviewCondition =
   // Team identity conditions (Phase 4)
   | 'team_identity_star_carry'
   | 'team_identity_resilient'
-  | 'team_identity_fragile';
+  | 'team_identity_fragile'
+  // Visa arc conditions
+  | 'visa_delay_active';
 
 export interface InterviewEffects {
   morale?: number;        // Delta applied to all player morale
