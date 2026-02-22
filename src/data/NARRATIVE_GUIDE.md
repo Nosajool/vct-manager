@@ -46,7 +46,7 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 ```typescript
 {
   id: 'unique_snake_case_id',          // string, no spaces
-  context: 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS',
+  context: 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF',
   subjectType: 'manager' | 'player' | 'coach',
   condition?: InterviewCondition,       // gates when it can appear
   requiresActiveFlag?: string,          // template only eligible if this flag is active
@@ -667,9 +667,12 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `arc_mod_momentum` | bracket-aware interview options (team-level) | future events |
 | `arc_mod_resilient` | bracket-aware interview options (team-level) | future events |
 | **Team identity flags (Phase 4)** | | |
-| `team_identity_star_carry` | `identity_star_carry_emerges` drama | `star_carry_friction`, `identity_shift_star_to_balanced`, interview templates |
-| `team_identity_balanced` | `identity_balanced_recognized` drama | `balanced_team_tested`, `balanced_chemistry_peak`, interview templates |
-| `team_identity_resilient` | `identity_resilient_earned` drama | `resilient_spirit_moment`, `identity_media_resilient`, interview templates |
+| `org_high_expectations` | `kickoff_season_opener` CONFIDENT option | future external pressure events |
+| `manager_development_focused` | `kickoff_season_opener` RESPECTFUL option | future player arc/growth events |
+| `manager_underdog_mindset` | `kickoff_season_opener` HUMBLE option | future resilience/comeback events |
+| `team_identity_star_carry` | `kickoff_season_opener` CONFIDENT option, `identity_star_carry_emerges` drama | `star_carry_friction`, `identity_shift_star_to_balanced`, interview templates |
+| `team_identity_balanced` | `kickoff_season_opener` RESPECTFUL option, `identity_balanced_recognized` drama | `balanced_team_tested`, `balanced_chemistry_peak`, interview templates |
+| `team_identity_resilient` | `kickoff_season_opener` HUMBLE option, `identity_resilient_earned` drama | `resilient_spirit_moment`, `identity_media_resilient`, interview templates |
 | `team_identity_fragile` | `identity_fragile_exposed` drama | `fragile_crisis_point`, `identity_media_fragile`, interview templates |
 | `star_carry_tension_unresolved` | `star_carry_friction` drama | future events |
 | `team_crisis_reset` | `fragile_crisis_point` drama | future events |

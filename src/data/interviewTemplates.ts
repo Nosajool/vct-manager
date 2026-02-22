@@ -1,10 +1,63 @@
 // Interview Template Catalog
-// ~16 templates covering PRE_MATCH, POST_MATCH (win/loss), and CRISIS contexts
+// ~17 templates covering KICKOFF, PRE_MATCH, POST_MATCH (win/loss), and CRISIS contexts
 // Each template has exactly 3 options with varied tones
 
 import type { InterviewTemplate } from '../types/interview';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
+  // ==========================================================================
+  // KICKOFF (1 template — fires once at season start)
+  // ==========================================================================
+
+  {
+    id: 'kickoff_season_opener',
+    context: 'KICKOFF',
+    subjectType: 'manager',
+    prompt: "You've just taken the helm for the 2026 VCT season. What message do you want to send to the league?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We're here to win",
+        quote: "We're not here to participate. Every team in this league should expect to see us in the finals. That's the standard we're setting — starting today.",
+        effects: {
+          hype: 5,
+          fanbase: 3,
+          dramaChance: 10,
+          setsFlags: [
+            { key: 'org_high_expectations', durationDays: 90 },
+            { key: 'team_identity_star_carry', durationDays: 60 },
+          ],
+        },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: 'Build something together',
+        quote: "We've got a talented group and a lot of work ahead of us. My focus is on building a team that plays for each other — something this region can be proud of.",
+        effects: {
+          morale: 3,
+          sponsorTrust: 2,
+          setsFlags: [
+            { key: 'manager_development_focused', durationDays: 90 },
+            { key: 'team_identity_balanced', durationDays: 60 },
+          ],
+        },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We'll let our play speak",
+        quote: "Honestly? I'm not here to make promises. We're going to put in the work, stay humble, and when we're deep in the bracket, you'll understand why we didn't say much today.",
+        effects: {
+          morale: 2,
+          dramaChance: 5,
+          setsFlags: [
+            { key: 'team_identity_resilient', durationDays: 60 },
+            { key: 'manager_underdog_mindset', durationDays: 90 },
+          ],
+        },
+      },
+    ],
+  },
+
   // ==========================================================================
   // PRE_MATCH (5 templates)
   // ==========================================================================

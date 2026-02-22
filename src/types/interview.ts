@@ -3,7 +3,7 @@
 
 import type { PlayerPersonality } from './player';
 
-export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS';
+export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF';
 
 export type InterviewTone =
   | 'CONFIDENT'

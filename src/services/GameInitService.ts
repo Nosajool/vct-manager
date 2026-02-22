@@ -11,6 +11,7 @@ import type { Player, Region, MatchEventData, Match } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
+import { INTERVIEW_TEMPLATES } from '../data/interviewTemplates';
 
 /**
  * Options for initializing a new game
@@ -175,6 +176,18 @@ export class GameInitService {
     // Mark game as initialized and started
     store.setInitialized(true);
     store.setGameStarted(true);
+
+    // Trigger one-time kickoff interview to seed narrative flags
+    const kickoffTemplate = INTERVIEW_TEMPLATES.find(t => t.id === 'kickoff_season_opener');
+    if (kickoffTemplate) {
+      store.setPendingInterview({
+        templateId: kickoffTemplate.id,
+        context: kickoffTemplate.context,
+        subjectType: kickoffTemplate.subjectType,
+        prompt: kickoffTemplate.prompt,
+        options: kickoffTemplate.options,
+      });
+    }
 
     console.log(
       `Game initialized: ${allPlayers.length} players, ${teams.length} teams`

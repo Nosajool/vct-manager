@@ -38,6 +38,10 @@ const CONTEXT_META: Record<InterviewContext, { label: string; badgeColor: string
     label: 'CRISIS',
     badgeColor: 'bg-red-500/20 text-red-400 border-red-500/30',
   },
+  KICKOFF: {
+    label: 'SEASON KICKOFF',
+    badgeColor: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  },
 };
 
 const TONE_BADGE: Record<InterviewTone, string> = {
