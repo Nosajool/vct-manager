@@ -89,6 +89,9 @@ export function evaluateCondition(
     case 'flag_active':
       return evaluateFlagActive(condition, snapshot);
 
+    case 'flag_not_active':
+      return !evaluateFlagActive(condition, snapshot);
+
     case 'recent_event_count':
       return evaluateRecentEventCount(condition, snapshot);
 

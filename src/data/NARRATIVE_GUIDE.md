@@ -143,16 +143,20 @@ PRE_MATCH and CRISIS templates are not filtered this way — they use all passin
   conditions: DramaCondition[], // ALL must pass
   probability: number,          // 0-100: base probability when conditions met
   cooldownDays?: number,        // Days before this template can fire again
-  oncePerSeason?: boolean,
+  oncePerSeason?: boolean,      // ⚠️ Template-scoped, not player-scoped — avoid for player arcs (see Pattern 9)
   requiresPlayerTeam?: boolean,
   // For minor events (auto-apply):
   effects?: DramaEffect[],
   // For major events (player chooses):
   choices?: DramaChoice[],
+  // effects?: DramaEffect[],   // Major events can ALSO have effects[] alongside choices[].
+  //                            // These fire immediately when the event triggers, before any
+  //                            // choice is made. Use for terminus flags that must block
+  //                            // downstream events right away (see Pattern 10).
   // Escalation if unresolved:
   escalateDays?: number,
   escalationTemplateId?: string,
-  durationDays?: number,
+  durationDays?: number,        // Auto-resolve after N days if no choice made
   autoResolveEffects?: DramaEffect[],
 }
 ```
@@ -185,7 +189,8 @@ PRE_MATCH and CRISIS templates are not filtered this way — they use all passin
 { type: 'player_injured' }
 
 // Drama state
-{ type: 'flag_active', flag: 'some_flag_key' }    // The interview bridge
+{ type: 'flag_active', flag: 'some_flag_key' }         // The interview bridge
+{ type: 'flag_not_active', flag: 'some_flag_key' }     // Guard: arc hasn't reached this state yet
 { type: 'category_on_cooldown', category: 'player_ego' }
 { type: 'recent_event_count' }
 
@@ -206,7 +211,9 @@ PRE_MATCH and CRISIS templates are not filtered this way — they use all passin
 
 ### `PlayerSelector` values (for conditions)
 
-`all` | `any` | `specific` | `star_player` | `lowest_morale` | `newest` | `random`
+`all` | `any` | `specific` | `star_player` | `lowest_morale` | `newest` | `random` | `condition_match`
+
+`condition_match` is the most important selector for player-scoped flag arcs. It tells the engine to pick a player who satisfies the condition's own filter — e.g. a `flag_active` condition with `{playerId}` will extract the player ID from the matching flag and select exactly that player.
 
 ### Effect structure
 
@@ -613,6 +620,99 @@ conditions: [
 }
 ```
 
+### Pattern 9: Player-scoped flag discipline
+
+Any flag that tracks state for a **specific player** must include `{playerId}` in its key. Global flags break silently when two players can be in the same state simultaneously (e.g. two import players both getting visa issues).
+
+**Wrong:**
+```typescript
+{ target: 'set_flag', flag: 'substitute_taking_over', flagDuration: 21 }
+// Bug: if two players hit this arc, they share a flag and corrupt each other's state
+```
+
+**Right:**
+```typescript
+{ target: 'set_flag', flag: 'substitute_taking_over_{playerId}', flagDuration: 21 }
+```
+
+Downstream conditions and clears must use the same scoped key:
+```typescript
+// Condition reading the flag
+{ type: 'flag_active', flag: 'substitute_taking_over_{playerId}', playerSelector: 'condition_match' }
+
+// Effect clearing it
+{ target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' }
+```
+
+`condition_match` is required when the flag has `{playerId}` — it tells the engine to derive the player from the matching flag key.
+
+**Rate-limiting corollary:** Don't use `oncePerSeason: true` on events with player-scoped conditions. `oncePerSeason` is template-scoped — it blocks the event for *all* players once any one fires. Natural rate-limiting from the player-scoped flag duration is sufficient and correct.
+
+---
+
+### Pattern 10: Arc termination — always clean up entry flags
+
+Every escalation chain must have a defined terminus. When the terminal event fires, it must:
+
+1. **Set a terminus flag immediately** (in `effects[]` on the major event, not in a choice) so downstream events are blocked even before the player makes their choice
+2. **Clear all intermediate arc flags** in every choice's effects AND in `autoResolveEffects`
+
+```typescript
+// Terminal event
+{
+  id: 'visa_tournament_missed',
+  // ...
+  effects: [
+    // Fires immediately when event triggers — blocks visa_approved_lastminute right away
+    { target: 'set_flag', flag: 'visa_tournament_missed_{playerId}', flagDuration: 90 },
+  ],
+  autoResolveEffects: [
+    { target: 'player_morale', effectPlayerSelector: 'all', delta: -10 },
+    { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },          // ← cleanup
+    { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' }, // ← cleanup
+  ],
+  choices: [
+    {
+      id: 'choice_a',
+      effects: [
+        { target: 'set_flag', flag: 'visa_admin_review', flagDuration: 30 },
+        { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },          // ← cleanup in every choice
+        { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
+      ],
+    },
+    // ... same cleanup in choice_b, choice_c
+  ],
+}
+```
+
+**Checklist for any terminal event:**
+- [ ] `effects[]` sets a terminus flag with a long duration (60–90 days)
+- [ ] Every choice clears all intermediate arc flags
+- [ ] `autoResolveEffects` also clears all intermediate arc flags
+
+---
+
+### Pattern 11: `flag_not_active` guards on downstream events
+
+When an arc can reach a terminal state, any event that would be nonsensical after that terminus must guard against it. Use `flag_not_active` as an additional condition.
+
+**Example:** "visa approved last-minute" makes no sense after "tournament already missed":
+```typescript
+{
+  id: 'visa_approved_lastminute',
+  conditions: [
+    { type: 'flag_active',     flag: 'visa_delayed_{playerId}',           playerSelector: 'condition_match' },
+    { type: 'flag_not_active', flag: 'visa_tournament_missed_{playerId}', playerSelector: 'condition_match' },
+    { type: 'tournament_active' },
+  ],
+  // ...
+}
+```
+
+The engine evaluates `flag_not_active` as the logical inverse of `flag_active` — it passes if no matching flag exists in `activeFlags`.
+
+**Also relevant to escalation:** The drama engine guards escalations against stale conditions — if an escalation template's `flag_active` / `flag_not_active` conditions fail at escalation time, the escalation is skipped and the source event expires naturally. You do not need to defend against this manually in the engine, but you *do* need the terminus flag to be set on the escalation template's conditions for this guard to work.
+
 ---
 
 ## Existing Flag Reference
@@ -686,6 +786,17 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `team_peak_cohesion` | `balanced_chemistry_peak` drama | future events |
 | `media_narrative_fragile` | `identity_media_fragile` drama | future events |
 | `media_narrative_resilient` | `identity_media_resilient` drama | future events |
+| **Visa drama arc flags** | | |
+| `visa_application_pending_{playerId}` | `visa_processing_warning` minor event | `visa_delay_crisis` (trigger condition) |
+| `visa_delayed_{playerId}` | `visa_delay_crisis` all 3 choices | `visa_approved_lastminute`, `visa_tournament_missed` (trigger condition); cleared by both |
+| `substitute_taking_over_{playerId}` | `visa_delay_crisis` all 3 choices | `substitute_spotlight_moment`, `substitute_struggles_under_pressure` (trigger condition); cleared by `visa_approved_lastminute` and `visa_tournament_missed` |
+| `visa_expedited_{playerId}` | `visa_delay_crisis` "lobby" choice | future events |
+| `visa_public_attention` | `visa_delay_crisis` "public statement" choice | `visa_admin_failure_backlash` (trigger condition) |
+| `visa_player_returned_{playerId}` | `visa_approved_lastminute` | future events |
+| `visa_tournament_missed_{playerId}` | `visa_tournament_missed` immediate effects | `visa_approved_lastminute` (guard: `flag_not_active`) — blocks approval after miss |
+| `visa_admin_review` | `visa_tournament_missed` "internal review" choice | future events |
+| `visa_public_apology` | `visa_tournament_missed` "public apology" choice | future events |
+| `team_underdog_refocus` | `visa_tournament_missed` "refocus" choice | future events |
 
 ---
 
@@ -723,6 +834,10 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - **Don't add `requiresActiveFlag` to an interview template without also ensuring the flag can actually be set** — trace the whole path.
 - **Don't use `player_stat` as a condition stat name** — use the actual stat key (`mechanics`, `igl`, `mental`, etc.).
 - **Don't forget to add POST_MATCH template IDs to `winIds`/`lossIds` in `InterviewService.ts`** — they will silently never fire otherwise.
+- **Don't use global flags for per-player arc state** — if any flag tracks something that applies to one player, it must use `{playerId}` in the key. Global flags corrupt silently when two players enter the same arc simultaneously. See Pattern 9.
+- **Don't use `oncePerSeason` on player-arc events** — `oncePerSeason` is template-scoped: once *any* player triggers the event, it blocks the template for all players for 90 days. For player-specific events, rely on the player-scoped flag's own duration as rate-limiter instead.
+- **Don't add conditions that require flags nothing sets** — before adding a `flag_active` condition, verify there is a concrete code path (interview option or drama effect) that sets that flag. Dead conditions silently make events unreachable.
+- **Don't forget to terminate arcs** — any escalation chain needs a terminal event that (a) sets a long-lived terminus flag immediately via `effects[]`, (b) clears intermediate arc flags in every choice, and (c) clears them in `autoResolveEffects` too. See Pattern 10.
 - **Scrim leak scandal and veteran/rookie rivalry are intentionally out of scope** — they require data structures not yet in `DramaGameStateSnapshot`.
 
 ---

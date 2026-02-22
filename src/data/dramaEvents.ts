@@ -5989,9 +5989,9 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
       { type: 'player_is_import', playerSelector: 'condition_match' },
     ],
     probability: 75,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
-    cooldownDays: 30,
     effects: [
       {
         target: 'player_morale',
@@ -6015,7 +6015,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Visa Crisis: Player Grounded',
     description: "{playerName}'s visa processing has hit a critical delay. They cannot travel to the tournament venue. You must decide how to handle this immediately.",
     conditions: [
-      { type: 'flag_active', flag: 'visa_application_pending_{playerId}' },
+      { type: 'flag_active', flag: 'visa_application_pending_{playerId}', playerSelector: 'condition_match' },
       { type: 'tournament_active' },
     ],
     probability: 90,
@@ -6028,7 +6028,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         description: 'Handle the roster swap internally without public comment.',
         effects: [
           { target: 'move_to_reserve', effectPlayerSelector: 'triggering' },
-          { target: 'set_flag', flag: 'substitute_taking_over', flagDuration: 21 },
+          { target: 'set_flag', flag: 'substitute_taking_over_{playerId}', flagDuration: 21 },
           { target: 'set_flag', flag: 'visa_delayed_{playerId}', flagDuration: 21 },
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
           { target: 'clear_flag', flag: 'visa_application_pending_{playerId}' },
@@ -6041,7 +6041,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         description: 'Spend org resources to push the visa through official channels faster.',
         effects: [
           { target: 'move_to_reserve', effectPlayerSelector: 'triggering' },
-          { target: 'set_flag', flag: 'substitute_taking_over', flagDuration: 21 },
+          { target: 'set_flag', flag: 'substitute_taking_over_{playerId}', flagDuration: 21 },
           { target: 'set_flag', flag: 'visa_delayed_{playerId}', flagDuration: 21 },
           { target: 'team_budget', delta: -10000 },
           { target: 'set_flag', flag: 'visa_expedited_{playerId}', flagDuration: 10 },
@@ -6056,7 +6056,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
         description: 'Publicly acknowledge the visa situation to get ahead of the story.',
         effects: [
           { target: 'move_to_reserve', effectPlayerSelector: 'triggering' },
-          { target: 'set_flag', flag: 'substitute_taking_over', flagDuration: 21 },
+          { target: 'set_flag', flag: 'substitute_taking_over_{playerId}', flagDuration: 21 },
           { target: 'set_flag', flag: 'visa_delayed_{playerId}', flagDuration: 21 },
           { target: 'set_flag', flag: 'visa_public_attention', flagDuration: 14 },
           { target: 'team_sponsor_trust', delta: -5 },
@@ -6075,15 +6075,16 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Last-Minute Visa Approval!',
     description: "Breaking news — {playerName}'s visa has been approved. They can rejoin the active roster immediately.",
     conditions: [
-      { type: 'flag_active', flag: 'visa_delayed_{playerId}' },
+      { type: 'flag_active', flag: 'visa_delayed_{playerId}', playerSelector: 'condition_match' },
+      { type: 'flag_not_active', flag: 'visa_tournament_missed_{playerId}', playerSelector: 'condition_match' },
       { type: 'tournament_active' },
     ],
     probability: 25,
-    cooldownDays: 30,
+    cooldownDays: 3,
     effects: [
       { target: 'move_to_active', effectPlayerSelector: 'triggering' },
       { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
-      { target: 'clear_flag', flag: 'substitute_taking_over' },
+      { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
       { target: 'player_morale', effectPlayerSelector: 'all', delta: 8 },
       { target: 'team_sponsor_trust', delta: 3 },
       { target: 'set_flag', flag: 'visa_player_returned_{playerId}', flagDuration: 7 },
@@ -6097,13 +6098,18 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Tournament Opportunity Lost',
     description: "{playerName}'s visa situation has not resolved in time. They have definitively missed tournament participation. How does the org respond publicly?",
     conditions: [
-      { type: 'flag_active', flag: 'visa_delayed_{playerId}' },
+      { type: 'flag_active', flag: 'visa_delayed_{playerId}', playerSelector: 'condition_match' },
     ],
     probability: 90,
     durationDays: 14,
+    effects: [
+      { target: 'set_flag', flag: 'visa_tournament_missed_{playerId}', flagDuration: 90 },
+    ],
     autoResolveEffects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -10 },
       { target: 'team_sponsor_trust', delta: -10 },
+      { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
+      { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
     ],
     choices: [
       {
@@ -6114,6 +6120,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'visa_admin_review', flagDuration: 30 },
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -10 },
           { target: 'team_budget', delta: -5000 },
+          { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
+          { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
         ],
         outcomeText: "The org commits to a full internal review. It signals seriousness but the process is costly and morale takes a hit.",
       },
@@ -6125,6 +6133,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'visa_public_apology', flagDuration: 14 },
           { target: 'team_sponsor_trust', delta: -8 },
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -3 },
+          { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
+          { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
         ],
         outcomeText: "The public apology generates empathy for the player, but sponsors see org disorganization and trust erodes.",
       },
@@ -6136,6 +6146,8 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
           { target: 'team_chemistry', delta: 3 },
           { target: 'set_flag', flag: 'team_underdog_refocus', flagDuration: 21 },
+          { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
+          { target: 'clear_flag', flag: 'substitute_taking_over_{playerId}' },
         ],
         outcomeText: "The team rallies around the substitute narrative. Morale lifts and chemistry tightens as everyone refocuses on what's ahead.",
       },
@@ -6149,7 +6161,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Substitute Steps Up',
     description: "The substitute lineup just secured a win. The emergency decision is looking inspired — the team's depth is showing.",
     conditions: [
-      { type: 'flag_active', flag: 'substitute_taking_over' },
+      { type: 'flag_active', flag: 'substitute_taking_over_{playerId}', playerSelector: 'condition_match' },
       { type: 'team_win_streak', streakLength: 1 },
     ],
     probability: 55,
@@ -6168,7 +6180,7 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Substitute Feeling the Pressure',
     description: "The substitute lineup dropped a match. Playing without the full roster is taking its toll on team cohesion.",
     conditions: [
-      { type: 'flag_active', flag: 'substitute_taking_over' },
+      { type: 'flag_active', flag: 'substitute_taking_over_{playerId}', playerSelector: 'condition_match' },
       { type: 'team_loss_streak', streakLength: 1 },
       { type: 'random_chance', chance: 40 },
     ],
@@ -6187,10 +6199,10 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Admin Failure Goes Public',
     description: "The org's admission of administrative failure has triggered a broader backlash. Sponsors are asking questions and fans are demanding answers.",
     conditions: [
-      { type: 'flag_active', flag: 'interview_admitted_admin_failure' },
       { type: 'flag_active', flag: 'visa_public_attention' },
     ],
     probability: 80,
+    cooldownDays: 3,
     choices: [
       {
         id: 'announce_formal_process_review',

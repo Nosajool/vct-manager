@@ -67,6 +67,7 @@ export type DramaConditionType =
   // Drama state checks
   | 'category_on_cooldown'
   | 'flag_active'
+  | 'flag_not_active'
   | 'recent_event_count'
 
   // Player archetype checks

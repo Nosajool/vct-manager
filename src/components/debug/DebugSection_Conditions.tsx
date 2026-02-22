@@ -53,7 +53,16 @@ export function DebugSection_Conditions() {
   const results = useMemo(() => {
     if (!snapshot) return [];
     return DRAMA_EVENT_TEMPLATES.map((template) => {
-      const isOnCooldown = !!snapshot.dramaState.cooldowns[template.category];
+      const cooldownExpiry = snapshot.dramaState.cooldowns[template.category] ?? null;
+      const isOnCooldown = cooldownExpiry
+        ? new Date(snapshot.currentDate) < new Date(cooldownExpiry)
+        : false;
+      const cooldownDaysRemaining = isOnCooldown && cooldownExpiry
+        ? Math.ceil(
+            (new Date(cooldownExpiry).getTime() - new Date(snapshot.currentDate).getTime()) /
+            (1000 * 60 * 60 * 24)
+          )
+        : 0;
       const condResults = template.conditions.map((cond) => ({
         cond,
         pass: cond.type === 'random_chance' ? null : evaluateCondition(cond, snapshot),
@@ -62,7 +71,7 @@ export function DebugSection_Conditions() {
         c.type === 'random_chance' ? true : evaluateCondition(c, snapshot)
       );
       const anyPass = condResults.some((r) => r.pass === true);
-      return { template, isOnCooldown, conditions: condResults, allPass, anyPass };
+      return { template, isOnCooldown, cooldownDaysRemaining, conditions: condResults, allPass, anyPass };
     });
   }, [snapshot]);
 
@@ -126,7 +135,7 @@ export function DebugSection_Conditions() {
 
       {/* Template cards */}
       <div className="space-y-2">
-        {filtered.map(({ template, isOnCooldown, conditions, allPass }) => {
+        {filtered.map(({ template, isOnCooldown, cooldownDaysRemaining, conditions, allPass }) => {
           const borderColor = isOnCooldown
             ? 'border-l-orange-500'
             : allPass
@@ -134,7 +143,7 @@ export function DebugSection_Conditions() {
               : 'border-l-red-500';
 
           const statusLabel = isOnCooldown
-            ? <span className="px-1.5 py-0.5 rounded text-[10px] bg-orange-900/50 text-orange-300">COOLDOWN</span>
+            ? <span className="px-1.5 py-0.5 rounded text-[10px] bg-orange-900/50 text-orange-300">COOLDOWN {cooldownDaysRemaining}d</span>
             : allPass
               ? <span className="px-1.5 py-0.5 rounded text-[10px] bg-green-900/50 text-green-300">ELIGIBLE</span>
               : <span className="px-1.5 py-0.5 rounded text-[10px] bg-red-900/50 text-red-300">BLOCKED</span>;

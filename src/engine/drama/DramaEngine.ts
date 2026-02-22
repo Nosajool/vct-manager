@@ -1,7 +1,7 @@
 // Drama Engine
 // Core engine for evaluating drama event triggers and creating event instances
 
-import { evaluateAllConditions } from './DramaConditionEvaluator';
+import { evaluateAllConditions, evaluateCondition } from './DramaConditionEvaluator';
 import type {
   DramaEventTemplate,
   DramaEventInstance,
@@ -170,6 +170,18 @@ export function checkEscalations(
       // Find escalation template
       const escalationTemplate = templates.find(t => t.id === template.escalationTemplateId);
       if (!escalationTemplate) {
+        continue;
+      }
+
+      // Guard: verify the escalation template's flag conditions still hold.
+      // If the arc was resolved before the deadline (e.g. visa was approved and
+      // visa_delayed_{playerId} was cleared), skip the escalation entirely.
+      // The source event will be picked up by the expired-event handler instead.
+      const flagConditionsMet = escalationTemplate.conditions
+        .filter(c => c.type === 'flag_active' || c.type === 'flag_not_active')
+        .every(c => evaluateCondition(c, snapshot));
+
+      if (!flagConditionsMet) {
         continue;
       }
 
@@ -489,6 +501,42 @@ function getPlayerCandidatesForCondition(
     case 'player_contract_expiring': {
       const t = condition.contractYearsThreshold ?? 1;
       return teamPlayers.filter(p => p.contract != null && p.contract.yearsRemaining <= t);
+    }
+    case 'flag_active': {
+      const flagPattern = condition.flag;
+      if (!flagPattern?.includes('{playerId}')) return teamPlayers;
+
+      const placeholder = '{playerId}';
+      const prefixEnd = flagPattern.indexOf(placeholder);
+      const prefix = flagPattern.slice(0, prefixEnd);
+      const suffix = flagPattern.slice(prefixEnd + placeholder.length);
+
+      for (const flagKey of Object.keys(snapshot.dramaState.activeFlags)) {
+        if (flagKey.startsWith(prefix) && flagKey.endsWith(suffix)) {
+          const extractedId = flagKey.slice(
+            prefix.length,
+            suffix.length > 0 ? flagKey.length - suffix.length : undefined
+          );
+          const player = teamPlayers.find(p => p.id === extractedId);
+          if (player) return [player];
+        }
+      }
+      return teamPlayers;
+    }
+    case 'flag_not_active': {
+      const flagPattern = condition.flag;
+      if (!flagPattern?.includes('{playerId}')) return teamPlayers;
+
+      const placeholder = '{playerId}';
+      const prefixEnd = flagPattern.indexOf(placeholder);
+      const prefix = flagPattern.slice(0, prefixEnd);
+      const suffix = flagPattern.slice(prefixEnd + placeholder.length);
+
+      // Return players who do NOT have this flag set
+      return teamPlayers.filter(player => {
+        const playerFlagKey = `${prefix}${player.id}${suffix}`;
+        return !(playerFlagKey in snapshot.dramaState.activeFlags);
+      });
     }
     default:
       return teamPlayers;
