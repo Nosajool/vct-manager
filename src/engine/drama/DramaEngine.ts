@@ -466,6 +466,36 @@ export function createEventInstance(
 // ============================================================================
 
 /**
+ * Returns the subset of team players who satisfy a condition's own per-player filter.
+ * Falls back to the full team list when the condition has no player-level filter.
+ */
+function getPlayerCandidatesForCondition(
+  condition: import('@/types/drama').DramaCondition,
+  teamPlayers: DramaGameStateSnapshot['players'],
+  snapshot: DramaGameStateSnapshot
+): DramaGameStateSnapshot['players'] {
+  switch (condition.type) {
+    case 'player_is_import':
+      if (!snapshot.playerTeamRegion) return teamPlayers;
+      return teamPlayers.filter(
+        p => p.region !== undefined && p.region !== snapshot.playerTeamRegion
+      );
+    case 'player_morale_below':
+      if (condition.threshold === undefined) return teamPlayers;
+      return teamPlayers.filter(p => p.morale < condition.threshold!);
+    case 'player_morale_above':
+      if (condition.threshold === undefined) return teamPlayers;
+      return teamPlayers.filter(p => p.morale > condition.threshold!);
+    case 'player_contract_expiring': {
+      const t = condition.contractYearsThreshold ?? 1;
+      return teamPlayers.filter(p => p.contract != null && p.contract.yearsRemaining <= t);
+    }
+    default:
+      return teamPlayers;
+  }
+}
+
+/**
  * Selects an involved player based on template conditions and effects
  * Returns null if no player is involved or selection fails
  */
@@ -532,6 +562,16 @@ export function selectInvolvedPlayer(
     case 'random': {
       const randomIndex = Math.floor(Math.random() * teamPlayers.length);
       const player = teamPlayers[randomIndex];
+      return { id: player.id, name: player.name };
+    }
+
+    case 'condition_match': {
+      const candidates = condition
+        ? getPlayerCandidatesForCondition(condition, teamPlayers, snapshot)
+        : teamPlayers;
+      const pool = candidates.length > 0 ? candidates : teamPlayers;
+      const idx = Math.floor(Math.random() * pool.length);
+      const player = pool[idx];
       return { id: player.id, name: player.name };
     }
 

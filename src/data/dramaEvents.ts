@@ -5984,9 +5984,9 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
     title: 'Visa Processing Warning',
     description: "{teamName}'s org has flagged potential delays in {playerName}'s tournament travel documentation. Admin is monitoring the situation.",
     conditions: [
-      { type: 'tournament_active', playerSelector: 'any' },
+      { type: 'tournament_active' },
       { type: 'min_season_day', threshold: 1 },
-      { type: 'player_is_import' },
+      { type: 'player_is_import', playerSelector: 'condition_match' },
     ],
     probability: 75,
     oncePerSeason: true,

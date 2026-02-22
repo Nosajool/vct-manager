@@ -94,13 +94,14 @@ export type DramaConditionType =
  * Player selection method for condition evaluation
  */
 export type PlayerSelector =
-  | 'all'           // All players must match
-  | 'any'           // Any player matches
-  | 'specific'      // Specific player by ID
-  | 'star_player'   // Highest rated player
-  | 'lowest_morale' // Player with lowest morale
-  | 'newest'        // Most recently signed player
-  | 'random';       // Random player from team
+  | 'all'             // All players must match
+  | 'any'             // Any player matches
+  | 'specific'        // Specific player by ID
+  | 'star_player'     // Highest rated player
+  | 'lowest_morale'   // Player with lowest morale
+  | 'newest'          // Most recently signed player
+  | 'random'          // Random player from team
+  | 'condition_match'; // Pick a random player who satisfies this condition's own filter
 
 /**
  * Condition that must be met for a drama event to trigger
