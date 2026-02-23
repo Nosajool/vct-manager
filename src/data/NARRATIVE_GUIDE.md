@@ -30,12 +30,14 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 |------|---------|
 | `src/types/interview.ts` | Types for interview templates, options, effects, `TournamentMatchContext` |
 | `src/types/drama.ts` | Types for drama conditions, effects, events; also `DRAMA_CONSTANTS` |
-| `src/data/interviewTemplates.ts` | The `INTERVIEW_TEMPLATES` array — add new templates here |
-| `src/data/dramaEvents.ts` | The `DRAMA_EVENT_TEMPLATES` array — add new drama events here |
-| `src/services/InterviewService.ts` | Applies flag effects; filters options by personality; `winIds`/`lossIds` lists |
+| `src/data/interviews/` | Interview templates split by context/arc — see "Which file to add your template to" |
+| `src/data/drama/` | Drama event templates split by category — see "Which file to add your template to" |
+| `src/services/InterviewService.ts` | Applies interview effects via `InterviewEffectResolver`; filters options by personality |
 | `src/services/CalendarService.ts` | Computes `TournamentMatchContext` from bracket, passes to InterviewService |
 | `src/services/DramaService.ts` | Builds `DramaGameStateSnapshot` including `tournamentContext` |
-| `src/engine/drama/DramaConditionEvaluator.ts` | Evaluates conditions during daily drama tick |
+| `src/engine/drama/DramaConditionEvaluator.ts` | Evaluates `DramaCondition[]` — used by both drama and interview systems |
+| `src/engine/interview/InterviewConditionEvaluator.ts` | `evaluateTemplateFlagGate()` — evaluates interview template `conditions[]` |
+| `src/engine/interview/InterviewEffectResolver.ts` | `resolveInterviewEffects()` — translates `InterviewEffects` into concrete mutations |
 
 ---
 
@@ -45,48 +47,86 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 
 ```typescript
 {
-  id: 'unique_snake_case_id',          // string, no spaces
+  id: 'unique_snake_case_id',             // string, no spaces
   context: 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF',
   subjectType: 'manager' | 'player' | 'coach',
-  condition?: InterviewCondition,       // gates when it can appear
-  requiresActiveFlag?: string,          // template only eligible if this flag is active
-  prompt: string,                       // the reporter's question
-  options: InterviewOption[],           // exactly 3 options
+  matchOutcome?: 'win' | 'loss' | 'any',  // POST_MATCH only: restricts to win or loss
+  conditions?: DramaCondition[],          // ALL must pass for the template to be eligible
+  prompt: string,                         // the reporter's question
+  options: InterviewOption[],             // exactly 3 options
 }
 ```
 
-### Available `condition` values
+### `matchOutcome` field (POST_MATCH)
 
-| Value | When it fires |
-|-------|--------------|
-| `'always'` | Any time this context occurs |
-| `'pre_playoff'` | Playoff match upcoming |
-| `'rivalry_active'` | Rival team is opponent |
-| `'loss_streak_2plus'` | Team lost 2+ in a row |
-| `'loss_streak_3plus'` | Team lost 3+ in a row |
-| `'win_streak_2plus'` | Team won 2+ in a row |
-| `'drama_active'` | Any drama event currently active |
-| `'sponsor_trust_low'` | Sponsor trust below threshold |
-| `'lower_bracket'` | Team is currently in the lower bracket (Phase 1) |
-| `'upper_bracket'` | Team is in the upper bracket (Phase 1) |
-| `'elimination_risk'` | One more loss ends the tournament (Phase 1) |
-| `'grand_final'` | This is the grand final match (Phase 1) |
-| `'opponent_dropped_from_upper'` | Current opponent just dropped from upper bracket (Phase 1) |
-| `'team_identity_star_carry'` | `team_identity_star_carry` drama flag is active (Phase 4) |
-| `'team_identity_resilient'` | `team_identity_resilient` drama flag is active (Phase 4) |
-| `'team_identity_fragile'` | `team_identity_fragile` drama flag is active (Phase 4) |
+Set `matchOutcome` to restrict a POST_MATCH template to win or loss matches:
 
-### POST_MATCH template selection — important
-
-POST_MATCH templates are narrowed to win or loss pools by ID. **Any new POST_MATCH template must have its ID added to `winIds` or `lossIds` in `InterviewService.ts`** or it will never fire.
+- `'win'` — only fires after a match win
+- `'loss'` — only fires after a match loss
+- `'any'` or omitted — fires regardless of outcome
 
 ```typescript
-// In InterviewService.ts, inside checkPostMatchInterview():
-const winIds = ['post_win_dominant', ..., 'your_new_win_template_id'];
-const lossIds = ['post_loss_standard', ..., 'your_new_loss_template_id'];
+{
+  id: 'post_win_dominant',
+  context: 'POST_MATCH',
+  matchOutcome: 'win',
+  // ...
+}
 ```
 
-PRE_MATCH and CRISIS templates are not filtered this way — they use all passing candidates.
+PRE_MATCH and CRISIS templates do not use `matchOutcome`.
+
+### `conditions[]` field
+
+Gate a template on any `DramaCondition` (same types used by drama events). All conditions must pass. Use any combination:
+
+```typescript
+// Fires only when rivalry is active
+conditions: [{ type: 'has_rivalry' }]
+
+// Fires when a specific flag is set
+conditions: [{ type: 'flag_active', flag: 'interview_trash_talked_rival' }]
+
+// Combine freely — all must pass
+conditions: [
+  { type: 'bracket_position', bracketPosition: 'lower' },
+  { type: 'flag_active', flag: 'team_identity_resilient' },
+]
+```
+
+Templates with no `conditions` field fire whenever their `context` (and `matchOutcome`) match.
+
+### Which file to add your template to
+
+**Interview templates** live in `src/data/interviews/`:
+
+| Context / Type | File |
+|----------------|------|
+| `KICKOFF` | `kickoff.ts` |
+| `PRE_MATCH` (standard) | `pre_match.ts` |
+| `PRE_MATCH` (opponent/rivalry aware) | `opponent_awareness.ts` |
+| `POST_MATCH` win | `post_match_win.ts` |
+| `POST_MATCH` loss | `post_match_loss.ts` |
+| `CRISIS` | `crisis.ts` |
+| Arc flag-gated (any context) | `arc_aware.ts` |
+| Team identity flag-gated | `team_identity.ts` |
+| Visa arc | `visa_arc.ts` |
+| Coaching overhaul arc | `coaching_overhaul.ts` |
+
+**Drama events** live in `src/data/drama/`:
+
+| Category | File |
+|----------|------|
+| `player_ego` | `player_ego.ts` |
+| `team_synergy` | `team_synergy.ts` |
+| `external_pressure` | `external_pressure.ts` |
+| `practice_burnout` | `practice_burnout.ts` |
+| `breakthrough` | `breakthrough.ts` |
+| `meta_rumors` | `meta_rumors.ts` |
+| Arc system events | `arc_system.ts` |
+| Team identity events | `team_identity.ts` |
+| `visa_arc` | `visa_arc.ts` |
+| `coaching_overhaul` | `coaching_overhaul.ts` |
 
 ### Option structure
 
@@ -301,19 +341,21 @@ Use `bracket_position` and `elimination_risk` condition types (not `flag_active`
 
 ### Tournament conditions in interview templates
 
-Use the `condition` field on the template:
+Use condition types in the `conditions[]` array — same as drama events:
 ```typescript
-{ condition: 'lower_bracket' }          // maps to context.bracketPosition === 'lower'
-{ condition: 'elimination_risk' }       // maps to context.eliminationRisk
-{ condition: 'grand_final' }            // maps to context.isGrandFinal
-{ condition: 'opponent_dropped_from_upper' } // maps to context.opponent.droppedFromUpper
+{ conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }] }
+{ conditions: [{ type: 'elimination_risk' }] }
+{ conditions: [{ type: 'is_grand_final' }] }
+{ conditions: [{ type: 'opponent_from_upper' }] }
 ```
 
-To combine a tournament condition with a flag gate, use `condition` for the bracket check and `requiresActiveFlag` for the flag:
+Combine with flag gates freely in the same array:
 ```typescript
 {
-  condition: 'lower_bracket',
-  requiresActiveFlag: 'team_identity_resilient',
+  conditions: [
+    { type: 'bracket_position', bracketPosition: 'lower' },
+    { type: 'flag_active', flag: 'team_identity_resilient' },
+  ],
   // fires only when: in lower bracket AND team_identity_resilient flag active
 }
 ```
@@ -366,13 +408,13 @@ arc_entry_identity    — sets arc_identity_{playerId}
 
 ### Arc-gated interview templates
 
-Use `requiresActiveFlag` to gate templates on an arc flag. These templates fire regardless of win/loss — they respond to the arc state:
+Gate arc templates with `conditions[]`. These fire regardless of win/loss — they respond to the arc state. Use `playerSelector: 'condition_match'` so the engine extracts the player ID from the matching flag:
 
 ```typescript
 {
   id: 'post_arc_redemption_win',
   context: 'POST_MATCH',
-  requiresActiveFlag: 'arc_redemption_{playerId}',
+  conditions: [{ type: 'flag_active', flag: 'arc_redemption_{playerId}', playerSelector: 'condition_match' }],
   // ...
 }
 ```
@@ -424,19 +466,21 @@ fragile_first_fight_back    — minor: clears fragile on first win streak
 
 ### Using team identity in interview templates
 
-Team identity conditions are checked against `activeFlags` in the store:
+Team identity flags are checked via `conditions[]` like any other flag:
 ```typescript
-// Condition on template — fires when flag is active
-{ condition: 'team_identity_star_carry' }
+// Fires when flag is active
+{ conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }] }
 
-// As requiresActiveFlag — combine with another condition
+// Combine with other conditions freely
 {
-  condition: 'lower_bracket',
-  requiresActiveFlag: 'team_identity_resilient',
+  conditions: [
+    { type: 'bracket_position', bracketPosition: 'lower' },
+    { type: 'flag_active', flag: 'team_identity_resilient' },
+  ],
 }
 ```
 
-Note: `team_identity_balanced` has no InterviewCondition value — gate it using `requiresActiveFlag: 'team_identity_balanced'` combined with another condition (e.g. `win_streak_2plus`).
+`team_identity_balanced` — gate it with `{ type: 'flag_active', flag: 'team_identity_balanced' }` in `conditions[]`, optionally alongside other conditions (e.g. `{ type: 'team_win_streak', streakLength: 2 }`).
 
 ---
 
@@ -502,13 +546,16 @@ The core CYOA mechanic. An interview option plants a flag; a drama event reads i
 
 ### Pattern 2: Flag-conditional interview template
 
-Only shown when a specific flag is active (uses `requiresActiveFlag` on the template):
+Gate a template on one or more active flags using `conditions[]`. Combine with `matchOutcome` to target win or loss contexts:
 ```typescript
 {
   id: 'post_rivalry_trash_talk_loss',
   context: 'POST_MATCH',
-  condition: 'rivalry_active',
-  requiresActiveFlag: 'interview_trash_talked_rival',
+  matchOutcome: 'loss',
+  conditions: [
+    { type: 'has_rivalry' },
+    { type: 'flag_active', flag: 'interview_trash_talked_rival' },
+  ],
   prompt: 'After your comments before the match, this loss must sting...',
   options: [ /* ... */ ],
 }
@@ -569,7 +616,7 @@ Seed a player arc via a detection drama event, then gate interviews and follow-u
    effect: set arc_redemption_{playerId} (45 days)
 
 2. post_arc_redemption_pressure (interview template)
-   requiresActiveFlag: 'arc_redemption_{playerId}'
+   conditions: [{ type: 'flag_active', flag: 'arc_redemption_{playerId}', playerSelector: 'condition_match' }]
    context: PRE_MATCH
    // Reporter asks about proving doubters wrong
 
@@ -590,7 +637,7 @@ Detection events set team identity flags; reactive events and interview template
    effect: set team_identity_star_carry (30 days)
 
 2. pre_star_carry_identity (interview template)
-   condition: 'team_identity_star_carry'
+   conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }]
    context: PRE_MATCH
    // Reporter asks about building around one player
 
@@ -615,10 +662,12 @@ conditions: [
 
 // Interview template: fires on win in lower bracket when resilient
 {
-  condition: 'lower_bracket',
-  requiresActiveFlag: 'team_identity_resilient',
   context: 'POST_MATCH',
-  // Add ID to winIds in InterviewService.ts
+  matchOutcome: 'win',
+  conditions: [
+    { type: 'bracket_position', bracketPosition: 'lower' },
+    { type: 'flag_active', flag: 'team_identity_resilient' },
+  ],
 }
 ```
 
@@ -881,9 +930,8 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - **Don't resolve stories in one event** — prefer a minor event setting a flag → major event 3–7 days later.
 - **Don't set flags without planning a reader** — if you add `setsFlags`, sketch the drama event that will consume it.
 - **Don't use morale deltas above ±20 on a single effect** — the scale is 0–100, small changes matter more narratively.
-- **Don't add `requiresActiveFlag` to an interview template without also ensuring the flag can actually be set** — trace the whole path.
+- **Don't add a `flag_active` condition without ensuring the flag can actually be set** — trace the whole path from interview option or drama effect to the condition. Dead conditions silently make templates unreachable.
 - **Don't use `player_stat` as a condition stat name** — use the actual stat key (`mechanics`, `igl`, `mental`, etc.).
-- **Don't forget to add POST_MATCH template IDs to `winIds`/`lossIds` in `InterviewService.ts`** — they will silently never fire otherwise.
 - **Don't use global flags for per-player arc state** — if any flag tracks something that applies to one player, it must use `{playerId}` in the key. Global flags corrupt silently when two players enter the same arc simultaneously. See Pattern 9.
 - **Don't use `oncePerSeason` on player-arc events** — `oncePerSeason` is template-scoped: once *any* player triggers the event, it blocks the template for all players for 90 days. For player-specific events, rely on the player-scoped flag's own duration as rate-limiter instead.
 - **Don't add conditions that require flags nothing sets** — before adding a `flag_active` condition, verify there is a concrete code path (interview option or drama effect) that sets that flag. Dead conditions silently make events unreachable.
@@ -899,7 +947,7 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 3. **Design the follow-up drama event**: what conditions besides the flag make it feel earned? (loss streak? low chemistry? specific phase?)
 4. **Design 3 choices** for the drama event — aggressive/risky, cautious/diplomatic, avoidant — each with different flag consequences
 5. **Optionally**: add a flag-conditional interview template that appears *after* the drama choice, letting the manager face press questions about their decision
-6. **Add to the arrays**: `INTERVIEW_TEMPLATES` and `DRAMA_EVENT_TEMPLATES`
+6. **Add to the right files**: interview template to `src/data/interviews/<context>.ts`, drama event to `src/data/drama/<category>.ts`
 
 Example arc skeleton:
 ```
@@ -916,7 +964,7 @@ Example arc skeleton:
       C) Grant meeting with other org → sets player_exploring_market, morale team -5
 
   interview (flag-conditional): pre_match_departure_questions
-    requiresActiveFlag: player_hinted_departure
+    conditions: [{ type: 'flag_active', flag: 'player_hinted_departure' }]
     prompt: "Fans are asking if [player] will be here next season..."
     options: confident they stay | acknowledge uncertainty | deflect
 ```
