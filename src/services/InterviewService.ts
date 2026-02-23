@@ -13,7 +13,7 @@ import type {
   InterviewHistoryEntry,
   TournamentMatchContext,
 } from '../types/interview';
-import { evaluateTemplateFlagGate } from '../engine/interview';
+import { evaluateTemplateFlagGate, resolveInterviewEffects } from '../engine/interview';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
 import { useGameStore } from '../store';
 
@@ -229,85 +229,79 @@ export class InterviewService {
     choiceIndex: number,
     currentDate: string,
   ): InterviewHistoryEntry & InterviewEffectResult {
-    console.log('InterviewService: resolveInterview START', { templateId: pending.templateId, choiceIndex, context: pending.context });
     const option: InterviewOption = pending.options[choiceIndex];
     const effects = option.effects;
-    console.log('InterviewService: effects:', effects);
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId!;
     const team = state.teams[playerTeamId];
 
-    // 1. Morale delta — apply to targeted players (or whole roster if no target)
-    console.log('InterviewService: applying morale delta...');
-    const newMorale: Record<string, number> = {};
-    if (effects.morale !== undefined && effects.morale !== 0) {
-      const moraleTargets = effects.targetPlayerIds ?? team.playerIds;
-      for (const playerId of moraleTargets) {
-        const player = state.players[playerId];
-        if (!player) continue;
-        const next = Math.max(0, Math.min(100, player.morale + effects.morale));
-        newMorale[playerId] = next;
-        state.updatePlayer(playerId, { morale: next });
-      }
-    }
-
-    // 2. Reputation deltas — fanbase, hype, sponsorTrust
-    console.log('InterviewService: applying reputation deltas...');
-    const rep = team.reputation;
-    const repUpdate = {
-      fanbase: effects.fanbase !== undefined
-        ? Math.max(0, Math.min(100, rep.fanbase + effects.fanbase))
-        : rep.fanbase,
-      hypeLevel: effects.hype !== undefined
-        ? Math.max(0, Math.min(100, rep.hypeLevel + effects.hype))
-        : rep.hypeLevel,
-      sponsorTrust: effects.sponsorTrust !== undefined
-        ? Math.max(0, Math.min(100, rep.sponsorTrust + effects.sponsorTrust))
-        : rep.sponsorTrust,
-    };
-    if (
-      repUpdate.fanbase !== rep.fanbase ||
-      repUpdate.hypeLevel !== rep.hypeLevel ||
-      repUpdate.sponsorTrust !== rep.sponsorTrust
-    ) {
-      state.updateTeam(playerTeamId, { reputation: repUpdate });
-    }
-
-    // 3. Rivalry delta
-    if (effects.rivalryDelta !== undefined && effects.rivalryDelta !== 0 && pending.matchId) {
+    // Derive opponentTeamId for rivalry effects
+    let opponentTeamId: string | undefined;
+    if (effects.rivalryDelta !== undefined && pending.matchId) {
       const match = state.matches[pending.matchId];
-      const opponentTeamId = match?.teamAId === playerTeamId ? match?.teamBId : match?.teamAId;
-      if (opponentTeamId) {
-        state.updateRivalryIntensity(opponentTeamId, effects.rivalryDelta);
+      opponentTeamId = match?.teamAId === playerTeamId ? match?.teamBId : match?.teamAId;
+    }
+
+    // Build snapshot (provides players list for team-wide morale fallback)
+    const snapshot = this.buildInterviewSnapshot({});
+
+    // Translate effects → concrete mutations
+    const resolved = resolveInterviewEffects(effects, snapshot, opponentTeamId);
+
+    // Apply mutations to store
+    const newMorale: Record<string, number> = {};
+    let pendingDramaBoost = 0;
+    const repPatch: Partial<{ fanbase: number; hypeLevel: number; sponsorTrust: number }> = {};
+
+    for (const r of resolved) {
+      switch (r.type) {
+        case 'update_player': {
+          const player = state.players[r.playerId!];
+          if (!player) break;
+          const next = Math.max(0, Math.min(100, player.morale + r.delta!));
+          newMorale[r.playerId!] = next;
+          state.updatePlayer(r.playerId!, { morale: next });
+          break;
+        }
+        case 'update_team': {
+          const rep = team.reputation;
+          const current = r.field === 'fanbase' ? rep.fanbase
+            : r.field === 'hypeLevel' ? rep.hypeLevel
+            : rep.sponsorTrust;
+          const next = Math.max(0, Math.min(100, current + r.delta!));
+          repPatch[r.field as 'fanbase' | 'hypeLevel' | 'sponsorTrust'] = next;
+          break;
+        }
+        case 'rivalry_delta':
+          state.updateRivalryIntensity(r.opponentTeamId!, r.delta!);
+          break;
+        case 'drama_boost': {
+          pendingDramaBoost = r.delta!;
+          const current = state.pendingDramaBoost;
+          useGameStore.setState({ pendingDramaBoost: current + r.delta! });
+          break;
+        }
+        case 'set_flag': {
+          const expiry = new Date(currentDate);
+          expiry.setDate(expiry.getDate() + r.flagDuration!);
+          useGameStore.getState().setDramaFlag(r.flag!, {
+            setDate: currentDate,
+            expiresDate: expiry.toISOString().slice(0, 10),
+          });
+          break;
+        }
+        case 'clear_flag':
+          useGameStore.getState().clearDramaFlag(r.flag!);
+          break;
       }
     }
 
-    // 4. Drama chance — accumulate in slice
-    const dramaBoost = effects.dramaChance ?? 0;
-    if (dramaBoost > 0) {
-      const current = state.pendingDramaBoost;
-      useGameStore.setState({ pendingDramaBoost: current + dramaBoost });
+    // Apply reputation patch once if any field changed
+    if (Object.keys(repPatch).length > 0) {
+      state.updateTeam(playerTeamId, { reputation: { ...team.reputation, ...repPatch } });
     }
 
-    // 4.5. Set/clear drama flags from interview choice
-    if (effects.setsFlags?.length) {
-      const latestForFlags = useGameStore.getState();
-      for (const { key, durationDays } of effects.setsFlags) {
-        const expiryDate = new Date(currentDate);
-        expiryDate.setDate(expiryDate.getDate() + durationDays);
-        const expiresDate = expiryDate.toISOString().slice(0, 10);
-        latestForFlags.setDramaFlag(key, { setDate: currentDate, expiresDate });
-      }
-    }
-    if (effects.clearsFlags?.length) {
-      const latestForFlags = useGameStore.getState();
-      for (const key of effects.clearsFlags) {
-        latestForFlags.clearDramaFlag(key);
-      }
-    }
-
-    // 5. Build history entry and commit to slice
-    console.log('InterviewService: building history entry...');
+    // Build and commit history entry
     const historyEntry: InterviewHistoryEntry = {
       date: currentDate,
       templateId: pending.templateId,
@@ -315,19 +309,14 @@ export class InterviewService {
       chosenTone: option.tone,
       effects,
     };
-
-    // Re-read state so we get the latest after prior mutations
-    const latestState = useGameStore.getState();
-    console.log('InterviewService: adding to history...');
-    latestState.addInterviewHistory(historyEntry);
+    useGameStore.getState().addInterviewHistory(historyEntry);
     // Note: clearPendingInterview is handled by the parent component after the modal closes
 
-    console.log('InterviewService: resolveInterview END');
     return {
       ...historyEntry,
       appliedEffects: effects,
       newMorale,
-      pendingDramaBoost: dramaBoost,
+      pendingDramaBoost,
     };
   }
 
