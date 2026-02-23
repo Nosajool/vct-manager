@@ -12,7 +12,7 @@ import type {
   InterviewHistoryEntry,
   TournamentMatchContext,
 } from '../types/interview';
-import { INTERVIEW_TEMPLATES } from '../data/interviewTemplates';
+import { INTERVIEW_TEMPLATES } from '../data/interviews';
 import { useGameStore } from '../store';
 
 export interface InterviewEffectResult {

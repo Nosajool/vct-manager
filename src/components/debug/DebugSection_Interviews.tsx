@@ -2,7 +2,7 @@
 // Shows pending interview, drama boost, history, and template eligibility
 
 import { useGameStore } from '../../store';
-import { INTERVIEW_TEMPLATES } from '../../data/interviewTemplates';
+import { INTERVIEW_TEMPLATES } from '../../data/interviews';
 
 export function DebugSection_Interviews() {
   const pendingInterview = useGameStore((s) => s.pendingInterview);

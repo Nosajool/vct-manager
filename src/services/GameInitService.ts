@@ -11,7 +11,7 @@ import type { Player, Region, MatchEventData, Match } from '../types';
 import { FREE_AGENTS_PER_REGION } from '../utils/constants';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
-import { INTERVIEW_TEMPLATES } from '../data/interviewTemplates';
+import { INTERVIEW_TEMPLATES } from '../data/interviews';
 
 /**
  * Options for initializing a new game
