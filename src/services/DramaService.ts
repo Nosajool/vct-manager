@@ -3,7 +3,7 @@
 
 import { useGameStore } from '../store';
 import * as dramaEngine from '../engine/drama';
-import { DRAMA_EVENT_TEMPLATES } from '../data/dramaEvents';
+import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
 import { resolveEffects, type ResolvedEffect } from '../engine/drama/DramaEffectResolver';
 import type {
   DramaEventInstance,

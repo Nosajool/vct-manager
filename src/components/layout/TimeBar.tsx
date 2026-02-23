@@ -25,7 +25,7 @@ import { DramaEventToast, DramaEventModal } from '../drama';
 import { InterviewModal } from '../narrative/InterviewModal';
 import { MoraleChangeModal } from '../match/MoraleChangeModal';
 import { dramaService } from '../../services/DramaService';
-import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
+import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
 import type { DramaEventInstance, DramaChoice } from '../../types/drama';

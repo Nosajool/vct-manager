@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import { useGameStore } from '../../store';
 import { evaluateCondition } from '../../engine/drama';
-import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
+import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { dramaService } from '../../services/DramaService';
 import type { DramaCategory, DramaGameStateSnapshot } from '../../types/drama';
 
