@@ -59,6 +59,16 @@ const CATEGORY_METADATA: Record<
     color: 'from-purple-500/20 to-purple-600/20 border-purple-500/30',
     icon: '📰',
   },
+  visa_arc: {
+    label: 'Visa Crisis',
+    color: 'from-blue-500/20 to-blue-600/20 border-blue-500/30',
+    icon: '🛂',
+  },
+  coaching_overhaul: {
+    label: 'Coaching Overhaul',
+    color: 'from-amber-500/20 to-amber-600/20 border-amber-500/30',
+    icon: '📋',
+  },
 };
 
 /**

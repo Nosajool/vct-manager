@@ -17,7 +17,9 @@ export type DramaCategory =
   | 'external_pressure'
   | 'practice_burnout'
   | 'breakthrough'
-  | 'meta_rumors';
+  | 'meta_rumors'
+  | 'visa_arc'           // all visa drama arc events
+  | 'coaching_overhaul'; // all coaching overhaul arc events
 
 /**
  * Severity level of drama events
@@ -439,12 +441,14 @@ export const DRAMA_CONSTANTS = {
   // Default cooldown periods per category (in days)
   // Reduced from 14-30 days to 5-10 days to increase event frequency
   cooldownDefaults: {
-    player_ego: 7,          // Reduced from 14
-    team_synergy: 7,        // Reduced from 21
-    external_pressure: 10,  // Reduced from 14
-    practice_burnout: 5,    // Reduced from 28
-    breakthrough: 7,        // Reduced from 30
-    meta_rumors: 7,         // Unchanged
+    player_ego: 7,           // Reduced from 14
+    team_synergy: 7,         // Reduced from 21
+    external_pressure: 10,   // Reduced from 14
+    practice_burnout: 5,     // Reduced from 28
+    breakthrough: 7,         // Reduced from 30
+    meta_rumors: 7,          // Unchanged
+    visa_arc: 3,             // Short: arc is flag-chained, not random
+    coaching_overhaul: 5,    // Short: arc events are flag-gated
   },
 
   // Effect magnitude defaults

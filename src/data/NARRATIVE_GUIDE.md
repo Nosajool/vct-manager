@@ -163,7 +163,9 @@ PRE_MATCH and CRISIS templates are not filtered this way — they use all passin
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul`
+
+**Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 
 ### Condition types reference
 
@@ -797,6 +799,54 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `visa_admin_review` | `visa_tournament_missed` "internal review" choice | future events |
 | `visa_public_apology` | `visa_tournament_missed` "public apology" choice | future events |
 | `team_underdog_refocus` | `visa_tournament_missed` "refocus" choice | future events |
+
+**Coaching overhaul arc flags**
+
+| Flag | Set by | Read by |
+|------|--------|---------|
+| `coaching_overhaul_active` | `coach_overhaul_kickoff_crisis` effects | All `coaching_overhaul` events as entry gate |
+| `star_bought_in_{playerId}` | `star_player_coaching_reaction` choices A/C; interview `crisis_star_player_on_new_coach` option A | `system_buyin_taking_hold` condition |
+| `star_skeptical_{playerId}` | `star_player_coaching_reaction` choice B; interview `crisis_star_player_on_new_coach` option C | narrative flavor only |
+| `star_coach_conflict_{playerId}` | `star_benched_in_scrims` choice B | `locker_room_friction_escalates`, `coaching_overhaul_crisis_point` conditions |
+| `star_silent_grind_{playerId}` | `star_benched_in_scrims` choice C | narrative flavor only |
+| `strict_regime_active` | `new_regime_strict_structure` effects | `star_benched_in_scrims`, `system_buyin_taking_hold` conditions; interview `pre_match_new_regime_check` gate |
+| `locker_room_divide` | `star_player_coaching_reaction` choice B | `locker_room_friction_escalates` condition |
+| `coaching_authority_undermined` | `star_benched_in_scrims` choice B | `coaching_overhaul_crisis_point` condition |
+| `system_buyin_path_active` | `system_buyin_taking_hold` effects; `locker_room_friction_escalates` choice C | narrative gate |
+| `coaching_system_peak` | `system_buyin_taking_hold` effects; `coaching_overhaul_crisis_point` choice C (20d) | `coaching_overhaul_triumphant` condition; interview `post_match_system_working` gate |
+| `coaching_overhaul_failed` | `coaching_overhaul_crisis_point` immediate effects | `coaching_overhaul_fallout_aftermath` condition; interview `crisis_coaching_overhaul_fallout` gate |
+| `coaching_overhaul_succeeded` | `coaching_overhaul_triumphant` effects | terminal positive flag |
+| `coach_hot_seat` | `coaching_overhaul_crisis_point` choice B | narrative flavor only |
+| `media_narrative_coaching_debate` | `extended_coach_media_interview` effects | narrative flavor only |
+
+**Coaching overhaul arc flow**
+
+```
+[ENTRY]  coach_overhaul_kickoff_crisis (minor)
+           → sets coaching_overhaul_active
+           → escalates → star_player_coaching_reaction
+
+[ACT 1]  star_player_coaching_reaction (major)
+           Choice A/C → star_bought_in_{playerId}        (PATH A)
+           Choice B   → star_skeptical + locker_room_divide (PATH B seed)
+
+[ACT 2a] new_regime_strict_structure (minor)  [requires 3 scrims]
+           → sets strict_regime_active
+
+[ACT 2b] star_benched_in_scrims (major)
+           Choice A → star_bought_in_{playerId}           (PATH A confirm)
+           Choice B → star_coach_conflict + coaching_authority_undermined (PATH B)
+           Choice C → star_silent_grind                   (neutral)
+
+PATH A ──► [ACT 3] system_buyin_taking_hold (minor) → coaching_system_peak
+           [TERM]  coaching_overhaul_triumphant (minor) → coaching_overhaul_succeeded ✓
+
+PATH B ──► [ACT 3] locker_room_friction_escalates (major)
+           [TERM]  coaching_overhaul_crisis_point (major) → coaching_overhaul_failed ✗
+
+[FLAVOR]  extended_coach_media_interview (minor, fires during arc)
+[AFTER]   coaching_overhaul_fallout_aftermath (minor, fires post-failure on loss streak)
+```
 
 ---
 

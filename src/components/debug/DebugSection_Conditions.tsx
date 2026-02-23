@@ -6,25 +6,20 @@ import { useGameStore } from '../../store';
 import { evaluateCondition } from '../../engine/drama';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/dramaEvents';
 import { dramaService } from '../../services/DramaService';
-import type { DramaGameStateSnapshot } from '../../types/drama';
+import type { DramaCategory, DramaGameStateSnapshot } from '../../types/drama';
 
-const CATEGORIES = [
-  'player_ego',
-  'team_synergy',
-  'external_pressure',
-  'practice_burnout',
-  'breakthrough',
-  'meta_rumors',
-] as const;
-
-const CATEGORY_COLORS: Record<string, string> = {
+const CATEGORY_COLORS: Record<DramaCategory, string> = {
   player_ego: 'bg-red-900/40 text-red-300',
   team_synergy: 'bg-blue-900/40 text-blue-300',
   external_pressure: 'bg-orange-900/40 text-orange-300',
   practice_burnout: 'bg-yellow-900/40 text-yellow-300',
   breakthrough: 'bg-green-900/40 text-green-300',
   meta_rumors: 'bg-purple-900/40 text-purple-300',
+  visa_arc: 'bg-cyan-900/40 text-cyan-300',
+  coaching_overhaul: 'bg-amber-900/40 text-amber-300',
 };
+
+const CATEGORIES = Object.keys(CATEGORY_COLORS) as DramaCategory[];
 
 export function DebugSection_Conditions() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
