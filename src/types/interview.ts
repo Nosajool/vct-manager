@@ -2,6 +2,7 @@
 // Part of the narrative layer (System 2: Interview System)
 
 import type { PlayerPersonality } from './player';
+import type { DramaGameStateSnapshot } from './drama';
 
 export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF';
 
@@ -95,6 +96,22 @@ export interface TournamentMatchContext {
     droppedFromUpper: boolean;  // opponent just came from upper bracket
     recentWinStreak: number;    // consecutive wins coming in
     rivalryLevel: number;       // 0-100 from RivalrySlice
+  };
+}
+
+// Snapshot of game state used for interview condition evaluation
+// Extends DramaGameStateSnapshot with interview-specific fields
+export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournamentContext'> {
+  isPlayoffMatch: boolean;
+  isUpsetWin: boolean;
+  lastMatchWon?: boolean;
+  hasRivalry: boolean;
+  // Widened tournamentContext: adds opponent context for interview conditions
+  tournamentContext?: {
+    bracketPosition: 'upper' | 'lower' | null;
+    eliminationRisk: boolean;
+    isGrandFinal: boolean;
+    opponent?: { droppedFromUpper: boolean };
   };
 }
 
