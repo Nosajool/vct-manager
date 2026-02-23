@@ -64,7 +64,6 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'post_player_veteran_return',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'always',
     prompt: "You've been competing at the top level for years. What does a win like this mean at this stage of your career?",
     options: [
       {
@@ -96,8 +95,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_championship_pact_pressure',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'pre_playoff',
-    conditions: [{ type: 'flag_active', flag: 'veteran_championship_pact' }],
+    conditions: [{ type: 'flag_active', flag: 'veteran_championship_pact' }, { type: 'is_playoff_match' }],
     prompt: "You publicly committed to a final championship run with your veteran player. With the pressure that puts on everyone, how are they actually holding up?",
     options: [
       {
@@ -126,7 +124,6 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'post_player_breakout_media',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'prodigy_hype_{playerId}' }],
     prompt: "Your name is everywhere right now — analysts, fans, sponsors are all talking about you. How do you handle becoming the story?",
     options: [
@@ -159,7 +156,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_triple_elim_fatigue',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'loss_streak_2plus',
+    conditions: [{ type: 'team_loss_streak', streakLength: 2 }],
     prompt: "Your team has had to fight through the elimination bracket to stay alive. Physically and mentally, how are they holding up heading into this must-win match?",
     options: [
       {
@@ -188,8 +185,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'post_igl_public_pressure',
     context: 'CRISIS',
     subjectType: 'player',
-    condition: 'drama_active',
-    conditions: [{ type: 'flag_active', flag: 'igl_authority_undermined' }],
+    conditions: [{ type: 'flag_active', flag: 'igl_authority_undermined' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Fans have been extremely vocal about in-game leadership this tournament. How do you block out community criticism when you're already under match pressure?",
     options: [
       {
@@ -221,7 +217,6 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'post_igl_redemption_chance',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'igl_seeking_redemption' }],
     prompt: "You spoke earlier about wanting to earn back trust through results. After today's performance, do you feel like you're getting there?",
     options: [

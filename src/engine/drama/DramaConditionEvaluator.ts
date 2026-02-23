@@ -140,6 +140,23 @@ export function evaluateCondition(
         ? Math.random() * 100 < condition.chance
         : false;
 
+    // Interview-context checks (populated by InterviewSnapshot)
+    case 'is_playoff_match':
+      return snapshot.isPlayoffMatch === true;
+
+    case 'has_rivalry':
+      return snapshot.hasRivalry === true;
+
+    case 'is_grand_final':
+      return snapshot.tournamentContext?.isGrandFinal === true;
+
+    case 'opponent_from_upper':
+      return snapshot.tournamentContext?.opponent?.droppedFromUpper === true;
+
+    // OR logic: at least one sub-condition must pass
+    case 'or':
+      return condition.anyOf?.some((c) => evaluateCondition(c, snapshot)) ?? false;
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;

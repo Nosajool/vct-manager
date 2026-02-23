@@ -9,7 +9,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_coach_dismissal_response',
     context: 'CRISIS',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'coaching_overhaul_active' }],
     prompt: "You've made the decision to change coaches mid-season. What's driving that call?",
     options: [
@@ -48,7 +47,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_star_player_on_new_coach',
     context: 'CRISIS',
     subjectType: 'player',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'coaching_overhaul_active' }],
     prompt: "Your team just changed coaches. How are you feeling about the transition?",
     options: [
@@ -107,7 +105,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_match_new_regime_check',
     context: 'PRE_MATCH',
     subjectType: 'coach',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'strict_regime_active' }],
     prompt: "You've implemented a noticeably stricter practice structure. What's the philosophy?",
     options: [
@@ -146,7 +143,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'post_match_system_working',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'coaching_system_peak' }],
     prompt: "The team looks completely transformed. What changed?",
     options: [
@@ -185,7 +181,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_star_conflict_public',
     context: 'CRISIS',
     subjectType: 'player',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'star_coach_conflict_{playerId}' }],
     prompt: "There are reports of tension between you and the coaching staff. Care to address that?",
     options: [
@@ -246,7 +241,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_coaching_overhaul_fallout',
     context: 'CRISIS',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'coaching_overhaul_failed' }],
     prompt: "The coaching experiment didn't work out. What do you say to your fans and sponsors?",
     options: [

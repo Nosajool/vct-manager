@@ -309,7 +309,6 @@ export type {
   InterviewContext,
   InterviewTone,
   InterviewSubject,
-  InterviewCondition,
   InterviewEffects,
   InterviewOption,
   InterviewTemplate,

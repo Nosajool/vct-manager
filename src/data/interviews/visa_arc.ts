@@ -9,7 +9,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_visa_admin_response',
     context: 'CRISIS',
     subjectType: 'manager',
-    condition: 'visa_delay_active',
     conditions: [{ type: 'flag_active', flag: 'visa_delayed_{playerId}' }],
     prompt: "Fans are questioning your team's preparation. How did this visa situation happen?",
     options: [
@@ -49,7 +48,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_substitute_lineup_start',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "Your substitute is stepping in for a tournament match. What's your message to them?",
     options: [
@@ -78,7 +76,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'post_sub_win_depth_shown',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'win',
     conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "The substitute lineup just won. What does this say about your roster depth?",
@@ -111,7 +108,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'post_sub_loss_pressure_mounts',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'loss',
     conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "You're playing without your main roster. Is the team holding together?",
@@ -141,7 +137,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_player_watches_sidelines',
     context: 'CRISIS',
     subjectType: 'player',
-    condition: 'visa_delay_active',
     conditions: [{ type: 'flag_active', flag: 'visa_delayed_{playerId}' }],
     prompt: "You're watching your team compete without you. How are you handling this?",
     options: [
@@ -197,7 +192,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     id: 'post_main_player_returns',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'any',
     conditions: [{ type: 'flag_active', flag: 'visa_player_returned_{playerId}' }],
     prompt: "Your player is back after missing tournament time. What does their return mean for the team?",

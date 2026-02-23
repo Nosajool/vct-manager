@@ -12,7 +12,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_star_carry_identity',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'team_identity_star_carry',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }],
     prompt: "It looks like this team is being built around one player's performance right now. Is that a conscious decision — or just where the form is taking you?",
     options: [
       {
@@ -41,8 +41,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_balanced_confidence',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'win_streak_2plus',
-    conditions: [{ type: 'flag_active', flag: 'team_identity_balanced' }],
+    conditions: [{ type: 'flag_active', flag: 'team_identity_balanced' }, { type: 'team_win_streak', streakLength: 2 }],
     prompt: "Your team has been remarkably consistent. Chemistry clearly isn't an issue — how do you maintain that cohesion heading into a high-stakes match?",
     options: [
       {
@@ -71,7 +70,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_fragile_narrative',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'team_identity_fragile',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_fragile' }],
     prompt: "There's a growing narrative that this team crumbles under pressure. Early hype, disappointing results. How do you respond to that characterization?",
     options: [
       {
@@ -102,9 +101,8 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'post_resilient_lower_bracket',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'lower_bracket',
     matchOutcome: 'win',
-    conditions: [{ type: 'flag_active', flag: 'team_identity_resilient' }],
+    conditions: [{ type: 'flag_active', flag: 'team_identity_resilient' }, { type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "This team just keeps finding ways to survive in the lower bracket. What is it about this group that makes you resilient when elimination is on the line?",
     options: [
       {
@@ -136,8 +134,8 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'post_star_carry_spotlight',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'team_identity_star_carry',
     matchOutcome: 'win',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }],
     prompt: "Your team is leaning heavily on your individual performance right now. Is that a role you're comfortable carrying — or does it add pressure you didn't sign up for?",
     options: [
       {
@@ -169,9 +167,8 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'post_fragile_elimination',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'elimination_risk',
     matchOutcome: 'loss',
-    conditions: [{ type: 'flag_active', flag: 'team_identity_fragile' }],
+    conditions: [{ type: 'flag_active', flag: 'team_identity_fragile' }, { type: 'elimination_risk' }],
     prompt: "With everything on the line, the cracks in this team are showing. What needs to change — and do you believe this group can actually make those changes before it's too late?",
     options: [
       {
@@ -200,7 +197,6 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'post_win_historic_milestone',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'win',
     prompt: "This could be the most significant result in this organization's history. What does this moment mean for everyone who has been part of this journey?",
     options: [
@@ -235,7 +231,6 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_high_expectations_pressure',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }],
     prompt: "You set a high bar at the start of the season. Does that statement feel like motivation or pressure heading into today's match?",
     options: [
@@ -264,7 +259,6 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'post_win_development_focus',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'win',
     conditions: [{ type: 'flag_active', flag: 'manager_development_focused' }],
     prompt: "You've talked about a development-first philosophy this season. Does a win like this feel like validation of that approach?",
@@ -294,7 +288,6 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_underdog_narrative',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     conditions: [{ type: 'flag_active', flag: 'manager_underdog_mindset' }],
     prompt: "Most analysts aren't picking your team to go deep this season. How do you use that heading into today?",
     options: [
@@ -323,8 +316,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_championship_mandate_streak',
     context: 'CRISIS',
     subjectType: 'manager',
-    condition: 'loss_streak_3plus',
-    conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }],
+    conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }, { type: 'team_loss_streak', streakLength: 3 }],
     prompt: "You declared you'd be in the finals at the start of the season. Three straight losses in — how do you justify that statement now?",
     options: [
       {

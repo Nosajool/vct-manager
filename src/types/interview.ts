@@ -18,29 +18,6 @@ export type InterviewTone =
 
 export type InterviewSubject = 'manager' | 'player' | 'coach';
 
-// Optional condition that gates when a template can appear
-export type InterviewCondition =
-  | 'always'
-  | 'pre_playoff'
-  | 'rivalry_active'
-  | 'loss_streak_2plus'
-  | 'win_streak_2plus'
-  | 'loss_streak_3plus'
-  | 'drama_active'
-  | 'sponsor_trust_low'
-  // Tournament bracket conditions (Phase 1)
-  | 'lower_bracket'
-  | 'upper_bracket'
-  | 'elimination_risk'
-  | 'grand_final'
-  | 'opponent_dropped_from_upper'
-  // Team identity conditions (Phase 4)
-  | 'team_identity_star_carry'
-  | 'team_identity_resilient'
-  | 'team_identity_fragile'
-  // Visa arc conditions
-  | 'visa_delay_active';
-
 export interface InterviewEffects {
   morale?: number;        // Delta applied to all player morale
   fanbase?: number;       // Delta applied to reputation.fanbase
@@ -69,7 +46,6 @@ export interface InterviewTemplate {
   id: string;
   context: InterviewContext;
   subjectType: InterviewSubject;
-  condition?: InterviewCondition;
   prompt: string;         // The question posed by the reporter
   options: InterviewOption[]; // Always exactly 3 options
   conditions?: DramaCondition[]; // Template-level gate: all must pass for eligibility

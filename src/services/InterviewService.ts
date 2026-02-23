@@ -13,7 +13,7 @@ import type {
   InterviewHistoryEntry,
   TournamentMatchContext,
 } from '../types/interview';
-import { evaluateInterviewCondition, evaluateTemplateFlagGate } from '../engine/interview';
+import { evaluateTemplateFlagGate } from '../engine/interview';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
 import { useGameStore } from '../store';
 
@@ -73,9 +73,7 @@ export class InterviewService {
     });
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'POST_MATCH') return false;
-      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
-      if (!t.condition || t.condition === 'always') return true;
-      return evaluateInterviewCondition(t.condition, snapshot);
+      return evaluateTemplateFlagGate(t, snapshot);
     });
 
     // Filter by match outcome using the template's matchOutcome field
@@ -152,9 +150,7 @@ export class InterviewService {
     });
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'PRE_MATCH') return false;
-      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
-      if (!t.condition || t.condition === 'always') return true;
-      return evaluateInterviewCondition(t.condition, snapshot);
+      return evaluateTemplateFlagGate(t, snapshot);
     });
 
     console.log('checkPreMatchInterview candidates:', {
@@ -205,9 +201,7 @@ export class InterviewService {
     const snapshot = this.buildInterviewSnapshot({});
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'CRISIS') return false;
-      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
-      if (!t.condition || t.condition === 'always') return true;
-      return evaluateInterviewCondition(t.condition, snapshot);
+      return evaluateTemplateFlagGate(t, snapshot);
     });
 
     const template = this.pickTemplate(candidates);

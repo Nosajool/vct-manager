@@ -80,6 +80,15 @@ export type DramaConditionType =
   | 'bracket_position'   // Check upper/lower bracket; uses bracketPosition field
   | 'elimination_risk'   // Team faces elimination with next loss
 
+  // Interview-context checks (populated on InterviewSnapshot, not DramaGameStateSnapshot)
+  | 'is_playoff_match'   // True when the current match is a playoff match
+  | 'has_rivalry'        // True when the player team has an active rivalry with the opponent
+  | 'is_grand_final'     // True when the current match is the grand final
+  | 'opponent_from_upper' // True when the opponent dropped from the upper bracket
+
+  // Logical grouping
+  | 'or'                 // At least one condition in anyOf must pass
+
   // Scrim history checks
   | 'scrim_count_min'   // Team has completed at least N total scrims
   | 'no_recent_match'   // No match played within threshold days (default 1)
@@ -141,6 +150,9 @@ export interface DramaCondition {
 
   // For bracket_position check
   bracketPosition?: 'upper' | 'lower'; // Used with bracket_position type
+
+  // For 'or' type: at least one sub-condition must pass
+  anyOf?: DramaCondition[];
 }
 
 // ============================================================================
@@ -372,7 +384,12 @@ export interface DramaGameStateSnapshot {
     bracketPosition: 'upper' | 'lower' | null;
     eliminationRisk: boolean;
     isGrandFinal: boolean;
+    opponent?: { droppedFromUpper: boolean }; // Populated in interview context
   };
+
+  // Optional fields populated in interview context (InterviewSnapshot extends this)
+  isPlayoffMatch?: boolean;
+  hasRivalry?: boolean;
 }
 
 /**

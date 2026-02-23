@@ -9,7 +9,6 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_standard',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     prompt: "How are you feeling heading into today's match?",
     options: [
       {
@@ -37,7 +36,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_playoff',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'pre_playoff',
+    conditions: [{ type: 'is_playoff_match' }],
     prompt: 'This is a playoff match — how does the pressure feel different?',
     options: [
       {
@@ -65,7 +64,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_rival',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'rivalry_active',
+    conditions: [{ type: 'has_rivalry' }],
     prompt: "You're facing a team you have history with. What does this match mean to you?",
     options: [
       {
@@ -93,7 +92,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_losing_streak',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'loss_streak_2plus',
+    conditions: [{ type: 'team_loss_streak', streakLength: 2 }],
     prompt: "The team has been struggling lately. How do you respond to concerns about your direction?",
     options: [
       {
@@ -121,7 +120,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_win_streak',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'win_streak_2plus',
+    conditions: [{ type: 'team_win_streak', streakLength: 2 }],
     prompt: "The team is on a roll. Is there any danger of complacency creeping in?",
     options: [
       {
@@ -154,7 +153,6 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_coach_standard',
     context: 'PRE_MATCH',
     subjectType: 'coach',
-    condition: 'always',
     prompt: "Your team is about to play. What tactical adjustments are you emphasizing heading into this match?",
     options: [
       {
@@ -182,7 +180,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_coach_rival',
     context: 'PRE_MATCH',
     subjectType: 'coach',
-    condition: 'rivalry_active',
+    conditions: [{ type: 'has_rivalry' }],
     prompt: "This is a rematch against a familiar opponent. How does your preparation differ for a team you know this well?",
     options: [
       {
@@ -215,7 +213,6 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_player_standard',
     context: 'PRE_MATCH',
     subjectType: 'player',
-    condition: 'always',
     prompt: "How are you personally feeling heading into today's match?",
     options: [
       {
@@ -243,7 +240,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_player_streak',
     context: 'PRE_MATCH',
     subjectType: 'player',
-    condition: 'win_streak_2plus',
+    conditions: [{ type: 'team_win_streak', streakLength: 2 }],
     prompt: "You've been in incredible form lately. How do you stay focused when things are going this well?",
     options: [
       {

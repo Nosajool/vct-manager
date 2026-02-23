@@ -13,7 +13,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_rivalry_rematch_lower',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'rivalry_active',
+    conditions: [{ type: 'has_rivalry' }],
     prompt: "You're facing a rival team with real history between you — and now it's survival for at least one side. Does that history add fuel, or does it complicate the focus?",
     options: [
       {
@@ -42,8 +42,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_revenge_match_scorched',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'rivalry_active',
-    conditions: [{ type: 'flag_active', flag: 'rivalry_scorched_earth' }],
+    conditions: [{ type: 'flag_active', flag: 'rivalry_scorched_earth' }, { type: 'has_rivalry' }],
     prompt: "Things got personal between these organizations earlier. Now you're meeting again with tournament lives on the line. Can you keep the emotion from becoming a liability?",
     options: [
       {
@@ -72,7 +71,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_mutual_elimination_battle',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'opponent_dropped_from_upper',
+    conditions: [{ type: 'opponent_from_upper' }],
     prompt: "Your opponent fell from the upper bracket and now faces the same elimination pressure you've been carrying. Two teams, everything to lose — what does a match like that look like from inside?",
     options: [
       {
@@ -101,7 +100,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_opponent_on_run',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    condition: 'lower_bracket',
+    conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "The team you're facing has been on a strong run — consecutive wins, clear momentum behind them. How do you prepare a team to break an opponent who's clearly in form?",
     options: [
       {
@@ -130,7 +129,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_rivalry_lower_player',
     context: 'PRE_MATCH',
     subjectType: 'player',
-    condition: 'rivalry_active',
+    conditions: [{ type: 'has_rivalry' }],
     prompt: "Facing a rival when it's do-or-die — does the history between these teams add to your focus, or is this just another match you need to win?",
     options: [
       {
@@ -162,7 +161,6 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'post_upset_momentum_shift',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'always',
     matchOutcome: 'win',
     prompt: "You just beat a team that had real momentum behind them coming into this tournament. What does pulling off a result like that do for this team's belief in itself?",
     options: [
@@ -192,8 +190,8 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'post_rivalry_win_elimination',
     context: 'POST_MATCH',
     subjectType: 'manager',
-    condition: 'rivalry_active',
     matchOutcome: 'win',
+    conditions: [{ type: 'has_rivalry' }],
     prompt: "You just eliminated a rival from this tournament. After everything the two teams have been through — what does a result like this mean beyond the bracket points?",
     options: [
       {
@@ -222,8 +220,8 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'post_lower_bracket_survival_player',
     context: 'POST_MATCH',
     subjectType: 'player',
-    condition: 'lower_bracket',
     matchOutcome: 'win',
+    conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "You just kept this team's tournament alive in the lower bracket. Describe what it actually feels like to survive a match where the other option was going home.",
     options: [
       {
