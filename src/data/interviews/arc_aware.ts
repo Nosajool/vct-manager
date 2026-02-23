@@ -10,6 +10,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'coach',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "Great result today. What did the team execute particularly well from a tactical standpoint?",
     options: [
       {
@@ -38,6 +39,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'coach',
     condition: 'always',
+    matchOutcome: 'loss',
     prompt: "Tough result today. What tactical adjustments will you be making going forward?",
     options: [
       {
@@ -71,6 +73,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "Strong performance from you today. What clicked for you personally in this match?",
     options: [
       {
@@ -101,6 +104,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'always',
+    matchOutcome: 'loss',
     prompt: "It was a tough day for the team. How are you personally processing this loss?",
     options: [
       {
@@ -192,6 +196,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'rivalry_active',
+    matchOutcome: 'loss',
     requiresActiveFlag: 'interview_trash_talked_rival',
     prompt: "After your comments before the match, this loss must be painful. Any regrets about what you said?",
     options: [
@@ -408,6 +413,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'loss_streak_2plus',
+    matchOutcome: 'loss',
     prompt: "You've been quiet through this rough stretch. How are you really processing what's happening with the team right now?",
     options: [
       {
@@ -447,6 +453,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'lower_bracket',
+    matchOutcome: 'loss',
     prompt: "You've been sent to the lower bracket. No more safety net. How does the team regroup from here?",
     options: [
       {
@@ -563,6 +570,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'grand_final',
+    matchOutcome: 'win',
     prompt: "You're champions. After everything this team went through to get here — what does this moment mean?",
     options: [
       {
@@ -592,6 +600,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'grand_final',
+    matchOutcome: 'loss',
     prompt: "You made the grand final and fell short at the last step. How do you walk away from something like this?",
     options: [
       {
@@ -708,6 +717,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'lower_bracket',
+    matchOutcome: 'win',
     prompt: "Match after match, elimination on the line each time — and this team keeps winning. How do you describe what you've witnessed from this roster through this lower bracket run?",
     options: [
       {
@@ -780,6 +790,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'loss_streak_2plus',
+    matchOutcome: 'loss',
     requiresActiveFlag: 'arc_mod_fragile_{playerId}',
     prompt: "You've had a difficult stretch and this was another tough result. There's a visible weight on you right now. How are you actually doing?",
     options: [
@@ -841,6 +852,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'win_streak_2plus',
+    matchOutcome: 'win',
     requiresActiveFlag: 'arc_mod_momentum_{playerId}',
     prompt: "You've been in outstanding form. There's a real feeling right now that something special is happening. What does this stretch feel like from the inside?",
     options: [
@@ -905,6 +917,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'lower_bracket',
+    matchOutcome: 'win',
     requiresActiveFlag: 'arc_mod_resilient_{playerId}',
     prompt: "You've watched one of your players come back from real adversity through this tournament run. What have you seen in them that the stats don't capture?",
     options: [
@@ -998,6 +1011,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'loss_streak_2plus',
+    matchOutcome: 'loss',
     requiresActiveFlag: 'arc_fallen_{playerId}',
     prompt: "This has been a difficult stretch for you personally. Some are saying this might not be the same player we saw a year ago. How do you respond to that?",
     options: [

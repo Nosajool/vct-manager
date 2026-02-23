@@ -10,6 +10,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "That was a commanding performance. What clicked for the team today?",
     options: [
       {
@@ -38,6 +39,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "It went down to the wire. How did you stay composed in the clutch moments?",
     options: [
       {
@@ -66,6 +68,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "You came back from a serious deficit. What did you say to the team at halftime?",
     options: [
       {
@@ -94,6 +97,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "Not many people gave you a chance today. How does it feel to prove the doubters wrong?",
     options: [
       {

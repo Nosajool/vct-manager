@@ -73,6 +73,7 @@ export interface InterviewTemplate {
   prompt: string;         // The question posed by the reporter
   options: InterviewOption[]; // Always exactly 3 options
   requiresActiveFlag?: string; // Template-level gate: only eligible if this drama flag is active
+  matchOutcome?: 'win' | 'loss' | 'any'; // POST_MATCH only: restrict to win, loss, or either
 }
 
 // A pending interview waiting for the player to respond

@@ -7,11 +7,13 @@ import type { DramaState } from '../types/drama';
 import type {
   InterviewEffects,
   InterviewOption,
+  InterviewSnapshot,
   InterviewTemplate,
   PendingInterview,
   InterviewHistoryEntry,
   TournamentMatchContext,
 } from '../types/interview';
+import { evaluateInterviewCondition, evaluateTemplateFlagGate } from '../engine/interview';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
 import { useGameStore } from '../store';
 
@@ -60,56 +62,26 @@ export class InterviewService {
     // Determine win/loss context
     const won = matchResult.winnerId === playerTeamId;
 
-    // Filter templates by context and conditions
-    const interviewContext = 'POST_MATCH' as const;
-    const activeFlags = useGameStore.getState().activeFlags;
+    // Build snapshot and filter templates by context and conditions
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+    const snapshot = this.buildInterviewSnapshot({
+      isPlayoffMatch,
+      isUpsetWin,
+      lastMatchWon: won,
+      opponentTeamId,
+      tournamentContext: context,
+    });
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
-      if (t.context !== interviewContext) return false;
-      if (!this.templateFlagGatePassed(t)) return false;
+      if (t.context !== 'POST_MATCH') return false;
+      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
       if (!t.condition || t.condition === 'always') return true;
-      if (t.condition === 'pre_playoff' && isPlayoffMatch) return true;
-      // Tournament bracket conditions
-      if (t.condition === 'lower_bracket' && context?.bracketPosition === 'lower') return true;
-      if (t.condition === 'upper_bracket' && context?.bracketPosition === 'upper') return true;
-      if (t.condition === 'elimination_risk' && context?.eliminationRisk) return true;
-      if (t.condition === 'grand_final' && context?.isGrandFinal) return true;
-      if (t.condition === 'opponent_dropped_from_upper' && context?.opponent?.droppedFromUpper) return true;
-      // Team identity conditions (flag-driven)
-      if (t.condition === 'team_identity_star_carry' && 'team_identity_star_carry' in activeFlags) return true;
-      if (t.condition === 'team_identity_resilient' && 'team_identity_resilient' in activeFlags) return true;
-      if (t.condition === 'team_identity_fragile' && 'team_identity_fragile' in activeFlags) return true;
-      return false;
+      return evaluateInterviewCondition(t.condition, snapshot);
     });
 
-    // Prefer win/loss specific templates based on match result.
-    // Includes bracket-aware and Phase 3 opponent-awareness templates so they can fire.
-    const winIds = [
-      'post_win_dominant', 'post_win_close', 'post_win_comeback', 'post_win_upset',
-      'post_coach_win', 'post_player_win',
-      // Bracket-aware (Phase 1)
-      'comeback_lower_bracket_run', 'grand_final_post_win',
-      // Opponent-awareness (Phase 3)
-      'post_upset_momentum_shift', 'post_rivalry_win_elimination', 'post_lower_bracket_survival_player',
-      // Team identity (Phase 4b)
-      'post_resilient_lower_bracket', 'post_star_carry_spotlight',
-      // Kickoff flag consequences
-      'post_win_development_focus',
-      // Visa arc
-      'post_sub_win_depth_shown', 'post_main_player_returns',
-    ];
-    const lossIds = [
-      'post_loss_standard', 'post_loss_close', 'post_loss_blowout', 'post_loss_elimination',
-      'post_coach_loss', 'post_player_loss',
-      // Bracket-aware (Phase 1)
-      'lower_bracket_dropped', 'grand_final_post_loss',
-      // Team identity (Phase 4b)
-      'post_fragile_elimination',
-      // Visa arc
-      'post_sub_loss_pressure_mounts', 'post_main_player_returns',
-    ];
-
-    const relevant = candidates.filter((t) =>
-      won ? winIds.includes(t.id) : lossIds.includes(t.id)
+    // Filter by match outcome using the template's matchOutcome field
+    const outcome = won ? 'win' : 'loss';
+    const relevant = candidates.filter(
+      (t) => !t.matchOutcome || t.matchOutcome === 'any' || t.matchOutcome === outcome
     );
 
     // Prefer upset win template if applicable
@@ -172,44 +144,22 @@ export class InterviewService {
       return null;
     }
 
-    // Build condition flags
-    const lossStreak = team.standings.currentStreak < 0
-      ? Math.abs(team.standings.currentStreak)
-      : 0;
-    const winStreak = team.standings.currentStreak > 0
-      ? team.standings.currentStreak
-      : 0;
-
-    const rivalry = state.rivalries[opponentTeamId];
-    const hasRivalry = rivalry && rivalry.intensity > 0;
-
-    const preFlagState = useGameStore.getState().activeFlags;
+    // Build snapshot and filter templates by context and conditions
+    const snapshot = this.buildInterviewSnapshot({
+      isPlayoffMatch,
+      opponentTeamId,
+      tournamentContext: context,
+    });
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'PRE_MATCH') return false;
-      if (!this.templateFlagGatePassed(t)) return false;
+      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
       if (!t.condition || t.condition === 'always') return true;
-      if (t.condition === 'pre_playoff' && isPlayoffMatch) return true;
-      if (t.condition === 'rivalry_active' && hasRivalry) return true;
-      if (t.condition === 'loss_streak_2plus' && lossStreak >= 2) return true;
-      if (t.condition === 'win_streak_2plus' && winStreak >= 2) return true;
-      // Tournament bracket conditions
-      if (t.condition === 'lower_bracket' && context?.bracketPosition === 'lower') return true;
-      if (t.condition === 'upper_bracket' && context?.bracketPosition === 'upper') return true;
-      if (t.condition === 'elimination_risk' && context?.eliminationRisk) return true;
-      if (t.condition === 'grand_final' && context?.isGrandFinal) return true;
-      if (t.condition === 'opponent_dropped_from_upper' && context?.opponent?.droppedFromUpper) return true;
-      // Team identity conditions (flag-driven)
-      if (t.condition === 'team_identity_star_carry' && 'team_identity_star_carry' in preFlagState) return true;
-      if (t.condition === 'team_identity_resilient' && 'team_identity_resilient' in preFlagState) return true;
-      if (t.condition === 'team_identity_fragile' && 'team_identity_fragile' in preFlagState) return true;
-      return false;
+      return evaluateInterviewCondition(t.condition, snapshot);
     });
 
-    console.log('checkPreMatchInterview candidates:', { 
+    console.log('checkPreMatchInterview candidates:', {
       candidateCount: candidates.length,
-      lossStreak, 
-      winStreak, 
-      hasRivalry 
+      hasRivalry: snapshot.hasRivalry,
     });
 
     const template = this.pickTemplate(candidates);
@@ -252,14 +202,12 @@ export class InterviewService {
     }
 
     // Pick matching template based on trigger reason
+    const snapshot = this.buildInterviewSnapshot({});
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'CRISIS') return false;
-      if (!this.templateFlagGatePassed(t)) return false;
-      if (t.condition === 'loss_streak_3plus' && lossStreak >= 3) return true;
-      if (t.condition === 'drama_active' && (anyLowMorale || hasCrisisFlag)) return true;
-      if (t.condition === 'sponsor_trust_low' && hasSponsorFlag) return true;
-      if (t.condition === 'visa_delay_active' && hasVisaDelayFlag) return true;
-      return false;
+      if (!evaluateTemplateFlagGate(t, snapshot)) return false;
+      if (!t.condition || t.condition === 'always') return true;
+      return evaluateInterviewCondition(t.condition, snapshot);
     });
 
     const template = this.pickTemplate(candidates);
@@ -419,16 +367,68 @@ export class InterviewService {
     return candidates[Math.floor(Math.random() * candidates.length)];
   }
 
-  /** Returns true if the template has no flag gate, or if the required flag is active.
-   * Supports {playerId} placeholder — checks if any active flag matches the pattern prefix. */
-  private templateFlagGatePassed(template: InterviewTemplate): boolean {
-    if (!template.requiresActiveFlag) return true;
-    const activeFlags = useGameStore.getState().activeFlags;
-    if (template.requiresActiveFlag.includes('{playerId}')) {
-      const prefix = template.requiresActiveFlag.split('{playerId}')[0];
-      return Object.keys(activeFlags).some(flag => flag.startsWith(prefix));
-    }
-    return template.requiresActiveFlag in activeFlags;
+  private buildInterviewSnapshot(options: {
+    isPlayoffMatch?: boolean;
+    isUpsetWin?: boolean;
+    lastMatchWon?: boolean;
+    opponentTeamId?: string;
+    tournamentContext?: TournamentMatchContext;
+  }): InterviewSnapshot {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId!;
+    const team = state.teams[playerTeamId];
+
+    const rivalry = options.opponentTeamId
+      ? state.rivalries[options.opponentTeamId]
+      : undefined;
+    const hasRivalry = rivalry ? rivalry.intensity > 0 : false;
+
+    const matchHistory = state.getTeamMatchHistory(playerTeamId);
+    const recentMatchResults = matchHistory.slice(-10).map((result) => {
+      const match = state.matches[result.matchId];
+      return {
+        matchId: result.matchId,
+        date: match?.scheduledDate ?? state.calendar.currentDate,
+        won: result.winnerId === playerTeamId,
+        teamId: playerTeamId,
+      };
+    });
+
+    const dramaState: DramaState = {
+      activeEvents: state.activeEvents,
+      eventHistory: state.eventHistory,
+      activeFlags: state.activeFlags,
+      cooldowns: state.cooldowns as unknown as DramaState['cooldowns'],
+    };
+
+    const tournamentContext = options.tournamentContext
+      ? {
+          bracketPosition: options.tournamentContext.bracketPosition,
+          eliminationRisk: options.tournamentContext.eliminationRisk,
+          isGrandFinal: options.tournamentContext.isGrandFinal,
+          opponent: options.tournamentContext.opponent
+            ? { droppedFromUpper: options.tournamentContext.opponent.droppedFromUpper }
+            : undefined,
+        }
+      : undefined;
+
+    return {
+      currentDate: state.calendar.currentDate,
+      currentSeason: state.calendar.currentSeason,
+      currentPhase: state.calendar.currentPhase,
+      playerTeamId,
+      playerTeamChemistry: team?.chemistry.overall ?? 50,
+      players: Object.values(state.players),
+      playerTeamRegion: team?.region,
+      recentMatchResults,
+      scrimCount: state.scrimHistory.length,
+      dramaState,
+      tournamentContext,
+      isPlayoffMatch: options.isPlayoffMatch ?? false,
+      isUpsetWin: options.isUpsetWin ?? false,
+      lastMatchWon: options.lastMatchWon,
+      hasRivalry,
+    };
   }
 
   private toPendingInterview(

@@ -103,6 +103,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'lower_bracket',
+    matchOutcome: 'win',
     requiresActiveFlag: 'team_identity_resilient',
     prompt: "This team just keeps finding ways to survive in the lower bracket. What is it about this group that makes you resilient when elimination is on the line?",
     options: [
@@ -136,6 +137,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'team_identity_star_carry',
+    matchOutcome: 'win',
     prompt: "Your team is leaning heavily on your individual performance right now. Is that a role you're comfortable carrying — or does it add pressure you didn't sign up for?",
     options: [
       {
@@ -168,6 +170,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'elimination_risk',
+    matchOutcome: 'loss',
     requiresActiveFlag: 'team_identity_fragile',
     prompt: "With everything on the line, the cracks in this team are showing. What needs to change — and do you believe this group can actually make those changes before it's too late?",
     options: [
@@ -198,6 +201,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "This could be the most significant result in this organization's history. What does this moment mean for everyone who has been part of this journey?",
     options: [
       {
@@ -261,6 +265,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     requiresActiveFlag: 'manager_development_focused',
     prompt: "You've talked about a development-first philosophy this season. Does a win like this feel like validation of that approach?",
     options: [

@@ -79,6 +79,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     requiresActiveFlag: 'substitute_taking_over',
     prompt: "The substitute lineup just won. What does this say about your roster depth?",
     options: [
@@ -111,6 +112,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'loss',
     requiresActiveFlag: 'substitute_taking_over',
     prompt: "You're playing without your main roster. Is the team holding together?",
     options: [
@@ -196,6 +198,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'any',
     requiresActiveFlag: 'visa_player_returned_{playerId}',
     prompt: "Your player is back after missing tournament time. What does their return mean for the team?",
     options: [

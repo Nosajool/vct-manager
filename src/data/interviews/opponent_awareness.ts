@@ -163,6 +163,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'always',
+    matchOutcome: 'win',
     prompt: "You just beat a team that had real momentum behind them coming into this tournament. What does pulling off a result like that do for this team's belief in itself?",
     options: [
       {
@@ -192,6 +193,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     condition: 'rivalry_active',
+    matchOutcome: 'win',
     prompt: "You just eliminated a rival from this tournament. After everything the two teams have been through — what does a result like this mean beyond the bracket points?",
     options: [
       {
@@ -221,6 +223,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'lower_bracket',
+    matchOutcome: 'win',
     prompt: "You just kept this team's tournament alive in the lower bracket. Describe what it actually feels like to survive a match where the other option was going home.",
     options: [
       {
