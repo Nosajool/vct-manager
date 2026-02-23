@@ -42,7 +42,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'win_streak_2plus',
-    requiresActiveFlag: 'team_identity_balanced',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_balanced' }],
     prompt: "Your team has been remarkably consistent. Chemistry clearly isn't an issue — how do you maintain that cohesion heading into a high-stakes match?",
     options: [
       {
@@ -104,7 +104,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     condition: 'lower_bracket',
     matchOutcome: 'win',
-    requiresActiveFlag: 'team_identity_resilient',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_resilient' }],
     prompt: "This team just keeps finding ways to survive in the lower bracket. What is it about this group that makes you resilient when elimination is on the line?",
     options: [
       {
@@ -171,7 +171,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'elimination_risk',
     matchOutcome: 'loss',
-    requiresActiveFlag: 'team_identity_fragile',
+    conditions: [{ type: 'flag_active', flag: 'team_identity_fragile' }],
     prompt: "With everything on the line, the cracks in this team are showing. What needs to change — and do you believe this group can actually make those changes before it's too late?",
     options: [
       {
@@ -236,7 +236,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'always',
-    requiresActiveFlag: 'org_high_expectations',
+    conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }],
     prompt: "You set a high bar at the start of the season. Does that statement feel like motivation or pressure heading into today's match?",
     options: [
       {
@@ -266,7 +266,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'always',
     matchOutcome: 'win',
-    requiresActiveFlag: 'manager_development_focused',
+    conditions: [{ type: 'flag_active', flag: 'manager_development_focused' }],
     prompt: "You've talked about a development-first philosophy this season. Does a win like this feel like validation of that approach?",
     options: [
       {
@@ -295,7 +295,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'always',
-    requiresActiveFlag: 'manager_underdog_mindset',
+    conditions: [{ type: 'flag_active', flag: 'manager_underdog_mindset' }],
     prompt: "Most analysts aren't picking your team to go deep this season. How do you use that heading into today?",
     options: [
       {
@@ -324,7 +324,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'loss_streak_3plus',
-    requiresActiveFlag: 'org_high_expectations',
+    conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }],
     prompt: "You declared you'd be in the finals at the start of the season. Three straight losses in — how do you justify that statement now?",
     options: [
       {

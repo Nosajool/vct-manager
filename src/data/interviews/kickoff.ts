@@ -97,7 +97,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'pre_playoff',
-    requiresActiveFlag: 'veteran_championship_pact',
+    conditions: [{ type: 'flag_active', flag: 'veteran_championship_pact' }],
     prompt: "You publicly committed to a final championship run with your veteran player. With the pressure that puts on everyone, how are they actually holding up?",
     options: [
       {
@@ -127,7 +127,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'always',
-    requiresActiveFlag: 'prodigy_hype_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'prodigy_hype_{playerId}' }],
     prompt: "Your name is everywhere right now — analysts, fans, sponsors are all talking about you. How do you handle becoming the story?",
     options: [
       {
@@ -189,7 +189,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'player',
     condition: 'drama_active',
-    requiresActiveFlag: 'igl_authority_undermined',
+    conditions: [{ type: 'flag_active', flag: 'igl_authority_undermined' }],
     prompt: "Fans have been extremely vocal about in-game leadership this tournament. How do you block out community criticism when you're already under match pressure?",
     options: [
       {
@@ -222,7 +222,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     condition: 'always',
-    requiresActiveFlag: 'igl_seeking_redemption',
+    conditions: [{ type: 'flag_active', flag: 'igl_seeking_redemption' }],
     prompt: "You spoke earlier about wanting to earn back trust through results. After today's performance, do you feel like you're getting there?",
     options: [
       {

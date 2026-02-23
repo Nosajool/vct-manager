@@ -2,7 +2,7 @@
 // Part of the narrative layer (System 2: Interview System)
 
 import type { PlayerPersonality } from './player';
-import type { DramaGameStateSnapshot } from './drama';
+import type { DramaCondition, DramaGameStateSnapshot } from './drama';
 
 export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF';
 
@@ -72,7 +72,7 @@ export interface InterviewTemplate {
   condition?: InterviewCondition;
   prompt: string;         // The question posed by the reporter
   options: InterviewOption[]; // Always exactly 3 options
-  requiresActiveFlag?: string; // Template-level gate: only eligible if this drama flag is active
+  conditions?: DramaCondition[]; // Template-level gate: all must pass for eligibility
   matchOutcome?: 'win' | 'loss' | 'any'; // POST_MATCH only: restrict to win, loss, or either
 }
 

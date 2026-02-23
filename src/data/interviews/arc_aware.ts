@@ -139,7 +139,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'interview_blamed_teammates',
+    conditions: [{ type: 'flag_active', flag: 'interview_blamed_teammates' }],
     prompt: "One of your players seemed to imply the game plan was the issue. Is there a communication breakdown between you and your IGL?",
     options: [
       {
@@ -197,7 +197,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'rivalry_active',
     matchOutcome: 'loss',
-    requiresActiveFlag: 'interview_trash_talked_rival',
+    conditions: [{ type: 'flag_active', flag: 'interview_trash_talked_rival' }],
     prompt: "After your comments before the match, this loss must be painful. Any regrets about what you said?",
     options: [
       {
@@ -232,7 +232,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'transfer_window_scouting',
+    conditions: [{ type: 'flag_active', flag: 'transfer_window_scouting' }],
     prompt: "Reports suggest your org is actively scouting the transfer market. How do your current players square with that?",
     options: [
       {
@@ -261,7 +261,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'burnout_risk_high',
+    conditions: [{ type: 'flag_active', flag: 'burnout_risk_high' }],
     prompt: "There are concerns that your team's training schedule is affecting player health and wellbeing. How do you respond?",
     options: [
       {
@@ -290,7 +290,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'org_open_to_trade',
+    conditions: [{ type: 'flag_active', flag: 'org_open_to_trade' }],
     prompt: "Players are reportedly unsettled following your earlier comments about roster flexibility. Looking back, was that a mistake?",
     options: [
       {
@@ -319,7 +319,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'igl_authority_undermined',
+    conditions: [{ type: 'flag_active', flag: 'igl_authority_undermined' }],
     prompt: "Reports suggest your IGL's shot-calling authority has been significantly reduced. How does that change your team's dynamic?",
     options: [
       {
@@ -348,7 +348,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'drama_active',
-    requiresActiveFlag: 'burnout_crisis_ignored',
+    conditions: [{ type: 'flag_active', flag: 'burnout_crisis_ignored' }],
     prompt: "Multiple sources suggest your team pushed through serious burnout warning signs. Players weren't given adequate support — what happened?",
     options: [
       {
@@ -744,7 +744,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
   // ==========================================================================
   // ARC-AWARE INTERVIEW TEMPLATES (Phase 2 — 10 templates)
-  // All gated by requiresActiveFlag using arc flag conventions.
+  // All gated by conditions[] using arc flag conventions.
   // Arc flags: arc_redemption_{playerId}, arc_prodigy_{playerId},
   //   arc_contender_{playerId}, arc_fallen_{playerId},
   //   arc_veteran_legacy_{playerId}, arc_identity_{playerId}
@@ -758,7 +758,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'player',
     condition: 'pre_playoff',
-    requiresActiveFlag: 'arc_redemption_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_redemption_{playerId}' }],
     prompt: "You've spoken about wanting to prove yourself this season. With the playoffs here, does that motivation feel like fuel — or pressure?",
     options: [
       {
@@ -791,7 +791,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     condition: 'loss_streak_2plus',
     matchOutcome: 'loss',
-    requiresActiveFlag: 'arc_mod_fragile_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_mod_fragile_{playerId}' }],
     prompt: "You've had a difficult stretch and this was another tough result. There's a visible weight on you right now. How are you actually doing?",
     options: [
       {
@@ -823,7 +823,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'elimination_risk',
-    requiresActiveFlag: 'arc_contender_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_contender_{playerId}' }],
     prompt: "Your team came in with championship expectations. Now you're one loss from going home. How do you manage expectations when the gap between narrative and reality is this sharp?",
     options: [
       {
@@ -853,7 +853,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     condition: 'win_streak_2plus',
     matchOutcome: 'win',
-    requiresActiveFlag: 'arc_mod_momentum_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_mod_momentum_{playerId}' }],
     prompt: "You've been in outstanding form. There's a real feeling right now that something special is happening. What does this stretch feel like from the inside?",
     options: [
       {
@@ -885,7 +885,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'player',
     condition: 'always',
-    requiresActiveFlag: 'arc_mod_underdog_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_mod_underdog_{playerId}' }],
     prompt: "Not many people expected you to still be here. Has that changed how you think about yourself — or this tournament?",
     options: [
       {
@@ -918,7 +918,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'lower_bracket',
     matchOutcome: 'win',
-    requiresActiveFlag: 'arc_mod_resilient_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_mod_resilient_{playerId}' }],
     prompt: "You've watched one of your players come back from real adversity through this tournament run. What have you seen in them that the stats don't capture?",
     options: [
       {
@@ -947,7 +947,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'player',
     condition: 'pre_playoff',
-    requiresActiveFlag: 'arc_prodigy_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_prodigy_{playerId}' }],
     prompt: "Everyone has been calling you the next big thing since this tournament started. Heading into a playoff match — does the label help or does it start to feel like a weight?",
     options: [
       {
@@ -979,7 +979,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'player',
     condition: 'grand_final',
-    requiresActiveFlag: 'arc_veteran_legacy_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_veteran_legacy_{playerId}' }],
     prompt: "You've been chasing something like this for a long time. Standing at the grand final — what does this moment feel like compared to everything that came before?",
     options: [
       {
@@ -1012,7 +1012,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     condition: 'loss_streak_2plus',
     matchOutcome: 'loss',
-    requiresActiveFlag: 'arc_fallen_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_fallen_{playerId}' }],
     prompt: "This has been a difficult stretch for you personally. Some are saying this might not be the same player we saw a year ago. How do you respond to that?",
     options: [
       {
@@ -1044,7 +1044,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'player',
     condition: 'always',
-    requiresActiveFlag: 'arc_mod_clutch_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'arc_mod_clutch_{playerId}' }],
     prompt: "You've built a reputation for delivering in the biggest moments this tournament. Does knowing that change how you approach pressure situations — or does it just add to the weight?",
     options: [
       {

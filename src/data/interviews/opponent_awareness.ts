@@ -4,7 +4,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
   // OPPONENT-AWARENESS TEMPLATES (Phase 3 — 8 templates)
   // Conditions: rivalry_active, opponent_dropped_from_upper, lower_bracket,
-  //             elimination_risk. Some gated by requiresActiveFlag.
+  //             elimination_risk. Some gated by conditions[].
   // POST_MATCH IDs added to InterviewService winIds/lossIds for routing.
   // ==========================================================================
 
@@ -43,7 +43,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'rivalry_active',
-    requiresActiveFlag: 'rivalry_scorched_earth',
+    conditions: [{ type: 'flag_active', flag: 'rivalry_scorched_earth' }],
     prompt: "Things got personal between these organizations earlier. Now you're meeting again with tournament lives on the line. Can you keep the emotion from becoming a liability?",
     options: [
       {

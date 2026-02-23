@@ -10,7 +10,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     condition: 'visa_delay_active',
-    requiresActiveFlag: 'visa_delayed_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'visa_delayed_{playerId}' }],
     prompt: "Fans are questioning your team's preparation. How did this visa situation happen?",
     options: [
       {
@@ -50,7 +50,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     condition: 'always',
-    requiresActiveFlag: 'substitute_taking_over',
+    conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "Your substitute is stepping in for a tournament match. What's your message to them?",
     options: [
       {
@@ -80,7 +80,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'always',
     matchOutcome: 'win',
-    requiresActiveFlag: 'substitute_taking_over',
+    conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "The substitute lineup just won. What does this say about your roster depth?",
     options: [
       {
@@ -113,7 +113,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'always',
     matchOutcome: 'loss',
-    requiresActiveFlag: 'substitute_taking_over',
+    conditions: [{ type: 'flag_active', flag: 'substitute_taking_over' }],
     prompt: "You're playing without your main roster. Is the team holding together?",
     options: [
       {
@@ -142,7 +142,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'player',
     condition: 'visa_delay_active',
-    requiresActiveFlag: 'visa_delayed_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'visa_delayed_{playerId}' }],
     prompt: "You're watching your team compete without you. How are you handling this?",
     options: [
       {
@@ -199,7 +199,7 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     condition: 'always',
     matchOutcome: 'any',
-    requiresActiveFlag: 'visa_player_returned_{playerId}',
+    conditions: [{ type: 'flag_active', flag: 'visa_player_returned_{playerId}' }],
     prompt: "Your player is back after missing tournament time. What does their return mean for the team?",
     options: [
       {

@@ -440,8 +440,11 @@ export class InterviewService {
 
     if (template.subjectType === 'player') {
       // If template gates on a flag with {playerId}, extract the player ID from the active flag
-      if (template.requiresActiveFlag?.includes('{playerId}')) {
-        const prefix = template.requiresActiveFlag.split('{playerId}')[0];
+      const playerFlagCondition = template.conditions?.find(
+        (c) => c.type === 'flag_active' && c.flag?.includes('{playerId}')
+      );
+      if (playerFlagCondition?.flag) {
+        const prefix = playerFlagCondition.flag.split('{playerId}')[0];
         const matchingFlag = Object.keys(state.activeFlags).find(f => f.startsWith(prefix));
         if (matchingFlag) {
           subjectId = matchingFlag.substring(prefix.length);

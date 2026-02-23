@@ -10,17 +10,20 @@ export function DebugSection_Interviews() {
   const interviewHistory = useGameStore((s) => s.interviewHistory);
   const activeFlags = useGameStore((s) => s.activeFlags);
 
-  // Check if a requiresActiveFlag matches any active flag (handles {playerId} wildcards)
-  function checkFlagEligible(requiresActiveFlag: string | undefined): boolean {
-    if (!requiresActiveFlag) return true;
-    // Direct match
-    if (activeFlags[requiresActiveFlag]) return true;
-    // Wildcard: if flag contains {playerId}, check if any active flag starts with the prefix
-    const prefix = requiresActiveFlag.replace(/\{[^}]+\}/g, '');
-    if (prefix !== requiresActiveFlag) {
-      return Object.keys(activeFlags).some((k) => k.startsWith(prefix));
-    }
-    return false;
+  // Check if all flag_active conditions in the template's conditions[] are satisfied
+  function checkConditionsEligible(conditions: import('../../types/interview').InterviewTemplate['conditions']): boolean {
+    if (!conditions?.length) return true;
+    return conditions.every((c) => {
+      if (c.type !== 'flag_active' || !c.flag) return true;
+      // Direct match
+      if (activeFlags[c.flag]) return true;
+      // Pattern match: {playerId} → check prefix
+      const prefix = c.flag.replace(/\{[^}]+\}/g, '');
+      if (prefix !== c.flag) {
+        return Object.keys(activeFlags).some((k) => k.startsWith(prefix));
+      }
+      return false;
+    });
   }
 
   const recentHistory = [...interviewHistory].reverse().slice(0, 5);
@@ -113,21 +116,22 @@ export function DebugSection_Interviews() {
             <tr className="text-vct-gray/60 text-left border-b border-vct-gray/20">
               <th className="pb-1 pr-3 font-normal">ID</th>
               <th className="pb-1 pr-3 font-normal">Context</th>
-              <th className="pb-1 pr-3 font-normal">Requires Flag</th>
+              <th className="pb-1 pr-3 font-normal">Conditions</th>
               <th className="pb-1 font-normal">Status</th>
             </tr>
           </thead>
           <tbody>
             {INTERVIEW_TEMPLATES.map((t) => {
-              const flagEligible = checkFlagEligible(t.requiresActiveFlag);
+              const condEligible = checkConditionsEligible(t.conditions);
+              const condLabel = t.conditions?.map((c) => c.flag ?? c.type).join(', ') ?? '—';
               return (
                 <tr key={t.id} className="border-b border-vct-gray/10">
                   <td className="py-1 pr-3 font-mono text-white">{t.id}</td>
                   <td className="py-1 pr-3 text-blue-300">{t.context}</td>
-                  <td className="py-1 pr-3 font-mono text-vct-gray/70">{t.requiresActiveFlag ?? '—'}</td>
+                  <td className="py-1 pr-3 font-mono text-vct-gray/70">{condLabel}</td>
                   <td className="py-1">
-                    {t.requiresActiveFlag ? (
-                      flagEligible
+                    {t.conditions?.length ? (
+                      condEligible
                         ? <span className="px-1.5 py-0.5 rounded bg-green-900/40 text-green-300 text-[10px]">PASS</span>
                         : <span className="px-1.5 py-0.5 rounded bg-red-900/40 text-red-300 text-[10px]">FAIL</span>
                     ) : (

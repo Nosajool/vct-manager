@@ -2,7 +2,7 @@
 // Pure function module for evaluating InterviewCondition strings against an InterviewSnapshot.
 // Delegates to DramaConditionEvaluator for conditions that map to drama condition types.
 
-import { evaluateCondition } from '@/engine/drama/DramaConditionEvaluator';
+import { evaluateCondition, evaluateAllConditions } from '@/engine/drama/DramaConditionEvaluator';
 import type { InterviewCondition, InterviewSnapshot, InterviewTemplate } from '@/types/interview';
 
 /**
@@ -74,17 +74,13 @@ export function evaluateInterviewCondition(
 }
 
 /**
- * Evaluates the template-level flag gate (requiresActiveFlag).
- * Returns true if the template has no flag gate, or if the required flag is active.
- * Handles {playerId} placeholder patterns via the underlying evaluateFlagActive logic.
+ * Evaluates the template-level conditions gate.
+ * Returns true if the template has no conditions, or if all conditions pass.
  */
 export function evaluateTemplateFlagGate(
   template: InterviewTemplate,
   snapshot: InterviewSnapshot
 ): boolean {
-  if (!template.requiresActiveFlag) return true;
-  return evaluateCondition(
-    { type: 'flag_active', flag: template.requiresActiveFlag },
-    snapshot
-  );
+  if (!template.conditions?.length) return true;
+  return evaluateAllConditions(template.conditions, snapshot);
 }
