@@ -186,6 +186,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
         chance: 15,
         playerSelector: 'star_player'
       },
+      { type: 'min_season_day', threshold: 20 },
     ],
     probability: 35,
     cooldownDays: 10,
@@ -350,6 +351,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
         chance: 15,
         playerSelector: 'any'
       },
+      { type: 'min_season_day', threshold: 10 },
     ],
     probability: 35,
     cooldownDays: 7,
@@ -1734,6 +1736,10 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
         chance: 35,
         playerSelector: 'any',
       },
+      {
+        type: 'season_phase',
+        phase: 'stage1',
+      }
     ],
     probability: 40,
     cooldownDays: 14,

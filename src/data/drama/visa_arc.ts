@@ -107,7 +107,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'visa_tournament_missed_{playerId}', playerSelector: 'condition_match' },
       { type: 'tournament_active' },
     ],
-    probability: 25,
+    probability: 40,
     cooldownDays: 3,
     effects: [
       { target: 'move_to_active', effectPlayerSelector: 'triggering' },
@@ -128,7 +128,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
     conditions: [
       { type: 'flag_active', flag: 'visa_delayed_{playerId}', playerSelector: 'condition_match' },
     ],
-    probability: 90,
+    probability: 60,
     durationDays: 14,
     effects: [
       { target: 'set_flag', flag: 'visa_tournament_missed_{playerId}', flagDuration: 90 },

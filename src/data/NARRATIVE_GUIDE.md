@@ -225,7 +225,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 { type: 'team_loss_streak', streakLength: 2 }
 
 // Game state
-{ type: 'season_phase', phase: 'stage1' | 'stage2' | 'playoffs' | 'champions' }
+{ type: 'season_phase', phase: 'offseason' | 'kickoff' |'stage1' | 'stage1_playoffs' | 'stage2' | 'stage2_playoffs' | 'masters1' | 'masters2' | 'champions' }
 { type: 'tournament_active' }
 { type: 'match_result' }
 { type: 'player_injured' }

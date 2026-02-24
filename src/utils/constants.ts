@@ -114,14 +114,14 @@ export const IGN_SUFFIXES = [
  * Common gaming-style names
  */
 export const GAMING_NAMES = [
-  'Ace', 'Blade', 'Blaze', 'Bolt', 'Chaos', 'Cipher', 'Cobra', 'Crypt',
+  'Ace', 'Blade', 'Blaze', 'Bolt', 'Chaos', 'Cipha', 'Cobra', 'Crypt',
   'Dash', 'Drake', 'Echo', 'Faze', 'Flash', 'Frost', 'Ghost', 'Hawk',
   'Hex', 'Hunter', 'Hydra', 'Ice', 'Jinx', 'Karma', 'Kuro', 'Laser',
-  'Luna', 'Lynx', 'Mist', 'Neon', 'Night', 'Nova', 'Onyx', 'Phoenix',
-  'Pulse', 'Pyro', 'Raze', 'Reaper', 'Rex', 'Riot', 'Rush', 'Sage',
+  'Luna', 'Lynx', 'Mist', 'Neko', 'Night', 'Nova', 'Onyx', 'Phaze',
+  'Pulse', 'Pyro', 'Razed', 'Reaper', 'Rex', 'Riot', 'Rush', 'Saga',
   'Shadow', 'Shiro', 'Skull', 'Sky', 'Smoke', 'Snake', 'Spark', 'Spect',
   'Spirit', 'Steel', 'Storm', 'Swift', 'Tac', 'Tank', 'Toxic', 'Trace',
-  'Trick', 'Turbo', 'Venom', 'Viper', 'Volt', 'Wolf', 'Wrath', 'Zero',
+  'Trick', 'Turbo', 'Venom', 'Vipen', 'Volt', 'Wolf', 'Wrath', 'Zero',
   'Zest', 'Zoom', 'Alpha', 'Beta', 'Omega', 'Delta', 'Sigma', 'Theta',
 ];
 
@@ -192,7 +192,7 @@ export const VCT_TEAMS: Record<Region, { name: string; orgValue: number; fanbase
  */
 export const MAPS = [
   'Ascent', 'Bind', 'Haven', 'Split', 'Icebox', 'Breeze', 'Fracture',
-  'Pearl', 'Lotus', 'Sunset', 'Abyss',
+  'Pearl', 'Lotus', 'Sunset', 'Abyss','Corrode'
 ];
 
 /**

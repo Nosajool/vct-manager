@@ -13,6 +13,7 @@ export const PRACTICE_BURNOUT_EVENTS: DramaEventTemplate[] = [
     description: '{playerName} is showing signs of mental fatigue. They look drained after recent practice sessions.',
     conditions: [
       { type: 'no_recent_match' },
+      { type: 'min_season_day', threshold: 20 },
       {
         type: 'random_chance',
         chance: 15,
@@ -43,6 +44,7 @@ export const PRACTICE_BURNOUT_EVENTS: DramaEventTemplate[] = [
     description: 'The team is going through the motions. Practice lacks the usual energy and focus.',
     conditions: [
       { type: 'no_recent_match' },
+      { type: 'min_season_day', threshold: 30 },
       {
         type: 'random_chance',
         chance: 20,

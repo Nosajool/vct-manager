@@ -14,7 +14,7 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'team_loss_streak',
-        streakLength: 1,
+        streakLength: 2,
       },
     ],
     probability: 60,

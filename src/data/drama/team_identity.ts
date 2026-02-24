@@ -601,6 +601,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
         threshold: 50,
         playerSelector: 'star_player',
       },
+      { type: 'min_season_day', threshold: 15 },
     ],
     probability: 50,
     cooldownDays: 7,

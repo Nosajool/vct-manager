@@ -17,6 +17,7 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
         chance: 20,
         playerSelector: 'any'
       },
+      { type: 'min_season_day', threshold: 15 },
     ],
     probability: 20,
     cooldownDays: 10,
@@ -47,6 +48,7 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
         chance: 10,
         playerSelector: 'any'
       },
+      { type: 'min_season_day', threshold: 15 },
     ],
     probability: 10,
     cooldownDays: 10,
