@@ -338,6 +338,20 @@ export class GameInitService {
         }
       }
 
+      // Ensure IGL has highest igl stat on team (random delta 0-5 above second highest)
+      if (team.iglPlayerId) {
+        const iglPlayer = rosterPlayers.find((p) => p.id === team.iglPlayerId);
+        if (iglPlayer) {
+          const nonIglPlayers = activeRoster.filter((p) => p.id !== team.iglPlayerId);
+          const secondHighest = nonIglPlayers.reduce(
+            (max, p) => (p.stats.igl > max ? p.stats.igl : max),
+            0
+          );
+          const delta = Math.floor(Math.random() * 6);
+          iglPlayer.stats.igl = Math.min(99, secondHighest + delta);
+        }
+      }
+
       allPlayers.push(...rosterPlayers);
     }
 
