@@ -265,11 +265,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
     }
   };
 
-  // Helper: Select player (for viewing/editing their assignment)
-  const selectPlayer = (playerId: string) => {
-    setSelectedPlayerId(playerId);
-  };
-
   // Confirm plan - save config to store instead of executing
   const handleConfirmPlan = () => {
     // Backwards compatibility check - eventId is required for plan-confirm workflow
@@ -400,7 +395,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
             benchPlayers={benchPlayers}
             trainingPlan={trainingPlan}
             selectedPlayerId={selectedPlayerId}
-            onSelectPlayer={selectPlayer}
             onTogglePlayer={togglePlayerAssignment}
             onToggleSkip={togglePlayerSkip}
           />
@@ -437,7 +431,6 @@ interface PlayerListColumnProps {
   benchPlayers: Player[];
   trainingPlan: Map<string, TrainingPlayerAssignment>;
   selectedPlayerId: string | null;
-  onSelectPlayer: (playerId: string) => void;
   onTogglePlayer: (playerId: string) => void;
   onToggleSkip: (playerId: string) => void;
 }
@@ -447,7 +440,6 @@ function PlayerListColumn({
   benchPlayers,
   trainingPlan,
   selectedPlayerId,
-  onSelectPlayer,
   onTogglePlayer,
   onToggleSkip,
 }: PlayerListColumnProps) {
@@ -470,7 +462,6 @@ function PlayerListColumn({
               isSelected={selectedPlayerId === player.id}
               isAssigned={trainingPlan.has(player.id)}
               assignment={trainingPlan.get(player.id) ?? null}
-              onSelect={() => onSelectPlayer(player.id)}
               onToggle={() => onTogglePlayer(player.id)}
               onToggleSkip={() => onToggleSkip(player.id)}
               onClickRecommendation={() => onTogglePlayer(player.id)}
@@ -496,7 +487,6 @@ function PlayerListColumn({
                   isSelected={selectedPlayerId === player.id}
                   isAssigned={trainingPlan.has(player.id)}
                   assignment={trainingPlan.get(player.id) ?? null}
-                  onSelect={() => onSelectPlayer(player.id)}
                   onToggle={() => onTogglePlayer(player.id)}
                   onToggleSkip={() => onToggleSkip(player.id)}
                   onClickRecommendation={() => onTogglePlayer(player.id)}
@@ -514,7 +504,6 @@ interface PlayerListItemProps {
   isSelected: boolean;
   isAssigned: boolean;
   assignment: TrainingPlayerAssignment | null;
-  onSelect: () => void;
   onToggle: () => void;
   onToggleSkip: () => void;
   onClickRecommendation: () => void;
@@ -525,7 +514,6 @@ function PlayerListItem({
   isSelected,
   isAssigned,
   assignment,
-  onSelect,
   onToggle,
   onToggleSkip,
   onClickRecommendation,
@@ -556,7 +544,7 @@ function PlayerListItem({
       {/* Main row: checkbox + name/age/ovr */}
       <div
         className="flex items-start gap-2 cursor-pointer"
-        onClick={onSelect}
+        onClick={onToggle}
       >
         <div className="pt-0.5">
           <input
