@@ -486,6 +486,12 @@ function getPlayerCandidatesForCondition(
   teamPlayers: DramaGameStateSnapshot['players'],
   snapshot: DramaGameStateSnapshot
 ): DramaGameStateSnapshot['players'] {
+  // Handle igl_player selector - check playerSelector for this special case
+  if (condition.playerSelector === 'igl_player') {
+    if (!snapshot.iglPlayerId) return teamPlayers;
+    return teamPlayers.filter(p => p.id === snapshot.iglPlayerId);
+  }
+
   switch (condition.type) {
     case 'player_is_import':
       if (!snapshot.playerTeamRegion) return teamPlayers;
@@ -538,6 +544,7 @@ function getPlayerCandidatesForCondition(
         return !(playerFlagKey in snapshot.dramaState.activeFlags);
       });
     }
+
     default:
       return teamPlayers;
   }

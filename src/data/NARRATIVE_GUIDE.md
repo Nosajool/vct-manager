@@ -213,6 +213,10 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 // Player stat checks
 { type: 'player_stat_below', stat: 'mechanics', threshold: 50, playerSelector: 'any' }
 { type: 'player_stat_above', stat: 'mechanics', threshold: 75, playerSelector: 'star_player' }
+
+// IGL-specific checks
+{ type: 'player_stat_below', stat: 'igl', threshold: 75, playerSelector: 'igl_player' }  // IGL player's IGL stat below threshold
+
 { type: 'player_morale_below', threshold: 40, playerSelector: 'any' }
 { type: 'player_morale_above', threshold: 70, playerSelector: 'star_player' }
 { type: 'player_form_below', threshold: 50, playerSelector: 'any' }
@@ -267,9 +271,10 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `PlayerSelector` values (for conditions)
 
-`all` | `any` | `specific` | `star_player` | `lowest_morale` | `newest` | `random` | `condition_match`
+`all` | `any` | `specific` | `star_player` | `lowest_morale` | `newest` | `random` | `condition_match` | `igl_player`
 
-`condition_match` is the most important selector for player-scoped flag arcs. It tells the engine to pick a player who satisfies the condition's own filter — e.g. a `flag_active` condition with `{playerId}` will extract the player ID from the matching flag and select exactly that player.
+- `igl_player` — targets the team's designated IGL player (from `team.iglPlayerId`). Use for IGL-specific drama events like mid-round calling crises.
+- `condition_match` is the most important selector for player-scoped flag arcs. It tells the engine to pick a player who satisfies the condition's own filter — e.g. a `flag_active` condition with `{playerId}` will extract the player ID from the matching flag and select exactly that player.
 
 ### Effect structure
 

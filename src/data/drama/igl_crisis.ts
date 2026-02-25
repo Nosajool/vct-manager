@@ -15,8 +15,8 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       "During film review, several players quietly question {playerName}'s mid-round calls after another stalled attack half. The fragging is there, but the reads aren't clicking.",
     conditions: [
       { type: 'team_loss_streak', streakLength: 2 },
-      { type: 'min_season_day', threshold: 14 },
-      { type: 'player_stat_below', stat: 'igl', threshold: 50 },
+      { type: 'min_season_day', threshold: 7 },
+      { type: 'player_stat_below', stat: 'igl', threshold: 75, playerSelector: 'igl_player' },
     ],
     probability: 60,
     cooldownDays: 21,

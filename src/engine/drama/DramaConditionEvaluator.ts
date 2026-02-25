@@ -238,6 +238,12 @@ function selectPlayers(
       return teamPlayers[randomIndex] ? [teamPlayers[randomIndex]] : [];
     }
 
+    case 'igl_player': {
+      if (!snapshot.iglPlayerId) return [];
+      const iglPlayer = teamPlayers.find((p) => p.id === snapshot.iglPlayerId);
+      return iglPlayer ? [iglPlayer] : [];
+    }
+
     default:
       return teamPlayers;
   }

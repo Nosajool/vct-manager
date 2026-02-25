@@ -114,7 +114,8 @@ export type PlayerSelector =
   | 'lowest_morale'   // Player with lowest morale
   | 'newest'          // Most recently signed player
   | 'random'          // Random player from team
-  | 'condition_match'; // Pick a random player who satisfies this condition's own filter
+  | 'condition_match' // Pick a random player who satisfies this condition's own filter
+  | 'igl_player';     // Team's designated IGL player
 
 /**
  * Condition that must be met for a drama event to trigger
@@ -365,6 +366,7 @@ export interface DramaGameStateSnapshot {
   }>;
 
   playerTeamRegion?: Region;  // The team's (league) region
+  iglPlayerId?: string;       // Team's designated IGL player ID
 
   // Recent match results
   recentMatchResults?: Array<{
