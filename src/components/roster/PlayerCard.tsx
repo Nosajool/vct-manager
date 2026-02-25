@@ -21,6 +21,8 @@ interface PlayerCardProps {
   isRestricted?: boolean;
   onMoveToActive?: (playerId: string) => void;
   onMoveToReserve?: (playerId: string) => void;
+  // IGL indicator
+  iglPlayerId?: string | null;
 }
 
 export function PlayerCard({
@@ -36,6 +38,7 @@ export function PlayerCard({
   isRestricted = false,
   onMoveToActive,
   onMoveToReserve,
+  iglPlayerId,
 }: PlayerCardProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
 
@@ -56,6 +59,9 @@ export function PlayerCard({
   };
 
   const formIndicator = getFormIndicator(player.form);
+
+  const isIGL = iglPlayerId !== undefined && player.id === iglPlayerId;
+  const isFormerIGL = player.isFormerIGL === true;
 
   // Format salary
   const formatSalary = (salary: number): string => {
@@ -235,9 +241,21 @@ export function PlayerCard({
           </div>
 
           {/* Personality Badge */}
-          {player.personality && (
-            <div className="mt-1.5">
-              <PersonalityBadge personality={player.personality} />
+          {(player.personality || isIGL || isFormerIGL) && (
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {isIGL && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide bg-orange-500/10 border-orange-500/30 text-orange-400">
+                  IGL
+                </span>
+              )}
+              {isFormerIGL && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide bg-vct-gray/10 border-vct-gray/30 text-vct-gray">
+                  Former IGL
+                </span>
+              )}
+              {player.personality && (
+                <PersonalityBadge personality={player.personality} />
+              )}
             </div>
           )}
 

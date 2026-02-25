@@ -16,6 +16,8 @@ interface PlayerDetailModalProps {
   teamName?: string;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
+  // IGL indicator
+  iglPlayerId?: string | null;
 }
 
 export function PlayerDetailModal({
@@ -26,9 +28,13 @@ export function PlayerDetailModal({
   rosterPosition,
   onSign,
   onRelease,
+  iglPlayerId,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
+
+  const isIGL = iglPlayerId !== undefined && player.id === iglPlayerId;
+  const isFormerIGL = player.isFormerIGL === true;
 
   // Default season stats for players without the field (backward compatibility)
   const seasonStats = player.seasonStats ?? {
@@ -97,8 +103,18 @@ export function PlayerDetailModal({
             </div>
 
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-2xl font-bold text-vct-light">{player.name}</h2>
+                {isIGL && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide bg-orange-500/10 border-orange-500/30 text-orange-400">
+                    IGL
+                  </span>
+                )}
+                {isFormerIGL && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide bg-vct-gray/10 border-vct-gray/30 text-vct-gray">
+                    Former IGL
+                  </span>
+                )}
                 {isOnPlayerTeam && rosterPosition && (
                   <span
                     className={`
