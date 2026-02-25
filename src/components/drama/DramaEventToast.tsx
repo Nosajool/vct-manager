@@ -69,6 +69,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-amber-500/20 to-amber-600/20 border-amber-500/30',
     icon: '📋',
   },
+  igl_crisis: {
+    label: 'IGL Crisis',
+    color: 'from-red-500/20 to-red-600/20 border-red-500/30',
+    icon: '🎯',
+  },
 };
 
 /**

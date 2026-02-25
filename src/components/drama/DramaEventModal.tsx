@@ -72,6 +72,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-amber-500/20 to-amber-600/20',
     badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
   },
+  igl_crisis: {
+    label: 'IGL Crisis',
+    color: 'from-red-500/20 to-red-600/20',
+    badgeColor: 'bg-red-500/20 text-red-400 border-red-500/30',
+  },
 };
 
 /**

@@ -68,6 +68,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-amber-500',
     icon: '📋',
   },
+  igl_crisis: {
+    label: 'IGL Crisis',
+    color: 'text-red-400',
+    dotColor: 'bg-red-500',
+    icon: '🎯',
+  },
 };
 
 /**

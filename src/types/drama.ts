@@ -19,7 +19,8 @@ export type DramaCategory =
   | 'breakthrough'
   | 'meta_rumors'
   | 'visa_arc'           // all visa drama arc events
-  | 'coaching_overhaul'; // all coaching overhaul arc events
+  | 'coaching_overhaul'  // all coaching overhaul arc events
+  | 'igl_crisis';        // all IGL crisis arc events
 
 /**
  * Severity level of drama events

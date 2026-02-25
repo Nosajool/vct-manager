@@ -94,6 +94,7 @@ export interface Team {
   playerIds: string[];        // Active roster (5 players)
   reservePlayerIds: string[]; // Reserve roster
   coachIds: string[];
+  iglPlayerId?: string;       // Designated IGL player ID
 
   // Organization strength
   organizationValue: number;  // Starting wealth

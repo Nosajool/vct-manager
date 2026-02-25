@@ -87,6 +87,9 @@ export interface Player {
 
   // Personality archetype (for narrative system)
   personality?: PlayerPersonality;
+
+  // IGL status
+  isFormerIGL?: boolean;
 }
 
 export type CoachType = 'Head Coach' | 'Assistant Coach' | 'Performance Coach';
