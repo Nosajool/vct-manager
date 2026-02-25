@@ -39,6 +39,11 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     color: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
     title: 'Strategy Unlocked',
   },
+  auto_assign: {
+    icon: '🤖',
+    color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
+    title: 'Smart Tools Unlocked',
+  },
 };
 
 export function UnlockNotification({

@@ -7,6 +7,7 @@ interface PreAdvanceValidationModalProps {
   unconfiguredEvents: CalendarEvent[];
   hasInsufficientRoster?: boolean;
   activeRosterCount?: number;
+  autoAssignUnlocked?: boolean;
   onAutoConfigAll: () => void;
   onReview: () => void;
   onCancel: () => void;
@@ -17,6 +18,7 @@ export function PreAdvanceValidationModal({
   unconfiguredEvents,
   hasInsufficientRoster = false,
   activeRosterCount = 0,
+  autoAssignUnlocked = true,
   onAutoConfigAll,
   onReview,
   onCancel,
@@ -136,10 +138,18 @@ export function PreAdvanceValidationModal({
         <div className="p-4 space-y-2 border-t border-vct-gray/20">
           {/* Primary: Auto-Configure All */}
           <button
-            onClick={onAutoConfigAll}
-            className="w-full py-3 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
+            onClick={autoAssignUnlocked ? onAutoConfigAll : undefined}
+            disabled={!autoAssignUnlocked}
+            className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+              autoAssignUnlocked
+                ? 'bg-vct-red hover:bg-vct-red/80 text-white'
+                : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
+            }`}
           >
             Auto-Configure All & Advance
+            {!autoAssignUnlocked && (
+              <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
+            )}
           </button>
 
           {/* Secondary: Review / Fix Roster */}

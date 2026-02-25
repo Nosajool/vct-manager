@@ -3,6 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useGameStore } from '../../store';
+import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { trainingService } from '../../services';
 import { playerDevelopment } from '../../engine/player';
 import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
@@ -68,6 +69,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
   const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
+  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
 
   // Load existing config when modal opens
   useEffect(() => {
@@ -370,12 +372,20 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
         {/* Auto-Assign Button */}
         <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
           <button
-            onClick={handleAutoAssign}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-            title="Starting 5 assigned with role-based recommendations at safe intensity"
+            onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
+            disabled={!autoAssignUnlocked}
+            className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+              autoAssignUnlocked
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
+            }`}
+            title={autoAssignUnlocked ? 'Starting 5 assigned with role-based recommendations at safe intensity' : 'Unlocks Week 3'}
           >
             <span className="text-lg">🎯</span>
             <span>Auto-Assign Optimal Training</span>
+            {!autoAssignUnlocked && (
+              <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
+            )}
           </button>
           <p className="text-xs text-vct-gray mt-2 text-center">
             Assigns recommended training goals to Starting 5 at safe intensity

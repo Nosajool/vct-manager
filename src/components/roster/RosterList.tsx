@@ -5,6 +5,7 @@ import type { Player, Team } from '../../types';
 import { PlayerCard } from './PlayerCard';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import { useGameStore } from '../../store';
+import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { contractService } from '../../services/ContractService';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
@@ -76,6 +77,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
   const [optimizationResult, setOptimizationResult] = useState<LineupResult | null>(null);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const activeFlags = useGameStore((state) => state.activeFlags);
+  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
   const isPlayerTeam = team.id === playerTeamId;
 
   const isPlayerRestricted = (playerId: string) =>
@@ -228,7 +230,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
               `}>
                 {activePlayers.length}/5
               </span>
-              {isPlayerTeam && optimizationResult && (
+              {isPlayerTeam && optimizationResult && autoAssignUnlocked && (
                 <button
                   onClick={handleSetOptimalLineup}
                   className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors flex items-center gap-1.5"

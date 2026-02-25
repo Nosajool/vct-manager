@@ -9,7 +9,7 @@ import type { SeasonPhase } from '../types/calendar';
 // ============================================
 
 /** Available game features that can be unlocked */
-export type FeatureType = 'training' | 'scrims' | 'transfers' | 'strategy';
+export type FeatureType = 'training' | 'scrims' | 'transfers' | 'strategy' | 'auto_assign';
 
 /** Unlock condition - either day-based or phase-based */
 export type UnlockCondition =
@@ -59,5 +59,10 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     feature: 'strategy',
     condition: { type: 'phase', phase: 'stage1' },
     description: 'Strategy unlocks in Stage 1 - advanced tactics for competitive play',
+  },
+  {
+    feature: 'auto_assign',
+    condition: { type: 'day', day: 22 },
+    description: 'Smart coaching tools unlocked - auto-optimize lineup, training, and scrims',
   },
 ];

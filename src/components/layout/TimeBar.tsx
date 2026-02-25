@@ -16,6 +16,7 @@ import { calendarService, interviewService, progressTrackingService, type TimeAd
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
+import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal } from '../calendar';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
@@ -127,6 +128,8 @@ export function TimeBar() {
 
   // Use centralized match day detection
   const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
+
+  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
 
   const playerTeamName = useGameStore((state) =>
     state.playerTeamId ? state.teams[state.playerTeamId]?.name : ''
@@ -623,6 +626,7 @@ export function TimeBar() {
         activeRosterCount={
           playerTeamId ? useGameStore.getState().teams[playerTeamId]?.playerIds.length ?? 0 : 0
         }
+        autoAssignUnlocked={autoAssignUnlocked}
         onAutoConfigAll={handleAutoConfigAll}
         onReview={handleReviewEvents}
         onCancel={handleCancelValidation}

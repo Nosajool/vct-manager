@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useGameStore } from '../../store';
+import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { scrimService } from '../../services';
 import type { TeamTier, ScrimIntensity } from '../../types';
 import type { ScrimActivityConfig } from '../../types/activityPlan';
@@ -58,6 +59,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
   const setActivityConfig = useGameStore((state) => state.setActivityConfig);
   const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
+  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
 
   // Get available partners organized by tier - must be before early returns
   const availablePartners = useMemo(() => {
@@ -192,12 +194,20 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
         {/* Auto-Assign Button */}
         <div className="p-4 border-b border-vct-gray/20">
           <button
-            onClick={handleAutoAssign}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-            title="Pre-fills weakest maps, best available partner, and intensity based on team morale"
+            onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
+            disabled={!autoAssignUnlocked}
+            className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+              autoAssignUnlocked
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
+            }`}
+            title={autoAssignUnlocked ? 'Pre-fills weakest maps, best available partner, and intensity based on team morale' : 'Unlocks Week 3'}
           >
             <span className="text-lg">🎯</span>
             <span>Auto-Assign Optimal Scrim</span>
+            {!autoAssignUnlocked && (
+              <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
+            )}
           </button>
           <p className="text-xs text-vct-gray mt-2 text-center">
             Selects weak maps, best partner, and intensity based on team morale
