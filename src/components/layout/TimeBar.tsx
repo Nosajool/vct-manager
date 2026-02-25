@@ -510,9 +510,13 @@ export function TimeBar() {
       }
     }
 
-    // Substitute placeholders in outcome texts
+    // Substitute placeholders in choice texts and outcome texts
     return template.choices.map(choice => ({
       ...choice,
+      text: substituteNarrative(choice.text, context),
+      description: choice.description
+        ? substituteNarrative(choice.description, context)
+        : undefined,
       outcomeText: substituteNarrative(choice.outcomeText, context),
     }));
   };
