@@ -6,6 +6,7 @@ import { playerGenerator } from '../../engine/player';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
+import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
 
 interface PlayerCardProps {
   player: Player;
@@ -21,8 +22,6 @@ interface PlayerCardProps {
   isRestricted?: boolean;
   onMoveToActive?: (playerId: string) => void;
   onMoveToReserve?: (playerId: string) => void;
-  // IGL indicator
-  iglPlayerId?: string | null;
 }
 
 export function PlayerCard({
@@ -38,9 +37,9 @@ export function PlayerCard({
   isRestricted = false,
   onMoveToActive,
   onMoveToReserve,
-  iglPlayerId,
 }: PlayerCardProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
+  const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
 
   // Get overall color based on rating
   const getOverallColor = (ovr: number): string => {
@@ -59,9 +58,6 @@ export function PlayerCard({
   };
 
   const formIndicator = getFormIndicator(player.form);
-
-  const isIGL = iglPlayerId !== undefined && player.id === iglPlayerId;
-  const isFormerIGL = player.isFormerIGL === true;
 
   // Format salary
   const formatSalary = (salary: number): string => {

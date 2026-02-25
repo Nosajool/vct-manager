@@ -262,7 +262,6 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
                   rosterPosition="active"
                   isPlayerTeam={isPlayerTeam}
                   onMoveToReserve={handleMoveToReserve}
-                  iglPlayerId={team.iglPlayerId}
                 />
               ))}
             </div>
@@ -303,7 +302,6 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
                   canPromote={canPromote}
                   isRestricted={isPlayerRestricted(player.id)}
                   onMoveToActive={handleMoveToActive}
-                  iglPlayerId={team.iglPlayerId}
                 />
               ))}
             </div>
@@ -324,7 +322,6 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
             rosterPosition={
               team.playerIds.includes(selectedPlayer.id) ? 'active' : 'reserve'
             }
-            iglPlayerId={team.iglPlayerId}
           />
         )}
       </div>

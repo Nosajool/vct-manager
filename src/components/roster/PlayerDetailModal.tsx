@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating, formatKD } from '../../utils/formatNumber';
+import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -16,8 +17,6 @@ interface PlayerDetailModalProps {
   teamName?: string;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
-  // IGL indicator
-  iglPlayerId?: string | null;
 }
 
 export function PlayerDetailModal({
@@ -28,13 +27,11 @@ export function PlayerDetailModal({
   rosterPosition,
   onSign,
   onRelease,
-  iglPlayerId,
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
 
-  const isIGL = iglPlayerId !== undefined && player.id === iglPlayerId;
-  const isFormerIGL = player.isFormerIGL === true;
+  const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
 
   // Default season stats for players without the field (backward compatibility)
   const seasonStats = player.seasonStats ?? {
