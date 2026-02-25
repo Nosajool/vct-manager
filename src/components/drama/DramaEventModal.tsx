@@ -140,7 +140,7 @@ export function DramaEventModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col">
+      <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
         {showOutcome ? (
           // Outcome View
           <>
@@ -153,31 +153,33 @@ export function DramaEventModal({
                     <GameImage
                       src={playerImageUrl}
                       alt={affectedPlayer.name}
-                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                      fallbackClassName="w-10 h-10 rounded-full flex-shrink-0"
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                      fallbackClassName="w-16 h-16 rounded-full flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-base font-bold text-vct-gray">{playerInitial}</span>
+                    <div className="w-16 h-16 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl font-bold text-vct-gray">{playerInitial}</span>
                     </div>
                   )}
-                  <span className="text-sm font-medium text-vct-light">{affectedPlayer.name}</span>
+                  <span className="text-base font-semibold text-vct-light">{affectedPlayer.name}</span>
                 </div>
               )}
             </div>
 
             {/* Outcome Content */}
-            <div className="p-6 space-y-4">
-              <p className="text-vct-light text-base italic leading-relaxed">
-                "{outcomeText}"
-              </p>
-
-              {/* Effect Summary */}
-              <div className="pt-4 border-t border-vct-gray/20">
-                <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
-                <p className="text-sm text-vct-light font-medium">
-                  {outcomeEffects}
+            <div className="overflow-y-auto flex-1">
+              <div className="p-6 space-y-4">
+                <p className="text-vct-light text-base italic leading-relaxed">
+                  "{outcomeText}"
                 </p>
+
+                {/* Effect Summary */}
+                <div className="pt-4 border-t border-vct-gray/20">
+                  <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
+                  <p className="text-sm text-vct-light font-medium">
+                    {outcomeEffects}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -215,55 +217,58 @@ export function DramaEventModal({
                     <GameImage
                       src={playerImageUrl}
                       alt={affectedPlayer.name}
-                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                      fallbackClassName="w-10 h-10 rounded-full flex-shrink-0"
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                      fallbackClassName="w-16 h-16 rounded-full flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-base font-bold text-vct-gray">{playerInitial}</span>
+                    <div className="w-16 h-16 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl font-bold text-vct-gray">{playerInitial}</span>
                     </div>
                   )}
-                  <span className="text-sm font-medium text-vct-light">{affectedPlayer.name}</span>
+                  <span className="text-base font-semibold text-vct-light">{affectedPlayer.name}</span>
                 </div>
               )}
             </div>
 
-            {/* Event Narrative */}
-            <div className="p-6 bg-vct-darker/50">
-              <blockquote className="border-l-4 border-vct-gray/30 pl-4 italic text-vct-light leading-relaxed">
-                {event.narrative}
-              </blockquote>
-            </div>
+            {/* Scrollable body: narrative + choices */}
+            <div className="overflow-y-auto flex-1">
+              {/* Event Narrative */}
+              <div className="p-6 bg-vct-darker/50">
+                <blockquote className="border-l-4 border-vct-gray/30 pl-4 italic text-vct-light leading-relaxed">
+                  {event.narrative}
+                </blockquote>
+              </div>
 
-            {/* Divider */}
-            <div className="h-px bg-vct-gray/20" />
+              {/* Divider */}
+              <div className="h-px bg-vct-gray/20" />
 
-            {/* Choices */}
-            <div className="p-6 space-y-3">
-              <h3 className="text-sm font-medium text-vct-gray mb-3">
-                How do you respond?
-              </h3>
-              {choices.map((choice) => (
-                <button
-                  key={choice.id}
-                  onClick={() => handleChoose(choice)}
-                  onMouseEnter={() => setSelectedChoice(choice.id)}
-                  onMouseLeave={() => setSelectedChoice(null)}
-                  className={`
-                    w-full text-left p-4 rounded-lg border transition-all
-                    ${
-                      selectedChoice === choice.id
-                        ? 'border-vct-red bg-vct-red/10'
-                        : 'border-vct-gray/20 hover:border-vct-gray/40'
-                    }
-                  `}
-                >
-                  <div className="font-bold text-vct-light mb-1">{choice.text}</div>
-                  {choice.description && (
-                    <div className="text-sm text-vct-gray">{choice.description}</div>
-                  )}
-                </button>
-              ))}
+              {/* Choices */}
+              <div className="p-6 space-y-3">
+                <h3 className="text-sm font-medium text-vct-gray mb-3">
+                  How do you respond?
+                </h3>
+                {choices.map((choice) => (
+                  <button
+                    key={choice.id}
+                    onClick={() => handleChoose(choice)}
+                    onMouseEnter={() => setSelectedChoice(choice.id)}
+                    onMouseLeave={() => setSelectedChoice(null)}
+                    className={`
+                      w-full text-left p-4 rounded-lg border transition-all
+                      ${
+                        selectedChoice === choice.id
+                          ? 'border-vct-red bg-vct-red/10'
+                          : 'border-vct-gray/20 hover:border-vct-gray/40'
+                      }
+                    `}
+                  >
+                    <div className="font-bold text-vct-light mb-1">{choice.text}</div>
+                    {choice.description && (
+                      <div className="text-sm text-vct-gray">{choice.description}</div>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </>
         )}

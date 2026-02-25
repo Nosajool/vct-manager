@@ -158,7 +158,7 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col">
+      <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
 
         {showOutcome ? (
           // ── Outcome view ────────────────────────────────────────────────
@@ -167,39 +167,41 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
               <h2 className="text-xl font-bold text-vct-light">Response Delivered</h2>
             </div>
 
-            <MatchupHeader interview={interview} />
+            <div className="overflow-y-auto flex-1">
+              <MatchupHeader interview={interview} />
 
-            <div className="p-6 space-y-4">
-              <p className="text-vct-light text-base italic leading-relaxed">
-                "{chosenOption?.quote}"
-              </p>
+              <div className="p-6 space-y-4">
+                <p className="text-vct-light text-base italic leading-relaxed">
+                  "{chosenOption?.quote}"
+                </p>
 
-              {affectedPlayerIds.length > 0 && (
-                <div className="pt-4 border-t border-vct-gray/20">
-                  <h3 className="text-sm font-medium text-vct-gray mb-3">Players Affected:</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {affectedPlayerIds.map((id) => {
-                      const player = players[id];
-                      if (!player) return null;
-                      return (
-                        <div key={id} className="flex flex-col items-center gap-1">
-                          <GameImage
-                            src={getPlayerImageUrl(player.name)}
-                            alt={player.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                            fallbackClassName="w-10 h-10 rounded-full"
-                          />
-                          <span className="text-xs text-vct-gray">{player.name}</span>
-                        </div>
-                      );
-                    })}
+                {affectedPlayerIds.length > 0 && (
+                  <div className="pt-4 border-t border-vct-gray/20">
+                    <h3 className="text-sm font-medium text-vct-gray mb-3">Players Affected:</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {affectedPlayerIds.map((id) => {
+                        const player = players[id];
+                        if (!player) return null;
+                        return (
+                          <div key={id} className="flex flex-col items-center gap-1">
+                            <GameImage
+                              src={getPlayerImageUrl(player.name)}
+                              alt={player.name}
+                              className="w-10 h-10 rounded-full object-cover"
+                              fallbackClassName="w-10 h-10 rounded-full"
+                            />
+                            <span className="text-xs text-vct-gray">{player.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <div className="pt-4 border-t border-vct-gray/20">
-                <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
-                <p className="text-sm text-vct-light font-medium">{effectsSummary}</p>
+                <div className="pt-4 border-t border-vct-gray/20">
+                  <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
+                  <p className="text-sm text-vct-light font-medium">{effectsSummary}</p>
+                </div>
               </div>
             </div>
 
@@ -217,62 +219,65 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
           <>
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
-              <div className="flex items-center gap-3 mb-2">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor} mb-3`}>
+                {contextMeta.label}
+              </span>
+              <div className="flex items-center gap-4 mb-3">
                 {subjectImageUrl ? (
                   <GameImage
                     src={subjectImageUrl}
                     alt={subjectLabel}
-                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                    fallbackClassName="w-12 h-12 rounded-full flex-shrink-0"
+                    className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                    fallbackClassName="w-20 h-20 rounded-full flex-shrink-0"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-lg font-bold text-vct-gray">{subjectInitial}</span>
+                  <div className="w-20 h-20 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl font-bold text-vct-gray">{subjectInitial}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
-                    {contextMeta.label}
-                  </span>
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-vct-gray/10 text-vct-gray border-vct-gray/30">
-                    {subjectLabel}
-                  </span>
+                <div>
+                  <p className="text-lg font-bold text-vct-light">{subjectLabel}</p>
+                  <p className="text-sm text-vct-gray">
+                    {interview.subjectType === 'manager' ? 'Manager' : interview.subjectType === 'coach' ? 'Head Coach' : 'Player'}
+                  </p>
                 </div>
               </div>
               <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
             </div>
 
-            {/* Matchup context header (pre-match: VS, post-match: score) */}
-            <MatchupHeader interview={interview} />
+            {/* Matchup context header (pre-match: VS, post-match: score) + scrollable body */}
+            <div className="overflow-y-auto flex-1">
+              <MatchupHeader interview={interview} />
 
-            {/* Prompt */}
-            <div className="p-6 bg-vct-darker/50">
-              <blockquote className="border-l-4 border-vct-gray/30 pl-4 text-vct-light leading-relaxed">
-                {interview.prompt}
-              </blockquote>
-            </div>
+              {/* Prompt */}
+              <div className="p-6 bg-vct-darker/50">
+                <blockquote className="border-l-4 border-vct-gray/30 pl-4 text-vct-light leading-relaxed">
+                  {interview.prompt}
+                </blockquote>
+              </div>
 
-            <div className="h-px bg-vct-gray/20" />
+              <div className="h-px bg-vct-gray/20" />
 
-            {/* Options */}
-            <div className="p-6 space-y-3">
-              <h3 className="text-sm font-medium text-vct-gray mb-3">How do you respond?</h3>
-              {interview.options.map((option, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleChoose(index)}
-                  className="w-full text-left p-4 rounded-lg border border-vct-gray/20 hover:border-vct-gray/40 transition-all"
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs px-2 py-0.5 rounded font-medium ${TONE_BADGE[option.tone]}`}>
-                      {option.tone.replace('_', ' ')}
-                    </span>
-                    <span className="font-semibold text-vct-light">{option.label}</span>
-                  </div>
-                  <p className="text-sm text-vct-gray italic">"{option.quote}"</p>
-                </button>
-              ))}
+              {/* Options */}
+              <div className="p-6 space-y-3">
+                <h3 className="text-sm font-medium text-vct-gray mb-3">How do you respond?</h3>
+                {interview.options.map((option, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => handleChoose(index)}
+                    className="w-full text-left p-4 rounded-lg border border-vct-gray/20 hover:border-vct-gray/40 transition-all"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TONE_BADGE[option.tone]}`}>
+                        {option.tone.replace('_', ' ')}
+                      </span>
+                      <span className="font-semibold text-vct-light">{option.label}</span>
+                    </div>
+                    <p className="text-sm text-vct-gray italic">"{option.quote}"</p>
+                  </button>
+                ))}
+              </div>
             </div>
           </>
         )}
