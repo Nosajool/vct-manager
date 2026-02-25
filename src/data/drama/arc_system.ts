@@ -961,6 +961,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'ego_role_demand_delayed_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'player_morale_below',
@@ -1049,6 +1050,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'ego_promise_made_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_loss_streak',
@@ -1137,6 +1139,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'player_trade_requested_{playerId}',
+        playerSelector: 'condition_match',
       },
     ],
     probability: 90,
@@ -1537,6 +1540,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'loyalty_tested_{playerId}',
+        playerSelector: 'condition_match',
       },
     ],
     probability: 85,
@@ -1628,6 +1632,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'contract_extension_promised_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_loss_streak',
@@ -2297,16 +2302,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'prodigy_hype_{playerId}',
-      },
-      {
-        type: 'player_stat_above',
-        stat: 'mechanics',
-        threshold: 70,
-        playerSelector: 'any',
-      },
-      {
-        type: 'random_chance',
-        chance: 45,
+        playerSelector: 'condition_match',
       },
     ],
     probability: 65,
@@ -3129,6 +3125,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_redemption_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_win_streak',
@@ -3161,6 +3158,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_contender_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_loss_streak',
@@ -3547,6 +3545,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_fallen_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_win_streak',
@@ -3615,6 +3614,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_contender_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_loss_streak',
@@ -3702,6 +3702,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_prodigy_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_loss_streak',
@@ -3739,6 +3740,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_veteran_legacy_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'bracket_position',
@@ -3819,6 +3821,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_identity_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_win_streak',
@@ -3859,10 +3862,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_redemption_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'flag_active',
         flag: 'arc_mod_momentum_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'bracket_position',
@@ -3947,10 +3952,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_contender_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'flag_active',
         flag: 'arc_mod_clutch_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'bracket_position',
@@ -4037,10 +4044,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_fallen_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'flag_active',
         flag: 'arc_mod_resilient_{playerId}',
+        playerSelector: 'condition_match',
       },
     ],
     probability: 70,
@@ -4136,6 +4145,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_prodigy_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'team_win_streak',
@@ -4236,10 +4246,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_veteran_legacy_{playerId}',
+        playerSelector: 'condition_match',
       },
       {
         type: 'flag_active',
         flag: 'arc_mod_momentum_{playerId}',
+        playerSelector: 'condition_match',
       },
     ],
     probability: 75,
