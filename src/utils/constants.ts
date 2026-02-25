@@ -472,3 +472,60 @@ export const T3_STAT_RANGES = {
   potentialMin: 55,
   potentialMax: 72,
 };
+
+/**
+ * Starting IGLs by team name (real VCT 2026 data)
+ * Teams without listed IGLs will fall back to auto-detection via highest igl stat
+ */
+export const STARTING_IGLS: Record<string, string> = {
+  // Americas
+  '100 Thieves': 'vora',
+  'Cloud9': 'Zellsis',
+  'Evil Geniuses': 'C0M',
+  'FURIA Esports': 'nerve',
+  'KRÜ Esports': 'Saadhak',
+  'Leviatán': 'kiNgg',
+  'Sentinels': 'johnqt',
+  'G2 Esports': 'valyn',
+  'ENVY': 'P0PPIN',
+  'NRG': 'Ethan',
+  'MIBR': 'Verno',
+  'LOUD': 'pANcada',
+  // EMEA
+  'Team Vitality': 'Jamppi',
+  'Team Liquid': 'nAts',
+  'Team Heretics': 'Boo',
+  'Fnatic': 'Boaster',
+  'FUT Esports': 'MrFaliN',
+  'BBL Esports': 'Rosé',
+  'Gentle Mates': 'starxo',
+  'GIANTX': 'Cloud',
+  'NAVI': 'Shao',
+  'Karmine Corp': 'Sheydos',
+  'ULF Esports': 'nekky',
+  'PCIFIC Esports': 'qpert',
+  // Pacific
+  'DRX': 'MaKo',
+  'T1': 'stax',
+  'Gen.G': 'Lakia',
+  'Nongshim RedForce': 'Rb',
+  'DetonatioN FocusMe': 'SSeeS',
+  'Rex Regum Qeon': 'crazyguy',
+  'Global Esports': 'xavi8k',
+  'ZETA DIVISION': 'sugarz3ro',
+  'Team Secret': 'jessievash',
+  'Paper Rex': 'd4v41',
+  // China
+  'EDward Gaming': 'nobody',
+  'All Gamers': 'K1ra',
+  'Xi Lai Gaming': 'wsleo',
+  'Trace Esports': 'viva',
+  'FunPlus Phoenix': 'berlin',
+  'Bilibili Gaming': 'nephh',
+  'JD Gaming': 'coconut',
+  'Dragon Ranger Gaming': 'Flex1n',
+  'Nova Esports': 'heybay',
+  'TYLOO': 'sword9',
+  'Titan Esports Club': 'Haodong',
+  'Wolves Esports': 'SiuFatBB'
+};

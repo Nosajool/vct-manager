@@ -8,7 +8,8 @@ import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { globalTournamentScheduler } from './GlobalTournamentScheduler';
 import type { Player, Region, MatchEventData, Match } from '../types';
-import { FREE_AGENTS_PER_REGION } from '../utils/constants';
+import { FREE_AGENTS_PER_REGION, STARTING_IGLS } from '../utils/constants';
+import { getTeamIGL } from '../utils/teamUtils';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
@@ -318,6 +319,24 @@ export class GameInitService {
         0
       );
       team.finances.monthlyExpenses.playerSalaries = Math.round(totalSalaries / 12);
+
+      // Assign IGL based on known IGL or fallback to highest igl stat
+      const activeRoster = rosterPlayers.slice(0, 5);
+      const expectedIgl = STARTING_IGLS[team.name];
+      if (expectedIgl) {
+        const iglPlayer = activeRoster.find(
+          (p) => p.name.toLowerCase() === expectedIgl.toLowerCase()
+        );
+        if (iglPlayer) {
+          team.iglPlayerId = iglPlayer.id;
+        }
+      }
+      if (!team.iglPlayerId) {
+        const bestIgl = getTeamIGL(team, activeRoster);
+        if (bestIgl) {
+          team.iglPlayerId = bestIgl.id;
+        }
+      }
 
       allPlayers.push(...rosterPlayers);
     }
