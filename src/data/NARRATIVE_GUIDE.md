@@ -246,6 +246,20 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 // Season timing checks
 { type: 'min_season_day', threshold: 8 }  // Day 1 = first day of season; blocks event in week 1
+{ type: 'no_recent_match', threshold: 1 }  // No match played within threshold days (default 1)
+{ type: 'scrim_count_min', threshold: 10 }  // Team has completed at least N total scrims
+
+// Player origin checks
+{ type: 'player_is_import' }  // Player's home region differs from team's league region
+
+// Interview context checks
+{ type: 'is_playoff_match' }   // True when current match is a playoff match
+{ type: 'has_rivalry' }        // True when team has active rivalry with opponent
+{ type: 'is_grand_final' }     // True when current match is the grand final
+{ type: 'opponent_from_upper' } // True when opponent dropped from upper bracket
+
+// Logical grouping
+{ type: 'or', anyOf: [{ type: '...' }, { type: '...' }] }  // At least one condition must pass
 
 // Random
 { type: 'random_chance', chance: 20 }  // 0-100
@@ -289,7 +303,7 @@ trigger_event | escalate_event
 
 ### `PlayerStats` keys (valid for `stat` field)
 
-Check `src/types/player.ts` for the full list. Common ones: `mechanics`, `igl`, `mental`, `physical`, `teamwork`.
+Check `src/types/player.ts` for the full list. Valid keys: `mechanics`, `igl`, `mental`, `clutch`, `vibes`, `lurking`, `entry`, `support`, `stamina`.
 
 ---
 
