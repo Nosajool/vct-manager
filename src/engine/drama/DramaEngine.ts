@@ -630,6 +630,12 @@ export function selectInvolvedPlayer(
       return { id: player.id, name: player.name };
     }
 
+    case 'igl_player': {
+      if (!snapshot.iglPlayerId) return null;
+      const iglPlayer = teamPlayers.find(p => p.id === snapshot.iglPlayerId);
+      return iglPlayer ? { id: iglPlayer.id, name: iglPlayer.name } : null;
+    }
+
     default:
       return null;
   }
