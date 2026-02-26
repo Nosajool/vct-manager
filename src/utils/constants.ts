@@ -119,7 +119,7 @@ export const GAMING_NAMES = [
   'Hex', 'Hunter', 'Hydra', 'Ice', 'Jinx', 'Karma', 'Kuro', 'Laser',
   'Luna', 'Lynx', 'Mist', 'Neko', 'Night', 'Nova', 'Onyx', 'Phaze',
   'Pulse', 'Pyro', 'Razed', 'Reaper', 'Rex', 'Riot', 'Rush', 'Saga',
-  'Shadow', 'Shiro', 'Skull', 'Sky', 'Smoke', 'Snake', 'Spark', 'Spect',
+  'Shadow', 'Shire', 'Skull', 'Sky', 'Smoke', 'Snake', 'Spark', 'Spect',
   'Spirit', 'Steel', 'Storm', 'Swift', 'Tac', 'Tank', 'Toxic', 'Trace',
   'Trick', 'Turbo', 'Venom', 'Vipen', 'Volt', 'Wolf', 'Wrath', 'Zero',
   'Zest', 'Zoom', 'Alpha', 'Beta', 'Omega', 'Delta', 'Sigma', 'Theta',

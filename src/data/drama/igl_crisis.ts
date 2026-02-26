@@ -19,7 +19,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'player_stat_below', stat: 'igl', threshold: 75, playerSelector: 'igl_player' },
     ],
     probability: 60,
-    cooldownDays: 21,
+    cooldownDays: 7,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
@@ -74,7 +74,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 3 },
     ],
     probability: 75,
-    cooldownDays: 14,
+    cooldownDays: 7,
     choices: [
       {
         id: 'ignore_noise',
@@ -126,7 +126,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'igl_replacement_considered' },
     ],
     probability: 90,
-    cooldownDays: 30,
+    cooldownDays: 7,
     choices: [
       {
         id: 'keep_igl',
