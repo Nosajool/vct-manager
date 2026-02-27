@@ -281,5 +281,6 @@ export function createPlayerFromVlr(
     },
     preferences: generatePreferences(),
     personality: generatePersonality(stats, age),
+    agentPreferences: processed.vlrStats.computedAgentPreferences,
   };
 }

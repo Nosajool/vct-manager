@@ -8,7 +8,7 @@ import type { VlrPlayerStats, VlrTeamRoster, VlrRosterData } from '@/types/vlr';
  * Metadata about when this snapshot was taken
  */
 export const VLR_SNAPSHOT_META = {
-  fetchedAt: '2026-02-21T02:24:08.791Z',
+  fetchedAt: '2026-02-27T03:24:17.087Z',
   regions: ['all'] as const,
   totalPlayers: 599,
   totalRosters: 48,
@@ -29,6 +29,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "1.33",
     "average_combat_score": "239.0",
@@ -51,6 +86,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "261",
     "rating": "1.30",
     "average_combat_score": "235.7",
@@ -73,6 +146,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "190",
     "rating": "1.28",
     "average_combat_score": "216.3",
@@ -93,6 +201,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "370",
     "rating": "1.27",
     "average_combat_score": "251.7",
@@ -113,6 +256,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "1.23",
     "average_combat_score": "258.1",
@@ -135,6 +313,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "256",
     "rating": "1.22",
     "average_combat_score": "242.0",
@@ -157,6 +370,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "357",
     "rating": "1.21",
     "average_combat_score": "210.0",
@@ -178,6 +429,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "141",
     "rating": "1.20",
     "average_combat_score": "200.4",
@@ -200,6 +489,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Vyse",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Vyse": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      }
+    },
     "rounds_played": "291",
     "rating": "1.19",
     "average_combat_score": "219.9",
@@ -222,6 +546,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "1.18",
     "average_combat_score": "229.9",
@@ -242,6 +601,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "1.18",
     "average_combat_score": "251.1",
@@ -264,6 +658,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Killjoy",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Killjoy": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      }
+    },
     "rounds_played": "474",
     "rating": "1.17",
     "average_combat_score": "236.5",
@@ -286,6 +715,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Jett",
+        "Omen"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Jett": 60,
+        "Omen": 40,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
     "rounds_played": "261",
     "rating": "1.16",
     "average_combat_score": "236.8",
@@ -308,6 +776,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "266",
     "rating": "1.15",
     "average_combat_score": "215.7",
@@ -330,6 +836,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "370",
     "rating": "1.15",
     "average_combat_score": "213.3",
@@ -352,6 +896,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "264",
     "rating": "1.15",
     "average_combat_score": "203.9",
@@ -374,6 +953,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Chamber",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Chamber": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "127",
     "rating": "1.14",
     "average_combat_score": "211.5",
@@ -396,6 +1013,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Yoru",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Yoru": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Initiator"
+      ]
+    },
     "rounds_played": "346",
     "rating": "1.14",
     "average_combat_score": "225.3",
@@ -418,6 +1074,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "400",
     "rating": "1.14",
     "average_combat_score": "202.2",
@@ -440,6 +1134,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "353",
     "rating": "1.14",
     "average_combat_score": "233.4",
@@ -462,6 +1191,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "KAY/O",
+        "Sage"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "KAY/O": 60,
+        "Sage": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "169",
     "rating": "1.13",
     "average_combat_score": "214.6",
@@ -484,6 +1252,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Jett",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Jett": 60,
+        "Astra": 40,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
     "rounds_played": "168",
     "rating": "1.13",
     "average_combat_score": "232.9",
@@ -506,6 +1313,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Chamber",
+        "Yoru"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Chamber": 60,
+        "Yoru": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "348",
     "rating": "1.13",
     "average_combat_score": "226.4",
@@ -528,6 +1373,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Chamber",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Chamber": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "146",
     "rating": "1.13",
     "average_combat_score": "228.1",
@@ -550,6 +1433,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "250",
     "rating": "1.12",
     "average_combat_score": "186.8",
@@ -572,6 +1490,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "280",
     "rating": "1.12",
     "average_combat_score": "216.6",
@@ -594,6 +1550,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "KAY/O": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "141",
     "rating": "1.12",
     "average_combat_score": "167.9",
@@ -615,6 +1606,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "264",
     "rating": "1.11",
     "average_combat_score": "230.7",
@@ -637,6 +1663,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "1.11",
     "average_combat_score": "189.7",
@@ -659,6 +1720,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Phoenix",
+        "Yoru"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Phoenix": 60,
+        "Yoru": 40,
+        "Reyna": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "280",
     "rating": "1.11",
     "average_combat_score": "240.6",
@@ -681,6 +1777,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "435",
     "rating": "1.11",
     "average_combat_score": "233.5",
@@ -702,6 +1833,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "250",
     "rating": "1.11",
     "average_combat_score": "246.5",
@@ -723,6 +1889,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "230",
     "rating": "1.10",
     "average_combat_score": "203.1",
@@ -745,6 +1946,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "440",
     "rating": "1.10",
     "average_combat_score": "188.8",
@@ -767,6 +2003,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Viper",
+        "Yoru"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Viper": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller",
+        "Duelist"
+      ]
+    },
     "rounds_played": "255",
     "rating": "1.10",
     "average_combat_score": "214.8",
@@ -789,6 +2064,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "440",
     "rating": "1.10",
     "average_combat_score": "217.0",
@@ -811,6 +2124,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "KAY/O",
+        "Jett"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "KAY/O": 60,
+        "Jett": 40,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Duelist"
+      ]
+    },
     "rounds_played": "474",
     "rating": "1.10",
     "average_combat_score": "223.0",
@@ -833,6 +2185,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "353",
     "rating": "1.10",
     "average_combat_score": "225.8",
@@ -855,6 +2242,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "1.09",
     "average_combat_score": "191.9",
@@ -876,6 +2298,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "364",
     "rating": "1.09",
     "average_combat_score": "205.9",
@@ -897,6 +2354,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "319",
     "rating": "1.09",
     "average_combat_score": "195.5",
@@ -919,6 +2411,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "1.09",
     "average_combat_score": "240.3",
@@ -941,6 +2468,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "432",
     "rating": "1.09",
     "average_combat_score": "227.3",
@@ -963,6 +2525,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "256",
     "rating": "1.09",
     "average_combat_score": "200.0",
@@ -985,6 +2582,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "477",
     "rating": "1.09",
     "average_combat_score": "232.7",
@@ -1007,6 +2639,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "348",
     "rating": "1.09",
     "average_combat_score": "251.4",
@@ -1029,6 +2696,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "348",
     "rating": "1.08",
     "average_combat_score": "202.4",
@@ -1051,6 +2753,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "261",
     "rating": "1.08",
     "average_combat_score": "208.8",
@@ -1073,6 +2813,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "350",
     "rating": "1.08",
     "average_combat_score": "196.6",
@@ -1095,6 +2870,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "319",
     "rating": "1.08",
     "average_combat_score": "220.7",
@@ -1117,6 +2927,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "348",
     "rating": "1.07",
     "average_combat_score": "195.3",
@@ -1139,6 +2987,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "277",
     "rating": "1.07",
     "average_combat_score": "215.9",
@@ -1161,6 +3047,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Neon",
+        "Omen"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Neon": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
     "rounds_played": "319",
     "rating": "1.07",
     "average_combat_score": "200.4",
@@ -1183,6 +3108,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "319",
     "rating": "1.07",
     "average_combat_score": "184.9",
@@ -1205,6 +3168,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Astra",
+        "KAY/O"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Astra": 60,
+        "KAY/O": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Initiator"
+      ]
+    },
     "rounds_played": "264",
     "rating": "1.07",
     "average_combat_score": "212.1",
@@ -1227,6 +3229,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "1.07",
     "average_combat_score": "228.7",
@@ -1249,6 +3286,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Brimstone": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "169",
     "rating": "1.07",
     "average_combat_score": "226.8",
@@ -1271,6 +3346,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "405",
     "rating": "1.06",
     "average_combat_score": "190.6",
@@ -1293,6 +3403,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "477",
     "rating": "1.06",
     "average_combat_score": "210.3",
@@ -1315,6 +3463,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "261",
     "rating": "1.06",
     "average_combat_score": "188.8",
@@ -1337,6 +3523,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "230",
     "rating": "1.06",
     "average_combat_score": "225.2",
@@ -1358,6 +3579,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "250",
     "rating": "1.06",
     "average_combat_score": "186.2",
@@ -1380,6 +3636,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "432",
     "rating": "1.05",
     "average_combat_score": "194.5",
@@ -1402,6 +3693,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "1.05",
     "average_combat_score": "192.0",
@@ -1424,6 +3750,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "346",
     "rating": "1.05",
     "average_combat_score": "221.1",
@@ -1446,6 +3810,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "264",
     "rating": "1.05",
     "average_combat_score": "195.3",
@@ -1467,6 +3866,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "1.05",
     "average_combat_score": "202.3",
@@ -1489,6 +3923,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "339",
     "rating": "1.05",
     "average_combat_score": "234.6",
@@ -1511,6 +3980,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "250",
     "rating": "1.05",
     "average_combat_score": "188.1",
@@ -1533,6 +4040,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "339",
     "rating": "1.05",
     "average_combat_score": "202.8",
@@ -1554,6 +4096,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "1.05",
     "average_combat_score": "237.4",
@@ -1575,6 +4152,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "261",
     "rating": "1.05",
     "average_combat_score": "177.5",
@@ -1596,6 +4208,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "256",
     "rating": "1.04",
     "average_combat_score": "190.5",
@@ -1618,6 +4265,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Killjoy",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Killjoy": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "293",
     "rating": "1.04",
     "average_combat_score": "188.8",
@@ -1640,6 +4325,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Fade": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "255",
     "rating": "1.04",
     "average_combat_score": "200.5",
@@ -1662,6 +4385,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "432",
     "rating": "1.04",
     "average_combat_score": "208.7",
@@ -1684,6 +4442,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "435",
     "rating": "1.04",
     "average_combat_score": "201.5",
@@ -1706,6 +4502,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "255",
     "rating": "1.04",
     "average_combat_score": "177.5",
@@ -1728,6 +4562,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "350",
     "rating": "1.04",
     "average_combat_score": "197.2",
@@ -1749,6 +4618,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "285",
     "rating": "1.04",
     "average_combat_score": "203.8",
@@ -1771,6 +4678,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "339",
     "rating": "1.03",
     "average_combat_score": "191.6",
@@ -1793,6 +4738,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Yoru"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "364",
     "rating": "1.03",
     "average_combat_score": "204.1",
@@ -1814,6 +4797,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "474",
     "rating": "1.03",
     "average_combat_score": "192.6",
@@ -1836,6 +4854,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "353",
     "rating": "1.03",
     "average_combat_score": "193.4",
@@ -1858,6 +4914,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "348",
     "rating": "1.03",
     "average_combat_score": "196.5",
@@ -1880,6 +4974,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "289",
     "rating": "1.03",
     "average_combat_score": "215.9",
@@ -1902,6 +5031,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "304",
     "rating": "1.02",
     "average_combat_score": "190.8",
@@ -1924,6 +5088,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "234",
     "rating": "1.02",
     "average_combat_score": "177.8",
@@ -1946,6 +5145,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "72",
     "rating": "1.02",
     "average_combat_score": "165.0",
@@ -1967,6 +5201,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "148",
     "rating": "1.02",
     "average_combat_score": "171.6",
@@ -1989,6 +5258,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Harbor",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Harbor": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "400",
     "rating": "1.02",
     "average_combat_score": "190.8",
@@ -2010,6 +5314,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "230",
     "rating": "1.02",
     "average_combat_score": "196.1",
@@ -2032,6 +5374,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Sova",
+        "Fade"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Sova": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "255",
     "rating": "1.01",
     "average_combat_score": "199.3",
@@ -2054,6 +5434,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "357",
     "rating": "1.01",
     "average_combat_score": "215.6",
@@ -2076,6 +5491,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "346",
     "rating": "1.01",
     "average_combat_score": "179.6",
@@ -2097,6 +5547,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "198",
     "rating": "1.01",
     "average_combat_score": "202.8",
@@ -2118,6 +5603,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "104",
     "rating": "1.01",
     "average_combat_score": "172.6",
@@ -2140,6 +5663,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "KAY/O",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "KAY/O": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "435",
     "rating": "1.01",
     "average_combat_score": "196.1",
@@ -2162,6 +5723,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "1.01",
     "average_combat_score": "202.6",
@@ -2184,6 +5780,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "1.01",
     "average_combat_score": "196.1",
@@ -2206,6 +5837,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Viper",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Viper": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "141",
     "rating": "1.01",
     "average_combat_score": "184.9",
@@ -2228,6 +5897,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "231",
     "rating": "1.01",
     "average_combat_score": "189.2",
@@ -2250,6 +5954,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Iso",
+        "Neon",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Iso": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "304",
     "rating": "1.01",
     "average_combat_score": "215.8",
@@ -2272,6 +6011,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "357",
     "rating": "1.01",
     "average_combat_score": "195.1",
@@ -2294,6 +6068,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "277",
     "rating": "1.01",
     "average_combat_score": "209.7",
@@ -2316,6 +6125,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "230",
     "rating": "1.00",
     "average_combat_score": "222.5",
@@ -2338,6 +6182,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Viper",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Viper": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "262",
     "rating": "1.00",
     "average_combat_score": "188.8",
@@ -2360,6 +6242,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Raze",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Raze": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "1.00",
     "average_combat_score": "236.8",
@@ -2382,6 +6299,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Raze": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "346",
     "rating": "1.00",
     "average_combat_score": "219.6",
@@ -2404,6 +6356,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Killjoy",
+        "Skye"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Killjoy": 60,
+        "Skye": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "348",
     "rating": "1.00",
     "average_combat_score": "219.4",
@@ -2426,6 +6417,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "440",
     "rating": "0.99",
     "average_combat_score": "193.9",
@@ -2448,6 +6474,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "0.99",
     "average_combat_score": "190.0",
@@ -2470,6 +6531,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "477",
     "rating": "0.99",
     "average_combat_score": "201.3",
@@ -2492,6 +6588,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Neon",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Neon": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "353",
     "rating": "0.99",
     "average_combat_score": "206.7",
@@ -2514,6 +6648,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "285",
     "rating": "0.99",
     "average_combat_score": "215.8",
@@ -2536,6 +6705,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "289",
     "rating": "0.98",
     "average_combat_score": "209.0",
@@ -2558,6 +6765,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Neon": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "400",
     "rating": "0.98",
     "average_combat_score": "230.6",
@@ -2580,6 +6822,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "364",
     "rating": "0.98",
     "average_combat_score": "196.2",
@@ -2602,6 +6879,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "0.98",
     "average_combat_score": "184.9",
@@ -2624,6 +6936,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "266",
     "rating": "0.98",
     "average_combat_score": "223.5",
@@ -2646,6 +6993,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "0.98",
     "average_combat_score": "204.1",
@@ -2668,6 +7050,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Gekko",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Gekko": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "291",
     "rating": "0.98",
     "average_combat_score": "181.9",
@@ -2690,6 +7107,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "339",
     "rating": "0.98",
     "average_combat_score": "181.6",
@@ -2712,6 +7164,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Phoenix",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Phoenix": 60,
+        "Neon": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "400",
     "rating": "0.97",
     "average_combat_score": "198.1",
@@ -2734,6 +7221,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "KAY/O",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "KAY/O": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "440",
     "rating": "0.97",
     "average_combat_score": "171.5",
@@ -2756,6 +7282,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "370",
     "rating": "0.97",
     "average_combat_score": "202.8",
@@ -2778,6 +7339,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Killjoy": 60,
+        "Chamber": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "289",
     "rating": "0.97",
     "average_combat_score": "191.0",
@@ -2800,6 +7399,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Gekko"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "285",
     "rating": "0.97",
     "average_combat_score": "197.2",
@@ -2822,6 +7456,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "285",
     "rating": "0.97",
     "average_combat_score": "163.9",
@@ -2844,6 +7513,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Omen",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Omen": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "187",
     "rating": "0.97",
     "average_combat_score": "173.6",
@@ -2866,6 +7573,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Viper"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "353",
     "rating": "0.97",
     "average_combat_score": "168.7",
@@ -2888,6 +7633,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "348",
     "rating": "0.97",
     "average_combat_score": "185.1",
@@ -2910,6 +7690,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "0.97",
     "average_combat_score": "198.0",
@@ -2932,6 +7747,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "364",
     "rating": "0.97",
     "average_combat_score": "197.1",
@@ -2953,6 +7806,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Yoru",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Yoru": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "133",
     "rating": "0.97",
     "average_combat_score": "218.6",
@@ -2975,6 +7866,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "280",
     "rating": "0.96",
     "average_combat_score": "174.4",
@@ -2997,6 +7923,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Sova",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Sova": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "280",
     "rating": "0.96",
     "average_combat_score": "204.0",
@@ -3019,6 +7983,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "277",
     "rating": "0.96",
     "average_combat_score": "170.2",
@@ -3041,6 +8040,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "277",
     "rating": "0.96",
     "average_combat_score": "164.6",
@@ -3063,6 +8097,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "256",
     "rating": "0.96",
     "average_combat_score": "188.5",
@@ -3085,6 +8154,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "KAY/O",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "KAY/O": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "477",
     "rating": "0.96",
     "average_combat_score": "167.5",
@@ -3107,6 +8214,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Phoenix",
+        "KAY/O",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Phoenix": 80,
+        "KAY/O": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "230",
     "rating": "0.96",
     "average_combat_score": "205.3",
@@ -3129,6 +8274,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "0.96",
     "average_combat_score": "190.7",
@@ -3151,6 +8331,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Fade",
+        "KAY/O"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Fade": 60,
+        "KAY/O": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "285",
     "rating": "0.96",
     "average_combat_score": "189.0",
@@ -3172,6 +8390,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "0.96",
     "average_combat_score": "177.0",
@@ -3194,6 +8447,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "348",
     "rating": "0.96",
     "average_combat_score": "168.2",
@@ -3216,6 +8504,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Chamber",
+        "Brimstone"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Chamber": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "164",
     "rating": "0.95",
     "average_combat_score": "157.5",
@@ -3238,6 +8564,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "350",
     "rating": "0.95",
     "average_combat_score": "189.1",
@@ -3260,6 +8624,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "474",
     "rating": "0.95",
     "average_combat_score": "202.7",
@@ -3281,6 +8680,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "198",
     "rating": "0.95",
     "average_combat_score": "206.4",
@@ -3302,6 +8736,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "0.95",
     "average_combat_score": "184.6",
@@ -3324,6 +8793,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "289",
     "rating": "0.95",
     "average_combat_score": "152.1",
@@ -3345,6 +8849,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "266",
     "rating": "0.95",
     "average_combat_score": "156.2",
@@ -3367,6 +8906,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Omen",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Omen": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "190",
     "rating": "0.95",
     "average_combat_score": "189.0",
@@ -3387,6 +8964,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "250",
     "rating": "0.94",
     "average_combat_score": "211.0",
@@ -3409,6 +9021,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Sage",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Sage": 60,
+        "Chamber": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "262",
     "rating": "0.94",
     "average_combat_score": "185.7",
@@ -3430,6 +9077,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "370",
     "rating": "0.94",
     "average_combat_score": "180.8",
@@ -3452,6 +9134,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Chamber",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Chamber": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "432",
     "rating": "0.94",
     "average_combat_score": "185.2",
@@ -3473,6 +9193,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "133",
     "rating": "0.94",
     "average_combat_score": "201.6",
@@ -3495,6 +9250,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "KAY/O",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "KAY/O": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "164",
     "rating": "0.94",
     "average_combat_score": "184.9",
@@ -3517,6 +9310,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "133",
     "rating": "0.94",
     "average_combat_score": "192.3",
@@ -3538,6 +9369,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "266",
     "rating": "0.94",
     "average_combat_score": "209.8",
@@ -3560,6 +9426,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "432",
     "rating": "0.93",
     "average_combat_score": "187.3",
@@ -3581,6 +9485,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Chamber",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Chamber": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "323",
     "rating": "0.93",
     "average_combat_score": "183.6",
@@ -3603,6 +9545,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "231",
     "rating": "0.93",
     "average_combat_score": "175.5",
@@ -3625,6 +9602,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Killjoy",
+        "KAY/O"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Killjoy": 60,
+        "KAY/O": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "148",
     "rating": "0.93",
     "average_combat_score": "214.7",
@@ -3646,6 +9662,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "148",
     "rating": "0.93",
     "average_combat_score": "204.6",
@@ -3668,6 +9719,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Killjoy",
+        "Raze"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Killjoy": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Duelist"
+      ]
+    },
     "rounds_played": "277",
     "rating": "0.93",
     "average_combat_score": "196.2",
@@ -3690,6 +9780,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "261",
     "rating": "0.93",
     "average_combat_score": "168.3",
@@ -3711,6 +9836,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "261",
     "rating": "0.93",
     "average_combat_score": "195.8",
@@ -3733,6 +9893,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "440",
     "rating": "0.93",
     "average_combat_score": "218.7",
@@ -3754,6 +9949,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "357",
     "rating": "0.92",
     "average_combat_score": "155.8",
@@ -3776,6 +10006,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "phoenix"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Reyna",
+        "Yoru",
+        "Phoenix"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Reyna": 80,
+        "Yoru": 60,
+        "Phoenix": 40,
+        "Jett": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "291",
     "rating": "0.92",
     "average_combat_score": "208.8",
@@ -3798,6 +10063,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "0.92",
     "average_combat_score": "174.3",
@@ -3820,6 +10120,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "KAY/O"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "146",
     "rating": "0.92",
     "average_combat_score": "188.3",
@@ -3840,6 +10178,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Clove"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "370",
     "rating": "0.91",
     "average_combat_score": "159.6",
@@ -3862,6 +10235,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Killjoy",
+        "Neon"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Killjoy": 60,
+        "Neon": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Duelist"
+      ]
+    },
     "rounds_played": "255",
     "rating": "0.91",
     "average_combat_score": "195.3",
@@ -3884,6 +10296,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "0.91",
     "average_combat_score": "161.3",
@@ -3906,6 +10353,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Killjoy",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Killjoy": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "293",
     "rating": "0.91",
     "average_combat_score": "189.6",
@@ -3926,6 +10411,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "357",
     "rating": "0.91",
     "average_combat_score": "187.3",
@@ -3948,6 +10468,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "0.90",
     "average_combat_score": "183.8",
@@ -3970,6 +10525,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Breach": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "190",
     "rating": "0.90",
     "average_combat_score": "176.8",
@@ -3992,6 +10582,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "141",
     "rating": "0.90",
     "average_combat_score": "172.9",
@@ -4014,6 +10639,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "264",
     "rating": "0.90",
     "average_combat_score": "174.9",
@@ -4036,6 +10699,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "346",
     "rating": "0.90",
     "average_combat_score": "156.9",
@@ -4057,6 +10755,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "231",
     "rating": "0.90",
     "average_combat_score": "190.4",
@@ -4078,6 +10811,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "256",
     "rating": "0.90",
     "average_combat_score": "164.6",
@@ -4100,6 +10868,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "0.90",
     "average_combat_score": "189.7",
@@ -4122,6 +10925,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "169",
     "rating": "0.89",
     "average_combat_score": "181.3",
@@ -4144,6 +10982,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Omen",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "187",
     "rating": "0.89",
     "average_combat_score": "174.3",
@@ -4166,6 +11042,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "164",
     "rating": "0.89",
     "average_combat_score": "163.8",
@@ -4188,6 +11099,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Fade",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "148",
     "rating": "0.89",
     "average_combat_score": "164.3",
@@ -4209,6 +11158,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "400",
     "rating": "0.89",
     "average_combat_score": "180.8",
@@ -4231,6 +11215,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Killjoy",
+        "Brimstone"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Killjoy": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
     "rounds_played": "435",
     "rating": "0.89",
     "average_combat_score": "162.8",
@@ -4253,6 +11276,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Skye",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "319",
     "rating": "0.89",
     "average_combat_score": "174.4",
@@ -4275,6 +11336,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "198",
     "rating": "0.88",
     "average_combat_score": "167.1",
@@ -4297,6 +11393,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Yoru",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Yoru": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
     "rounds_played": "256",
     "rating": "0.88",
     "average_combat_score": "174.4",
@@ -4319,6 +11454,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "201",
     "rating": "0.88",
     "average_combat_score": "158.7",
@@ -4340,6 +11510,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "262",
     "rating": "0.88",
     "average_combat_score": "169.9",
@@ -4362,6 +11567,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "phoenix"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Phoenix",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Phoenix": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "323",
     "rating": "0.87",
     "average_combat_score": "199.0",
@@ -4384,6 +11627,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "237",
     "rating": "0.87",
     "average_combat_score": "166.8",
@@ -4406,6 +11687,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Harbor",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Harbor": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "146",
     "rating": "0.87",
     "average_combat_score": "157.3",
@@ -4428,6 +11744,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Neon",
+        "Raze"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Neon": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "348",
     "rating": "0.87",
     "average_combat_score": "196.0",
@@ -4450,6 +11804,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "266",
     "rating": "0.86",
     "average_combat_score": "170.5",
@@ -4472,6 +11861,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Yoru"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Yoru": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "164",
     "rating": "0.86",
     "average_combat_score": "205.8",
@@ -4493,6 +11917,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "169",
     "rating": "0.86",
     "average_combat_score": "142.4",
@@ -4515,6 +11974,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Sova",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Sova": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "230",
     "rating": "0.86",
     "average_combat_score": "156.9",
@@ -4537,6 +12031,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "190",
     "rating": "0.85",
     "average_combat_score": "175.6",
@@ -4559,6 +12091,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Breach",
+        "Viper"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Breach": 60,
+        "Viper": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Controller"
+      ]
+    },
     "rounds_played": "175",
     "rating": "0.85",
     "average_combat_score": "190.8",
@@ -4581,6 +12152,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "KAY/O",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "KAY/O": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "0.85",
     "average_combat_score": "173.8",
@@ -4603,6 +12209,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "339",
     "rating": "0.85",
     "average_combat_score": "172.9",
@@ -4623,6 +12268,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "304",
     "rating": "0.85",
     "average_combat_score": "180.8",
@@ -4645,6 +12325,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Omen",
+        "Yoru"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Omen": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Duelist"
+      ]
+    },
     "rounds_played": "261",
     "rating": "0.85",
     "average_combat_score": "171.7",
@@ -4667,6 +12386,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "0.85",
     "average_combat_score": "196.3",
@@ -4688,6 +12442,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "198",
     "rating": "0.85",
     "average_combat_score": "196.4",
@@ -4710,6 +12499,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "348",
     "rating": "0.85",
     "average_combat_score": "155.6",
@@ -4732,6 +12556,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "291",
     "rating": "0.85",
     "average_combat_score": "173.1",
@@ -4754,6 +12613,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Yoru",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Yoru": 60,
+        "Neon": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "261",
     "rating": "0.84",
     "average_combat_score": "194.1",
@@ -4775,6 +12669,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "262",
     "rating": "0.84",
     "average_combat_score": "167.5",
@@ -4797,6 +12729,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "304",
     "rating": "0.83",
     "average_combat_score": "178.4",
@@ -4819,6 +12786,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Viper",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Viper": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "289",
     "rating": "0.83",
     "average_combat_score": "182.9",
@@ -4841,6 +12846,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Breach",
+        "KAY/O"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Breach": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "350",
     "rating": "0.83",
     "average_combat_score": "150.0",
@@ -4863,6 +12906,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Killjoy"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "280",
     "rating": "0.83",
     "average_combat_score": "149.1",
@@ -4885,6 +12966,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "291",
     "rating": "0.82",
     "average_combat_score": "185.7",
@@ -4907,6 +13023,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "364",
     "rating": "0.82",
     "average_combat_score": "165.2",
@@ -4929,6 +13083,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "0.81",
     "average_combat_score": "164.6",
@@ -4951,6 +13140,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Viper",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "231",
     "rating": "0.81",
     "average_combat_score": "172.5",
@@ -4973,6 +13200,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "0.80",
     "average_combat_score": "181.1",
@@ -4995,6 +13257,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Chamber",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Chamber": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "190",
     "rating": "0.80",
     "average_combat_score": "187.1",
@@ -5017,6 +13317,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "198",
     "rating": "0.80",
     "average_combat_score": "155.6",
@@ -5038,6 +13376,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "146",
     "rating": "0.79",
     "average_combat_score": "162.6",
@@ -5060,6 +13433,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "133",
     "rating": "0.79",
     "average_combat_score": "171.0",
@@ -5081,6 +13489,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Sova",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Sova": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "261",
     "rating": "0.78",
     "average_combat_score": "149.7",
@@ -5102,6 +13548,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "169",
     "rating": "0.78",
     "average_combat_score": "160.5",
@@ -5124,6 +13605,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "0.78",
     "average_combat_score": "169.1",
@@ -5146,6 +13662,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "474",
     "rating": "0.77",
     "average_combat_score": "134.2",
@@ -5168,6 +13719,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "133",
     "rating": "0.75",
     "average_combat_score": "141.6",
@@ -5189,6 +13775,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Neon": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "146",
     "rating": "0.75",
     "average_combat_score": "171.3",
@@ -5211,6 +13832,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "148",
     "rating": "0.74",
     "average_combat_score": "157.7",
@@ -5233,6 +13889,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Killjoy",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Killjoy": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "175",
     "rating": "0.72",
     "average_combat_score": "162.2",
@@ -5255,6 +13949,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "164",
     "rating": "0.71",
     "average_combat_score": "148.3",
@@ -5277,6 +14006,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "187",
     "rating": "0.68",
     "average_combat_score": "158.8",
@@ -5299,6 +14066,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "187",
     "rating": "0.66",
     "average_combat_score": "131.3",
@@ -5321,6 +14123,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Raze": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "141",
     "rating": "0.65",
     "average_combat_score": "162.9",
@@ -5343,6 +14180,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "903",
     "rating": "1.08",
     "average_combat_score": "193.6",
@@ -5364,6 +14239,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "590",
     "rating": "1.07",
     "average_combat_score": "194.3",
@@ -5386,6 +14296,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "790",
     "rating": "1.07",
     "average_combat_score": "201.4",
@@ -5408,6 +14356,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1403",
     "rating": "1.05",
     "average_combat_score": "200.5",
@@ -5430,6 +14413,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "992",
     "rating": "1.04",
     "average_combat_score": "183.0",
@@ -5452,6 +14470,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "914",
     "rating": "1.04",
     "average_combat_score": "193.0",
@@ -5474,6 +14530,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Skye",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Skye": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "584",
     "rating": "1.02",
     "average_combat_score": "168.7",
@@ -5496,6 +14587,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Sage",
+        "Astra"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Sage": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
     "rounds_played": "1031",
     "rating": "1.02",
     "average_combat_score": "201.0",
@@ -5518,6 +14648,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "1312",
     "rating": "1.02",
     "average_combat_score": "204.4",
@@ -5540,6 +14708,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      }
+    },
     "rounds_played": "652",
     "rating": "1.01",
     "average_combat_score": "194.1",
@@ -5562,6 +14765,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "KAY/O": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "755",
     "rating": "1.00",
     "average_combat_score": "196.4",
@@ -5584,6 +14825,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "903",
     "rating": "1.00",
     "average_combat_score": "177.8",
@@ -5606,6 +14882,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Vyse",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Vyse": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "2129",
     "rating": "0.99",
     "average_combat_score": "181.1",
@@ -5628,6 +14942,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "777",
     "rating": "0.99",
     "average_combat_score": "189.9",
@@ -5650,6 +14999,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "588",
     "rating": "0.98",
     "average_combat_score": "185.9",
@@ -5672,6 +15056,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Gekko"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "1149",
     "rating": "0.98",
     "average_combat_score": "191.7",
@@ -5694,6 +15116,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "950",
     "rating": "0.97",
     "average_combat_score": "188.0",
@@ -5716,6 +15173,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Phoenix",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Phoenix": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
     "rounds_played": "777",
     "rating": "0.97",
     "average_combat_score": "212.5",
@@ -5738,6 +15234,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1516",
     "rating": "0.97",
     "average_combat_score": "172.7",
@@ -5760,6 +15291,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Breach": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1653",
     "rating": "0.95",
     "average_combat_score": "175.6",
@@ -5782,6 +15348,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "926",
     "rating": "0.93",
     "average_combat_score": "177.8",
@@ -5804,6 +15405,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "phoenix"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Phoenix"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Phoenix": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "664",
     "rating": "0.93",
     "average_combat_score": "215.5",
@@ -5826,6 +15462,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "814",
     "rating": "0.92",
     "average_combat_score": "204.0",
@@ -5848,6 +15519,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Vyse",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Vyse": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "1351",
     "rating": "0.92",
     "average_combat_score": "173.3",
@@ -5870,6 +15579,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "777",
     "rating": "0.91",
     "average_combat_score": "198.7",
@@ -5892,6 +15636,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Viper",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "664",
     "rating": "0.91",
     "average_combat_score": "184.6",
@@ -5914,6 +15696,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "iso"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Iso",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Iso": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "644",
     "rating": "0.91",
     "average_combat_score": "181.5",
@@ -5936,6 +15756,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Fade",
+        "Raze"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Fade": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "641",
     "rating": "0.91",
     "average_combat_score": "174.4",
@@ -5958,6 +15816,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Gekko",
+        "Killjoy",
+        "Cypher"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Gekko": 80,
+        "Killjoy": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "550",
     "rating": "0.91",
     "average_combat_score": "166.5",
@@ -5980,6 +15876,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Sova",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "528",
     "rating": "0.90",
     "average_combat_score": "168.3",
@@ -6002,6 +15933,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Breach",
+        "Gekko"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Breach": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "664",
     "rating": "0.89",
     "average_combat_score": "174.5",
@@ -6024,6 +15990,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Viper",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "765",
     "rating": "0.89",
     "average_combat_score": "178.8",
@@ -6046,6 +16050,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Vyse",
+        "Breach"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Vyse": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "777",
     "rating": "0.89",
     "average_combat_score": "179.3",
@@ -6068,6 +16111,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "540",
     "rating": "0.88",
     "average_combat_score": "161.7",
@@ -6090,6 +16168,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1045",
     "rating": "0.88",
     "average_combat_score": "166.1",
@@ -6112,6 +16225,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Killjoy",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Killjoy": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "588",
     "rating": "0.87",
     "average_combat_score": "167.5",
@@ -6134,6 +16285,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Deadlock",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Deadlock": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "926",
     "rating": "0.86",
     "average_combat_score": "168.6",
@@ -6156,6 +16345,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Astra",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Astra": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "899",
     "rating": "0.86",
     "average_combat_score": "158.4",
@@ -6178,6 +16405,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "reyna"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Reyna"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 40,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "508",
     "rating": "0.85",
     "average_combat_score": "201.8",
@@ -6200,6 +16462,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Deadlock",
+        "KAY/O"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Deadlock": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "550",
     "rating": "0.85",
     "average_combat_score": "176.4",
@@ -6222,6 +16523,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "691",
     "rating": "0.83",
     "average_combat_score": "157.1",
@@ -6244,6 +16580,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Deadlock",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Deadlock": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "643",
     "rating": "0.83",
     "average_combat_score": "151.4",
@@ -6266,6 +16640,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "clove"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Clove"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Clove": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "512",
     "rating": "0.82",
     "average_combat_score": "174.9",
@@ -6288,6 +16700,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Chamber": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "583",
     "rating": "0.80",
     "average_combat_score": "172.4",
@@ -6310,6 +16760,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Gekko",
+        "Killjoy"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Gekko": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "578",
     "rating": "0.73",
     "average_combat_score": "148.1",
@@ -6332,6 +16820,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Vyse"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "769",
     "rating": "0.73",
     "average_combat_score": "145.8",
@@ -6354,6 +16880,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "203",
     "rating": "1.25",
     "average_combat_score": "223.6",
@@ -6376,6 +16940,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "1.17",
     "average_combat_score": "242.5",
@@ -6397,6 +16996,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "1.16",
     "average_combat_score": "212.4",
@@ -6417,6 +17051,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "1.14",
     "average_combat_score": "250.3",
@@ -6439,6 +17108,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "203",
     "rating": "1.14",
     "average_combat_score": "223.2",
@@ -6460,6 +17164,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "iso"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Iso",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Iso": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "212",
     "rating": "1.13",
     "average_combat_score": "208.9",
@@ -6482,6 +17224,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Phoenix",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Phoenix": 60,
+        "Raze": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "210",
     "rating": "1.11",
     "average_combat_score": "250.6",
@@ -6503,6 +17280,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "chamber"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "372",
     "rating": "1.11",
     "average_combat_score": "178.2",
@@ -6525,6 +17340,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "234",
     "rating": "1.10",
     "average_combat_score": "207.4",
@@ -6547,6 +17400,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "203",
     "rating": "1.09",
     "average_combat_score": "209.7",
@@ -6569,6 +17457,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Chamber",
+        "Sage"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Chamber": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "210",
     "rating": "1.09",
     "average_combat_score": "219.2",
@@ -6591,6 +17514,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Sage",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Sage": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "293",
     "rating": "1.09",
     "average_combat_score": "234.5",
@@ -6612,6 +17573,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "293",
     "rating": "1.08",
     "average_combat_score": "230.4",
@@ -6634,6 +17633,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "303",
     "rating": "1.08",
     "average_combat_score": "199.7",
@@ -6656,6 +17690,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "214",
     "rating": "1.08",
     "average_combat_score": "199.4",
@@ -6677,6 +17746,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "1.08",
     "average_combat_score": "201.5",
@@ -6699,6 +17803,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "phoenix"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Phoenix"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Phoenix": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Duelist"
+      ]
+    },
     "rounds_played": "303",
     "rating": "1.08",
     "average_combat_score": "197.3",
@@ -6721,6 +17864,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Killjoy",
+        "Viper"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Killjoy": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
     "rounds_played": "236",
     "rating": "1.08",
     "average_combat_score": "210.5",
@@ -6743,6 +17925,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "212",
     "rating": "1.08",
     "average_combat_score": "193.7",
@@ -6765,6 +17985,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "200",
     "rating": "1.07",
     "average_combat_score": "216.9",
@@ -6786,6 +18041,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "255",
     "rating": "1.07",
     "average_combat_score": "221.1",
@@ -6806,6 +18096,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "211",
     "rating": "1.07",
     "average_combat_score": "195.5",
@@ -6827,6 +18152,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "236",
     "rating": "1.07",
     "average_combat_score": "205.9",
@@ -6849,6 +18209,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Skye",
+        "Omen"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Skye": 60,
+        "Omen": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Controller"
+      ]
+    },
     "rounds_played": "303",
     "rating": "1.06",
     "average_combat_score": "204.7",
@@ -6870,6 +18269,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Yoru",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Yoru": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "234",
     "rating": "1.04",
     "average_combat_score": "203.2",
@@ -6892,6 +18329,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Breach",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Breach": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "218",
     "rating": "1.04",
     "average_combat_score": "208.2",
@@ -6914,6 +18386,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Deadlock",
+        "Yoru"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Deadlock": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Duelist"
+      ]
+    },
     "rounds_played": "214",
     "rating": "1.04",
     "average_combat_score": "206.3",
@@ -6936,6 +18447,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "273",
     "rating": "1.04",
     "average_combat_score": "216.7",
@@ -6958,6 +18507,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "1.03",
     "average_combat_score": "224.5",
@@ -6980,6 +18564,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Iso",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "236",
     "rating": "1.03",
     "average_combat_score": "191.4",
@@ -7001,6 +18620,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "clove",
       "reyna"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Clove",
+        "Reyna",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Clove": 80,
+        "Reyna": 60,
+        "Jett": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "372",
     "rating": "1.03",
     "average_combat_score": "258.7",
@@ -7023,6 +18680,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Yoru",
+        "Killjoy"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Yoru": 60,
+        "Killjoy": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "211",
     "rating": "1.03",
     "average_combat_score": "219.5",
@@ -7045,6 +18740,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Yoru",
+        "Killjoy"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Yoru": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "237",
     "rating": "1.03",
     "average_combat_score": "207.4",
@@ -7066,6 +18800,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "1.03",
     "average_combat_score": "200.7",
@@ -7088,6 +18857,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "iso"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Iso": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "213",
     "rating": "1.02",
     "average_combat_score": "232.1",
@@ -7110,6 +18914,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "237",
     "rating": "1.02",
     "average_combat_score": "188.6",
@@ -7132,6 +18974,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Phoenix",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Phoenix": 60,
+        "Neon": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "252",
     "rating": "1.01",
     "average_combat_score": "219.3",
@@ -7154,6 +19031,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "236",
     "rating": "1.00",
     "average_combat_score": "183.6",
@@ -7176,6 +19091,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "303",
     "rating": "1.00",
     "average_combat_score": "180.5",
@@ -7198,6 +19148,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "211",
     "rating": "1.00",
     "average_combat_score": "183.8",
@@ -7220,6 +19205,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "213",
     "rating": "1.00",
     "average_combat_score": "199.4",
@@ -7242,6 +19266,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Skye",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Skye": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "350",
     "rating": "0.99",
     "average_combat_score": "176.2",
@@ -7264,6 +19323,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "236",
     "rating": "0.98",
     "average_combat_score": "196.8",
@@ -7285,6 +19379,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "210",
     "rating": "0.98",
     "average_combat_score": "181.9",
@@ -7306,6 +19435,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "206",
     "rating": "0.98",
     "average_combat_score": "185.9",
@@ -7328,6 +19492,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Vyse",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Vyse": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "206",
     "rating": "0.98",
     "average_combat_score": "185.9",
@@ -7350,6 +19552,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "303",
     "rating": "0.98",
     "average_combat_score": "219.1",
@@ -7372,6 +19609,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Sage",
+        "Viper"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Sage": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
     "rounds_played": "210",
     "rating": "0.98",
     "average_combat_score": "175.3",
@@ -7394,6 +19670,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Iso",
+        "Yoru",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Iso": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "372",
     "rating": "0.98",
     "average_combat_score": "203.5",
@@ -7416,6 +19727,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Yoru"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Duelist"
+      ]
+    },
     "rounds_played": "323",
     "rating": "0.97",
     "average_combat_score": "184.2",
@@ -7438,6 +19788,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "iso",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Iso",
+        "Neon",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Iso": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "372",
     "rating": "0.97",
     "average_combat_score": "201.9",
@@ -7460,6 +19845,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Sova",
+        "Harbor"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Sova": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "218",
     "rating": "0.96",
     "average_combat_score": "190.8",
@@ -7482,6 +19905,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Jett",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Jett": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "271",
     "rating": "0.96",
     "average_combat_score": "198.4",
@@ -7504,6 +19962,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "234",
     "rating": "0.95",
     "average_combat_score": "171.4",
@@ -7526,6 +20019,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "231",
     "rating": "0.95",
     "average_combat_score": "181.1",
@@ -7548,6 +20079,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Fade"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "236",
     "rating": "0.94",
     "average_combat_score": "172.5",
@@ -7570,6 +20139,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "214",
     "rating": "0.94",
     "average_combat_score": "181.3",
@@ -7592,6 +20196,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Yoru",
+        "Killjoy"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Yoru": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "252",
     "rating": "0.94",
     "average_combat_score": "194.8",
@@ -7614,6 +20256,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Sage"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "254",
     "rating": "0.94",
     "average_combat_score": "192.7",
@@ -7636,6 +20316,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Neon",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Neon": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "203",
     "rating": "0.93",
     "average_combat_score": "188.6",
@@ -7658,6 +20376,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "218",
     "rating": "0.93",
     "average_combat_score": "194.1",
@@ -7680,6 +20433,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "271",
     "rating": "0.93",
     "average_combat_score": "175.4",
@@ -7702,6 +20490,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Gekko"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "0.93",
     "average_combat_score": "178.1",
@@ -7724,6 +20547,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Phoenix",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Phoenix": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "236",
     "rating": "0.93",
     "average_combat_score": "175.9",
@@ -7746,6 +20608,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "218",
     "rating": "0.93",
     "average_combat_score": "183.4",
@@ -7768,6 +20665,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "210",
     "rating": "0.93",
     "average_combat_score": "182.7",
@@ -7790,6 +20722,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "254",
     "rating": "0.92",
     "average_combat_score": "179.4",
@@ -7812,6 +20779,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Yoru",
+        "KAY/O"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Yoru": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Initiator"
+      ]
+    },
     "rounds_played": "212",
     "rating": "0.91",
     "average_combat_score": "201.4",
@@ -7833,6 +20839,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "0.91",
     "average_combat_score": "167.1",
@@ -7855,6 +20896,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "218",
     "rating": "0.91",
     "average_combat_score": "218.3",
@@ -7877,6 +20953,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "213",
     "rating": "0.91",
     "average_combat_score": "189.5",
@@ -7898,6 +21012,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "237",
     "rating": "0.91",
     "average_combat_score": "153.5",
@@ -7920,6 +21069,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Breach": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "203",
     "rating": "0.90",
     "average_combat_score": "170.9",
@@ -7942,6 +21126,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Omen",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "236",
     "rating": "0.90",
     "average_combat_score": "196.6",
@@ -7963,6 +21185,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "206",
     "rating": "0.89",
     "average_combat_score": "180.4",
@@ -7985,6 +21242,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "0.89",
     "average_combat_score": "181.0",
@@ -8006,6 +21298,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Raze",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Raze": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "206",
     "rating": "0.88",
     "average_combat_score": "178.1",
@@ -8027,6 +21357,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "0.88",
     "average_combat_score": "211.9",
@@ -8049,6 +21414,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Raze"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "271",
     "rating": "0.88",
     "average_combat_score": "189.2",
@@ -8070,6 +21473,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "clove"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Clove",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Clove": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "212",
     "rating": "0.88",
     "average_combat_score": "205.0",
@@ -8092,6 +21530,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "252",
     "rating": "0.88",
     "average_combat_score": "175.0",
@@ -8114,6 +21590,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "292",
     "rating": "0.88",
     "average_combat_score": "171.8",
@@ -8135,6 +21649,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "234",
     "rating": "0.87",
     "average_combat_score": "180.9",
@@ -8157,6 +21706,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "213",
     "rating": "0.86",
     "average_combat_score": "150.5",
@@ -8179,6 +21766,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "211",
     "rating": "0.86",
     "average_combat_score": "187.5",
@@ -8200,6 +21822,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "323",
     "rating": "0.85",
     "average_combat_score": "163.1",
@@ -8222,6 +21879,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "254",
     "rating": "0.83",
     "average_combat_score": "171.0",
@@ -8244,6 +21939,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "214",
     "rating": "0.83",
     "average_combat_score": "195.0",
@@ -8266,6 +21996,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Yoru",
+        "Breach"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Yoru": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Initiator"
+      ]
+    },
     "rounds_played": "254",
     "rating": "0.83",
     "average_combat_score": "163.5",
@@ -8288,6 +22057,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Fade",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Fade": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "292",
     "rating": "0.83",
     "average_combat_score": "171.4",
@@ -8310,6 +22117,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "217",
     "rating": "0.83",
     "average_combat_score": "175.3",
@@ -8332,6 +22177,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "tejo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "252",
     "rating": "0.83",
     "average_combat_score": "155.9",
@@ -8354,6 +22234,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Fade",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Fade": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "212",
     "rating": "0.82",
     "average_combat_score": "157.3",
@@ -8376,6 +22294,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Sova",
+        "Brimstone"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Sova": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "231",
     "rating": "0.81",
     "average_combat_score": "162.3",
@@ -8398,6 +22354,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "271",
     "rating": "0.79",
     "average_combat_score": "163.4",
@@ -8420,6 +22414,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "iso",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Iso",
+        "Yoru",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Iso": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "213",
     "rating": "0.76",
     "average_combat_score": "169.5",
@@ -8442,6 +22471,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Skye",
+        "Brimstone"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Skye": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator",
+        "Controller"
+      ]
+    },
     "rounds_played": "214",
     "rating": "0.72",
     "average_combat_score": "177.8",
@@ -8464,6 +22532,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "271",
     "rating": "0.71",
     "average_combat_score": "139.9",
@@ -8485,6 +22591,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "293",
     "rating": "0.67",
     "average_combat_score": "128.5",
@@ -8507,6 +22648,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "204",
     "rating": "1.45",
     "average_combat_score": "310.0",
@@ -8528,6 +22704,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "305",
     "rating": "1.23",
     "average_combat_score": "286.6",
@@ -8550,6 +22761,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Harbor"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "125",
     "rating": "1.20",
     "average_combat_score": "236.3",
@@ -8570,6 +22816,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "204",
     "rating": "1.15",
     "average_combat_score": "215.9",
@@ -8591,6 +22872,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "204",
     "rating": "1.15",
     "average_combat_score": "204.6",
@@ -8613,6 +22929,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "127",
     "rating": "1.14",
     "average_combat_score": "247.8",
@@ -8634,6 +22985,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "iso",
       "deadlock"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Iso",
+        "Deadlock",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Iso": 80,
+        "Deadlock": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "112",
     "rating": "1.12",
     "average_combat_score": "241.0",
@@ -8656,6 +23045,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Breach",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Breach": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "305",
     "rating": "1.12",
     "average_combat_score": "189.8",
@@ -8678,6 +23105,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Sova",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Sova": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "229",
     "rating": "1.11",
     "average_combat_score": "214.8",
@@ -8700,6 +23165,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "KAY/O",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "KAY/O": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "223",
     "rating": "1.10",
     "average_combat_score": "201.1",
@@ -8722,6 +23222,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Gekko",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Gekko": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "305",
     "rating": "1.10",
     "average_combat_score": "215.1",
@@ -8744,6 +23279,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Sova",
+        "Skye"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Sova": 60,
+        "Skye": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "223",
     "rating": "1.09",
     "average_combat_score": "200.7",
@@ -8766,6 +23339,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "223",
     "rating": "1.09",
     "average_combat_score": "249.1",
@@ -8788,6 +23396,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Fade"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "305",
     "rating": "1.09",
     "average_combat_score": "194.1",
@@ -8809,6 +23455,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "243",
     "rating": "1.06",
     "average_combat_score": "186.6",
@@ -8830,6 +23511,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "127",
     "rating": "1.06",
     "average_combat_score": "221.0",
@@ -8851,6 +23567,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "1.05",
     "average_combat_score": "191.1",
@@ -8873,6 +23624,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "223",
     "rating": "1.05",
     "average_combat_score": "195.3",
@@ -8895,6 +23684,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "243",
     "rating": "1.04",
     "average_combat_score": "218.2",
@@ -8915,6 +23739,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Chamber",
+        "Deadlock"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "127",
     "rating": "1.04",
     "average_combat_score": "210.2",
@@ -8937,6 +23796,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Omen",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Omen": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "223",
     "rating": "1.03",
     "average_combat_score": "191.1",
@@ -8958,6 +23852,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "deadlock"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Deadlock",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Deadlock": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "61",
     "rating": "1.02",
     "average_combat_score": "191.0",
@@ -8980,6 +23912,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Deadlock",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Deadlock": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "204",
     "rating": "1.01",
     "average_combat_score": "166.7",
@@ -9001,6 +23971,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "204",
     "rating": "1.01",
     "average_combat_score": "187.4",
@@ -9023,6 +24028,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Yoru"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Yoru": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "125",
     "rating": "1.01",
     "average_combat_score": "215.7",
@@ -9045,6 +24085,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Sage"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Breach": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "125",
     "rating": "1.00",
     "average_combat_score": "182.3",
@@ -9067,6 +24145,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "KAY/O",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "KAY/O": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "229",
     "rating": "0.99",
     "average_combat_score": "199.4",
@@ -9088,6 +24201,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "112",
     "rating": "0.98",
     "average_combat_score": "169.2",
@@ -9109,6 +24257,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "243",
     "rating": "0.97",
     "average_combat_score": "189.5",
@@ -9131,6 +24317,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "229",
     "rating": "0.95",
     "average_combat_score": "175.1",
@@ -9153,6 +24377,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Neon": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "0.94",
     "average_combat_score": "213.6",
@@ -9175,6 +24434,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "229",
     "rating": "0.94",
     "average_combat_score": "216.6",
@@ -9196,6 +24490,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Sova",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Sova": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "175",
     "rating": "0.91",
     "average_combat_score": "175.8",
@@ -9218,6 +24550,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "125",
     "rating": "0.91",
     "average_combat_score": "215.8",
@@ -9239,6 +24609,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "175",
     "rating": "0.91",
     "average_combat_score": "184.4",
@@ -9259,6 +24664,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "112",
     "rating": "0.90",
     "average_combat_score": "214.8",
@@ -9281,6 +24721,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "KAY/O",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "KAY/O": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "175",
     "rating": "0.90",
     "average_combat_score": "165.4",
@@ -9301,6 +24776,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Chamber",
+        "Deadlock"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "112",
     "rating": "0.88",
     "average_combat_score": "163.2",
@@ -9323,6 +24833,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "305",
     "rating": "0.86",
     "average_combat_score": "152.1",
@@ -9343,6 +24891,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "112",
     "rating": "0.86",
     "average_combat_score": "174.2",
@@ -9364,6 +24947,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "127",
     "rating": "0.85",
     "average_combat_score": "164.8",
@@ -9386,6 +25004,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Gekko"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "243",
     "rating": "0.84",
     "average_combat_score": "161.2",
@@ -9406,6 +25059,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "71",
     "rating": "0.82",
     "average_combat_score": "186.8",
@@ -9428,6 +25116,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "229",
     "rating": "0.81",
     "average_combat_score": "148.6",
@@ -9450,6 +25173,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Viper",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Viper": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "125",
     "rating": "0.81",
     "average_combat_score": "154.0",
@@ -9472,6 +25233,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "243",
     "rating": "0.81",
     "average_combat_score": "203.5",
@@ -9493,6 +25289,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "71",
     "rating": "0.79",
     "average_combat_score": "143.0",
@@ -9515,6 +25346,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "deadlock"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Phoenix",
+        "Breach",
+        "Deadlock"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Phoenix": 80,
+        "Breach": 60,
+        "Deadlock": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "66",
     "rating": "0.74",
     "average_combat_score": "147.3",
@@ -9535,6 +25405,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "37",
     "rating": "0.74",
     "average_combat_score": "152.0",
@@ -9556,6 +25461,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "71",
     "rating": "0.72",
     "average_combat_score": "193.3",
@@ -9577,6 +25517,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "71",
     "rating": "0.69",
     "average_combat_score": "155.5",
@@ -9598,6 +25573,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "34",
     "rating": "0.29",
     "average_combat_score": "85.0",
@@ -9620,6 +25630,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Skye": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "274",
     "rating": "1.17",
     "average_combat_score": "215.1",
@@ -9642,6 +25687,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "veto",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Raze",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Raze": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "274",
     "rating": "1.16",
     "average_combat_score": "237.4",
@@ -9664,6 +25747,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Yoru"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "333",
     "rating": "1.16",
     "average_combat_score": "227.6",
@@ -9685,6 +25806,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "224",
     "rating": "1.16",
     "average_combat_score": "226.5",
@@ -9706,6 +25865,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Omen",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Omen": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "93",
     "rating": "1.12",
     "average_combat_score": "236.8",
@@ -9728,6 +25925,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Yoru",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Yoru": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "132",
     "rating": "1.05",
     "average_combat_score": "212.0",
@@ -9750,6 +25985,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "129",
     "rating": "1.04",
     "average_combat_score": "217.4",
@@ -9772,6 +26042,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "168",
     "rating": "1.04",
     "average_combat_score": "236.9",
@@ -9794,6 +26099,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "tejo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "129",
     "rating": "1.00",
     "average_combat_score": "178.0",
@@ -9816,6 +26156,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Astra",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Astra": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "333",
     "rating": "0.95",
     "average_combat_score": "182.3",
@@ -9837,6 +26212,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "132",
     "rating": "0.93",
     "average_combat_score": "178.4",
@@ -9858,6 +26268,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "129",
     "rating": "0.93",
     "average_combat_score": "214.7",
@@ -9880,6 +26325,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Fade"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "129",
     "rating": "0.93",
     "average_combat_score": "178.5",
@@ -9902,6 +26386,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Killjoy",
+        "Vyse"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Killjoy": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "132",
     "rating": "0.91",
     "average_combat_score": "196.7",
@@ -9924,6 +26446,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Deadlock",
+        "Astra",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Deadlock": 80,
+        "Astra": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "93",
     "rating": "0.90",
     "average_combat_score": "187.8",
@@ -9946,6 +26506,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "129",
     "rating": "0.90",
     "average_combat_score": "187.6",
@@ -9968,6 +26566,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "274",
     "rating": "0.89",
     "average_combat_score": "167.7",
@@ -9988,6 +26621,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
     "agents": [
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "129",
     "rating": "0.88",
     "average_combat_score": "175.1",
@@ -10009,6 +26677,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Skye": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "129",
     "rating": "0.88",
     "average_combat_score": "178.4",
@@ -10031,6 +26734,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Brimstone",
+        "Sova",
+        "Vyse"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Brimstone": 80,
+        "Sova": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "129",
     "rating": "0.87",
     "average_combat_score": "168.3",
@@ -10052,6 +26794,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Fade",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "93",
     "rating": "0.84",
     "average_combat_score": "169.0",
@@ -10073,6 +26853,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Iso",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "132",
     "rating": "0.82",
     "average_combat_score": "192.0",
@@ -10095,6 +26910,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "132",
     "rating": "0.79",
     "average_combat_score": "161.6",
@@ -10116,6 +26966,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "274",
     "rating": "0.78",
     "average_combat_score": "154.8",
@@ -10138,6 +27026,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "yoru",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "93",
     "rating": "0.71",
     "average_combat_score": "174.6",
@@ -10159,6 +27082,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Omen",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Omen": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "129",
     "rating": "0.69",
     "average_combat_score": "139.8",
@@ -10181,6 +27142,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "veto"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Cypher",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Cypher": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "93",
     "rating": "0.68",
     "average_combat_score": "132.0",
@@ -10202,6 +27201,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "101",
     "rating": "1.09",
     "average_combat_score": "221.4",
@@ -10224,6 +27258,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Yoru"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Yoru": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "106",
     "rating": "1.09",
     "average_combat_score": "235.6",
@@ -10246,6 +27315,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "waylay"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Yoru",
+        "Neon",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Yoru": 80,
+        "Neon": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "166",
     "rating": "1.08",
     "average_combat_score": "237.3",
@@ -10268,6 +27372,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "deadlock"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Viper",
+        "Deadlock"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Viper": 60,
+        "Deadlock": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "116",
     "rating": "1.05",
     "average_combat_score": "212.0",
@@ -10290,6 +27433,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "177",
     "rating": "1.04",
     "average_combat_score": "184.0",
@@ -10311,6 +27492,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "deadlock",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Deadlock",
+        "Omen"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Deadlock": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "336",
     "rating": "1.04",
     "average_combat_score": "206.1",
@@ -10332,6 +27551,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "363",
     "rating": "1.03",
     "average_combat_score": "186.5",
@@ -10354,6 +27608,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Sova": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "279",
     "rating": "1.03",
     "average_combat_score": "186.4",
@@ -10376,6 +27668,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "KAY/O": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "166",
     "rating": "1.00",
     "average_combat_score": "174.8",
@@ -10397,6 +27724,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Yoru",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Yoru": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "116",
     "rating": "0.99",
     "average_combat_score": "208.3",
@@ -10419,6 +27781,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "waylay",
       "clove"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Clove",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Clove": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "363",
     "rating": "0.99",
     "average_combat_score": "237.7",
@@ -10440,6 +27840,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Harbor",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Harbor": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "101",
     "rating": "0.99",
     "average_combat_score": "193.8",
@@ -10462,6 +27897,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Cypher",
+        "Vyse"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Cypher": 60,
+        "Vyse": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "279",
     "rating": "0.98",
     "average_combat_score": "209.4",
@@ -10483,6 +27956,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "177",
     "rating": "0.98",
     "average_combat_score": "184.8",
@@ -10505,6 +28013,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Neon"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Neon": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "106",
     "rating": "0.94",
     "average_combat_score": "194.8",
@@ -10527,6 +28073,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "177",
     "rating": "0.94",
     "average_combat_score": "213.4",
@@ -10549,6 +28130,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Chamber",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Chamber": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "106",
     "rating": "0.92",
     "average_combat_score": "168.6",
@@ -10571,6 +28190,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Cypher",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Cypher": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "177",
     "rating": "0.91",
     "average_combat_score": "168.4",
@@ -10593,6 +28250,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Chamber",
+        "Omen",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Chamber": 80,
+        "Omen": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "177",
     "rating": "0.90",
     "average_combat_score": "193.3",
@@ -10615,6 +28310,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Omen",
+        "Viper"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Omen": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "101",
     "rating": "0.88",
     "average_combat_score": "184.6",
@@ -10637,6 +28370,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Skye",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Skye": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "106",
     "rating": "0.88",
     "average_combat_score": "164.4",
@@ -10659,6 +28427,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Vyse",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Vyse": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "166",
     "rating": "0.85",
     "average_combat_score": "159.4",
@@ -10681,6 +28487,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "166",
     "rating": "0.82",
     "average_combat_score": "152.0",
@@ -10703,6 +28544,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Sova",
+        "Yoru"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Sova": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "166",
     "rating": "0.82",
     "average_combat_score": "164.3",
@@ -10725,6 +28604,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "vyse",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Vyse",
+        "Yoru"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Vyse": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "101",
     "rating": "0.82",
     "average_combat_score": "178.8",
@@ -10746,6 +28663,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "101",
     "rating": "0.82",
     "average_combat_score": "153.6",
@@ -10767,6 +28719,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "279",
     "rating": "0.82",
     "average_combat_score": "161.6",
@@ -10789,6 +28776,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "vyse"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Chamber",
+        "Vyse"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Chamber": 60,
+        "Vyse": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Killjoy": 20,
+        "Deadlock": 20
+      }
+    },
     "rounds_played": "336",
     "rating": "0.81",
     "average_combat_score": "169.4",
@@ -10811,6 +28833,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "KAY/O"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller",
+        "Initiator"
+      ]
+    },
     "rounds_played": "106",
     "rating": "0.80",
     "average_combat_score": "166.0",
@@ -10832,6 +28893,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Astra"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "116",
     "rating": "0.80",
     "average_combat_score": "161.0",
@@ -10853,6 +28949,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Iso"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1085",
     "rating": "1.10",
     "average_combat_score": "230.9",
@@ -10875,6 +29006,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "KAY/O"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "KAY/O": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "973",
     "rating": "1.10",
     "average_combat_score": "216.5",
@@ -10897,6 +29066,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Sage",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Sage": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "973",
     "rating": "1.10",
     "average_combat_score": "207.3",
@@ -10919,6 +29126,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Raze",
+        "Sage"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Raze": 60,
+        "Sage": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "667",
     "rating": "1.06",
     "average_combat_score": "226.5",
@@ -10941,6 +29186,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "987",
     "rating": "1.06",
     "average_combat_score": "189.8",
@@ -10963,6 +29243,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "KAY/O",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "KAY/O": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "891",
     "rating": "1.06",
     "average_combat_score": "208.5",
@@ -10985,6 +29304,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Killjoy",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Killjoy": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "1437",
     "rating": "1.05",
     "average_combat_score": "216.5",
@@ -11007,6 +29364,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "671",
     "rating": "1.05",
     "average_combat_score": "209.6",
@@ -11029,6 +29424,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Raze",
+        "KAY/O"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Raze": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Initiator"
+      ]
+    },
     "rounds_played": "810",
     "rating": "1.04",
     "average_combat_score": "187.7",
@@ -11051,6 +29485,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Neon",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Neon": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "884",
     "rating": "1.04",
     "average_combat_score": "232.4",
@@ -11073,6 +29542,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Harbor",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Harbor": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "1085",
     "rating": "1.04",
     "average_combat_score": "191.9",
@@ -11095,6 +29602,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Jett",
+        "Raze"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Jett": 60,
+        "Raze": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1091",
     "rating": "1.03",
     "average_combat_score": "220.4",
@@ -11117,6 +29659,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Jett",
+        "Killjoy"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Jett": 60,
+        "Killjoy": 40,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "1437",
     "rating": "1.03",
     "average_combat_score": "217.7",
@@ -11139,6 +29719,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "667",
     "rating": "1.03",
     "average_combat_score": "208.2",
@@ -11161,6 +29779,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Sova",
+        "Skye"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Sova": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "884",
     "rating": "1.02",
     "average_combat_score": "187.4",
@@ -11183,6 +29839,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "KAY/O",
+        "Raze"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "KAY/O": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "671",
     "rating": "1.02",
     "average_combat_score": "225.2",
@@ -11205,6 +29899,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Skye",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Skye": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "810",
     "rating": "1.02",
     "average_combat_score": "211.4",
@@ -11227,6 +29956,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "KAY/O": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "700",
     "rating": "1.02",
     "average_combat_score": "196.2",
@@ -11249,6 +30013,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Fade": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "562",
     "rating": "1.01",
     "average_combat_score": "192.0",
@@ -11271,6 +30070,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Harbor",
+        "Gekko"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Harbor": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller",
+        "Initiator"
+      ]
+    },
     "rounds_played": "527",
     "rating": "1.01",
     "average_combat_score": "210.4",
@@ -11293,6 +30131,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Killjoy",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Killjoy": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "810",
     "rating": "1.01",
     "average_combat_score": "178.6",
@@ -11315,6 +30191,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Breach",
+        "Sova"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Breach": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "802",
     "rating": "1.01",
     "average_combat_score": "181.2",
@@ -11337,6 +30251,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "KAY/O",
+        "Fade"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "KAY/O": 60,
+        "Fade": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "667",
     "rating": "1.00",
     "average_combat_score": "190.2",
@@ -11359,6 +30311,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Brimstone",
+        "Harbor"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Brimstone": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Omen": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "908",
     "rating": "1.00",
     "average_combat_score": "181.2",
@@ -11381,6 +30368,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "802",
     "rating": "0.99",
     "average_combat_score": "190.8",
@@ -11403,6 +30425,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "neon",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Neon",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Neon": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "620",
     "rating": "0.99",
     "average_combat_score": "224.8",
@@ -11425,6 +30482,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Astra",
+        "Breach"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Astra": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller",
+        "Initiator"
+      ]
+    },
     "rounds_played": "1053",
     "rating": "0.99",
     "average_combat_score": "189.4",
@@ -11447,6 +30543,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Brimstone",
+        "Sage"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Brimstone": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "681",
     "rating": "0.98",
     "average_combat_score": "191.6",
@@ -11469,6 +30604,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Sage",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Sage": 60,
+        "Neon": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "507",
     "rating": "0.97",
     "average_combat_score": "204.3",
@@ -11491,6 +30664,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Sage",
+        "Killjoy"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Sage": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "645",
     "rating": "0.97",
     "average_combat_score": "206.6",
@@ -11513,6 +30721,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "jett"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Neon",
+        "Raze",
+        "Jett"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Neon": 80,
+        "Raze": 60,
+        "Jett": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "621",
     "rating": "0.97",
     "average_combat_score": "209.3",
@@ -11535,6 +30778,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Viper",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Viper": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "645",
     "rating": "0.97",
     "average_combat_score": "187.5",
@@ -11557,6 +30838,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "astra"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Astra"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Astra": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "908",
     "rating": "0.97",
     "average_combat_score": "196.0",
@@ -11579,6 +30898,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1352",
     "rating": "0.97",
     "average_combat_score": "169.3",
@@ -11601,6 +30955,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Killjoy"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "1006",
     "rating": "0.96",
     "average_combat_score": "178.6",
@@ -11623,6 +31015,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Sova"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "578",
     "rating": "0.96",
     "average_combat_score": "165.4",
@@ -11645,6 +31072,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Raze",
+        "KAY/O"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Raze": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist",
+        "Initiator"
+      ]
+    },
     "rounds_played": "908",
     "rating": "0.96",
     "average_combat_score": "208.9",
@@ -11667,6 +31133,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "891",
     "rating": "0.95",
     "average_combat_score": "183.2",
@@ -11689,6 +31190,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "1091",
     "rating": "0.95",
     "average_combat_score": "188.4",
@@ -11711,6 +31250,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Omen",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Omen": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "551",
     "rating": "0.95",
     "average_combat_score": "177.2",
@@ -11733,6 +31307,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Fade",
+        "Breach",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Fade": 80,
+        "Breach": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "554",
     "rating": "0.94",
     "average_combat_score": "191.0",
@@ -11755,6 +31364,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sage",
       "raze"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Sage",
+        "Raze"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Sage": 60,
+        "Raze": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "578",
     "rating": "0.94",
     "average_combat_score": "199.1",
@@ -11777,6 +31424,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Astra",
+        "Harbor"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Astra": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "667",
     "rating": "0.92",
     "average_combat_score": "173.8",
@@ -11799,6 +31481,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Breach",
+        "Sage"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Breach": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "843",
     "rating": "0.92",
     "average_combat_score": "175.1",
@@ -11821,6 +31541,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "astra",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Astra",
+        "Breach"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Astra": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller",
+        "Initiator"
+      ]
+    },
     "rounds_played": "1088",
     "rating": "0.92",
     "average_combat_score": "164.8",
@@ -11843,6 +31602,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "752",
     "rating": "0.91",
     "average_combat_score": "179.3",
@@ -11865,6 +31662,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Harbor"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "671",
     "rating": "0.91",
     "average_combat_score": "165.8",
@@ -11887,6 +31722,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "743",
     "rating": "0.91",
     "average_combat_score": "180.9",
@@ -11909,6 +31782,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Harbor",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Harbor": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "810",
     "rating": "0.91",
     "average_combat_score": "170.1",
@@ -11931,6 +31842,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Sova",
+        "Killjoy"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Sova": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "884",
     "rating": "0.91",
     "average_combat_score": "201.8",
@@ -11953,6 +31902,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Omen",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Omen": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "990",
     "rating": "0.90",
     "average_combat_score": "182.7",
@@ -11975,6 +31962,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "skye",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Skye",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Skye": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "1085",
     "rating": "0.90",
     "average_combat_score": "172.6",
@@ -11997,6 +32019,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Killjoy",
+        "Cypher"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Killjoy": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "578",
     "rating": "0.87",
     "average_combat_score": "165.4",
@@ -12019,6 +32079,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Fade": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "667",
     "rating": "0.87",
     "average_combat_score": "168.1",
@@ -12041,6 +32139,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "KAY/O",
+        "Harbor"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "KAY/O": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "884",
     "rating": "0.87",
     "average_combat_score": "164.0",
@@ -12063,6 +32199,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Astra",
+        "Viper",
+        "Omen"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Astra": 80,
+        "Viper": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "973",
     "rating": "0.87",
     "average_combat_score": "168.0",
@@ -12085,6 +32256,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Breach",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Breach": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Initiator",
+        "Controller"
+      ]
+    },
     "rounds_played": "1437",
     "rating": "0.86",
     "average_combat_score": "173.0",
@@ -12107,6 +32317,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Breach",
+        "Omen"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Breach": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "1088",
     "rating": "0.86",
     "average_combat_score": "168.2",
@@ -12129,6 +32377,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "kayo",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "KAY/O",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "KAY/O": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "551",
     "rating": "0.86",
     "average_combat_score": "190.6",
@@ -12151,6 +32434,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Killjoy",
+        "Harbor"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Killjoy": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "562",
     "rating": "0.85",
     "average_combat_score": "170.1",
@@ -12173,6 +32494,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "phoenix",
       "neon"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Jett",
+        "Phoenix",
+        "Neon"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Jett": 80,
+        "Phoenix": 60,
+        "Neon": 40,
+        "Reyna": 20,
+        "Raze": 20,
+        "Yoru": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "551",
     "rating": "0.84",
     "average_combat_score": "197.7",
@@ -12195,6 +32551,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Omen",
+        "Brimstone"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Omen": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Cypher": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "585",
     "rating": "0.79",
     "average_combat_score": "157.6",
@@ -12217,6 +32611,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "712",
     "rating": "0.70",
     "average_combat_score": "126.6",
@@ -12239,6 +32671,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Gekko",
+        "Sova",
+        "Fade"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Gekko": 80,
+        "Sova": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "631",
     "rating": "0.98",
     "average_combat_score": "189.8",
@@ -12261,6 +32728,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "fade"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Fade"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Fade": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "1205",
     "rating": "0.96",
     "average_combat_score": "184.8",
@@ -12283,6 +32788,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "chamber",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Chamber",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Chamber": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "1065",
     "rating": "0.95",
     "average_combat_score": "186.1",
@@ -12304,6 +32847,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Chamber"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      }
+    },
     "rounds_played": "607",
     "rating": "0.94",
     "average_combat_score": "183.5",
@@ -12326,6 +32904,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Gekko"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Gekko": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "631",
     "rating": "0.93",
     "average_combat_score": "213.8",
@@ -12348,6 +32964,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Sova",
+        "Breach"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Sova": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "795",
     "rating": "0.93",
     "average_combat_score": "182.2",
@@ -12370,6 +33024,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "631",
     "rating": "0.92",
     "average_combat_score": "166.0",
@@ -12392,6 +33084,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "omen",
       "sage"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Omen",
+        "Sage"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Omen": 60,
+        "Sage": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "631",
     "rating": "0.91",
     "average_combat_score": "179.9",
@@ -12414,6 +33144,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Gekko",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Gekko": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "631",
     "rating": "0.91",
     "average_combat_score": "181.4",
@@ -12436,6 +33201,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "528",
     "rating": "0.91",
     "average_combat_score": "170.8",
@@ -12458,6 +33261,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Cypher",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Cypher": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "530",
     "rating": "0.90",
     "average_combat_score": "174.1",
@@ -12480,6 +33321,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "cypher",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Killjoy",
+        "Cypher",
+        "Viper"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Killjoy": 80,
+        "Cypher": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "620",
     "rating": "0.90",
     "average_combat_score": "183.1",
@@ -12502,6 +33381,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "omen"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sage",
+        "Brimstone",
+        "Omen"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Sage": 80,
+        "Brimstone": 60,
+        "Omen": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Cypher": 20,
+        "Killjoy": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "683",
     "rating": "0.90",
     "average_combat_score": "175.1",
@@ -12524,6 +33441,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "gekko"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Viper",
+        "Gekko"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Viper": 60,
+        "Gekko": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "822",
     "rating": "0.89",
     "average_combat_score": "174.9",
@@ -12546,6 +33501,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "raze",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Raze",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Raze": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Duelist",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "652",
     "rating": "0.89",
     "average_combat_score": "192.8",
@@ -12568,6 +33562,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Sova",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Sova": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "795",
     "rating": "0.88",
     "average_combat_score": "172.9",
@@ -12590,6 +33619,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "564",
     "rating": "0.86",
     "average_combat_score": "153.4",
@@ -12612,6 +33679,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "fade",
       "breach"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Fade",
+        "Breach"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Fade": 60,
+        "Breach": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "740",
     "rating": "0.86",
     "average_combat_score": "167.6",
@@ -12634,6 +33736,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "harbor",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Harbor",
+        "Cypher"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Harbor": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "620",
     "rating": "0.85",
     "average_combat_score": "166.6",
@@ -12656,6 +33796,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Sova",
+        "Viper"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Sova": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "575",
     "rating": "0.85",
     "average_combat_score": "161.8",
@@ -12678,6 +33856,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Skye",
+        "Sova",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Skye": 80,
+        "Sova": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "620",
     "rating": "0.83",
     "average_combat_score": "156.8",
@@ -12700,6 +33913,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Killjoy",
+        "Harbor"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Killjoy": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Controller"
+      ]
+    },
     "rounds_played": "632",
     "rating": "0.83",
     "average_combat_score": "172.0",
@@ -12722,6 +33973,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "kayo"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Sova",
+        "KAY/O"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Sova": 60,
+        "KAY/O": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "564",
     "rating": "0.80",
     "average_combat_score": "155.4",
@@ -12744,6 +34030,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "sova"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Harbor",
+        "Gekko",
+        "Sova"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Harbor": 80,
+        "Gekko": 60,
+        "Sova": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "827",
     "rating": "",
     "average_combat_score": "177.2",
@@ -12766,6 +34090,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "breach",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Breach",
+        "Viper"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Breach": 60,
+        "Viper": 40,
+        "Jett": 20,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator",
+        "Controller"
+      ]
+    },
     "rounds_played": "691",
     "rating": "",
     "average_combat_score": "164.3",
@@ -12788,6 +34151,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Gekko",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Gekko": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "585",
     "rating": "",
     "average_combat_score": "196.1",
@@ -12810,6 +34208,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Killjoy"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Killjoy": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "529",
     "rating": "",
     "average_combat_score": "201.6",
@@ -12832,6 +34268,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "gekko",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Gekko",
+        "Skye"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Gekko": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Fade": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "534",
     "rating": "",
     "average_combat_score": "192.0",
@@ -12854,6 +34325,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Raze",
+        "Jett",
+        "Killjoy"
+      ],
+      "primaryRole": "Duelist",
+      "agentMastery": {
+        "Raze": 80,
+        "Jett": 60,
+        "Killjoy": 40,
+        "Reyna": 20,
+        "Phoenix": 20,
+        "Yoru": 20,
+        "Neon": 20,
+        "Iso": 20,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel"
+      ]
+    },
     "rounds_played": "567",
     "rating": "",
     "average_combat_score": "234.3",
@@ -12876,6 +34385,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "cypher"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Sova",
+        "Viper",
+        "Cypher"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Sova": 80,
+        "Viper": 60,
+        "Cypher": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Sentinel"
+      ]
+    },
     "rounds_played": "708",
     "rating": "",
     "average_combat_score": "185.3",
@@ -12898,6 +34446,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "brimstone",
       "viper"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Brimstone",
+        "Viper"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Brimstone": 60,
+        "Viper": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "649",
     "rating": "",
     "average_combat_score": "183.0",
@@ -12920,6 +34503,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "978",
     "rating": "",
     "average_combat_score": "179.5",
@@ -12942,6 +34560,41 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "brimstone"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Viper",
+        "Brimstone"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Viper": 60,
+        "Brimstone": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      }
+    },
     "rounds_played": "662",
     "rating": "",
     "average_combat_score": "193.1",
@@ -12964,6 +34617,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "sova",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Viper",
+        "Sova",
+        "Skye"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Viper": 80,
+        "Sova": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Omen": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Initiator"
+      ]
+    },
     "rounds_played": "826",
     "rating": "",
     "average_combat_score": "167.9",
@@ -12986,6 +34677,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "harbor"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Breach",
+        "Killjoy",
+        "Harbor"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "Breach": 80,
+        "Killjoy": 60,
+        "Harbor": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Skye": 20,
+        "KAY/O": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
     "rounds_played": "662",
     "rating": "",
     "average_combat_score": "189.9",
@@ -13008,6 +34738,44 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "jett",
       "killjoy"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Cypher",
+        "Jett",
+        "Killjoy"
+      ],
+      "primaryRole": "Sentinel",
+      "agentMastery": {
+        "Cypher": 80,
+        "Jett": 60,
+        "Killjoy": 40,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "Skye": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Viper": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 20,
+        "Chamber": 20,
+        "Deadlock": 20,
+        "Vyse": 20
+      },
+      "flexRoles": [
+        "Duelist"
+      ]
+    },
     "rounds_played": "662",
     "rating": "",
     "average_combat_score": "216.1",
@@ -13030,6 +34798,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "viper",
       "yoru"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "KAY/O",
+        "Viper",
+        "Yoru"
+      ],
+      "primaryRole": "Initiator",
+      "agentMastery": {
+        "KAY/O": 80,
+        "Viper": 60,
+        "Yoru": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 20,
+        "Breach": 20,
+        "Skye": 20,
+        "Fade": 20,
+        "Gekko": 20,
+        "Brimstone": 10,
+        "Omen": 10,
+        "Astra": 10,
+        "Harbor": 10,
+        "Clove": 10,
+        "Sage": 10,
+        "Cypher": 10,
+        "Killjoy": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Controller",
+        "Duelist"
+      ]
+    },
     "rounds_played": "656",
     "rating": "",
     "average_combat_score": "180.9",
@@ -13052,6 +34859,45 @@ export const VLR_PLAYER_STATS: Record<string, VlrPlayerStats[]> = {
       "killjoy",
       "skye"
     ],
+    "computedAgentPreferences": {
+      "preferredAgents": [
+        "Omen",
+        "Killjoy",
+        "Skye"
+      ],
+      "primaryRole": "Controller",
+      "agentMastery": {
+        "Omen": 80,
+        "Killjoy": 60,
+        "Skye": 40,
+        "Jett": 10,
+        "Reyna": 10,
+        "Phoenix": 10,
+        "Raze": 10,
+        "Yoru": 10,
+        "Neon": 10,
+        "Iso": 10,
+        "Sova": 10,
+        "Breach": 10,
+        "KAY/O": 10,
+        "Fade": 10,
+        "Gekko": 10,
+        "Brimstone": 20,
+        "Viper": 20,
+        "Astra": 20,
+        "Harbor": 20,
+        "Clove": 20,
+        "Sage": 10,
+        "Cypher": 10,
+        "Chamber": 10,
+        "Deadlock": 10,
+        "Vyse": 10
+      },
+      "flexRoles": [
+        "Sentinel",
+        "Initiator"
+      ]
+    },
     "rounds_played": "656",
     "rating": "",
     "average_combat_score": "193.2",

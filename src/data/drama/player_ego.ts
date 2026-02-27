@@ -215,6 +215,40 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
   },
 
   {
+    id: 'forced_off_agent',
+    category: 'player_ego',
+    severity: 'minor',
+    title: 'Playing Outside Their Comfort Zone',
+    description: '{playerName} has been put on agents they\'re clearly uncomfortable with. You can see it affecting their performance and their mood.',
+    conditions: [
+      { type: 'no_recent_match' },
+      {
+        type: 'player_morale_below',
+        threshold: 55,
+        playerSelector: 'any',
+      },
+      { type: 'scrim_count_min', threshold: 3 },
+      { type: 'random_chance', chance: 40 },
+    ],
+    probability: 50,
+    cooldownDays: 7,
+    effects: [
+      {
+        target: 'player_morale',
+        effectPlayerSelector: 'triggering',
+        delta: -8,
+      },
+      {
+        target: 'set_flag',
+        flag: 'ego_underutilized_{playerId}',
+        flagDuration: 14,
+      },
+    ],
+    escalateDays: 7,
+    escalationTemplateId: 'ego_role_demand',
+  },
+
+  {
     id: 'ego_trade_request',
     category: 'player_ego',
     severity: 'major',

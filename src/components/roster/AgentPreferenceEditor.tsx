@@ -172,22 +172,47 @@ export function AgentPreferenceEditor({
               Top 3 agents for {preferences.primaryRole} role (in order of preference)
             </p>
             <div className="space-y-3">
-              {[0, 1, 2].map((index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <span className="text-sm text-vct-gray w-6">#{index + 1}</span>
-                  <select
-                    value={preferences.preferredAgents[index as 0 | 1 | 2]}
-                    onChange={(e) => handleAgentChange(index as 0 | 1 | 2, e.target.value)}
-                    className={`flex-1 p-2 rounded-lg border ${ROLE_BG[preferences.primaryRole]} border-vct-gray/30 text-vct-light bg-vct-dark focus:outline-none focus:border-vct-red`}
-                  >
-                    {primaryRoleAgents.map((agent) => (
-                      <option key={agent} value={agent}>
-                        {agent}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ))}
+              {[0, 1, 2].map((index) => {
+                const agentName = preferences.preferredAgents[index as 0 | 1 | 2];
+                const mastery = existingPrefs?.agentMastery?.[agentName] ?? 0;
+                return (
+                  <div key={index} className="space-y-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-vct-gray w-6">#{index + 1}</span>
+                      <select
+                        value={agentName}
+                        onChange={(e) => handleAgentChange(index as 0 | 1 | 2, e.target.value)}
+                        className={`flex-1 p-2 rounded-lg border ${ROLE_BG[preferences.primaryRole]} border-vct-gray/30 text-vct-light bg-vct-dark focus:outline-none focus:border-vct-red`}
+                      >
+                        {primaryRoleAgents.map((agent) => (
+                          <option key={agent} value={agent}>
+                            {agent}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {existingPrefs && (
+                      <div className="flex items-center gap-2 pl-9">
+                        <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all ${
+                              mastery >= 80
+                                ? 'bg-green-400'
+                                : mastery >= 60
+                                ? 'bg-yellow-400'
+                                : mastery >= 30
+                                ? 'bg-orange-400'
+                                : 'bg-red-400'
+                            }`}
+                            style={{ width: `${mastery}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-vct-gray w-16">Mastery {mastery}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

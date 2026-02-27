@@ -10,6 +10,7 @@ import type {
   PlayerMapPerformance,
   EnhancedRoundInfo,
   TeamStrategy,
+  PlayerAgentPreferences,
 } from '../../types';
 import { MAPS } from '../../utils/constants';
 
@@ -18,6 +19,7 @@ import { EconomyEngine } from './EconomyEngine';
 import { UltimateEngine } from './UltimateEngine';
 import { CompositionEngine } from './CompositionEngine';
 import { RoundSimulator, type TeamRoundContext, type RoundPlayerPerformance } from './RoundSimulator';
+import { agentMasteryEngine } from '../player/AgentMasteryEngine';
 
 export class MatchSimulator {
   private economyEngine: EconomyEngine;
@@ -54,7 +56,8 @@ export class MatchSimulator {
     rivalryIntensity?: number,
     teamAHypeLevel?: number,
     teamBHypeLevel?: number,
-    isPlayoffMatch?: boolean
+    isPlayoffMatch?: boolean,
+    allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -114,7 +117,8 @@ export class MatchSimulator {
         teamAStrategy,
         teamBStrategy,
         rivalry,
-        playoff
+        playoff,
+        allPlayerAgentPreferences
       );
       maps.push(mapResult);
 
@@ -302,14 +306,24 @@ export class MatchSimulator {
     strategyA: TeamStrategy,
     strategyB: TeamStrategy,
     rivalryIntensity: number = 0,
-    isPlayoffMatch: boolean = false
+    isPlayoffMatch: boolean = false,
+    allPreferences?: Record<string, PlayerAgentPreferences>
   ): MapResult {
-    const adjustedStrengthA = teamAStrength;
-    const adjustedStrengthB = teamBStrength;
-
     // Select agents for each team
     const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
     const agentSelectionB = this.compositionEngine.selectAgents(playersB, strategyB, mapName);
+
+    // Apply mastery modifier if preferences are available
+    const prefs = allPreferences ?? {};
+    const masteryModifierA = agentMasteryEngine.calculateTeamMasteryModifier(
+      playersA, agentSelectionA.assignments, prefs
+    );
+    const masteryModifierB = agentMasteryEngine.calculateTeamMasteryModifier(
+      playersB, agentSelectionB.assignments, prefs
+    );
+
+    const adjustedStrengthA = teamAStrength * (1 + masteryModifierA);
+    const adjustedStrengthB = teamBStrength * (1 + masteryModifierB);
 
     const agentsA = playersA.map((p) => agentSelectionA.assignments[p.id]);
     const agentsB = playersB.map((p) => agentSelectionB.assignments[p.id]);

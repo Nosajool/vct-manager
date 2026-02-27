@@ -2,6 +2,7 @@
 // Types for the unofficial vlrggapi (https://github.com/axsddlr/vlrggapi)
 
 import type { Region } from './player';
+import type { PlayerAgentPreferences } from './strategy';
 
 /** VLR API region parameter values */
 export type VlrRegion =
@@ -52,6 +53,8 @@ export interface VlrPlayerStats {
   first_deaths_per_round: string; // FDPR (e.g., "0.13")
   headshot_percentage: string; // HS% (e.g., "26%")
   clutch_success_percentage: string; // Clutch % (e.g., "28%")
+  /** Agent preferences derived from VLR agent usage at snapshot time */
+  computedAgentPreferences?: PlayerAgentPreferences;
 }
 
 /** Team ranking from VLR API /rankings endpoint */

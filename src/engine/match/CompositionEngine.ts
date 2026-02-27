@@ -10,6 +10,7 @@ import type {
   PlayerAgentPreferences,
 } from '../../types';
 import { COMPOSITION_CONSTANTS } from './constants';
+import { agentMasteryEngine } from '../player/AgentMasteryEngine';
 
 /**
  * Map-specific agent preferences (some agents are better on certain maps)
@@ -191,12 +192,16 @@ export class CompositionEngine {
     const assignments: Record<string, string> = {};
     const usedAgents = new Set<string>();
 
-    // Sort players by their role flexibility (less flexible first)
-    const sortedPlayers = [...players].sort((a, b) => {
-      const flexA = a.agentPreferences?.flexRoles?.length || 0;
-      const flexB = b.agentPreferences?.flexRoles?.length || 0;
-      return flexA - flexB;
-    });
+    if (!strategy) {
+      throw new Error('TeamStrategy is required');
+    }
+
+    const { defaultComposition } = strategy;
+    if (!defaultComposition) {
+      return this.getDefaultAgentSelection(players, mapName);
+    }
+
+    const mapPreferences = MAP_AGENT_PREFERENCES[mapName] || [];
 
     // Track role counts to meet composition requirements
     const roleCounts: Record<AgentRole, number> = {
@@ -206,74 +211,74 @@ export class CompositionEngine {
       Sentinel: 0,
     };
 
-    // Safety check for strategy
-    if (!strategy) {
-      throw new Error('TeamStrategy is required');
-    }
-    
-    // Safety check for strategy
-    if (!strategy) {
-      throw new Error('TeamStrategy is required');
-    }
-    
-    // Extract defaultComposition safely
-    const { defaultComposition } = strategy;
-    if (!defaultComposition) {
-      return this.getDefaultAgentSelection(players, mapName);
-    }
-    
-    const mapPreferences = MAP_AGENT_PREFERENCES[mapName] || [];
+    // CompositionRequirements uses lowercase keys — helper to look up correctly
+    const getNeeded = (role: AgentRole): number =>
+      defaultComposition[role.toLowerCase() as keyof typeof defaultComposition] || 0;
 
-    // Second pass: fill remaining players with flex roles
+    // Sort players by role flexibility ascending (less flexible = harder to reassign, serve first)
+    const sortedPlayers = [...players].sort((a, b) => {
+      const flexA = a.agentPreferences?.flexRoles?.length || 0;
+      const flexB = b.agentPreferences?.flexRoles?.length || 0;
+      return flexA - flexB;
+    });
+
+    // First pass: assign each player to their primaryRole if composition still needs it.
+    // This ensures a player manually set to Duelist actually plays Duelist.
+    for (const player of sortedPlayers) {
+      const primaryRole = player.agentPreferences?.primaryRole;
+      if (!primaryRole) continue;
+      if (roleCounts[primaryRole] < getNeeded(primaryRole)) {
+        const agent = this.selectBestAgent(
+          player.agentPreferences,
+          primaryRole,
+          usedAgents,
+          mapPreferences
+        );
+        assignments[player.id] = agent;
+        usedAgents.add(agent);
+        roleCounts[primaryRole]++;
+      }
+    }
+
+    // Second pass: assign remaining players (primaryRole slot was already filled)
+    // using their flexRoles, then any unfilled role.
     for (const player of sortedPlayers) {
       if (assignments[player.id]) continue;
 
       const prefs = player.agentPreferences;
-      const flexRoles = prefs?.flexRoles || ['Initiator', 'Duelist'] as AgentRole[];
+      const flexRoles = prefs?.flexRoles || (['Initiator', 'Duelist'] as AgentRole[]);
 
-      // Find a role that still needs filling
       let assignedRole: AgentRole | null = null;
+
+      // Try flex roles first
       for (const role of flexRoles) {
-        // Ensure consistent role comparison
-        const roleKey = role as keyof typeof defaultComposition;
-        const needed = defaultComposition?.[roleKey] || 0;
-        if (roleCounts[role] < needed) {
+        if (roleCounts[role] < getNeeded(role)) {
           assignedRole = role;
           break;
         }
       }
 
-      // If no flex role needed, fill any remaining role
+      // Fill any remaining unfilled role
       if (!assignedRole) {
-        for (const [role, count] of Object.entries(roleCounts)) {
-          const needed = defaultComposition[role.toLowerCase() as keyof typeof defaultComposition] || 0;
-          if (count < needed) {
-            assignedRole = role as AgentRole;
+        for (const [role] of Object.entries(roleCounts) as [AgentRole, number][]) {
+          if (roleCounts[role] < getNeeded(role)) {
+            assignedRole = role;
             break;
           }
         }
       }
 
-      // Still nothing? Pick based on team needs
+      // Last resort: lowest count role
       if (!assignedRole) {
-        // Default to lowest count role
-        assignedRole = (Object.entries(roleCounts)
-          .sort(([, a], [, b]) => a - b)[0][0] as AgentRole);
+        assignedRole = Object.entries(roleCounts).sort(([, a], [, b]) => a - b)[0][0] as AgentRole;
       }
 
-      const agent = this.selectBestAgent(
-        prefs,
-        assignedRole,
-        usedAgents,
-        mapPreferences
-      );
-
+      const agent = this.selectBestAgent(prefs, assignedRole, usedAgents, mapPreferences);
       assignments[player.id] = agent;
       usedAgents.add(agent);
       roleCounts[assignedRole]++;
     }
 
-    // Calculate composition bonus
     const bonus = this.calculateCompositionBonus(roleCounts);
 
     return {
@@ -380,6 +385,7 @@ export class CompositionEngine {
       preferredAgents,
       primaryRole,
       flexRoles,
+      agentMastery: agentMasteryEngine.getDefaultMastery(preferredAgents, primaryRole),
     };
   }
 

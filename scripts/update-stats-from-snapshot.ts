@@ -23,6 +23,13 @@ import * as path from 'path';
 import * as cheerio from 'cheerio';
 import { getCountryFromVlrCode, extractCountryCodeFromClass } from '../src/utils/vlrCountryMapping';
 
+interface AgentPreferences {
+  preferredAgents: [string, string, string];
+  primaryRole: string;
+  flexRoles?: string[];
+  agentMastery?: Record<string, number>;
+}
+
 interface VlrPlayerStats {
   player: string;
   org: string;
@@ -40,6 +47,117 @@ interface VlrPlayerStats {
   first_deaths_per_round: string;
   headshot_percentage: string;
   clutch_success_percentage: string;
+  computedAgentPreferences?: AgentPreferences;
+}
+
+// Agent role mapping (mirrors COMPOSITION_CONSTANTS.AGENT_ROLES in constants.ts)
+const AGENT_ROLES: Record<string, string> = {
+  Jett: 'Duelist',
+  Reyna: 'Duelist',
+  Phoenix: 'Duelist',
+  Raze: 'Duelist',
+  Yoru: 'Duelist',
+  Neon: 'Duelist',
+  Iso: 'Duelist',
+  Sova: 'Initiator',
+  Breach: 'Initiator',
+  Skye: 'Initiator',
+  'KAY/O': 'Initiator',
+  Fade: 'Initiator',
+  Gekko: 'Initiator',
+  Brimstone: 'Controller',
+  Omen: 'Controller',
+  Viper: 'Controller',
+  Astra: 'Controller',
+  Harbor: 'Controller',
+  Clove: 'Controller',
+  Sage: 'Sentinel',
+  Cypher: 'Sentinel',
+  Killjoy: 'Sentinel',
+  Chamber: 'Sentinel',
+  Deadlock: 'Sentinel',
+  Vyse: 'Sentinel',
+};
+
+const AGENTS_BY_ROLE: Record<string, string[]> = {
+  Duelist: ['Jett', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Neon', 'Iso'],
+  Initiator: ['Sova', 'Breach', 'Skye', 'KAY/O', 'Fade', 'Gekko'],
+  Controller: ['Brimstone', 'Omen', 'Viper', 'Astra', 'Harbor', 'Clove'],
+  Sentinel: ['Sage', 'Cypher', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse'],
+};
+
+/**
+ * Convert VLR lowercase agent name to canonical game name.
+ * Handles special cases like "kayo" → "KAY/O"; all others are title-cased.
+ */
+function normalizeAgentName(lowercase: string): string | null {
+  const special: Record<string, string> = {
+    kayo: 'KAY/O',
+  };
+  if (special[lowercase]) return special[lowercase];
+  const titleCased = lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
+  return AGENT_ROLES[titleCased] ? titleCased : null;
+}
+
+/**
+ * Compute PlayerAgentPreferences from a VLR agents array (most-played first).
+ * Returns null if the primary agent cannot be resolved to a known role.
+ */
+function computeAgentPreferences(agents: string[]): AgentPreferences | null {
+  // Normalize all agent names, dropping unknowns
+  const normalized = agents
+    .map(normalizeAgentName)
+    .filter((a): a is string => a !== null);
+
+  if (normalized.length === 0) return null;
+
+  const primaryAgent = normalized[0];
+  const primaryRole = AGENT_ROLES[primaryAgent];
+  if (!primaryRole) return null;
+
+  // Build preferredAgents: up to 3 from normalized list, padded with role peers
+  const preferred: string[] = normalized.slice(0, 3);
+  if (preferred.length < 3) {
+    const roleAgents = (AGENTS_BY_ROLE[primaryRole] || []).sort();
+    for (const agent of roleAgents) {
+      if (preferred.length >= 3) break;
+      if (!preferred.includes(agent)) {
+        preferred.push(agent);
+      }
+    }
+  }
+
+  // flexRoles: unique roles from agents[1+] that differ from primaryRole, max 2
+  const flexRoleSet = new Set<string>();
+  for (const agent of normalized.slice(1)) {
+    const role = AGENT_ROLES[agent];
+    if (role && role !== primaryRole) {
+      flexRoleSet.add(role);
+    }
+    if (flexRoleSet.size >= 2) break;
+  }
+
+  // agentMastery
+  const agentMastery: Record<string, number> = {};
+  // Top agents get tiered mastery
+  if (normalized[0]) agentMastery[normalized[0]] = 80;
+  if (normalized[1]) agentMastery[normalized[1]] = 60;
+  if (normalized[2]) agentMastery[normalized[2]] = 40;
+  // Other known agents
+  for (const [agent, role] of Object.entries(AGENT_ROLES)) {
+    if (agentMastery[agent] !== undefined) continue;
+    agentMastery[agent] = role === primaryRole ? 20 : 10;
+  }
+
+  const result: AgentPreferences = {
+    preferredAgents: preferred as [string, string, string],
+    primaryRole,
+    agentMastery,
+  };
+  if (flexRoleSet.size > 0) {
+    result.flexRoles = [...flexRoleSet];
+  }
+  return result;
 }
 
 const SNAPSHOTS_DIR = path.join(process.cwd(), 'src/data/statsSnapshots');
@@ -123,11 +241,14 @@ function parseHtmlStats(html: string): VlrPlayerStats[] {
       return text.replace(/[^\d.%]/g, '').trim();
     };
     
+    const computedAgentPreferences = computeAgentPreferences(agents) ?? undefined;
+
     const player: VlrPlayerStats = {
       player: playerName,
       org: teamName || 'Unknown',
       ...(country && { country }),
       agents,
+      ...(computedAgentPreferences && { computedAgentPreferences }),
       rounds_played: cleanStat($(cells[2]).text()),
       rating: cleanStat($(cells[3]).text()),
       average_combat_score: cleanStat($(cells[4]).text()),

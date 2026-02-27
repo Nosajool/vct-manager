@@ -7,6 +7,7 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating, formatKD } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
+import { AgentPreferenceEditor } from './AgentPreferenceEditor';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -30,6 +31,7 @@ export function PlayerDetailModal({
 }: PlayerDetailModalProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const [showCareerStats, setShowCareerStats] = useState(false);
+  const [showAgentEditor, setShowAgentEditor] = useState(false);
 
   const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
 
@@ -73,6 +75,7 @@ export function PlayerDetailModal({
   };
 
   return (
+    <>
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -362,6 +365,18 @@ export function PlayerDetailModal({
             </div>
           )}
 
+          {/* Agent Preferences */}
+          {isOnPlayerTeam && (
+            <div className="pt-2 border-t border-vct-gray/20">
+              <button
+                onClick={() => setShowAgentEditor(true)}
+                className="w-full px-4 py-2 bg-vct-dark hover:bg-vct-gray/20 text-vct-light border border-vct-gray/30 font-medium rounded transition-colors"
+              >
+                Agent Preferences
+              </button>
+            </div>
+          )}
+
           {/* Action Buttons */}
           {(onSign || onRelease) && (
             <div className="flex gap-3 pt-2 border-t border-vct-gray/20">
@@ -386,5 +401,13 @@ export function PlayerDetailModal({
         </div>
       </div>
     </div>
+
+    {showAgentEditor && (
+      <AgentPreferenceEditor
+        player={player}
+        onClose={() => setShowAgentEditor(false)}
+      />
+    )}
+    </>
   );
 }

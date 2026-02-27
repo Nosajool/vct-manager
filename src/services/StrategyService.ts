@@ -154,7 +154,8 @@ export class StrategyService {
       const player = state.players[playerId];
       if (!player) continue;
 
-      const preferences = this.generateDefaultPreferences(player);
+      // Use pre-computed VLR agent preferences if available; otherwise generate defaults
+      const preferences = player.agentPreferences ?? this.generateDefaultPreferences(player);
       state.setPlayerAgentPreferences(playerId, preferences);
     }
   }

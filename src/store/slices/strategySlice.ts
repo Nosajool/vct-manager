@@ -5,6 +5,7 @@ import type { StateCreator } from 'zustand';
 import type {
   TeamStrategy,
   PlayerAgentPreferences,
+  Player,
 } from '../../types';
 import { DEFAULT_TEAM_STRATEGY, AI_STRATEGY_PRESETS, validateStrategy } from '../../types/strategy';
 
@@ -33,6 +34,9 @@ export interface StrategySliceActions {
   setPlayerAgentPreferences: (playerId: string, preferences: PlayerAgentPreferences) => void;
   updatePlayerAgentPreferences: (playerId: string, updates: Partial<PlayerAgentPreferences>) => void;
   clearPlayerAgentPreferences: (playerId: string) => void;
+
+  // Mastery
+  updateAgentMastery: (playerId: string, agentName: string, delta: number) => void;
 
   // Selectors
   getTeamStrategy: (teamId: string) => TeamStrategy;
@@ -69,7 +73,7 @@ function generateAIStrategy(): TeamStrategy {
  * Create the strategy slice
  */
 export const createStrategySlice: StateCreator<
-  StrategySlice,
+  StrategySlice & { players: Record<string, Player> },
   [],
   [],
   StrategySlice
@@ -151,6 +155,12 @@ export const createStrategySlice: StateCreator<
         ...state.playerAgentPreferences,
         [playerId]: preferences,
       },
+      players: state.players[playerId]
+        ? {
+            ...state.players,
+            [playerId]: { ...state.players[playerId], agentPreferences: preferences },
+          }
+        : state.players,
     }));
   },
 
@@ -163,11 +173,44 @@ export const createStrategySlice: StateCreator<
         return state;
       }
 
+      const updated = { ...current, ...updates };
       return {
         playerAgentPreferences: {
           ...state.playerAgentPreferences,
-          [playerId]: { ...current, ...updates },
+          [playerId]: updated,
         },
+        players: state.players[playerId]
+          ? {
+              ...state.players,
+              [playerId]: { ...state.players[playerId], agentPreferences: updated },
+            }
+          : state.players,
+      };
+    });
+  },
+
+  // Update a single agent's mastery value for a player (clamped 0–100)
+  updateAgentMastery: (playerId, agentName, delta) => {
+    set((state) => {
+      const prefs = state.playerAgentPreferences[playerId];
+      if (!prefs) return state;
+      const currentMastery = prefs.agentMastery ?? {};
+      const newValue = Math.min(100, Math.max(0, (currentMastery[agentName] ?? 0) + delta));
+      const updated = {
+        ...prefs,
+        agentMastery: { ...currentMastery, [agentName]: newValue },
+      };
+      return {
+        playerAgentPreferences: {
+          ...state.playerAgentPreferences,
+          [playerId]: updated,
+        },
+        players: state.players[playerId]
+          ? {
+              ...state.players,
+              [playerId]: { ...state.players[playerId], agentPreferences: updated },
+            }
+          : state.players,
       };
     });
   },
@@ -177,7 +220,15 @@ export const createStrategySlice: StateCreator<
     set((state) => {
       const newPreferences = { ...state.playerAgentPreferences };
       delete newPreferences[playerId];
-      return { playerAgentPreferences: newPreferences };
+      return {
+        playerAgentPreferences: newPreferences,
+        players: state.players[playerId]
+          ? {
+              ...state.players,
+              [playerId]: { ...state.players[playerId], agentPreferences: undefined },
+            }
+          : state.players,
+      };
     });
   },
 

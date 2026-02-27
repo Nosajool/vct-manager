@@ -5,6 +5,7 @@ import type {
   Team,
   Player,
   TeamStrategy,
+  PlayerAgentPreferences,
   MatchResult,
   TrainingResult,
   TrainingFocus,
@@ -41,6 +42,8 @@ export interface MatchSimInput {
   teamBHypeLevel?: number;
   /** Whether this is a playoff match, affects narrative intensity. */
   isPlayoffMatch?: boolean;
+  /** All player agent preferences for mastery modifier calculations. */
+  allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>;
 }
 
 /** Input for training a single player */

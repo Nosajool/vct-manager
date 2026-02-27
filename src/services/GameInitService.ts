@@ -7,6 +7,7 @@ import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
 import { globalTournamentScheduler } from './GlobalTournamentScheduler';
+import { strategyService } from './StrategyService';
 import type { Player, Region, MatchEventData, Match } from '../types';
 import { FREE_AGENTS_PER_REGION, STARTING_IGLS } from '../utils/constants';
 import { getTeamIGL } from '../utils/teamUtils';
@@ -113,6 +114,12 @@ export class GameInitService {
     const tierTeams = tierTeamGenerator.generateAllTierTeams(freeAgents);
     store.addTierTeams(tierTeams);
     console.log(`Generated ${tierTeams.length} T2/T3 teams for scrim practice`);
+
+    // Initialize agent preferences for all teams so CompositionEngine respects player roles
+    console.log('Initializing agent preferences for all teams...');
+    for (const team of teams) {
+      strategyService.initializeTeamAgentPreferences(team.id);
+    }
 
     // Set calendar to start of season (January 1, 2026)
     const seasonStartDate = '2026-01-01T00:00:00.000Z';

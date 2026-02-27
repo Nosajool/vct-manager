@@ -70,6 +70,9 @@ export interface PlayerAgentPreferences {
 
   /** Additional roles the player can flex to */
   flexRoles?: AgentRole[];
+
+  /** Per-agent mastery (0–100). Earned through play. Absent keys treated as 0. */
+  agentMastery?: Record<string, number>;
 }
 
 /**

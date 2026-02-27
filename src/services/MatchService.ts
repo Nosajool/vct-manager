@@ -87,6 +87,7 @@ export class MatchService {
       teamAHypeLevel,
       teamBHypeLevel,
       isPlayoffMatch,
+      allPlayerAgentPreferences: state.playerAgentPreferences,
     });
 
     // Update result's matchId to the actual match
@@ -199,6 +200,9 @@ export class MatchService {
     // 6. Update player stats
     this.updatePlayerStats(playersA, result, match.teamAId, match, updatePlayer);
     this.updatePlayerStats(playersB, result, match.teamBId, match, updatePlayer);
+
+    // 7. Update agent mastery from match performances
+    this.updateAgentMastery(result);
   }
 
   /**
@@ -458,6 +462,37 @@ export class MatchService {
           },
           form: newForm,
         });
+      }
+    }
+  }
+
+  /**
+   * Update agent mastery for all players after a match
+   */
+  private updateAgentMastery(result: MatchResult): void {
+    const state = useGameStore.getState();
+    const { updateAgentMastery, getPlayerAgentPreferences, updatePlayer, players } = state;
+
+    for (const mapResult of result.maps) {
+      for (const perf of [...mapResult.teamAPerformances, ...mapResult.teamBPerformances]) {
+        const agentPlayed = perf.agent;
+        if (!agentPlayed) continue;
+
+        const prefs = getPlayerAgentPreferences(perf.playerId);
+        const mastery = prefs?.agentMastery ?? {};
+        const currentMastery = mastery[agentPlayed] ?? 0;
+
+        const isPreferred = prefs?.preferredAgents.includes(agentPlayed) ?? false;
+        const gain = isPreferred ? 4 : 2;
+        updateAgentMastery(perf.playerId, agentPlayed, gain);
+
+        // Morale penalty for playing a very unfamiliar agent (mastery < 30)
+        if (currentMastery < 30) {
+          const player = players[perf.playerId];
+          if (player) {
+            updatePlayer(perf.playerId, { morale: Math.max(0, player.morale - 5) });
+          }
+        }
       }
     }
   }
