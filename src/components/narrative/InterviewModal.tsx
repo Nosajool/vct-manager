@@ -19,6 +19,10 @@ interface InterviewModalProps {
   onChoose: (choiceIndex: number) => void;
   /** Called when the user closes the modal (clicks Continue) */
   onClose: () => void;
+  /** Current question number in the press conference (1-based) */
+  questionNumber?: number;
+  /** Total questions in this press conference */
+  totalQuestions?: number;
 }
 
 // ============================================================================
@@ -87,7 +91,7 @@ function MatchupHeader({ interview }: { interview: PendingInterview }) {
 // Component
 // ============================================================================
 
-export function InterviewModal({ interview, onChoose, onClose }: InterviewModalProps) {
+export function InterviewModal({ interview, onChoose, onClose, questionNumber, totalQuestions }: InterviewModalProps) {
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
   const [showOutcome, setShowOutcome] = useState(false);
   const [effectsSummary, setEffectsSummary] = useState('');
@@ -210,7 +214,9 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
                 onClick={handleContinue}
                 className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
               >
-                Continue
+                {totalQuestions && questionNumber && questionNumber < totalQuestions
+                  ? 'Next Question'
+                  : 'Continue'}
               </button>
             </div>
           </>
@@ -243,6 +249,11 @@ export function InterviewModal({ interview, onChoose, onClose }: InterviewModalP
                 </div>
               </div>
               <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
+              {totalQuestions && totalQuestions > 1 && (
+                <p className="text-sm text-vct-gray mt-0.5">
+                  Question {questionNumber} of {totalQuestions}
+                </p>
+              )}
             </div>
 
             {/* Matchup context header (pre-match: VS, post-match: score) + scrollable body */}

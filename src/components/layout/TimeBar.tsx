@@ -92,8 +92,12 @@ export function TimeBar() {
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
   const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
 
+  const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
+
   // Interview state from store
   const pendingInterview = useGameStore((state) => state.pendingInterview);
+  const interviewQueue = useGameStore((state) => state.interviewQueue);
+  const currentQuestionNumber = pressConferenceTotal - interviewQueue.length + 1;
 
   // Compute valid enriched drama toasts
   const validDramaToasts = useMemo(() => {
@@ -186,8 +190,9 @@ export function TimeBar() {
     if (result?.moraleChanges) {
       queue.push('morale');
     }
-    if (result?.pendingInterview) {
-      useGameStore.getState().setPendingInterview(result.pendingInterview);
+    if (result?.interviewQueue?.length) {
+      useGameStore.getState().setInterviewQueue(result.interviewQueue);
+      setPressConferenceTotal(result.interviewQueue.length);
       queue.push('interview');
     }
 
@@ -257,16 +262,17 @@ export function TimeBar() {
     const team = state.teams[playerTeamId];
     const isPlayoffMatch = matchData.isPlayoffMatch ?? false;
 
-    // Check for pre-match interview
-    const interview = interviewService.checkPreMatchInterview(
+    // Check for pre-match press conference
+    const queue = interviewService.checkPreMatchPressConference(
       matchId,
       playerTeamId,
       team,
       isPlayoffMatch
     );
 
-    if (interview) {
-      state.setPendingInterview(interview);
+    if (queue.length > 0) {
+      useGameStore.getState().setInterviewQueue(queue);
+      setPressConferenceTotal(queue.length);
       return true;
     }
 
@@ -331,16 +337,20 @@ export function TimeBar() {
 
   const handleInterviewClose = () => {
     const state = useGameStore.getState();
-    const interviewContext = state.pendingInterview?.context;
+    const completedContext = state.pendingInterview?.context;
 
-    // Clear pending interview from store (effects were already applied via onChoose)
-    state.clearPendingInterview();
+    // Pop current question from queue
+    state.shiftInterviewQueue();
 
-    if (interviewContext === 'PRE_MATCH') {
-      // Pre-match interview resolved - now advance the day
+    // If more questions remain in this press conference, stay on the interview modal
+    if (useGameStore.getState().pendingInterview) return;
+
+    // Queue exhausted — handle end-of-press-conference
+    if (completedContext === 'PRE_MATCH') {
+      // Pre-match press conference done - now advance the day
       handleTimeAdvance(() => calendarService.advanceDay(true));
-    } else if (interviewContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
-      // Post-match interview resolved, now show crisis interview
+    } else if (completedContext === 'POST_MATCH' && simulationResult?.crisisInterview) {
+      // Post-match press conference done, now show crisis interview
       state.setPendingInterview(simulationResult.crisisInterview);
       advancePostModals(['interview', ...postModalQueue]);
     } else {
@@ -693,7 +703,10 @@ export function TimeBar() {
       {/* Interview Modal - shown for queue-based (post-sim) or pre-match interviews */}
       {pendingInterview && (activePostModal === 'interview' || activePostModal === null) && (
         <InterviewModal
+          key={pendingInterview.templateId}
           interview={pendingInterview}
+          questionNumber={currentQuestionNumber}
+          totalQuestions={pressConferenceTotal}
           onChoose={(choiceIndex) => {
             interviewService.resolveInterview(pendingInterview, choiceIndex, useGameStore.getState().calendar.currentDate);
           }}

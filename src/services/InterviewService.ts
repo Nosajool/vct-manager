@@ -171,6 +171,142 @@ export class InterviewService {
   }
 
   /**
+   * Generate a press conference as an array of N distinct PendingInterview objects.
+   * Used by checkPreMatchPressConference and checkPostMatchPressConference.
+   */
+  private generatePressConference(
+    count: number,
+    context: 'PRE_MATCH' | 'POST_MATCH',
+    snapshot: ReturnType<typeof this.buildInterviewSnapshot>,
+    matchId?: string,
+    outcome?: 'win' | 'loss',
+    isUpsetWin?: boolean,
+  ): PendingInterview[] {
+    // Filter templates by context and flag gates
+    let candidates = INTERVIEW_TEMPLATES.filter((t) => {
+      if (t.context !== context) return false;
+      return evaluateTemplateFlagGate(t, snapshot);
+    });
+
+    // For POST_MATCH: further filter by matchOutcome
+    if (context === 'POST_MATCH' && outcome) {
+      candidates = candidates.filter(
+        (t) => !t.matchOutcome || t.matchOutcome === 'any' || t.matchOutcome === outcome
+      );
+    }
+
+    // If upset win, move the upset template to front of pool
+    if (context === 'POST_MATCH' && isUpsetWin) {
+      const upsetIdx = candidates.findIndex((t) => t.id === 'post_win_upset');
+      if (upsetIdx > 0) {
+        const [upsetTemplate] = candidates.splice(upsetIdx, 1);
+        candidates = [upsetTemplate, ...candidates];
+      }
+    }
+
+    // Shuffle remaining candidates (after reserving upset slot at front if applicable)
+    const startIdx = (context === 'POST_MATCH' && isUpsetWin && candidates[0]?.id === 'post_win_upset') ? 1 : 0;
+    const rest = candidates.slice(startIdx);
+    for (let i = rest.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rest[i], rest[j]] = [rest[j], rest[i]];
+    }
+    const pool = [...candidates.slice(0, startIdx), ...rest];
+
+    // Pick up to `count` distinct templates
+    const selected = pool.slice(0, count);
+    if (selected.length === 0) return [];
+
+    return selected.map((t) => this.toPendingInterview(t, matchId));
+  }
+
+  /**
+   * Check whether a pre-match press conference should trigger.
+   * Base: 80%; +20% if playoff. Only fires for tournament matches.
+   * Returns 2 questions normally, 3 for playoff matches.
+   */
+  checkPreMatchPressConference(
+    matchId: string,
+    playerTeamId: string,
+    _team: Team,
+    isPlayoffMatch?: boolean,
+    context?: TournamentMatchContext,
+  ): PendingInterview[] {
+    const state = useGameStore.getState();
+    const match = state.matches[matchId];
+    if (!match) return [];
+
+    // Only tournament matches
+    if (!match.tournamentId) return [];
+
+    // Roll probability
+    let chance = 80;
+    if (isPlayoffMatch) chance += 20;
+
+    if (Math.random() * 100 >= chance) return [];
+
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+    const snapshot = this.buildInterviewSnapshot({
+      isPlayoffMatch,
+      opponentTeamId,
+      tournamentContext: context,
+    });
+
+    const count = isPlayoffMatch ? 3 : 2;
+    return this.generatePressConference(count, 'PRE_MATCH', snapshot, matchId);
+  }
+
+  /**
+   * Check whether a post-match press conference should trigger.
+   * Base: 80%; +20% if playoff; +15% if loss streak >= 2; +15% if upset win.
+   * Count: 2 base; +1 if playoff; +1 if upset win or grand final; capped at 4.
+   */
+  checkPostMatchPressConference(
+    matchResult: MatchResult,
+    playerTeamId: string,
+    team: Team,
+    isPlayoffMatch?: boolean,
+    isUpsetWin?: boolean,
+    context?: TournamentMatchContext,
+  ): PendingInterview[] {
+    const state = useGameStore.getState();
+    const match = state.matches[matchResult.matchId];
+    if (!match) return [];
+
+    // Roll probability
+    let chance = 80;
+    if (isPlayoffMatch) chance += 20;
+
+    const lossStreak = team.standings.currentStreak < 0
+      ? Math.abs(team.standings.currentStreak)
+      : 0;
+    if (lossStreak >= 2) chance += 15;
+    if (isUpsetWin) chance += 15;
+
+    if (Math.random() * 100 >= chance) return [];
+
+    const won = matchResult.winnerId === playerTeamId;
+    const outcome = won ? 'win' : 'loss';
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+
+    const snapshot = this.buildInterviewSnapshot({
+      isPlayoffMatch,
+      isUpsetWin,
+      lastMatchWon: won,
+      opponentTeamId,
+      tournamentContext: context,
+      matchResult,
+    });
+
+    let count = 2;
+    if (isPlayoffMatch) count++;
+    if (isUpsetWin || context?.isGrandFinal) count++;
+    count = Math.min(count, 4);
+
+    return this.generatePressConference(count, 'POST_MATCH', snapshot, matchResult.matchId, outcome, isUpsetWin);
+  }
+
+  /**
    * Check whether a crisis interview should trigger.
    * Fires if: loss streak >= 3, OR any player morale < 30, OR crisis_active drama flag.
    */

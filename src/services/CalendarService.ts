@@ -45,7 +45,7 @@ export interface TimeAdvanceResult {
   activityResults?: ActivityResolutionResult; // Results from resolved training/scrim activities
   reputationDelta?: ReputationDelta;   // Reputation change from player team matches today
   rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
-  pendingInterview?: PendingInterview; // Interview to show after SimulationResultsModal
+  interviewQueue?: PendingInterview[]; // Interviews to show after SimulationResultsModal
   crisisInterview?: PendingInterview;  // Crisis interview to show (after post-match interview)
   moraleChanges?: MatchMoraleResult;   // Morale changes from player team match
 }
@@ -94,7 +94,7 @@ export class CalendarService {
     const simulatedMatches: MatchResult[] = [];
     let reputationDelta: ReputationDelta | undefined;
     let rivalryDelta: RivalryDelta | undefined;
-    let pendingInterview: PendingInterview | undefined;
+    let interviewQueue: PendingInterview[] | undefined;
     let moraleChanges: MatchMoraleResult | undefined;
 
     // Setup progress tracking if requested
@@ -298,15 +298,15 @@ export class CalendarService {
                 state.updatePlayer(change.playerId, { morale: change.newMorale });
               }
 
-              // Check for post-match interview (at most one; first match wins)
-              if (!pendingInterview) {
+              // Check for post-match press conference (at most once; first match wins)
+              if (!interviewQueue?.length) {
                 const tournamentContext = this.computeTournamentMatchContext(
                   result,
                   state.playerTeamId,
                   matchData.tournamentId,
                   state.tournaments,
                 );
-                const interview = interviewService.checkPostMatchInterview(
+                const queue = interviewService.checkPostMatchPressConference(
                   result,
                   state.playerTeamId,
                   playerTeam,
@@ -314,8 +314,8 @@ export class CalendarService {
                   undefined, // isUpsetWin
                   tournamentContext,
                 );
-                if (interview) {
-                  pendingInterview = interview;
+                if (queue.length > 0) {
+                  interviewQueue = queue;
                 }
               }
             }
@@ -478,7 +478,7 @@ export class CalendarService {
       activityResults,
       reputationDelta,
       rivalryDelta,
-      pendingInterview,
+      interviewQueue,
       crisisInterview: crisisInterview ?? undefined,
       moraleChanges,
     };
