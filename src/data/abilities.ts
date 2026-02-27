@@ -29,7 +29,9 @@ export type AbilityEffectType =
   | 'blind'
   | 'concuss'
   | 'slow'
-  | 'vulnerable';
+  | 'vulnerable'
+  | 'reveal'
+  | 'barrier';
 
 /** Single ability definition */
 export interface Ability {
@@ -463,50 +465,46 @@ const WAYLAY: AgentAbilities = {
   abilities: {
     C: {
       id: 'Waylay_C',
-      name: 'Cluster Grenade',
+      name: 'Light Speed',
       slot: 'C',
-      cost: 200,
-      maxCharges: 2,
+      cost: 250,
+      maxCharges: 1,
       isSignature: false,
-      effectType: 'damage',
-      damage: { min: 20, max: 60 },
-      aoeRadius: 5,
-      description: 'Throw a grenade that splits into smaller explosives.',
+      effectType: 'stim',
+      description: 'Dash forward twice (or once with alt fire). First dash can go upward.',
     },
     Q: {
       id: 'Waylay_Q',
-      name: 'Flash Charge',
+      name: 'Saturate',
       slot: 'Q',
-      cost: 250,
+      cost: 200,
       maxCharges: 2,
       isSignature: false,
-      effectType: 'flash',
-      durationMs: 1200,
-      description: 'Deploy a flash that detonates after a short delay.',
+      effectType: 'slow',
+      aoeRadius: 5,
+      description: 'Instantly throw a cluster of light that explodes on ground contact, hindering nearby enemies.',
     },
     E: {
       id: 'Waylay_E',
-      name: 'Rapid Assault',
+      name: 'Refract',
       slot: 'E',
       cost: 0,
       maxCharges: 1,
       isSignature: true,
       effectType: 'stim',
-      durationMs: 8000,
-      description: 'Gain increased movement and fire rate for a short duration.',
+      description: 'Create a beacon of light on the floor. Reactivate to speed back to it as an invulnerable mote.',
     },
     X: {
       id: 'Waylay_X',
-      name: 'Predator Strike',
+      name: 'Convergent Paths',
       slot: 'X',
       cost: 0,
       maxCharges: 1,
       isSignature: false,
-      ultimateCost: 7,
-      effectType: 'damage',
-      damage: { min: 100, max: 200 },
-      aoeRadius: 8,
-      description: 'Call in a precision strike that devastates a targeted area.',
+      ultimateCost: 8,
+      effectType: 'flash',
+      aoeRadius: 30,
+      description: 'Launch a luminous beam through walls that hinders enemies, then surge forward.',
     },
   },
 };
@@ -847,6 +845,59 @@ const GEKKO: AgentAbilities = {
       durationMs: 6000,
       aoeRadius: 6,
       description: 'Link with Thrash and lunge to detain enemies caught in her explosion.',
+    },
+  },
+};
+
+const TEJO: AgentAbilities = {
+  agentId: 'Tejo',
+  role: 'Initiator',
+  abilities: {
+    C: {
+      id: 'Tejo_C',
+      name: 'Stealth Drone',
+      slot: 'C',
+      cost: 200,
+      maxCharges: 1,
+      isSignature: false,
+      effectType: 'reveal',
+      secondaryEffects: ['suppress'],
+      description: 'Throw a drone and assume control. Fire to pulse: suppresses and reveals enemies hit.',
+    },
+    Q: {
+      id: 'Tejo_Q',
+      name: 'Special Delivery',
+      slot: 'Q',
+      cost: 200,
+      maxCharges: 2,
+      isSignature: false,
+      effectType: 'concuss',
+      aoeRadius: 5,
+      description: 'Launch a sticky concuss grenade. Alt fire for a single bounce.',
+    },
+    E: {
+      id: 'Tejo_E',
+      name: 'Guided Salvo',
+      slot: 'E',
+      cost: 0,
+      maxCharges: 1,
+      isSignature: true,
+      effectType: 'concuss',
+      aoeRadius: 6,
+      description: 'Select up to 2 target locations and launch missiles that auto-navigate and concuss on arrival.',
+    },
+    X: {
+      id: 'Tejo_X',
+      name: 'Armageddon',
+      slot: 'X',
+      cost: 0,
+      maxCharges: 1,
+      isSignature: false,
+      ultimateCost: 9,
+      effectType: 'damage',
+      damage: { min: 50, max: 150 },
+      aoeRadius: 40,
+      description: 'Select an origin and end point, then unleash a wave of explosions along the path.',
     },
   },
 };
@@ -1514,6 +1565,58 @@ const VYSE: AgentAbilities = {
   },
 };
 
+const VETO: AgentAbilities = {
+  agentId: 'Veto',
+  role: 'Sentinel',
+  abilities: {
+    C: {
+      id: 'Veto_C',
+      name: 'Crosscut',
+      slot: 'C',
+      cost: 200,
+      maxCharges: 1,
+      isSignature: false,
+      effectType: 'stim',
+      description: 'Place a vortex on the ground; while in range looking at it, reactivate to teleport.',
+    },
+    Q: {
+      id: 'Veto_Q',
+      name: 'Chokehold',
+      slot: 'Q',
+      cost: 200,
+      maxCharges: 2,
+      isSignature: false,
+      effectType: 'slow',
+      secondaryEffects: ['debuff'],
+      aoeRadius: 5,
+      durationMs: 6000,
+      description: 'Throw a viscous fragment that deploys a trap: holds, deafens, and decays enemies.',
+    },
+    E: {
+      id: 'Veto_E',
+      name: 'Interceptor',
+      slot: 'E',
+      cost: 0,
+      maxCharges: 1,
+      isSignature: true,
+      effectType: 'barrier',
+      description: 'Place a device that destroys utility bouncing off players or destroyed by gunfire.',
+    },
+    X: {
+      id: 'Veto_X',
+      name: 'Evolution',
+      slot: 'X',
+      cost: 0,
+      maxCharges: 1,
+      isSignature: false,
+      ultimateCost: 8,
+      effectType: 'stim',
+      durationMs: 45000,
+      description: 'Instantly fully mutate: combat stim, regeneration, and immunity to debuffs and ability damage for the entire round.',
+    },
+  },
+};
+
 // ============================================
 // AGENT ABILITIES MAP
 // ============================================
@@ -1536,6 +1639,7 @@ export const AGENT_ABILITIES: Record<string, AgentAbilities> = {
   'KAY/O': KAYO,
   Fade: FADE,
   Gekko: GEKKO,
+  Tejo: TEJO,
   // Controllers
   Brimstone: BRIMSTONE,
   Omen: OMEN,
@@ -1550,6 +1654,7 @@ export const AGENT_ABILITIES: Record<string, AgentAbilities> = {
   Chamber: CHAMBER,
   Deadlock: DEADLOCK,
   Vyse: VYSE,
+  Veto: VETO,
 } as const;
 
 // ============================================

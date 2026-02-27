@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useGameStore } from '../../store';
 import { strategyService } from '../../services';
 import type { Player, PlayerAgentPreferences, AgentRole } from '../../types';
+import { getAgentImageUrl } from '../../utils/imageAssets';
+import { GameImage } from '../shared/GameImage';
 
 interface AgentPreferenceEditorProps {
   player: Player;
@@ -21,12 +23,6 @@ const ROLE_COLORS: Record<AgentRole, string> = {
   Sentinel: 'text-blue-400 border-blue-400/30 bg-blue-400/10',
 };
 
-const ROLE_BG: Record<AgentRole, string> = {
-  Duelist: 'bg-red-400/20',
-  Initiator: 'bg-green-400/20',
-  Controller: 'bg-purple-400/20',
-  Sentinel: 'bg-blue-400/20',
-};
 
 export function AgentPreferenceEditor({
   player,
@@ -79,14 +75,25 @@ export function AgentPreferenceEditor({
     });
       };
 
-  // Handle preferred agent change
-  const handleAgentChange = (index: 0 | 1 | 2, agent: string) => {
+  // Handle agent image click (select/deselect)
+  const handleAgentImageClick = (agent: string) => {
     setPreferences((prev) => {
-      const newAgents = [...prev.preferredAgents] as [string, string, string];
-      newAgents[index] = agent;
-      return { ...prev, preferredAgents: newAgents };
+      const current = [...prev.preferredAgents] as [string, string, string];
+      const existingIndex = current.indexOf(agent);
+
+      if (existingIndex !== -1) {
+        // Deselect: remove and compact. Fill the 3rd slot with a fallback agent.
+        const remaining = current.filter((a) => a !== agent);
+        const fallback = primaryRoleAgents.find((a) => !remaining.includes(a) && a !== agent);
+        const newAgents = [...remaining, fallback ?? remaining[0]] as [string, string, string];
+        return { ...prev, preferredAgents: newAgents };
+      } else {
+        // Select: replace the 3rd slot (lowest priority)
+        const newAgents = [current[0], current[1], agent] as [string, string, string];
+        return { ...prev, preferredAgents: newAgents };
+      }
     });
-      };
+  };
 
   // Handle save
   const handleSave = () => {
@@ -171,46 +178,56 @@ export function AgentPreferenceEditor({
             <p className="text-xs text-vct-gray mb-3">
               Top 3 agents for {preferences.primaryRole} role (in order of preference)
             </p>
-            <div className="space-y-3">
-              {[0, 1, 2].map((index) => {
-                const agentName = preferences.preferredAgents[index as 0 | 1 | 2];
-                const mastery = existingPrefs?.agentMastery?.[agentName] ?? 0;
+            <div className="grid grid-cols-4 gap-2">
+              {primaryRoleAgents.map((agent) => {
+                const rankIndex = preferences.preferredAgents.indexOf(agent);
+                const isSelected = rankIndex !== -1;
+                const mastery = existingPrefs?.agentMastery?.[agent] ?? 0;
+                const roleColorRing: Record<AgentRole, string> = {
+                  Duelist: 'ring-red-400',
+                  Initiator: 'ring-green-400',
+                  Controller: 'ring-purple-400',
+                  Sentinel: 'ring-blue-400',
+                };
+
                 return (
-                  <div key={index} className="space-y-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-vct-gray w-6">#{index + 1}</span>
-                      <select
-                        value={agentName}
-                        onChange={(e) => handleAgentChange(index as 0 | 1 | 2, e.target.value)}
-                        className={`flex-1 p-2 rounded-lg border ${ROLE_BG[preferences.primaryRole]} border-vct-gray/30 text-vct-light bg-vct-dark focus:outline-none focus:border-vct-red`}
-                      >
-                        {primaryRoleAgents.map((agent) => (
-                          <option key={agent} value={agent}>
-                            {agent}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {existingPrefs && (
-                      <div className="flex items-center gap-2 pl-9">
-                        <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all ${
-                              mastery >= 80
-                                ? 'bg-green-400'
-                                : mastery >= 60
-                                ? 'bg-yellow-400'
-                                : mastery >= 30
-                                ? 'bg-orange-400'
-                                : 'bg-red-400'
-                            }`}
-                            style={{ width: `${mastery}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-vct-gray w-16">Mastery {mastery}</span>
+                  <button
+                    key={agent}
+                    onClick={() => handleAgentImageClick(agent)}
+                    className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border transition-all
+                      ${isSelected
+                        ? `border-transparent ring-2 ${roleColorRing[preferences.primaryRole]} bg-vct-dark`
+                        : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40 opacity-60 hover:opacity-100'
+                      }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute top-1 left-1 text-xs font-bold text-white bg-black/60 rounded px-1 leading-tight z-10">
+                        #{rankIndex + 1}
+                      </span>
+                    )}
+                    <GameImage
+                      src={getAgentImageUrl(agent)}
+                      alt={agent}
+                      className="w-12 h-12 object-cover rounded"
+                      fallbackClassName="w-12 h-12 rounded"
+                    />
+                    <span className="text-xs text-vct-light text-center leading-tight w-full truncate">
+                      {agent}
+                    </span>
+                    {isSelected && existingPrefs && (
+                      <div className="w-full h-1 bg-vct-gray/20 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            mastery >= 80 ? 'bg-green-400'
+                            : mastery >= 60 ? 'bg-yellow-400'
+                            : mastery >= 30 ? 'bg-orange-400'
+                            : 'bg-red-400'
+                          }`}
+                          style={{ width: `${mastery}%` }}
+                        />
                       </div>
                     )}
-                  </div>
+                  </button>
                 );
               })}
             </div>

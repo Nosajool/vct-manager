@@ -82,6 +82,7 @@ export const ULT_CONSTANTS = {
     Yoru: 7,
     Neon: 7,
     Iso: 7,
+    Waylay: 8,
     // Initiators (7-8 points)
     Sova: 8,
     Breach: 7,
@@ -89,6 +90,7 @@ export const ULT_CONSTANTS = {
     'KAY/O': 7,
     Fade: 7,
     Gekko: 7,
+    Tejo: 9,
     // Controllers (7-8 points)
     Brimstone: 7,
     Omen: 7,
@@ -103,6 +105,7 @@ export const ULT_CONSTANTS = {
     Chamber: 8,
     Deadlock: 7,
     Vyse: 7,
+    Veto: 8,
   } as const satisfies Record<string, number>,
 
   /** Ult points earned per kill */
@@ -151,6 +154,10 @@ export const ULT_CONSTANTS = {
     Iso: 'MEDIUM',
     Clove: 'MEDIUM',
     Vyse: 'MEDIUM',
+    Veto: 'MEDIUM',
+    // High impact ults (new agents)
+    Waylay: 'HIGH',
+    Tejo: 'HIGH',
     // Low impact ults
     Cypher: 'LOW',
     Skye: 'LOW',
@@ -196,6 +203,7 @@ export const COMPOSITION_CONSTANTS = {
     Yoru: 'Duelist',
     Neon: 'Duelist',
     Iso: 'Duelist',
+    Waylay: 'Duelist',
     // Initiators
     Sova: 'Initiator',
     Breach: 'Initiator',
@@ -203,6 +211,7 @@ export const COMPOSITION_CONSTANTS = {
     'KAY/O': 'Initiator',
     Fade: 'Initiator',
     Gekko: 'Initiator',
+    Tejo: 'Initiator',
     // Controllers
     Brimstone: 'Controller',
     Omen: 'Controller',
@@ -217,14 +226,15 @@ export const COMPOSITION_CONSTANTS = {
     Chamber: 'Sentinel',
     Deadlock: 'Sentinel',
     Vyse: 'Sentinel',
+    Veto: 'Sentinel',
   } as const satisfies Record<string, AgentRole>,
 
   /** Agents by role for easy lookup */
   AGENTS_BY_ROLE: {
-    Duelist: ['Jett', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Neon', 'Iso'],
-    Initiator: ['Sova', 'Breach', 'Skye', 'KAY/O', 'Fade', 'Gekko'],
+    Duelist: ['Jett', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Neon', 'Iso', 'Waylay'],
+    Initiator: ['Sova', 'Breach', 'Skye', 'KAY/O', 'Fade', 'Gekko', 'Tejo'],
     Controller: ['Brimstone', 'Omen', 'Viper', 'Astra', 'Harbor', 'Clove'],
-    Sentinel: ['Sage', 'Cypher', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse'],
+    Sentinel: ['Sage', 'Cypher', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse', 'Veto'],
   } as const satisfies Record<AgentRole, readonly string[]>,
 } as const;
 
