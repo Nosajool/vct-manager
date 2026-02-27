@@ -86,7 +86,6 @@ export type {
   PlayerAgentPreferences,
   CompositionBonus,
   AgentSelection,
-  CompositionRequirements,
   BuyType,
   AgentRole,
   PlaystyleType,

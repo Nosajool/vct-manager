@@ -9,7 +9,6 @@ import type {
   PlaystyleType,
   EconomyDiscipline,
   UltUsageStyle,
-  CompositionRequirements,
 } from '../../types';
 import { AI_STRATEGY_PRESETS, getStrategyDisplayName } from '../../types/strategy';
 
@@ -45,30 +44,8 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
     setHasChanges(true);
   };
 
-  const handleCompositionChange = (role: keyof CompositionRequirements, delta: number) => {
-    setSaveError(null);
-    setLocalStrategy((prev) => {
-      const newComp = { ...prev.defaultComposition };
-      const newValue = newComp[role] + delta;
-
-      // Validate bounds
-      if (newValue < 0 || newValue > 3) return prev;
-
-      newComp[role] = newValue;
-      return { ...prev, defaultComposition: newComp };
-    });
-    setHasChanges(true);
-  };
-
   const handleSave = () => {
     setSaveError(null);
-    
-    // Validate composition totals exactly 5 players
-    const total = Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0);
-    if (total !== 5) {
-      setSaveError(`Composition must total exactly 5 players (currently ${total})`);
-      return;
-    }
 
     const success = strategyService.updateTeamStrategy(teamId, localStrategy);
     if (success) {
@@ -267,53 +244,6 @@ export function TeamStrategy({ teamId }: TeamStrategyProps) {
         </div>
       </div>
 
-      {/* Default Composition */}
-      <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-vct-light mb-1">Default Composition</h3>
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs text-vct-gray">
-            Preferred role distribution
-          </p>
-          <div className={`text-sm font-medium ${
-            Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0) === 5
-              ? 'text-green-400'
-              : 'text-yellow-400'
-          }`}>
-            Total: {Object.values(localStrategy.defaultComposition).reduce((sum, v) => sum + v, 0)} / 5
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <RoleCounter
-            role="Duelist"
-            count={localStrategy.defaultComposition.duelist}
-            color="text-red-400"
-            onIncrement={() => handleCompositionChange('duelist', 1)}
-            onDecrement={() => handleCompositionChange('duelist', -1)}
-          />
-          <RoleCounter
-            role="Controller"
-            count={localStrategy.defaultComposition.controller}
-            color="text-purple-400"
-            onIncrement={() => handleCompositionChange('controller', 1)}
-            onDecrement={() => handleCompositionChange('controller', -1)}
-          />
-          <RoleCounter
-            role="Initiator"
-            count={localStrategy.defaultComposition.initiator}
-            color="text-green-400"
-            onIncrement={() => handleCompositionChange('initiator', 1)}
-            onDecrement={() => handleCompositionChange('initiator', -1)}
-          />
-          <RoleCounter
-            role="Sentinel"
-            count={localStrategy.defaultComposition.sentinel}
-            color="text-blue-400"
-            onIncrement={() => handleCompositionChange('sentinel', 1)}
-            onDecrement={() => handleCompositionChange('sentinel', -1)}
-          />
-        </div>
-      </div>
-
       {/* Current Strategy Summary */}
       <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-vct-light mb-2">Current Strategy</h3>
@@ -352,40 +282,3 @@ function PlaystyleOption<T extends string>({
   );
 }
 
-// Helper component for role counters
-function RoleCounter({
-  role,
-  count,
-  color,
-  onIncrement,
-  onDecrement,
-}: {
-  role: string;
-  count: number;
-  color: string;
-  onIncrement: () => void;
-  onDecrement: () => void;
-}) {
-  return (
-    <div className="text-center">
-      <div className={`text-sm font-medium ${color} mb-2`}>{role}</div>
-      <div className="flex items-center justify-center gap-3">
-        <button
-          onClick={onDecrement}
-          disabled={count <= 0}
-          className="w-8 h-8 bg-vct-gray/20 hover:bg-vct-gray/30 disabled:opacity-30 disabled:cursor-not-allowed text-vct-light rounded-lg transition-colors"
-        >
-          -
-        </button>
-        <span className="text-xl font-bold text-vct-light w-6">{count}</span>
-        <button
-          onClick={onIncrement}
-          disabled={count >= 3}
-          className="w-8 h-8 bg-vct-gray/20 hover:bg-vct-gray/30 disabled:opacity-30 disabled:cursor-not-allowed text-vct-light rounded-lg transition-colors"
-        >
-          +
-        </button>
-      </div>
-    </div>
-  );
-}

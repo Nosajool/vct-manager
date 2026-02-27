@@ -27,16 +27,6 @@ export type EconomyDiscipline = 'risky' | 'standard' | 'conservative';
 export type UltUsageStyle = 'aggressive' | 'save_for_key_rounds' | 'combo_focused';
 
 /**
- * Team composition requirements by role
- */
-export interface CompositionRequirements {
-  duelist: number;     // 0-2 typically
-  controller: number;  // 1-2 typically
-  initiator: number;   // 1-2 typically
-  sentinel: number;    // 0-2 typically
-}
-
-/**
  * Team strategy configuration
  * Controls how the team plays and makes decisions
  */
@@ -49,9 +39,6 @@ export interface TeamStrategy {
 
   /** Minimum credits to consider a force buy (1000-4000) */
   forceThreshold: number;
-
-  /** Preferred team composition by role counts */
-  defaultComposition: CompositionRequirements;
 
   /** How ultimates are used - aggressive, save, or combo */
   ultUsageStyle: UltUsageStyle;
@@ -121,12 +108,6 @@ export const DEFAULT_TEAM_STRATEGY: TeamStrategy = {
   playstyle: 'balanced',
   economyDiscipline: 'standard',
   forceThreshold: 2400,
-  defaultComposition: {
-    duelist: 1,
-    controller: 1,
-    initiator: 2,
-    sentinel: 1,
-  },
   ultUsageStyle: 'save_for_key_rounds',
 };
 
@@ -198,29 +179,11 @@ export function getStrategyDisplayName(strategy: TeamStrategy): string {
  * Validate strategy values are within bounds
  */
 export function validateStrategy(strategy: TeamStrategy): boolean {
-  const { forceThreshold, defaultComposition } = strategy;
+  const { forceThreshold } = strategy;
 
   // Force threshold should be between 1000-4000
   if (forceThreshold < 1000 || forceThreshold > 4000) {
     return false;
-  }
-
-  // Composition should sum to 5 players
-  const totalRoles =
-    defaultComposition.duelist +
-    defaultComposition.controller +
-    defaultComposition.initiator +
-    defaultComposition.sentinel;
-
-  if (totalRoles !== 5) {
-    return false;
-  }
-
-  // Each role count should be 0-3
-  for (const count of Object.values(defaultComposition)) {
-    if (count < 0 || count > 3) {
-      return false;
-    }
   }
 
   return true;

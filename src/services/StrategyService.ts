@@ -10,7 +10,6 @@ import type {
   PlaystyleType,
   EconomyDiscipline,
   UltUsageStyle,
-  CompositionRequirements,
   Player,
 } from '../types';
 import {
@@ -67,25 +66,6 @@ export class StrategyService {
       return false;
     }
     useGameStore.getState().updateTeamStrategy(teamId, { forceThreshold: threshold });
-    return true;
-  }
-
-  /**
-   * Set default composition
-   */
-  setDefaultComposition(teamId: string, composition: CompositionRequirements): boolean {
-    const total =
-      composition.duelist +
-      composition.controller +
-      composition.initiator +
-      composition.sentinel;
-
-    if (total !== 5) {
-      console.error('Composition must sum to 5 players');
-      return false;
-    }
-
-    useGameStore.getState().updateTeamStrategy(teamId, { defaultComposition: composition });
     return true;
   }
 

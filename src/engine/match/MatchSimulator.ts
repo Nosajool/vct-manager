@@ -274,12 +274,6 @@ export class MatchSimulator {
       playstyle: 'balanced',
       economyDiscipline: 'standard',
       forceThreshold: 2400,
-      defaultComposition: {
-        duelist: 1,
-        controller: 1,
-        initiator: 2,
-        sentinel: 1,
-      },
       ultUsageStyle: 'save_for_key_rounds',
     };
   }

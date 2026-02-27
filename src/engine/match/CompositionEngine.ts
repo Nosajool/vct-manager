@@ -43,138 +43,6 @@ export class CompositionEngine {
   }
 
   /**
-   * Fallback method to create a default agent selection when no defaultComposition is provided
-   * Uses a balanced 2-1-1-1 composition (2 Duelists, 1 Initiator, 1 Controller, 1 Sentinel)
-   */
-  private getDefaultAgentSelection(
-    players: Player[],
-    mapName: string
-  ): AgentSelection {
-    const assignments: Record<string, string> = {};
-    const usedAgents = new Set<string>();
-    
-    // Default balanced composition: 2-1-1-1
-    const fallbackComposition = {
-      Duelist: 2,
-      Initiator: 1,
-      Controller: 1,
-      Sentinel: 1,
-    };
-
-    // Sort players by their agent preferences
-    const sortedPlayers = [...players].sort((a, b) => {
-      const prefA = a.agentPreferences?.preferredAgents[0] || '';
-      const prefB = b.agentPreferences?.preferredAgents[0] || '';
-      return prefA.localeCompare(prefB);
-    });
-
-    // Get map-preferred agents
-    const mapPreferences = MAP_AGENT_PREFERENCES[mapName] || [];
-
-    // Assign agents following the fallback composition
-    for (const [role, count] of Object.entries(fallbackComposition) as [AgentRole, number][]) {
-      let assigned = 0;
-      
-      for (const player of sortedPlayers) {
-        if (assignments[player.id]) continue;
-        if (assigned >= count) break;
-
-        const preferredAgents = player.agentPreferences?.preferredAgents || [];
-        const flexRoles = player.agentPreferences?.flexRoles || [role];
-        
-        // Try to assign player's preferred agent if it fits the role and is available
-        for (const pref of preferredAgents) {
-          const prefRole = this.getAgentRole(pref);
-          if (prefRole === role && !usedAgents.has(pref)) {
-            assignments[player.id] = pref;
-            usedAgents.add(pref);
-            assigned++;
-            break;
-          }
-        }
-
-        // Try to assign a map-preferred agent for this role
-        if (assigned < count) {
-          for (const agent of mapPreferences) {
-            if (this.getAgentRole(agent) === role &&
-                !usedAgents.has(agent) &&
-                flexRoles.includes(role)) {
-              assignments[player.id] = agent;
-              usedAgents.add(agent);
-              assigned++;
-              break;
-            }
-          }
-        }
-
-        // If still not assigned, pick any available agent for this role
-        if (assigned < count) {
-          const availableAgents = COMPOSITION_CONSTANTS.AGENTS_BY_ROLE[role]
-            .filter(agent => !usedAgents.has(agent));
-          
-          if (availableAgents.length > 0) {
-            const agent = availableAgents[0];
-            assignments[player.id] = agent;
-            usedAgents.add(agent);
-            assigned++;
-          }
-        }
-      }
-    }
-
-    // Assign remaining players with any available agents
-    for (const player of sortedPlayers) {
-      if (assignments[player.id]) continue;
-      
-      const preferredAgents = player.agentPreferences?.preferredAgents || [];
-      for (const pref of preferredAgents) {
-        if (!usedAgents.has(pref)) {
-          assignments[player.id] = pref;
-          usedAgents.add(pref);
-          break;
-        }
-      }
-      
-      // If still not assigned, pick first available agent
-      if (!assignments[player.id]) {
-        const allAgents = Object.keys(COMPOSITION_CONSTANTS.AGENT_ROLES);
-        for (const agent of allAgents) {
-          if (!usedAgents.has(agent)) {
-            assignments[player.id] = agent;
-            usedAgents.add(agent);
-            break;
-          }
-        }
-      }
-    }
-
-    // Calculate role counts for the result
-    const roleCounts: Record<AgentRole, number> = {
-      Duelist: 0,
-      Initiator: 0,
-      Controller: 0,
-      Sentinel: 0,
-    };
-
-    Object.values(assignments).forEach(agent => {
-      const role = this.getAgentRole(agent);
-      if (role && role in roleCounts) {
-        roleCounts[role]++;
-      }
-    });
-
-    return {
-      assignments,
-      bonus: {
-        modifier: 0,
-        description: 'Default fallback composition (2-1-1-1)',
-        roleCounts,
-      },
-      isValidComposition: true,
-    };
-  }
-
-  /**
    * Get all agents that can play a specific role
    */
   getAgentsByRole(role: AgentRole): string[] {
@@ -183,6 +51,7 @@ export class CompositionEngine {
 
   /**
    * Select agents for a team based on player preferences and strategy
+   * Composition is derived purely from player primaryRole and flexRoles — no cap.
    */
   selectAgents(
     players: Player[],
@@ -196,24 +65,15 @@ export class CompositionEngine {
       throw new Error('TeamStrategy is required');
     }
 
-    const { defaultComposition } = strategy;
-    if (!defaultComposition) {
-      return this.getDefaultAgentSelection(players, mapName);
-    }
-
     const mapPreferences = MAP_AGENT_PREFERENCES[mapName] || [];
 
-    // Track role counts to meet composition requirements
+    // Track role counts
     const roleCounts: Record<AgentRole, number> = {
       Duelist: 0,
       Initiator: 0,
       Controller: 0,
       Sentinel: 0,
     };
-
-    // CompositionRequirements uses lowercase keys — helper to look up correctly
-    const getNeeded = (role: AgentRole): number =>
-      defaultComposition[role.toLowerCase() as keyof typeof defaultComposition] || 0;
 
     // Sort players by role flexibility ascending (less flexible = harder to reassign, serve first)
     const sortedPlayers = [...players].sort((a, b) => {
@@ -222,56 +82,40 @@ export class CompositionEngine {
       return flexA - flexB;
     });
 
-    // First pass: assign each player to their primaryRole if composition still needs it.
-    // This ensures a player manually set to Duelist actually plays Duelist.
+    // First pass: assign every player who has a primaryRole directly to it — no cap.
     for (const player of sortedPlayers) {
       const primaryRole = player.agentPreferences?.primaryRole;
       if (!primaryRole) continue;
-      if (roleCounts[primaryRole] < getNeeded(primaryRole)) {
-        const agent = this.selectBestAgent(
-          player.agentPreferences,
-          primaryRole,
-          usedAgents,
-          mapPreferences
-        );
-        assignments[player.id] = agent;
-        usedAgents.add(agent);
-        roleCounts[primaryRole]++;
-      }
+
+      const agent = this.selectBestAgent(
+        player.agentPreferences,
+        primaryRole,
+        usedAgents,
+        mapPreferences
+      );
+      assignments[player.id] = agent;
+      usedAgents.add(agent);
+      roleCounts[primaryRole]++;
     }
 
-    // Second pass: assign remaining players (primaryRole slot was already filled)
-    // using their flexRoles, then any unfilled role.
+    // Second pass: remaining players (no primaryRole) — pick the flex role with the lowest
+    // current count; if no flex roles, use the global lowest-count role.
     for (const player of sortedPlayers) {
       if (assignments[player.id]) continue;
 
       const prefs = player.agentPreferences;
-      const flexRoles = prefs?.flexRoles || (['Initiator', 'Duelist'] as AgentRole[]);
+      const flexRoles = prefs?.flexRoles?.length
+        ? prefs.flexRoles
+        : (['Initiator', 'Duelist'] as AgentRole[]);
 
-      let assignedRole: AgentRole | null = null;
+      const lowestOverall = (): AgentRole =>
+        (Object.entries(roleCounts) as [AgentRole, number][])
+          .sort(([, a], [, b]) => a - b)[0][0];
 
-      // Try flex roles first
-      for (const role of flexRoles) {
-        if (roleCounts[role] < getNeeded(role)) {
-          assignedRole = role;
-          break;
-        }
-      }
-
-      // Fill any remaining unfilled role
-      if (!assignedRole) {
-        for (const [role] of Object.entries(roleCounts) as [AgentRole, number][]) {
-          if (roleCounts[role] < getNeeded(role)) {
-            assignedRole = role;
-            break;
-          }
-        }
-      }
-
-      // Last resort: lowest count role
-      if (!assignedRole) {
-        assignedRole = Object.entries(roleCounts).sort(([, a], [, b]) => a - b)[0][0] as AgentRole;
-      }
+      const assignedRole: AgentRole =
+        flexRoles.reduce((best, role) =>
+          roleCounts[role] < roleCounts[best] ? role : best
+        , flexRoles[0]) ?? lowestOverall();
 
       const agent = this.selectBestAgent(prefs, assignedRole, usedAgents, mapPreferences);
       assignments[player.id] = agent;
