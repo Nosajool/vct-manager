@@ -157,6 +157,40 @@ export function evaluateCondition(
     case 'or':
       return condition.anyOf?.some((c) => evaluateCondition(c, snapshot)) ?? false;
 
+    // Agent composition / strategy checks (interview-only fields on InterviewSnapshot)
+    case 'composition_type': {
+      const interviewSnap = snapshot as { lastMatchComposition?: { roleCounts: Record<string, number> } };
+      const comp = interviewSnap.lastMatchComposition;
+      if (!comp || !condition.compositionPattern) return false;
+      const { roleCounts } = comp;
+      switch (condition.compositionPattern) {
+        case 'double_duelist':    return (roleCounts['Duelist'] ?? 0) >= 2;
+        case 'double_controller': return (roleCounts['Controller'] ?? 0) >= 2;
+        case 'double_initiator':  return (roleCounts['Initiator'] ?? 0) >= 2;
+        case 'triple_duelist':    return (roleCounts['Duelist'] ?? 0) >= 3;
+        case 'no_controller':     return (roleCounts['Controller'] ?? 0) === 0;
+        case 'no_initiator':      return (roleCounts['Initiator'] ?? 0) === 0;
+        default: return false;
+      }
+    }
+
+    case 'player_off_preferred_agent': {
+      const interviewSnap = snapshot as { lastMatchComposition?: { offPreferredPlayerIds: string[] } };
+      return (interviewSnap.lastMatchComposition?.offPreferredPlayerIds.length ?? 0) > 0;
+    }
+
+    case 'team_playstyle': {
+      const interviewSnap = snapshot as { teamStrategy?: { playstyle: string } };
+      if (!interviewSnap.teamStrategy || !condition.playstyle) return false;
+      return interviewSnap.teamStrategy.playstyle === condition.playstyle;
+    }
+
+    case 'team_economy_discipline': {
+      const interviewSnap = snapshot as { teamStrategy?: { economyDiscipline: string } };
+      if (!interviewSnap.teamStrategy || !condition.economyDiscipline) return false;
+      return interviewSnap.teamStrategy.economyDiscipline === condition.economyDiscipline;
+    }
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;

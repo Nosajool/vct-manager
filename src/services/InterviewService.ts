@@ -4,6 +4,7 @@
 import type { MatchResult } from '../types/match';
 import type { Team } from '../types/team';
 import type { DramaState } from '../types/drama';
+import { COMPOSITION_CONSTANTS } from '../engine/match/constants';
 import type {
   InterviewEffects,
   InterviewOption,
@@ -70,6 +71,7 @@ export class InterviewService {
       lastMatchWon: won,
       opponentTeamId,
       tournamentContext: context,
+      matchResult,
     });
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'POST_MATCH') return false;
@@ -356,6 +358,7 @@ export class InterviewService {
     lastMatchWon?: boolean;
     opponentTeamId?: string;
     tournamentContext?: TournamentMatchContext;
+    matchResult?: MatchResult;
   }): InterviewSnapshot {
     const state = useGameStore.getState();
     const playerTeamId = state.playerTeamId!;
@@ -395,6 +398,41 @@ export class InterviewService {
         }
       : undefined;
 
+    // Extract composition data from match result if provided
+    let lastMatchComposition: InterviewSnapshot['lastMatchComposition'];
+    if (options.matchResult) {
+      const matchObj = state.matches[options.matchResult.matchId];
+      const isTeamA = matchObj?.teamAId === playerTeamId;
+
+      const playerPerfs = options.matchResult.maps.flatMap((m) =>
+        isTeamA ? m.teamAPerformances : m.teamBPerformances
+      );
+
+      const roleCounts: Record<string, number> = {};
+      for (const perf of playerPerfs) {
+        const role = (COMPOSITION_CONSTANTS.AGENT_ROLES as Record<string, string>)[perf.agent] ?? 'Unknown';
+        roleCounts[role] = (roleCounts[role] ?? 0) + 1;
+      }
+
+      const offPreferredPlayerIds = playerPerfs
+        .filter((perf) => {
+          const prefs = state.playerAgentPreferences[perf.playerId];
+          if (!prefs?.preferredAgents) return false;
+          return !prefs.preferredAgents.includes(perf.agent);
+        })
+        .map((perf) => perf.playerId);
+
+      lastMatchComposition = { roleCounts, offPreferredPlayerIds };
+    }
+
+    // Extract team strategy
+    const rawStrategy = state.getTeamStrategy(playerTeamId);
+    const teamStrategy: InterviewSnapshot['teamStrategy'] = {
+      playstyle: rawStrategy.playstyle,
+      economyDiscipline: rawStrategy.economyDiscipline,
+      ultUsageStyle: rawStrategy.ultUsageStyle,
+    };
+
     return {
       currentDate: state.calendar.currentDate,
       currentSeason: state.calendar.currentSeason,
@@ -411,6 +449,8 @@ export class InterviewService {
       isUpsetWin: options.isUpsetWin ?? false,
       lastMatchWon: options.lastMatchWon,
       hasRivalry,
+      lastMatchComposition,
+      teamStrategy,
     };
   }
 

@@ -104,6 +104,17 @@ export interface AgentSelection {
 }
 
 /**
+ * Composition pattern for interview conditions
+ */
+export type CompositionPattern =
+  | 'double_duelist'
+  | 'double_controller'
+  | 'double_initiator'
+  | 'no_controller'
+  | 'no_initiator'
+  | 'triple_duelist';
+
+/**
  * Default team strategy
  */
 export const DEFAULT_TEAM_STRATEGY: TeamStrategy = {

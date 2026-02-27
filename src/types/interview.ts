@@ -3,6 +3,9 @@
 
 import type { PlayerPersonality } from './player';
 import type { DramaCondition, DramaGameStateSnapshot } from './drama';
+import type { CompositionPattern } from './strategy';
+
+export type { CompositionPattern };
 
 export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF';
 
@@ -89,6 +92,17 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
     eliminationRisk: boolean;
     isGrandFinal: boolean;
     opponent?: { droppedFromUpper: boolean };
+  };
+  // Agent composition from the last match
+  lastMatchComposition?: {
+    roleCounts: Record<string, number>;  // e.g. { Duelist: 2, Controller: 1, ... }
+    offPreferredPlayerIds: string[];     // playerIds who played outside their top-3
+  };
+  // Team strategy settings
+  teamStrategy?: {
+    playstyle: 'aggressive' | 'balanced' | 'passive';
+    economyDiscipline: 'risky' | 'standard' | 'conservative';
+    ultUsageStyle: 'aggressive' | 'save_for_key_rounds' | 'combo_focused';
   };
 }
 

@@ -10,6 +10,7 @@ import { OPPONENT_AWARENESS_TEMPLATES } from './opponent_awareness';
 import { TEAM_IDENTITY_TEMPLATES } from './team_identity';
 import { VISA_ARC_TEMPLATES } from './visa_arc';
 import { COACHING_OVERHAUL_TEMPLATES } from './coaching_overhaul';
+import { AGENT_STRATEGY_TEMPLATES } from './agent_strategy';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -22,4 +23,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...TEAM_IDENTITY_TEMPLATES,
   ...VISA_ARC_TEMPLATES,
   ...COACHING_OVERHAUL_TEMPLATES,
+  ...AGENT_STRATEGY_TEMPLATES,
 ];

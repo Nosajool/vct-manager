@@ -3,6 +3,7 @@
 
 import type { PlayerContract, PlayerPersonality, PlayerStats, Region } from './player';
 import type { SeasonPhase } from './calendar';
+import type { CompositionPattern } from './strategy';
 
 // ============================================================================
 // Basic Enums (String Union Types)
@@ -101,7 +102,13 @@ export type DramaConditionType =
   | 'player_is_import'  // Any player's home region differs from the team's league region
 
   // Random chance
-  | 'random_chance';
+  | 'random_chance'
+
+  // Agent composition / strategy checks (populated on InterviewSnapshot)
+  | 'composition_type'            // Checks role distribution in last match
+  | 'player_off_preferred_agent'  // At least one player played outside their top-3
+  | 'team_playstyle'              // Checks team strategy playstyle
+  | 'team_economy_discipline';    // Checks team economy discipline
 
 /**
  * Player selection method for condition evaluation
@@ -155,6 +162,15 @@ export interface DramaCondition {
 
   // For 'or' type: at least one sub-condition must pass
   anyOf?: DramaCondition[];
+
+  // For composition_type check
+  compositionPattern?: CompositionPattern;
+
+  // For team_playstyle check
+  playstyle?: 'aggressive' | 'balanced' | 'passive';
+
+  // For team_economy_discipline check
+  economyDiscipline?: 'risky' | 'standard' | 'conservative';
 }
 
 // ============================================================================
