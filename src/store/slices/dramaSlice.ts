@@ -8,7 +8,7 @@ export interface DramaSlice {
   // State
   activeEvents: DramaEventInstance[];
   eventHistory: DramaEventInstance[];
-  activeFlags: Record<string, { setDate: string; expiresDate?: string }>; // flagName -> flag data
+  activeFlags: Record<string, { setDate: string; expiresDate?: string; value?: any }>; // flagName -> flag data
   cooldowns: Record<string, string>; // templateId -> last fired ISO date
   lastEventByCategory: Record<DramaCategory, string>; // category -> ISO date
   totalEventsTriggered: number;
@@ -25,7 +25,7 @@ export interface DramaSlice {
   ) => void;
   expireDramaEvent: (eventId: string) => void;
   escalateDramaEvent: (eventId: string, newEvent: DramaEventInstance) => void;
-  setDramaFlag: (flag: string, data: { setDate: string; expiresDate?: string }) => void;
+  setDramaFlag: (flag: string, data: { setDate: string; expiresDate?: string; value?: any }) => void;
   clearDramaFlag: (flag: string) => void;
   setCooldown: (templateId: string, date: string) => void;
   updateLastEventByCategory: (category: DramaCategory, date: string) => void;

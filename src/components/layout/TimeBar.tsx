@@ -414,6 +414,21 @@ export function TimeBar() {
 
       for (const player of available.slice(0, needed)) {
         state.movePlayerToActive(playerTeamId, player.id);
+
+        // Track substitute for visa arc recovery: store promoted player's ID in the flag value
+        const currentFlags = useGameStore.getState().activeFlags;
+        const substituteFlag = Object.keys(currentFlags).find(flagKey => {
+          if (!flagKey.startsWith('substitute_taking_over_')) return false;
+          if (currentFlags[flagKey].value) return false; // already tracked
+          const originalPlayerId = flagKey.replace('substitute_taking_over_', '');
+          return team.reservePlayerIds.includes(originalPlayerId);
+        });
+        if (substituteFlag) {
+          state.setDramaFlag(substituteFlag, {
+            ...currentFlags[substituteFlag],
+            value: player.id,
+          });
+        }
       }
     }
 

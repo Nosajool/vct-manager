@@ -274,7 +274,7 @@ export class DramaService {
           acc[flag] = {
             setDate: data.setDate,
             expiresDate: data.expiresDate,
-            value: undefined,
+            value: data.value,
           };
         }
         return acc;
@@ -526,6 +526,14 @@ export class DramaService {
           if (!effect.playerId) continue;
           const playerTeamId = state.playerTeamId;
           if (!playerTeamId) continue;
+          const team = state.teams[playerTeamId];
+          if (team && team.playerIds.length >= 5) {
+            // Bench the tracked substitute to make room for the returning player
+            const substituteFlag = state.activeFlags[`substitute_taking_over_${effect.playerId}`];
+            if (substituteFlag?.value) {
+              state.movePlayerToReserve(playerTeamId, substituteFlag.value);
+            }
+          }
           state.movePlayerToActive(playerTeamId, effect.playerId);
           break;
         }

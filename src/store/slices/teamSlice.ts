@@ -191,6 +191,7 @@ export const createTeamSlice: StateCreator<
     set((state) => {
       const team = state.teams[teamId];
       if (!team) return state;
+      if (team.playerIds.length >= 5) return state;
 
       // Remove from reserve, add to active
       return {

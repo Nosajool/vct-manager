@@ -276,6 +276,20 @@ export class ContractService {
       }
       // Move from reserve to active
       state.movePlayerToActive(player.teamId, playerId);
+
+      // Track substitute for visa arc recovery: store promoted player's ID in the flag value
+      const substituteFlag = Object.keys(state.activeFlags).find(flagKey => {
+        if (!flagKey.startsWith('substitute_taking_over_')) return false;
+        if (state.activeFlags[flagKey].value) return false; // already tracked
+        const originalPlayerId = flagKey.replace('substitute_taking_over_', '');
+        return team.reservePlayerIds.includes(originalPlayerId);
+      });
+      if (substituteFlag) {
+        state.setDramaFlag(substituteFlag, {
+          ...state.activeFlags[substituteFlag],
+          value: playerId,
+        });
+      }
     } else {
       if (isReserve) {
         return { success: false, error: 'Player is already in reserve' };
