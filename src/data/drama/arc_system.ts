@@ -2569,6 +2569,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'interview_historic_win',
+        playerSelector: 'star_player',
       },
       {
         type: 'tournament_active',

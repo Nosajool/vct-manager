@@ -8,6 +8,8 @@ import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating, formatKD } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
 import { AgentPreferenceEditor } from './AgentPreferenceEditor';
+import { useGameStore } from '../../store';
+import { contractService } from '../../services';
 
 interface PlayerDetailModalProps {
   player: Player;
@@ -34,6 +36,15 @@ export function PlayerDetailModal({
   const [showAgentEditor, setShowAgentEditor] = useState(false);
 
   const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
+  const { getTeam } = useGameStore();
+
+  const canMakeIGL = isOnPlayerTeam && !isIGL && rosterPosition === 'active';
+
+  const handleMakeIGL = () => {
+    const team = player.teamId ? getTeam(player.teamId) : undefined;
+    if (!team) return;
+    contractService.reassignIGL(player.id, team.id);
+  };
 
   // Default season stats for players without the field (backward compatibility)
   const seasonStats = player.seasonStats ?? {
@@ -367,13 +378,21 @@ export function PlayerDetailModal({
 
           {/* Agent Preferences */}
           {isOnPlayerTeam && (
-            <div className="pt-2 border-t border-vct-gray/20">
+            <div className="pt-2 border-t border-vct-gray/20 space-y-2">
               <button
                 onClick={() => setShowAgentEditor(true)}
                 className="w-full px-4 py-2 bg-vct-dark hover:bg-vct-gray/20 text-vct-light border border-vct-gray/30 font-medium rounded transition-colors"
               >
                 Agent Preferences
               </button>
+              {canMakeIGL && (
+                <button
+                  onClick={handleMakeIGL}
+                  className="w-full px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 font-medium rounded transition-colors"
+                >
+                  Make IGL
+                </button>
+              )}
             </div>
           )}
 

@@ -71,8 +71,8 @@ export function evaluateCondition(
       );
 
     case 'match_result':
-      // Check if there's a recent match result (within last 3 days)
-      return hasRecentMatchResult(snapshot);
+      // Check if there's a recent match result (within threshold days, default 3)
+      return hasRecentMatchResult(snapshot, condition.threshold ?? 3);
 
     case 'no_recent_match':
       return !hasRecentMatchResult(snapshot, condition.threshold ?? 1);

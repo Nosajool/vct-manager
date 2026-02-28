@@ -290,6 +290,15 @@ export function rollForEvent(
     probability *= CADENCE_LIMITS.CATEGORY_BOOST_MULTIPLIER;
   }
 
+  // Apply flag-driven probability boosts
+  if (template.probabilityBoostedBy) {
+    for (const { flag, boost } of template.probabilityBoostedBy) {
+      if (evaluateCondition({ type: 'flag_active', flag }, snapshot)) {
+        probability += boost;
+      }
+    }
+  }
+
   // Cap at 100%
   probability = Math.min(100, probability);
 

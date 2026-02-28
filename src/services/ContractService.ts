@@ -318,6 +318,32 @@ export class ContractService {
   }
 
   /**
+   * Reassign the IGL role to a new player, with drama flag side effects
+   */
+  reassignIGL(newIglPlayerId: string, teamId: string): void {
+    const state = useGameStore.getState();
+    const team = state.teams[teamId];
+    if (!team) return;
+
+    if (team.iglPlayerId && team.iglPlayerId !== newIglPlayerId) {
+      state.updatePlayer(team.iglPlayerId, { isFormerIGL: true });
+
+      const currentDate = state.calendar.currentDate;
+      const expiryDateObj = new Date(currentDate);
+      expiryDateObj.setDate(expiryDateObj.getDate() + 21);
+      state.setDramaFlag('igl_manually_reassigned', {
+        setDate: currentDate,
+        expiresDate: expiryDateObj.toISOString(),
+      });
+
+      if (state.activeFlags['igl_replacement_considered']) state.clearDramaFlag('igl_replacement_considered');
+      if (state.activeFlags['igl_on_notice']) state.clearDramaFlag('igl_on_notice');
+    }
+
+    state.updateTeam(teamId, { iglPlayerId: newIglPlayerId });
+  }
+
+  /**
    * Record a financial transaction
    */
   private recordTransaction(teamId: string, transaction: Transaction): void {

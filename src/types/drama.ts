@@ -295,6 +295,12 @@ export interface DramaEventTemplate {
   escalateDays?: number;    // Days until escalation if unresolved
   escalationTemplateId?: string;
 
+  // Flag-driven probability boosts
+  probabilityBoostedBy?: Array<{
+    flag: string;    // supports {playerId} patterns, e.g. 'visa_expedited_{playerId}'
+    boost: number;   // flat addition to probability (0-100)
+  }>;
+
   // Meta
   cooldownDays?: number;    // Cooldown before this template can trigger again
   oncePerSeason?: boolean;  // Can only trigger once per season
