@@ -326,4 +326,121 @@ export const IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       },
     ],
   },
+
+  {
+    id: 'crisis_igl_playing_under_endorsement_pressure',
+    context: 'CRISIS',
+    subjectType: 'player',
+    conditions: [{ type: 'flag_active', flag: 'igl_backed_by_management' }],
+    prompt: "Management has publicly staked their reputation on you as IGL. How do you carry that?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'It fuels me',
+        quote: "It fuels me. When people believe in you that loudly, you don't waste it. I'm going to prove every word right.",
+        effects: {
+          morale: 5,
+          hype: 4,
+        },
+        personalityWeights: {
+          FAME_SEEKER: 2,
+          BIG_STAGE: 2,
+          TEAM_FIRST: 1,
+          STABLE: 1,
+          INTROVERT: 0,
+        },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'I carry it lightly',
+        quote: "I carry it lightly. The best way to honor that backing is to keep my head down and lead well — not think about it every round.",
+        effects: {
+          morale: 4,
+          sponsorTrust: 3,
+        },
+        personalityWeights: {
+          STABLE: 2,
+          TEAM_FIRST: 2,
+          INTROVERT: 1,
+          FAME_SEEKER: 0,
+          BIG_STAGE: 0,
+        },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I don't think about it",
+        quote: "Honestly? I don't think about it. You can't call rounds with that kind of weight on your mind. I just play.",
+        effects: {
+          morale: 2,
+        },
+        personalityWeights: {
+          INTROVERT: 2,
+          STABLE: 1,
+          TEAM_FIRST: 1,
+          FAME_SEEKER: 0,
+          BIG_STAGE: 0,
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_former_igl_in_coaching_role',
+    context: 'CRISIS',
+    subjectType: 'player',
+    conditions: [{ type: 'flag_active', flag: 'igl_transitioned_to_coach' }],
+    prompt: "You've moved from calling rounds to a strategic assistant role. How are you adjusting to not being the one on the mic?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: 'Different kind of satisfaction',
+        quote: "There's a different kind of satisfaction in shaping the game from the outside. When a call I worked on with the team lands perfectly, I feel that.",
+        effects: {
+          morale: 4,
+          setsFlags: [{ key: 'igl_coaching_transition_smooth', durationDays: 30 }],
+        },
+        personalityWeights: {
+          TEAM_FIRST: 2,
+          STABLE: 2,
+          INTROVERT: 1,
+          FAME_SEEKER: 0,
+          BIG_STAGE: 0,
+        },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: 'My voice still shapes every round',
+        quote: "I'm still in every round — just differently. My reads go into the prep, the vod review, the strat board. The mic changed, the impact didn't.",
+        effects: {
+          morale: 4,
+          hype: 3,
+        },
+        personalityWeights: {
+          FAME_SEEKER: 2,
+          BIG_STAGE: 2,
+          STABLE: 1,
+          TEAM_FIRST: 1,
+          INTROVERT: 0,
+        },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Still learning',
+        quote: "Still learning what this role really means. It's a big shift. I don't have it all figured out yet — and that's okay.",
+        effects: {
+          morale: -2,
+          fanbase: 4,
+          dramaChance: 5,
+        },
+        personalityWeights: {
+          INTROVERT: 2,
+          STABLE: 1,
+          TEAM_FIRST: 1,
+          FAME_SEEKER: 0,
+          BIG_STAGE: 0,
+        },
+      },
+    ],
+  },
+
 ];

@@ -309,4 +309,126 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
+
+  {
+    id: 'underdog_narrative_pays_off',
+    category: 'visa_arc',
+    severity: 'major',
+    title: 'Underdog Story Breaks Through',
+    description: "The substitute lineup just won, and the underdog narrative is gaining real traction. Media and fans are rallying behind {teamName}'s resilience. How do you handle the moment?",
+    conditions: [
+      { type: 'flag_active', flag: 'team_underdog_refocus' },
+      { type: 'team_win_streak', streakLength: 1 },
+    ],
+    probability: 65,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'lean_into_media',
+        text: 'Lean into the narrative — ride the wave',
+        description: 'Amplify the underdog story publicly and let the momentum build.',
+        effects: [
+          { target: 'team_hype', delta: 8 },
+          { target: 'team_sponsor_trust', delta: 5 },
+          { target: 'set_flag', flag: 'underdog_narrative_viral', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'team_underdog_refocus' },
+        ],
+        outcomeText: "The org leans in hard. Clips go viral, sponsors take notice, and the media can't stop talking about {teamName}'s grit.",
+      },
+      {
+        id: 'shield_team_from_noise',
+        text: 'Shield the team — stay focused internally',
+        description: 'Keep the narrative out of the locker room and protect team concentration.',
+        effects: [
+          { target: 'team_chemistry', delta: 6 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
+          { target: 'clear_flag', flag: 'team_underdog_refocus' },
+        ],
+        outcomeText: "You keep the energy inside the building. The team stays grounded and the chemistry tightens — this group knows what they're doing.",
+      },
+      {
+        id: 'honor_missing_player',
+        text: 'Honor the missing player publicly',
+        description: 'Make sure the absent player is part of the story — this win is for them.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 10 },
+          { target: 'team_chemistry', delta: 8 },
+          { target: 'set_flag', flag: 'underdog_narrative_viral', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'team_underdog_refocus' },
+        ],
+        outcomeText: "You dedicate the moment to the missing player. The entire team feels it — and the gesture resonates far beyond the locker room.",
+      },
+    ],
+  },
+
+  {
+    id: 'underdog_narrative_stalls',
+    category: 'visa_arc',
+    severity: 'minor',
+    title: 'Underdog Story Runs Out of Steam',
+    description: "Back-to-back losses have deflated the feel-good narrative. The substitute lineup is struggling, and the initial energy has faded.",
+    conditions: [
+      { type: 'flag_active', flag: 'team_underdog_refocus' },
+      { type: 'team_loss_streak', streakLength: 2 },
+    ],
+    probability: 70,
+    cooldownDays: 7,
+    effects: [
+      { target: 'player_morale', effectPlayerSelector: 'all', delta: -6 },
+      { target: 'team_hype', delta: -5 },
+      { target: 'team_chemistry', delta: -4 },
+      { target: 'clear_flag', flag: 'team_underdog_refocus' },
+    ],
+  },
+
+  {
+    id: 'visa_reform_audit',
+    category: 'visa_arc',
+    severity: 'major',
+    title: 'Reform Audit Complete',
+    description: "The internal review window for the org's administrative reforms is closing. Sponsors and the community are waiting to see what actually changed. How does {teamName} present the results?",
+    conditions: [
+      { type: 'flag_active', flag: 'visa_admin_reformed' },
+      { type: 'random_chance', chance: 70 },
+    ],
+    probability: 80,
+    cooldownDays: 5,
+    choices: [
+      {
+        id: 'publish_concrete_results',
+        text: 'Publish concrete reform results',
+        description: 'Release specific policy changes and process documentation publicly.',
+        effects: [
+          { target: 'team_sponsor_trust', delta: 10 },
+          { target: 'set_flag', flag: 'visa_process_certified', flagDuration: 60 },
+          { target: 'clear_flag', flag: 'visa_admin_reformed' },
+        ],
+        outcomeText: "The org releases detailed documentation of the new processes. Sponsors are impressed by the transparency, and the community sees real accountability.",
+      },
+      {
+        id: 'vague_positive_statement',
+        text: 'Release a vague positive statement',
+        description: 'Acknowledge the review with optimistic language but no specifics.',
+        effects: [
+          { target: 'team_sponsor_trust', delta: 1 },
+          { target: 'team_chemistry', delta: -3 },
+          { target: 'clear_flag', flag: 'visa_admin_reformed' },
+        ],
+        outcomeText: "The statement reads more like PR than accountability. Internally the team notices the lack of substance, and sponsors file it away.",
+      },
+      {
+        id: 'admit_reform_incomplete',
+        text: 'Admit the reform is still incomplete',
+        description: 'Be honest that the process changes are not yet fully implemented.',
+        effects: [
+          { target: 'team_sponsor_trust', delta: -8 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
+          { target: 'set_flag', flag: 'visa_admin_failure_recurring', flagDuration: 21 },
+          { target: 'clear_flag', flag: 'visa_admin_reformed' },
+        ],
+        outcomeText: "The admission of incompleteness is honest but damaging. Sponsors pull back on trust, and the team questions whether the org can get its house in order.",
+      },
+    ],
+  },
+
 ];

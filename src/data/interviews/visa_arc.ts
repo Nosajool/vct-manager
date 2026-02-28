@@ -217,4 +217,43 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+
+  {
+    id: 'crisis_public_apology_followup',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    conditions: [{ type: 'flag_active', flag: 'visa_public_apology' }],
+    prompt: "The org issued a public apology for the visa failure. Is an apology enough?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: 'First step, more coming',
+        quote: "An apology is the beginning, not the end. We're committing to structural changes that ensure this never happens to one of our players again.",
+        effects: {
+          fanbase: 6,
+          setsFlags: [{ key: 'visa_reform_promised', durationDays: 21 }],
+        },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: 'We owed it to the player',
+        quote: "We owed that player a public acknowledgment of how we failed them. The apology was the least we could do — now we have to back it up.",
+        effects: {
+          fanbase: 3,
+          sponsorTrust: 2,
+          morale: 3,
+        },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Focus forward',
+        quote: "We said what needed to be said. Now the focus is on the team and what we can accomplish from here.",
+        effects: {
+          hype: 2,
+          fanbase: -4,
+        },
+      },
+    ],
+  },
+
 ];

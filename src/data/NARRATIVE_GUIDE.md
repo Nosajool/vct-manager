@@ -112,6 +112,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | Team identity flag-gated | `team_identity.ts` |
 | Visa arc | `visa_arc.ts` |
 | Coaching overhaul arc | `coaching_overhaul.ts` |
+| IGL crisis arc | `igl_crisis.ts` |
 
 **Drama events** live in `src/data/drama/`:
 
@@ -127,6 +128,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | Team identity events | `team_identity.ts` |
 | `visa_arc` | `visa_arc.ts` |
 | `coaching_overhaul` | `coaching_overhaul.ts` |
+| `igl_crisis` | `igl_crisis.ts` |
 
 ### Option structure
 
@@ -203,7 +205,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 
@@ -865,8 +867,33 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `visa_player_returned_{playerId}` | `visa_approved_lastminute` | future events |
 | `visa_tournament_missed_{playerId}` | `visa_tournament_missed` immediate effects | `visa_approved_lastminute` (guard: `flag_not_active`) — blocks approval after miss |
 | `visa_admin_review` | `visa_tournament_missed` "internal review" choice | future events |
-| `visa_public_apology` | `visa_tournament_missed` "public apology" choice | future events |
-| `team_underdog_refocus` | `visa_tournament_missed` "refocus" choice | future events |
+| `visa_public_apology` | `visa_tournament_missed` "public apology" choice | `crisis_public_apology_followup` interview |
+| `visa_admin_reformed` | `visa_admin_failure_backlash` "formal process review" choice | `visa_reform_audit` drama |
+| `team_underdog_refocus` | `visa_tournament_missed` "refocus" choice | `underdog_narrative_pays_off`, `underdog_narrative_stalls` drama |
+| `visa_process_certified` | `visa_reform_audit` "publish results" choice | future events (positive signal) |
+| `visa_admin_failure_recurring` | `visa_reform_audit` "admit incomplete" choice | future events |
+| `underdog_narrative_viral` | `underdog_narrative_pays_off` choices A/C | future events (short-lived info signal) |
+
+**IGL crisis arc flags**
+
+| Flag | Set by | Read by |
+|------|--------|---------|
+| `igl_on_notice` | `igl_midround_doubt` "private warning" choice; `management_endorsement_backfires` "walk back" choice | `igl_reddit_backlash` condition; `crisis_igl_on_notice` interview |
+| `igl_backed_by_management` | `igl_midround_doubt` "back IGL publicly" choice | `management_endorsement_backfires` drama; `crisis_igl_playing_under_endorsement_pressure` interview |
+| `igl_doubles_down` | `igl_reddit_backlash` "ignore noise" choice | `post_loss_igl_under_fire` interview condition |
+| `igl_replacement_considered` | `igl_reddit_backlash` "explore replacement" choice | `igl_leadership_decision` drama; `crisis_igl_changes_looming` interview |
+| `shared_calling_enabled` | `igl_reddit_backlash` "strip midround" choice; `shared_caller_experiment_chaos` "co-caller" choice | `post_match_shared_calling` interview |
+| `igl_removed` | `igl_leadership_decision` "reassign" choice | `igl_collapse` drama; `crisis_leadership_change_explained` interview |
+| `igl_redemption_path` | `igl_leadership_decision` "keep IGL" choice | `igl_redemption` drama; `post_win_igl_silences_critics` interview |
+| `igl_redemption_achieved` | `igl_redemption` drama | `post_win_igl_redemption_player` interview |
+| `igl_transitioned_to_coach` | `igl_leadership_decision` "transition to coach" choice | `crisis_former_igl_in_coaching_role` interview |
+| `shared_caller_experiment` | `igl_midround_doubt` "open discussion" choice | `shared_caller_experiment_success`, `shared_caller_experiment_chaos` drama |
+| `igl_under_siege` | `management_endorsement_backfires` "double down" choice | future events |
+| `collaborative_calling_system` | `shared_caller_experiment_success` "codify as policy" choice | future events (positive signal) |
+| `igl_authority_restored` | `shared_caller_experiment_chaos` "restore authority" choice | future events |
+| `igl_crisis_deepening` | `shared_caller_experiment_chaos` "push through" choice | future events |
+| `igl_coaching_transition_smooth` | `crisis_former_igl_in_coaching_role` HUMBLE option | future events (positive signal) |
+| `leadership_instability` | `igl_collapse` drama | `crisis_leadership_instability` interview |
 
 **Coaching overhaul arc flags**
 
@@ -947,7 +974,7 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 
 - **Don't make choices that feel identical** — each of 3 choices should have a meaningfully different risk/reward tradeoff.
 - **Don't resolve stories in one event** — prefer a minor event setting a flag → major event 3–7 days later.
-- **Don't set flags without planning a reader** — if you add `setsFlags`, sketch the drama event that will consume it.
+- **Don't set flags without a consumer.** Every `set_flag` effect and `setsFlags` entry is a **promise to the player** that their decision will matter downstream. A flag with no `flag_active` condition anywhere is invisible game state — the story treats it as if the choice never happened. Before committing any new flag, name the specific event or interview template that reads it. If you can't name it, don't set it yet. See Pattern 12.
 - **Don't use morale deltas above ±20 on a single effect** — the scale is 0–100, small changes matter more narratively.
 - **Don't add a `flag_active` condition without ensuring the flag can actually be set** — trace the whole path from interview option or drama effect to the condition. Dead conditions silently make templates unreachable.
 - **Don't use `player_stat` as a condition stat name** — use the actual stat key (`mechanics`, `igl`, `mental`, etc.).
@@ -956,6 +983,45 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - **Don't add conditions that require flags nothing sets** — before adding a `flag_active` condition, verify there is a concrete code path (interview option or drama effect) that sets that flag. Dead conditions silently make events unreachable.
 - **Don't forget to terminate arcs** — any escalation chain needs a terminal event that (a) sets a long-lived terminus flag immediately via `effects[]`, (b) clears intermediate arc flags in every choice, and (c) clears them in `autoResolveEffects` too. See Pattern 10.
 - **Scrim leak scandal and veteran/rookie rivalry are intentionally out of scope** — they require data structures not yet in `DramaGameStateSnapshot`.
+
+### Pattern 12: Every flag is a promise — close the loop
+
+Setting a flag implies a game state change. Without a consumer, that state is invisible and the story feels incomplete. A manager who issues a public apology, publicly backs their IGL, or pivots to an underdog narrative should feel that decision echoing forward — not have it silently expire.
+
+**The rule:** Every `set_flag` effect and every `setsFlags` entry must have at least one of:
+- A `flag_active` condition on a drama event
+- A `flag_active` condition on an interview template
+
+**Orphan pattern to avoid:**
+```typescript
+// ❌ Flag set with no reader anywhere in the codebase:
+{ target: 'set_flag', flag: 'visa_public_apology', flagDuration: 14 }
+// No drama event or interview has: { type: 'flag_active', flag: 'visa_public_apology' }
+// The org's apology simply... vanishes.
+```
+
+**Closed loop:**
+```typescript
+// ✅ Flag set and consumed:
+{ target: 'set_flag', flag: 'visa_public_apology', flagDuration: 14 }
+
+// In interviews/visa_arc.ts:
+{
+  id: 'crisis_public_apology_followup',
+  conditions: [{ type: 'flag_active', flag: 'visa_public_apology' }],
+  prompt: "The org issued a public apology. Is an apology enough?",
+  // Manager is forced to answer for the decision they made
+}
+```
+
+**How to verify before shipping new content:**
+1. Grep for the flag key across all `src/data/drama/` and `src/data/interviews/`
+2. Confirm at least one `flag_active` condition references it
+3. Confirm that `flag_active` is reachable — trace back to the `set_flag` that produces it
+
+**New flags are not automatically consumed by existing events.** When adding choices to an existing drama event, audit every flag set in every new choice. New downstream flags (`visa_process_certified`, `collaborative_calling_system`, etc.) that don't yet have consumers should be documented in the flag reference table as "future events" — that's acceptable for short-lived info signals, but schedule them as explicit follow-up work, not as permanent gaps.
+
+**Short-lived probability boosts are an exception.** A flag like `visa_expedited_{playerId}` that feeds a `probabilityBoostedBy` entry on a subsequent event *is* being consumed — the boost is the consequence. These don't require a separate `flag_active` condition.
 
 ---
 

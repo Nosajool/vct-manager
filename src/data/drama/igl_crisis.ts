@@ -196,6 +196,167 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
+  // Event: Management endorsement backfires when team loses under pressure
+  {
+    id: 'management_endorsement_backfires',
+    category: 'igl_crisis',
+    severity: 'major',
+    title: 'Management Backing Under Scrutiny',
+    description:
+      "The team has dropped consecutive matches after management publicly staked its reputation on {playerName}. The endorsement is now a liability — critics are circling and internal doubts are mounting.",
+    conditions: [
+      { type: 'flag_active', flag: 'igl_backed_by_management' },
+      { type: 'team_loss_streak', streakLength: 2 },
+      { type: 'player_morale_above', threshold: -1, playerSelector: 'igl_player' },
+    ],
+    probability: 75,
+    cooldownDays: 7,
+    requiresPlayerTeam: true,
+    choices: [
+      {
+        id: 'double_down_endorsement',
+        text: "Double down — we stand behind {playerName}.",
+        description: 'Publicly reaffirm the endorsement despite the losses.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 8 },
+          { target: 'team_hype', delta: -5 },
+          { target: 'team_sponsor_trust', delta: -6 },
+          { target: 'set_flag', flag: 'igl_under_siege', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'igl_backed_by_management' },
+        ],
+        outcomeText:
+          "You reaffirm the backing publicly. {playerName} feels the lifeline, but sponsors and commentators start questioning management's judgment.",
+      },
+      {
+        id: 'walk_back_privately',
+        text: "Walk it back — have a quiet conversation with {playerName}.",
+        description: 'Quietly signal that the endorsement has limits without making a public statement.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -8 },
+          { target: 'team_chemistry', delta: -5 },
+          { target: 'set_flag', flag: 'igl_on_notice', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'igl_backed_by_management' },
+        ],
+        outcomeText:
+          "{playerName} reads between the lines in the private meeting. The team senses the shift in confidence and the locker room tightens up.",
+      },
+      {
+        id: 'reframe_as_team_issue',
+        text: 'Reframe this as a team-wide performance issue.',
+        description: 'Deflect pressure from the IGL by distributing accountability across the roster.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: -4 },
+          { target: 'team_sponsor_trust', delta: 4 },
+          { target: 'clear_flag', flag: 'igl_backed_by_management' },
+        ],
+        outcomeText:
+          "You shift the narrative away from individual leadership. Sponsors appreciate the measured tone, but the whole team feels the weight of collective blame.",
+      },
+    ],
+  },
+
+  // Event: Shared caller experiment succeeds on win streak
+  {
+    id: 'shared_caller_experiment_success',
+    category: 'igl_crisis',
+    severity: 'major',
+    title: 'Shared Calling Clicks',
+    description:
+      "Two consecutive wins while operating with the shared calling structure — the collaborative approach is working. How does the team lock this in?",
+    conditions: [
+      { type: 'flag_active', flag: 'shared_caller_experiment' },
+      { type: 'team_win_streak', streakLength: 2 },
+    ],
+    probability: 70,
+    cooldownDays: 7,
+    choices: [
+      {
+        id: 'codify_as_policy',
+        text: 'Make it official — codify shared calling as the system.',
+        description: 'Formally commit to a collaborative calling structure going forward.',
+        effects: [
+          { target: 'team_chemistry', delta: 8 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 6 },
+          { target: 'set_flag', flag: 'collaborative_calling_system', flagDuration: 30 },
+          { target: 'clear_flag', flag: 'shared_caller_experiment' },
+        ],
+        outcomeText:
+          "The org formally commits to shared calling. Everyone buys in — the team feels ownership over the system, and the chemistry shows it.",
+      },
+      {
+        id: 'continue_cautiously',
+        text: "Keep running it, but don't lock anything in yet.",
+        description: 'Let the experiment keep proving itself before making structural commitments.',
+        effects: [
+          { target: 'team_chemistry', delta: 4 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
+          { target: 'clear_flag', flag: 'shared_caller_experiment' },
+        ],
+        outcomeText:
+          "The wins buy time without creating expectations. The team keeps running the system, but without a formal commitment, uncertainty lingers.",
+      },
+    ],
+  },
+
+  // Event: Shared caller experiment collapses on loss streak
+  {
+    id: 'shared_caller_experiment_chaos',
+    category: 'igl_crisis',
+    severity: 'major',
+    title: 'Shared Calling Creates Confusion',
+    description:
+      "Two straight losses with the shared calling structure in place. The lack of a clear authority is starting to hurt — players are stepping on each other mid-round.",
+    conditions: [
+      { type: 'flag_active', flag: 'shared_caller_experiment' },
+      { type: 'team_loss_streak', streakLength: 2 },
+      { type: 'player_morale_above', threshold: -1, playerSelector: 'igl_player' },
+    ],
+    probability: 75,
+    cooldownDays: 7,
+    requiresPlayerTeam: true,
+    choices: [
+      {
+        id: 'restore_igl_authority',
+        text: 'Restore clear IGL authority.',
+        description: 'End the experiment and return to a single shot-caller.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 7 },
+          { target: 'team_chemistry', delta: -5 },
+          { target: 'set_flag', flag: 'igl_authority_restored', flagDuration: 21 },
+          { target: 'clear_flag', flag: 'shared_caller_experiment' },
+        ],
+        outcomeText:
+          "The IGL gets the reins back. The clarity helps, but players who had a voice feel the pullback and some friction remains.",
+      },
+      {
+        id: 'designate_co_caller',
+        text: 'Keep shared calling, but designate a clear co-caller.',
+        description: 'Formalize the structure by defining who calls when.',
+        effects: [
+          { target: 'team_chemistry', delta: 3 },
+          { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -4 },
+          { target: 'set_flag', flag: 'shared_calling_enabled', flagDuration: 21 },
+          { target: 'clear_flag', flag: 'shared_caller_experiment' },
+        ],
+        outcomeText:
+          "A second caller is formally designated. It takes the chaos out of the structure, though the IGL privately bristles at the reduced authority.",
+      },
+      {
+        id: 'push_through_experiment',
+        text: 'Push through — the system just needs more time.',
+        description: "Don't change anything. Trust the process to work itself out.",
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: -6 },
+          { target: 'team_chemistry', delta: -7 },
+          { target: 'set_flag', flag: 'igl_crisis_deepening', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'shared_caller_experiment' },
+        ],
+        outcomeText:
+          "Nobody buys the 'trust the process' message after two losses. The locker room grows fractured and the calling confusion deepens.",
+      },
+    ],
+  },
+
   // Event 4b: Collapse (follow-up if IGL removed and team struggles)
   {
     id: 'igl_collapse',
