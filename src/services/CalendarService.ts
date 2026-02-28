@@ -47,6 +47,7 @@ export interface TimeAdvanceResult {
   rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
   interviewQueue?: PendingInterview[]; // Interviews to show after SimulationResultsModal
   crisisInterview?: PendingInterview;  // Crisis interview to show (after post-match interview)
+  generalInterview?: PendingInterview; // General media-day interview for non-match days
   moraleChanges?: MatchMoraleResult;   // Morale changes from player team match
 }
 
@@ -454,6 +455,13 @@ export class CalendarService {
       }
     }
 
+    // Check for general interview (non-match days only)
+    const isMatchDay = simulatedMatches.length > 0;
+    let generalInterview: PendingInterview | undefined;
+    if (!isMatchDay && state.playerTeamId) {
+      generalInterview = interviewService.checkGeneralInterview(currentDate) ?? undefined;
+    }
+
     // Check if auto-save should trigger
     const autoSaveTriggered = timeProgression.shouldAutoSave(
       newDate,
@@ -480,6 +488,7 @@ export class CalendarService {
       rivalryDelta,
       interviewQueue,
       crisisInterview: crisisInterview ?? undefined,
+      generalInterview: generalInterview ?? undefined,
       moraleChanges,
     };
   }

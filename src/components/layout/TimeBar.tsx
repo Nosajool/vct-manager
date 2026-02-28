@@ -194,6 +194,14 @@ export function TimeBar() {
       useGameStore.getState().setInterviewQueue(result.interviewQueue);
       setPressConferenceTotal(result.interviewQueue.length);
       queue.push('interview');
+    } else {
+      // No press conference — check for standalone crisis or general interview (non-match days)
+      const standalone = result?.crisisInterview ?? result?.generalInterview;
+      if (standalone) {
+        useGameStore.getState().setPendingInterview(standalone);
+        setPressConferenceTotal(1);
+        queue.push('interview');
+      }
     }
 
     advancePostModals(queue);

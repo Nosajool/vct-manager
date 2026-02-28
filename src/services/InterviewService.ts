@@ -309,6 +309,7 @@ export class InterviewService {
   /**
    * Check whether a crisis interview should trigger.
    * Fires if: loss streak >= 3, OR any player morale < 30, OR crisis_active drama flag.
+   * Includes a 3-day cooldown to prevent daily crisis interview spam.
    */
   checkCrisisInterview(
     dramaState: Pick<DramaState, 'activeFlags'>,
@@ -335,10 +336,53 @@ export class InterviewService {
       return null;
     }
 
+    // 3-day cooldown: skip if a CRISIS interview was shown recently
+    const currentDate = state.calendar.currentDate;
+    const recentCrisis = state.interviewHistory.some((entry) => {
+      if (entry.context !== 'CRISIS') return false;
+      const daysDiff = Math.abs(
+        (new Date(currentDate).getTime() - new Date(entry.date).getTime()) / 86_400_000
+      );
+      return daysDiff < 3;
+    });
+    if (recentCrisis) return null;
+
     // Pick matching template based on trigger reason
     const snapshot = this.buildInterviewSnapshot({});
     const candidates = INTERVIEW_TEMPLATES.filter((t) => {
       if (t.context !== 'CRISIS') return false;
+      return evaluateTemplateFlagGate(t, snapshot);
+    });
+
+    const template = this.pickTemplate(candidates);
+    if (!template) return null;
+
+    return this.toPendingInterview(template, undefined);
+  }
+
+  /**
+   * Check whether a general media-day interview should trigger on a non-match day.
+   * Base probability: 40% per day. 3-day cooldown after any previous GENERAL interview.
+   */
+  checkGeneralInterview(currentDate: string): PendingInterview | null {
+    const state = useGameStore.getState();
+
+    // 3-day cooldown: skip if a GENERAL interview was shown recently
+    const recentGeneral = state.interviewHistory.some((entry) => {
+      if (entry.context !== 'GENERAL') return false;
+      const daysDiff = Math.abs(
+        (new Date(currentDate).getTime() - new Date(entry.date).getTime()) / 86_400_000
+      );
+      return daysDiff < 3;
+    });
+    if (recentGeneral) return null;
+
+    // 40% base probability
+    if (Math.random() * 100 >= 40) return null;
+
+    const snapshot = this.buildInterviewSnapshot({});
+    const candidates = INTERVIEW_TEMPLATES.filter((t) => {
+      if (t.context !== 'GENERAL') return false;
       return evaluateTemplateFlagGate(t, snapshot);
     });
 
