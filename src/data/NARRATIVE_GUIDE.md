@@ -903,16 +903,16 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `star_bought_in_{playerId}` | `star_player_coaching_reaction` choices A/C; interview `crisis_star_player_on_new_coach` option A | `system_buyin_taking_hold` condition |
 | `star_skeptical_{playerId}` | `star_player_coaching_reaction` choice B; interview `crisis_star_player_on_new_coach` option C | narrative flavor only |
 | `star_coach_conflict_{playerId}` | `star_benched_in_scrims` choice B | `locker_room_friction_escalates`, `coaching_overhaul_crisis_point` conditions |
-| `star_silent_grind_{playerId}` | `star_benched_in_scrims` choice C | narrative flavor only |
+| `star_silent_grind_{playerId}` | `star_benched_in_scrims` choice C | `silent_grind_comeback` drama (form >55); interview `post_match_silent_grind` (any form) |
 | `strict_regime_active` | `new_regime_strict_structure` effects | `star_benched_in_scrims`, `system_buyin_taking_hold` conditions; interview `pre_match_new_regime_check` gate |
 | `locker_room_divide` | `star_player_coaching_reaction` choice B | `locker_room_friction_escalates` condition |
 | `coaching_authority_undermined` | `star_benched_in_scrims` choice B | `coaching_overhaul_crisis_point` condition |
 | `system_buyin_path_active` | `system_buyin_taking_hold` effects; `locker_room_friction_escalates` choice C | narrative gate |
 | `coaching_system_peak` | `system_buyin_taking_hold` effects; `coaching_overhaul_crisis_point` choice C (20d) | `coaching_overhaul_triumphant` condition; interview `post_match_system_working` gate |
 | `coaching_overhaul_failed` | `coaching_overhaul_crisis_point` immediate effects | `coaching_overhaul_fallout_aftermath` condition; interview `crisis_coaching_overhaul_fallout` gate |
-| `coaching_overhaul_succeeded` | `coaching_overhaul_triumphant` effects | terminal positive flag |
-| `coach_hot_seat` | `coaching_overhaul_crisis_point` choice B | narrative flavor only |
-| `media_narrative_coaching_debate` | `extended_coach_media_interview` effects | narrative flavor only |
+| `coaching_overhaul_succeeded` | `coaching_overhaul_triumphant` effects | interview `post_match_overhaul_success` |
+| `coach_hot_seat` | `coaching_overhaul_crisis_point` choice B | `coach_hot_seat_verdict` drama |
+| `media_narrative_coaching_debate` | `extended_coach_media_interview` effects | interview `crisis_coaching_philosophy_debate` |
 
 **Coaching overhaul arc flow**
 
@@ -933,13 +933,22 @@ These flags are already used in the system. Don't duplicate their meaning:
            Choice B → star_coach_conflict + coaching_authority_undermined (PATH B)
            Choice C → star_silent_grind                   (neutral)
 
+           Choice C → star_silent_grind_{playerId}        (neutral — resolved by drama or interview)
+
 PATH A ──► [ACT 3] system_buyin_taking_hold (minor) → coaching_system_peak
            [TERM]  coaching_overhaul_triumphant (minor) → coaching_overhaul_succeeded ✓
+                     └─► interview post_match_overhaul_success (victory lap)
 
 PATH B ──► [ACT 3] locker_room_friction_escalates (major)
            [TERM]  coaching_overhaul_crisis_point (major) → coaching_overhaul_failed ✗
+                     Choice B → coach_hot_seat → coach_hot_seat_verdict (major) clears flag
 
-[FLAVOR]  extended_coach_media_interview (minor, fires during arc)
+NEUTRAL ──► star_silent_grind_{playerId}
+              form >55 → silent_grind_comeback (minor) → star_bought_in (joins PATH A)
+              any form → interview post_match_silent_grind → CONFIDENT routes to PATH A
+
+[FLAVOR]  extended_coach_media_interview (minor, fires during arc) → media_narrative_coaching_debate
+            └─► interview crisis_coaching_philosophy_debate (closes debate loop)
 [AFTER]   coaching_overhaul_fallout_aftermath (minor, fires post-failure on loss streak)
 ```
 

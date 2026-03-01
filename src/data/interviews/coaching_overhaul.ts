@@ -238,6 +238,125 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
   },
 
   {
+    id: 'post_match_silent_grind',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    conditions: [{ type: 'flag_active', flag: 'star_silent_grind_{playerId}' }],
+    prompt: "You've been unusually quiet since the benching. A lot of people are reading into that silence. What's going on with you right now?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "I let the work answer.",
+        quote: "I don't need to say anything. The work will speak. It always does. Watch the next match.",
+        effects: {
+          hype: 5,
+          fanbase: 3,
+          setsFlags: [{ key: 'star_bought_in_{playerId}', durationDays: 30 }],
+        },
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0, TEAM_FIRST: 0, INTROVERT: 0 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'm focused. That's all.",
+        quote: "Sometimes staying quiet is the loudest thing you can do. I'm focused on getting better. Nothing else matters right now.",
+        effects: {
+          morale: 2,
+          sponsorTrust: 1,
+        },
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 2, FAME_SEEKER: 0, BIG_STAGE: 0 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'm fine. Next question.",
+        quote: "I'm fine. I've been through way worse. Next question.",
+        effects: {
+          dramaChance: 10,
+          fanbase: -1,
+        },
+        personalityWeights: { INTROVERT: 2, STABLE: 1, FAME_SEEKER: 0, BIG_STAGE: 0, TEAM_FIRST: 0 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_match_overhaul_success',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    conditions: [{ type: 'flag_active', flag: 'coaching_overhaul_succeeded' }],
+    prompt: "You pulled off something rare — a mid-season coaching change that actually worked. Looking back, what was the key to making it stick?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We knew what we were doing.",
+        quote: "We didn't make this change hoping it would work. We made it because we had a clear vision for what this team needed to be. The players trusted that. The results are what they are.",
+        effects: {
+          hype: 5,
+          sponsorTrust: 3,
+          fanbase: 2,
+        },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The players made it possible.",
+        quote: "Credit goes entirely to the players. I gave them a hard system to buy into, and they bought in anyway. That's not easy. I'm just proud to work with this group.",
+        effects: {
+          morale: 5,
+          fanbase: 4,
+          sponsorTrust: 1,
+        },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "It's hard to say. But we stuck together.",
+        quote: "I don't know if there was one key thing. We just kept working, kept communicating, and trusted that the process would catch up. Guess it did.",
+        effects: {
+          morale: 2,
+          hype: 2,
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_coaching_philosophy_debate',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    conditions: [{ type: 'flag_active', flag: 'media_narrative_coaching_debate' }],
+    prompt: "Your coach's recent comments about 'repeatable systems' have sparked real debate — some say it's the right philosophy, others say it stifles star players. Where do you personally stand?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Systems win championships. Full stop.",
+        quote: "I'll back my coach on this. The teams that win consistently — year over year, different metas, different opponents — they all have one thing in common: a system. Individual brilliance gets you to the final. Structure wins it.",
+        effects: {
+          hype: 4,
+          sponsorTrust: 2,
+          setsFlags: [{ key: 'coach_philosophy_backed', durationDays: 7 }],
+        },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It's more nuanced than a soundbite.",
+        quote: "I think the coach was making a larger point that got clipped in the coverage. The best teams I've seen blend structure with the freedom to be elite. You need both. It's not either/or.",
+        effects: {
+          morale: 3,
+          sponsorTrust: 2,
+          fanbase: 1,
+        },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Let the performance settle the debate.",
+        quote: "I'll let the team's performance settle this one. We don't need to win the argument on social media. We need to win matches. That's the answer.",
+        effects: {
+          dramaChance: 5,
+          hype: 2,
+        },
+      },
+    ],
+  },
+
+  {
     id: 'crisis_coaching_overhaul_fallout',
     context: 'CRISIS',
     subjectType: 'manager',

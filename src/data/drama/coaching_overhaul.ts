@@ -344,6 +344,83 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
   },
 
   {
+    id: 'silent_grind_comeback',
+    category: 'coaching_overhaul',
+    severity: 'minor',
+    title: "The Quiet Work Is Starting to Show",
+    description: "{playerName}'s form is quietly returning. No press conferences, no tweets — just better reads, sharper utility, and a player who looks like they found something.",
+    conditions: [
+      { type: 'flag_active', flag: 'star_silent_grind_{playerId}', playerSelector: 'condition_match' },
+      { type: 'player_form_above', threshold: 55, playerSelector: 'star_player' },
+    ],
+    probability: 70,
+    cooldownDays: 7,
+    effects: [
+      { target: 'set_flag', flag: 'star_bought_in_{playerId}', flagDuration: 45 },
+      { target: 'clear_flag', flag: 'star_silent_grind_{playerId}' },
+      { target: 'player_stat', effectPlayerSelector: 'star_player', stat: 'mental', delta: 3 },
+      { target: 'team_hype', delta: 5 },
+    ],
+  },
+
+  {
+    id: 'coach_hot_seat_verdict',
+    category: 'coaching_overhaul',
+    severity: 'major',
+    title: "Management Must Decide the Coach's Fate",
+    description: "The org's public criticism of the coaching staff has created an untenable limbo. Players are watching. Sponsors are asking. A decision has to come.",
+    conditions: [
+      { type: 'flag_active', flag: 'coach_hot_seat' },
+    ],
+    probability: 80,
+    durationDays: 7,
+    autoResolveEffects: [
+      { target: 'clear_flag', flag: 'coach_hot_seat' },
+      { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
+      { target: 'team_hype', delta: -3 },
+    ],
+    choices: [
+      {
+        id: 'back_coach_fully',
+        text: 'Stand by the Coach',
+        description: "Publicly reverse course and endorse the coach. Admit the criticism was premature.",
+        effects: [
+          { target: 'clear_flag', flag: 'coach_hot_seat' },
+          { target: 'set_flag', flag: 'coach_confidence_restored', flagDuration: 21 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: -3 },
+          { target: 'team_hype', delta: 5 },
+          { target: 'team_sponsor_trust', delta: 2 },
+        ],
+        outcomeText: "The reversal confuses the fanbase but steadies the coaching staff. The players aren't sure what to believe.",
+      },
+      {
+        id: 'part_ways',
+        text: 'Part Ways With the Coach',
+        description: "Follow through on the implicit threat. Release the coach and begin a search.",
+        effects: [
+          { target: 'clear_flag', flag: 'coach_hot_seat' },
+          { target: 'set_flag', flag: 'coaching_staff_turnover', flagDuration: 30 },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
+          { target: 'team_chemistry', delta: -5 },
+          { target: 'team_hype', delta: -5 },
+        ],
+        outcomeText: "The players feel vindicated but the org looks unstable. A second coaching change in one season will raise questions.",
+      },
+      {
+        id: 'restructure_role',
+        text: 'Restructure the Coaching Role',
+        description: "Keep the coach but redefine their authority — less tactical control, more mentorship.",
+        effects: [
+          { target: 'clear_flag', flag: 'coach_hot_seat' },
+          { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
+          { target: 'team_chemistry', delta: 3 },
+        ],
+        outcomeText: "An unusual compromise. The coach stays but in name only. The players run more of their own system now.",
+      },
+    ],
+  },
+
+  {
     id: 'coaching_overhaul_fallout_aftermath',
     category: 'coaching_overhaul',
     severity: 'minor',
