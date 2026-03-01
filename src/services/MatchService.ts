@@ -88,6 +88,8 @@ export class MatchService {
       teamBHypeLevel,
       isPlayoffMatch,
       allPlayerAgentPreferences: state.playerAgentPreferences,
+      mapPoolA: teamA.mapPool,
+      mapPoolB: teamB.mapPool,
     });
 
     // Update result's matchId to the actual match

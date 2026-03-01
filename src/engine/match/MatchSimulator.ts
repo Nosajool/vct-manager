@@ -11,6 +11,7 @@ import type {
   EnhancedRoundInfo,
   TeamStrategy,
   PlayerAgentPreferences,
+  MapPoolStrength,
 } from '../../types';
 import { MAPS } from '../../utils/constants';
 
@@ -57,7 +58,9 @@ export class MatchSimulator {
     teamAHypeLevel?: number,
     teamBHypeLevel?: number,
     isPlayoffMatch?: boolean,
-    allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>
+    allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>,
+    mapPoolA?: MapPoolStrength,
+    mapPoolB?: MapPoolStrength
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -118,7 +121,9 @@ export class MatchSimulator {
         teamBStrategy,
         rivalry,
         playoff,
-        allPlayerAgentPreferences
+        allPlayerAgentPreferences,
+        mapPoolA,
+        mapPoolB
       );
       maps.push(mapResult);
 
@@ -301,8 +306,14 @@ export class MatchSimulator {
     strategyB: TeamStrategy,
     rivalryIntensity: number = 0,
     isPlayoffMatch: boolean = false,
-    allPreferences?: Record<string, PlayerAgentPreferences>
+    allPreferences?: Record<string, PlayerAgentPreferences>,
+    mapPoolA?: MapPoolStrength,
+    mapPoolB?: MapPoolStrength
   ): MapResult {
+    // Look up map-specific scrim attributes for this map
+    const mapAttributesA = mapPoolA?.maps[mapName]?.attributes;
+    const mapAttributesB = mapPoolB?.maps[mapName]?.attributes;
+
     // Select agents for each team
     const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
     const agentSelectionB = this.compositionEngine.selectAgents(playersB, strategyB, mapName);
@@ -387,6 +398,7 @@ export class MatchSimulator {
         previousRoundLoadouts: previousLoadoutsA,
         previousRoundSurvival: previousSurvivalA,
         narrativeContext,
+        mapAttributes: mapAttributesA,
       };
 
       const contextB: TeamRoundContext = {
@@ -401,6 +413,7 @@ export class MatchSimulator {
         previousRoundLoadouts: previousLoadoutsB,
         previousRoundSurvival: previousSurvivalB,
         narrativeContext,
+        mapAttributes: mapAttributesB,
       };
 
       // Simulate the round

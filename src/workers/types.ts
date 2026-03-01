@@ -44,6 +44,10 @@ export interface MatchSimInput {
   isPlayoffMatch?: boolean;
   /** All player agent preferences for mastery modifier calculations. */
   allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>;
+  /** Map pool for team A — used to apply map-specific scrim attribute bonuses. */
+  mapPoolA?: MapPoolStrength;
+  /** Map pool for team B — used to apply map-specific scrim attribute bonuses. */
+  mapPoolB?: MapPoolStrength;
 }
 
 /** Input for training a single player */

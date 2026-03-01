@@ -31,6 +31,7 @@ import type {
   SimWinCondition,
   BuyPhaseEntry,
 } from '../../types/round-simulation';
+import type { MapStrengthAttributes } from '../../types/scrim';
 
 export interface RoundResult {
   /** Enhanced round info for storage */
@@ -90,6 +91,8 @@ export interface TeamRoundContext {
   previousRoundSurvival: boolean[];
   /** Optional narrative context for rivalry aggression boost */
   narrativeContext?: { rivalryIntensity: number; isPlayoffMatch: boolean };
+  /** Map-specific scrim attributes for situational round bonuses */
+  mapAttributes?: MapStrengthAttributes;
 }
 
 // ============================================
@@ -104,6 +107,15 @@ const PHASE_ENCOUNTER_PROBABILITY: Record<CombatPhase, number> = {
   mid: 0.8,
   late: 0.6,
   final: 0.4,
+};
+
+const SCRIM_ATTR_MODIFIERS = {
+  EXECUTE_BONUS: 0.05,       // T-side full-buy bonus (max 5%)
+  UTILITY_ECO_BONUS: 0.03,   // T-side eco/force bonus (max 3%)
+  MAP_CONTROL_BONUS: 0.02,   // General bonus, both sides (max 2%)
+  RETAKE_BONUS: 0.05,        // CT-side general proxy (max 5%)
+  COMM_BONUS: 0.02,          // CT-side coordination (max 2%)
+  ANTISTRAT_REDUCTION: 0.25, // Reduces enemy compositionBonus by up to 25%
 };
 
 export class RoundSimulator {
@@ -218,10 +230,19 @@ export class RoundSimulator {
     // 8. Calculate strength ratio for combat weighting
     const buyModA = this.economyEngine.getBuyStrengthModifier(buyTypeA);
     const buyModB = this.economyEngine.getBuyStrengthModifier(buyTypeB);
-    const strengthA = teamAContext.baseStrength * buyModA *
-      (1 + teamAContext.compositionBonus) * (1 + ultDecisionA.impactModifier);
-    const strengthB = teamBContext.baseStrength * buyModB *
-      (1 + teamBContext.compositionBonus) * (1 + ultDecisionB.impactModifier);
+    const situationalA = this.calculateSituationalBonus(teamAContext, teamAContext.isAttacking, buyTypeA);
+    const situationalB = this.calculateSituationalBonus(teamBContext, teamBContext.isAttacking, buyTypeB);
+    // Anti-strat: opponent's high antiStrat reduces your composition bonus effectiveness
+    const antiStratReductA = (teamBContext.mapAttributes?.antiStrat ?? 0) / 100 * SCRIM_ATTR_MODIFIERS.ANTISTRAT_REDUCTION;
+    const antiStratReductB = (teamAContext.mapAttributes?.antiStrat ?? 0) / 100 * SCRIM_ATTR_MODIFIERS.ANTISTRAT_REDUCTION;
+    const strengthA = teamAContext.baseStrength * buyModA
+      * (1 + teamAContext.compositionBonus * (1 - antiStratReductA))
+      * (1 + ultDecisionA.impactModifier)
+      * (1 + situationalA);
+    const strengthB = teamBContext.baseStrength * buyModB
+      * (1 + teamBContext.compositionBonus * (1 - antiStratReductB))
+      * (1 + ultDecisionB.impactModifier)
+      * (1 + situationalB);
     const strengthRatio = strengthA / (strengthA + strengthB);
 
     // 9. Combat loop
@@ -806,6 +827,11 @@ export class RoundSimulator {
       plantProb *= 1.4;
     }
 
+    // Executes attribute boosts coordinated site takes
+    if (attackerCtx.mapAttributes?.executes) {
+      plantProb *= 1 + (attackerCtx.mapAttributes.executes / 100) * 0.15;
+    }
+
     if (Math.random() > plantProb) return;
 
     // Find spike carrier or alive attacker
@@ -864,6 +890,11 @@ export class RoundSimulator {
     // More defenders alive = more likely to attempt defuse
     defuseProb *= 0.5 + aliveDefenders.length * 0.15;
 
+    // Retakes attribute boosts post-plant recovery
+    if (defenderCtx.mapAttributes?.retakes) {
+      defuseProb *= 1 + (defenderCtx.mapAttributes.retakes / 100) * 0.15;
+    }
+
     if (Math.random() > defuseProb) return;
 
     // Select defuser (mental + clutch weighted)
@@ -882,6 +913,30 @@ export class RoundSimulator {
 
     // Complete defuse
     sm.completeDefuse(time + 7000);
+  }
+
+  /**
+   * Calculate situational bonus from map-specific scrim attributes
+   */
+  private calculateSituationalBonus(
+    ctx: TeamRoundContext,
+    isAttacker: boolean,
+    buyType: BuyType
+  ): number {
+    if (!ctx.mapAttributes) return 0;
+    const attrs = ctx.mapAttributes;
+    const M = SCRIM_ATTR_MODIFIERS;
+    let bonus = 0;
+    if (isAttacker) {
+      if (buyType === 'full_buy') bonus += (attrs.executes / 100) * M.EXECUTE_BONUS;
+      if (buyType === 'half_buy' || buyType === 'eco') bonus += (attrs.utility / 100) * M.UTILITY_ECO_BONUS;
+      bonus += (attrs.mapControl / 100) * M.MAP_CONTROL_BONUS;
+    } else {
+      bonus += (attrs.retakes / 100) * M.RETAKE_BONUS;
+      bonus += (attrs.communication / 100) * M.COMM_BONUS;
+      bonus += (attrs.mapControl / 100) * M.MAP_CONTROL_BONUS;
+    }
+    return bonus;
   }
 
   /**
