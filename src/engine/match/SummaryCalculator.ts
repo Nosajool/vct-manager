@@ -225,11 +225,20 @@ export class SummaryCalculator {
   }
 
   private calculateHeadshotPercentage(timeline: TimelineEvent[]): number {
-    const totalKills = this.countKills(timeline);
-    if (totalKills === 0) return 0;
+    const damageEvents = timeline.filter(e => e.type === 'damage') as SimDamageEvent[];
 
-    const headshots = this.countHeadshots(timeline);
-    return Math.round((headshots / totalKills) * 100 * 10) / 10; // Round to 1 decimal
+    let totalShots = 0;
+    let headshots = 0;
+
+    for (const event of damageEvents) {
+      const landedHits = event.hits.filter(h => h.hpDamage > 0 || h.shieldAbsorbed > 0);
+      totalShots += landedHits.length;
+      headshots += landedHits.filter(h => h.location === 'head').length;
+    }
+
+    if (totalShots === 0) return 0;
+
+    return Math.round((headshots / totalShots) * 100 * 10) / 10; // Round to 1 decimal
   }
 
   private sumTotalDamage(timeline: TimelineEvent[]): number {

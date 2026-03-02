@@ -70,6 +70,7 @@ export interface RoundPlayerPerformance {
   survivedRound: boolean;
   usedUlt: boolean;
   headshotKills: number;
+  headshotsLanded: number;
   shotsFired: number;
   totalHits: number;
   weaponUsed: string;
@@ -443,6 +444,8 @@ export class RoundSimulator {
       let kastRounds = 0;
       let ultsUsed = 0;
       let headshotKills = 0;
+      let totalHits = 0;
+      let headshotsLanded = 0;
 
       for (const roundPerf of roundPerformances) {
         const perf = roundPerf.get(player.id);
@@ -460,6 +463,8 @@ export class RoundSimulator {
         if (perf.defused) defuses++;
         if (perf.usedUlt) ultsUsed++;
         headshotKills += perf.headshotKills;
+        totalHits += perf.totalHits;
+        headshotsLanded += perf.headshotsLanded;
 
         // KAST: Kills/Assists/Survived/Traded
         if (perf.kills > 0 || perf.assists > 0 || perf.survivedRound || perf.wasTraded) {
@@ -470,8 +475,8 @@ export class RoundSimulator {
       const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
       const adr = totalRounds > 0 ? totalDamage / totalRounds : 0;
 
-      // Headshot percentage formula: (headshot kills/total kills) × 100
-      const hsPercent = totalKills > 0 ? (headshotKills / totalKills) * 100 : 0;
+      // Headshot percentage formula: (headshots landed / total shots landed) × 100 (Valorant formula)
+      const hsPercent = totalHits > 0 ? (headshotsLanded / totalHits) * 100 : 0;
       const kast = totalRounds > 0 ? (kastRounds / totalRounds) * 100 : 0;
 
       // Calculate ACS with proper Valorant formula
@@ -1412,6 +1417,7 @@ export class RoundSimulator {
         survivedRound: sm.isPlayerAlive(player.id),
         usedUlt: false,
         headshotKills: 0,
+        headshotsLanded: 0,
         shotsFired: 0,
         totalHits: 0,
         weaponUsed: loadout?.primary?.name || loadout?.secondary?.name || 'Classic',
@@ -1429,7 +1435,9 @@ export class RoundSimulator {
           if (attackerPerf) {
             attackerPerf.damage += event.totalDamage;
             attackerPerf.shotsFired += event.hits.length;
-            attackerPerf.totalHits += event.hits.filter(h => h.hpDamage > 0 || h.shieldAbsorbed > 0).length;
+            const landedHits = event.hits.filter(h => h.hpDamage > 0 || h.shieldAbsorbed > 0);
+            attackerPerf.totalHits += landedHits.length;
+            attackerPerf.headshotsLanded += landedHits.filter(h => h.location === 'head').length;
           }
           break;
         }
