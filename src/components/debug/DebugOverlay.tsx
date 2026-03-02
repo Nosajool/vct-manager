@@ -6,14 +6,16 @@ import { DebugSection_Flags } from './DebugSection_Flags';
 import { DebugSection_DramaEvents } from './DebugSection_DramaEvents';
 import { DebugSection_Conditions } from './DebugSection_Conditions';
 import { DebugSection_Interviews } from './DebugSection_Interviews';
+import { DebugSection_FastForward } from './DebugSection_FastForward';
 
-type Tab = 'flags' | 'events' | 'conditions' | 'interviews';
+type Tab = 'flags' | 'events' | 'conditions' | 'interviews' | 'fastforward';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'flags', label: 'Flags' },
   { id: 'events', label: 'Drama Events' },
   { id: 'conditions', label: 'Conditions' },
   { id: 'interviews', label: 'Interviews' },
+  { id: 'fastforward', label: 'Fast Forward' },
 ];
 
 interface Props {
@@ -78,6 +80,7 @@ export function DebugOverlay({ isOpen, onClose }: Props) {
           {activeTab === 'events' && <DebugSection_DramaEvents />}
           {activeTab === 'conditions' && <DebugSection_Conditions />}
           {activeTab === 'interviews' && <DebugSection_Interviews />}
+          {activeTab === 'fastforward' && <DebugSection_FastForward />}
         </div>
       </div>
     </div>
