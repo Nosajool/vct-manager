@@ -3,6 +3,7 @@
 
 import type { StateCreator } from 'zustand';
 import type { GameCalendar, SeasonPhase, CalendarEvent, CalendarEventType, MatchEventData } from '../../types';
+import type { MetaPatch } from '../../types/meta';
 
 export interface GameSlice {
   // Game initialization
@@ -15,8 +16,12 @@ export interface GameSlice {
   // Auto-save tracking
   lastSaveDate: string | null;
 
+  // Active meta patch
+  currentPatch: MetaPatch | null;
+
   // Actions
   setInitialized: (value: boolean) => void;
+  setCurrentPatch: (patch: MetaPatch | null) => void;
   setGameStarted: (value: boolean) => void;
 
   // Calendar actions
@@ -88,6 +93,7 @@ export const createGameSlice: StateCreator<
   gameStarted: false,
   calendar: defaultCalendar,
   lastSaveDate: null,
+  currentPatch: null,
 
   // Actions
   setInitialized: (value) =>
@@ -135,6 +141,9 @@ export const createGameSlice: StateCreator<
 
   setLastSaveDate: (date) =>
     set({ lastSaveDate: date }),
+
+  setCurrentPatch: (patch) =>
+    set({ currentPatch: patch }),
 
   // Event actions
   addCalendarEvent: (event) =>

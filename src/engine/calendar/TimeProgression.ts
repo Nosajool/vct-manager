@@ -236,6 +236,10 @@ export class TimeProgression {
         return 'Sponsorship renewal deadline';
       case 'season_end':
         return 'Season ends';
+      case 'patch_notes': {
+        const patchData = data as Record<string, string>;
+        return `Patch ${patchData?.version ?? ''}: ${patchData?.title ?? 'Meta Update'}`;
+      }
       default:
         return `Event: ${event.type}`;
     }
@@ -278,6 +282,7 @@ export class TimeProgression {
       scheduled_training: [],
       scheduled_scrim: [],
       team_activity: [],
+      patch_notes: [],
     };
 
     for (const event of events) {

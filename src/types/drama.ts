@@ -2,8 +2,10 @@
 // Defines narrative events, conditions, effects, and player/team dynamics
 
 import type { PlayerContract, PlayerPersonality, PlayerStats, Region } from './player';
+import type { PlayerAgentPreferences } from './strategy';
 import type { SeasonPhase } from './calendar';
 import type { CompositionPattern } from './strategy';
+import type { MetaPatch } from './meta';
 
 // ============================================================================
 // Basic Enums (String Union Types)
@@ -108,7 +110,10 @@ export type DramaConditionType =
   | 'composition_type'            // Checks role distribution in last match
   | 'player_off_preferred_agent'  // At least one player played outside their top-3
   | 'team_playstyle'              // Checks team strategy playstyle
-  | 'team_economy_discipline';    // Checks team economy discipline
+  | 'team_economy_discipline'     // Checks team economy discipline
+
+  // Meta patch checks
+  | 'agent_is_meta_nerfed';       // Star player's preferred agents include a nerfed agent
 
 /**
  * Player selection method for condition evaluation
@@ -385,7 +390,11 @@ export interface DramaGameStateSnapshot {
     contract?: PlayerContract | null;
     personality?: PlayerPersonality;
     region?: Region;        // Player's home region (for import detection)
+    agentPreferences?: PlayerAgentPreferences;
   }>;
+
+  // Active meta patch (null if no patch has fired yet)
+  activePatch?: MetaPatch | null;
 
   playerTeamRegion?: Region;  // The team's (league) region
   iglPlayerId?: string;       // Team's designated IGL player ID

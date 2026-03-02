@@ -25,7 +25,8 @@ export type CalendarEventType =
   | 'placeholder_match'
   | 'scheduled_training'
   | 'scheduled_scrim'
-  | 'team_activity';
+  | 'team_activity'
+  | 'patch_notes';
 
 export type ActivityLifecycleState =
   | 'needs_setup'   // scheduled but unconfigured
@@ -114,10 +115,17 @@ export interface PlaceholderMatchEventData {
   resolvedTeamBId?: string;
 }
 
+export interface PatchNotesEventData {
+  patchId: string;
+  version: string;
+  title: string;
+}
+
 // Union type for all event data - used for type-safe casting
 export type CalendarEventData =
   | MatchEventData
   | TournamentEventData
   | SalaryPaymentEventData
   | RestDayEventData
-  | PlaceholderMatchEventData;
+  | PlaceholderMatchEventData
+  | PatchNotesEventData;

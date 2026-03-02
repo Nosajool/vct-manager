@@ -191,6 +191,19 @@ export function evaluateCondition(
       return interviewSnap.teamStrategy.economyDiscipline === condition.economyDiscipline;
     }
 
+    case 'agent_is_meta_nerfed': {
+      if (!snapshot.activePatch) return false;
+      const nerfed = snapshot.activePatch.nerfedAgents;
+      const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
+      if (teamPlayers.length === 0) return false;
+      const starPlayer = teamPlayers.reduce((best, curr) => {
+        const rating = (p: typeof curr) => Object.values(p.stats).reduce((s, v) => s + v, 0);
+        return rating(curr) > rating(best) ? curr : best;
+      }, teamPlayers[0]);
+      const preferred = starPlayer?.agentPreferences?.preferredAgents ?? [];
+      return preferred.some(a => nerfed.includes(a));
+    }
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;

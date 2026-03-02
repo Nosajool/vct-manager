@@ -14,6 +14,8 @@ import { getTeamIGL } from '../utils/teamUtils';
 import { VLR_PLAYER_STATS, VLR_SNAPSHOT_META, VLR_TEAM_ROSTERS } from '../data/vlrSnapshot';
 import { processVlrSnapshot, createPlayerFromVlr } from '../engine/player/vlr';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
+import { META_PATCHES } from '../data/meta/patches';
+import { metaShiftEngine } from '../engine/meta/MetaShiftEngine';
 
 /**
  * Options for initializing a new game
@@ -180,6 +182,12 @@ export class GameInitService {
       }
     }
     console.log(`Created ${tournamentMatchCount} tournament match entities`);
+
+    // Schedule meta patch events for the season
+    console.log('Scheduling meta patch events...');
+    const patchEvents = metaShiftEngine.schedulePatchEvents(seasonStartDate, META_PATCHES);
+    store.addCalendarEvents(patchEvents);
+    console.log(`Scheduled ${patchEvents.length} meta patch events`);
 
     // Mark game as initialized and started
     store.setInitialized(true);

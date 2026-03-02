@@ -631,6 +631,7 @@ export class InterviewService {
       hasRivalry,
       lastMatchComposition,
       teamStrategy,
+      activePatch: state.currentPatch ?? null,
     };
   }
 

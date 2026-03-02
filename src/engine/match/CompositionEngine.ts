@@ -52,11 +52,15 @@ export class CompositionEngine {
   /**
    * Select agents for a team based on player preferences and strategy
    * Composition is derived purely from player primaryRole and flexRoles — no cap.
+   *
+   * @param metaMapPrefs - Optional patch-modified preferences from MetaShiftEngine.
+   *   Falls back to the static MAP_AGENT_PREFERENCES when undefined.
    */
   selectAgents(
     players: Player[],
     strategy: TeamStrategy,
-    mapName: string
+    mapName: string,
+    metaMapPrefs?: Record<string, string[]>
   ): AgentSelection {
     const assignments: Record<string, string> = {};
     const usedAgents = new Set<string>();
@@ -65,7 +69,7 @@ export class CompositionEngine {
       throw new Error('TeamStrategy is required');
     }
 
-    const mapPreferences = MAP_AGENT_PREFERENCES[mapName] || [];
+    const mapPreferences = (metaMapPrefs ?? MAP_AGENT_PREFERENCES)[mapName] ?? [];
 
     // Track role counts
     const roleCounts: Record<AgentRole, number> = {

@@ -21,6 +21,8 @@ import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
 import { eventLifecycleManager } from '../engine/scheduling/EventLifecycleManager';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
+import type { PatchNotesEventData } from '../types/calendar';
+import { META_PATCHES } from '../data/meta/patches';
 import type { BracketMatch, BracketRound, BracketStructure, Tournament } from '../types/competition';
 import type { TournamentMatchContext } from '../types/interview';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
@@ -224,6 +226,10 @@ export class CalendarService {
       } else if (event.type === 'tournament_start') {
         // Transition tournament from 'upcoming' to 'in_progress'
         this.processTournamentStart(event);
+        processedEvents.push(event);
+      } else if (event.type === 'patch_notes') {
+        // Apply meta patch: update currentPatch and set drama flag
+        this.processPatchNotesEvent(event);
         processedEvents.push(event);
       } else if (event.type === 'match') {
         // Check if this match belongs to the current phase
@@ -624,6 +630,25 @@ export class CalendarService {
       this.getCurrentDate(),
       nextMatch.date
     );
+  }
+
+  /**
+   * Process a patch notes event — activate the patch and set the drama flag
+   */
+  processPatchNotesEvent(event: CalendarEvent): void {
+    const state = useGameStore.getState();
+    const data = event.data as PatchNotesEventData;
+
+    const patch = META_PATCHES.find(p => p.id === data.patchId);
+    if (patch) {
+      state.setCurrentPatch(patch);
+      state.setDramaFlag('patch_active', { setDate: state.calendar.currentDate });
+      console.log(`Patch applied: ${patch.version} - ${patch.title}`);
+    } else {
+      console.warn(`Patch not found: ${data.patchId}`);
+    }
+
+    state.markEventProcessed(event.id);
   }
 
   /**

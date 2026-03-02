@@ -4,6 +4,7 @@
 import type { PlayerPersonality } from './player';
 import type { DramaCondition, DramaGameStateSnapshot } from './drama';
 import type { CompositionPattern } from './strategy';
+import type { MetaPatch } from './meta';
 
 export type { CompositionPattern };
 
@@ -104,6 +105,8 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
     economyDiscipline: 'risky' | 'standard' | 'conservative';
     ultUsageStyle: 'aggressive' | 'save_for_key_rounds' | 'combo_focused';
   };
+  // Active meta patch (null if none has fired yet)
+  activePatch?: MetaPatch | null;
 }
 
 // Historical record of a completed interview choice

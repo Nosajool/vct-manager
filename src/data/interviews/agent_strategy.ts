@@ -204,6 +204,39 @@ export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ==========================================================================
+  // PRE_MATCH — active patch (meta shift)
+  // ==========================================================================
+  {
+    id: 'pre_patch_notes_adaptation',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    prompt: "A patch dropped recently that changed the meta significantly. How is your team adapting going into today's match?",
+    conditions: [
+      { type: 'flag_active', flag: 'patch_active' },
+    ],
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'We adapt faster than anyone',
+        quote: "Meta shifts are where preparation separates contenders from pretenders. We've already rebuilt our approach — I like our position going into this.",
+        effects: { hype: 5, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'Still finding our footing',
+        quote: "Honestly, it's an adjustment. The patch changes a lot for us. We're being honest about that internally and working through it day by day.",
+        effects: { morale: 2, sponsorTrust: 2, fanbase: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Patches affect everyone equally',
+        quote: "Every team is dealing with the same patch. We're not going to overthink it — our fundamentals don't change based on ability tweaks.",
+        effects: { morale: 2, fanbase: 1 },
+      },
+    ],
+  },
+
+  // ==========================================================================
   // PRE_MATCH — risky economy discipline
   // ==========================================================================
   {
@@ -232,6 +265,75 @@ export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = [
         label: 'Passive play loses tempo',
         quote: "You control the game by staying aggressive. Playing for a full-buy every round gives opponents the rhythm. We dictate the pace — even on a pistol.",
         effects: { hype: 4, fanbase: 3, morale: 2, dramaChance: 8 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // POST_MATCH — LOSS, patch active + player off preferred agent
+  // ==========================================================================
+  {
+    id: 'post_patch_star_player_nerfed',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    prompt: "One of your players wasn't on their usual agent today — some say the patch forced it. Did that affect your performance?",
+    conditions: [
+      { type: 'flag_active', flag: 'patch_active' },
+      { type: 'player_off_preferred_agent' },
+    ],
+    options: [
+      {
+        tone: 'BLAME_SELF',
+        label: "We weren't ready for the change",
+        quote: "Truthfully, we weren't fully adapted yet. The patch took one of our best tools away and we haven't found a clean replacement. That's on the coaching staff — I need to give the team better options.",
+        effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Not making excuses',
+        quote: "I'm not going to use the patch as an excuse. Every team deals with the same environment. We just didn't execute well enough today.",
+        effects: { morale: -1, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'We need more reps on new agents',
+        quote: "It showed. When players are on agents they haven't fully developed, it affects their confidence. We need more practice time on the alternatives.",
+        effects: { morale: -2, fanbase: 2, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // POST_MATCH — WIN, patch active
+  // ==========================================================================
+  {
+    id: 'post_patch_win_meta_adapted',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'win',
+    prompt: "You won after a significant patch. Does this show your team handles meta shifts better than the field?",
+    conditions: [
+      { type: 'flag_active', flag: 'patch_active' },
+    ],
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We live in the new meta",
+        quote: "We don't complain about patches — we exploit them. Our team found the updated power picks faster than anyone. That's a competitive edge we'll keep pressing.",
+        effects: { hype: 6, morale: 4, fanbase: 4 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'A lot of hard work this week',
+        quote: "It's been a difficult week of preparation. The players put in extra hours to rework our approach. This win belongs to their dedication, not the patch.",
+        effects: { morale: 5, fanbase: 3, sponsorTrust: 3 },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Opponents weren't ready",
+        quote: "Our opponents clearly didn't do their homework on the patch. We did. That's the difference between teams that adapt and teams that lose.",
+        effects: { hype: 7, rivalryDelta: 4, fanbase: 3, dramaChance: 12 },
       },
     ],
   },
