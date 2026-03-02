@@ -36,6 +36,8 @@ import { scrimService } from '../../services/ScrimService';
 import { DayScheduleService } from '../../services/DayScheduleService';
 import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
+import type { MetaPatch } from '../../types/meta';
+import { PatchNotesModal } from '../meta/PatchNotesModal';
 
 type PostSimulationModalType = 'training' | 'scrim' | 'morale' | 'interview';
 
@@ -91,6 +93,7 @@ export function TimeBar() {
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
   const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
+  const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
 
@@ -177,7 +180,19 @@ export function TimeBar() {
 
   const handlePostModalClose = () => advancePostModals(postModalQueue);
 
+  const handlePatchNotesClose = () => {
+    setPendingPatchNotes(null);
+    // After closing patch notes, proceed to rest of modal queue
+    advancePostModals(postModalQueue);
+  };
+
   const showPostSimulationModals = (result: TimeAdvanceResult | null) => {
+    // Check for pending patch notes first
+    if (pendingPatchNotes) {
+      // Patch modal will show first, handlePatchNotesClose will then show the rest
+      return;
+    }
+
     const queue: PostSimulationModalType[] = [];
     const activities = result?.activityResults;
 
@@ -204,14 +219,30 @@ export function TimeBar() {
       }
     }
 
+    // Check for patch notes after building queue
+    const patchAfterAdvance = useGameStore.getState().currentPatch;
+    if (patchAfterAdvance) {
+      setPendingPatchNotes(patchAfterAdvance);
+      return;
+    }
+
     advancePostModals(queue);
   };
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
 
+    // Capture current patch before advancing
+    const patchBeforeAdvance = useGameStore.getState().currentPatch;
+
     try {
       const result = await advanceFn(true); // Pass true for withProgress
+
+      // Check if a new patch was activated
+      const patchAfterAdvance = useGameStore.getState().currentPatch;
+      if (patchAfterAdvance && patchBeforeAdvance?.id !== patchAfterAdvance.id) {
+        setPendingPatchNotes(patchAfterAdvance);
+      }
 
       // Show newly unlocked features
       if (result.newlyUnlockedFeatures.length > 0) {
@@ -668,6 +699,14 @@ export function TimeBar() {
         onReview={handleReviewEvents}
         onCancel={handleCancelValidation}
       />
+
+      {/* Patch Notes Modal - shown when a new meta patch is activated */}
+      {pendingPatchNotes && (
+        <PatchNotesModal
+          patch={pendingPatchNotes}
+          onClose={handlePatchNotesClose}
+        />
+      )}
 
       {/* Qualification Modal - triggered by TournamentService after Kickoff completion */}
       {isModalOpen && modalType === 'qualification' && (
