@@ -70,7 +70,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
     title: "Star Player's Agent Nerfed",
     description: 'A recent patch has nerfed {playerName}\'s signature agent. The team needs to decide how to handle this.',
     conditions: [
-      { type: 'agent_is_meta_nerfed' },
+      { type: 'agent_is_meta_nerfed', playerSelector: 'star_player' },
       { type: 'flag_active', flag: 'patch_active' },
       { type: 'random_chance', chance: 85 },
     ],

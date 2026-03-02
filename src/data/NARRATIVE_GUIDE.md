@@ -182,6 +182,8 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
   severity: 'minor' | 'major',
   title: string,
   description: string,          // Supports {playerName}, {teamName} placeholders
+                                // ⚠️ If using {playerName}, at least one condition must have
+                                //    a `playerSelector` so the engine knows which player to resolve.
   conditions: DramaCondition[], // ALL must pass
   probability: number,          // 0-100: base probability when conditions met
   cooldownDays?: number,        // Days before this template can fire again
@@ -277,6 +279,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 - `igl_player` — targets the team's designated IGL player (from `team.iglPlayerId`). Use for IGL-specific drama events like mid-round calling crises.
 - `condition_match` is the most important selector for player-scoped flag arcs. It tells the engine to pick a player who satisfies the condition's own filter — e.g. a `flag_active` condition with `{playerId}` will extract the player ID from the matching flag and select exactly that player.
+- **Rule:** Any event that uses `{playerName}` in its `title`, `description`, `outcomeText`, or choice text **must** have at least one condition with a `playerSelector`. This is how the engine determines which player's name to substitute. Common choices: `star_player` (highest-rated), `igl_player`, `any` (any matching player), or `condition_match` (for player-scoped flag arcs).
 
 ### Effect structure
 
