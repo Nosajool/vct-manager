@@ -19,6 +19,17 @@ export const STAT_WEIGHTS = {
 export const MAX_CHEMISTRY_BONUS = 0.20;
 
 // ============================================
+// IGL CONSTANTS
+// ============================================
+
+export const IGL_CONSTANTS = {
+  /** Max team-level coordination bonus from designated IGL (added to team strength) */
+  TEAM_STRENGTH_BONUS_MAX: 0.05,  // up to +5%
+  /** Max per-round calling effectiveness bonus (applied in round strength formula) */
+  CALLING_BONUS_MAX: 0.03,        // up to +3%
+} as const;
+
+// ============================================
 // ECONOMY CONSTANTS
 // ============================================
 

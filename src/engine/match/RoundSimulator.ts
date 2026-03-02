@@ -15,7 +15,7 @@ import type {
 } from '../../types';
 import { EconomyEngine, type TeamEconomyState } from './EconomyEngine';
 import { UltimateEngine, type TeamUltimateState } from './UltimateEngine';
-import { NARRATIVE_CONSTANTS } from './constants';
+import { NARRATIVE_CONSTANTS, IGL_CONSTANTS } from './constants';
 import { weaponEngine, type PlayerLoadout } from './WeaponEngine';
 import { type DamageEvent, type RoundDamageEvents, type PlayerArmorState } from '../../types/match';
 import { RoundStateMachine } from './RoundStateMachine';
@@ -94,6 +94,8 @@ export interface TeamRoundContext {
   narrativeContext?: { rivalryIntensity: number; isPlayoffMatch: boolean };
   /** Map-specific scrim attributes for situational round bonuses */
   mapAttributes?: MapStrengthAttributes;
+  /** Effective IGL stat for this team (designated IGL or best fallback, 0–100) */
+  iglStat?: number;
 }
 
 // ============================================
@@ -236,14 +238,18 @@ export class RoundSimulator {
     // Anti-strat: opponent's high antiStrat reduces your composition bonus effectiveness
     const antiStratReductA = (teamBContext.mapAttributes?.antiStrat ?? 0) / 100 * SCRIM_ATTR_MODIFIERS.ANTISTRAT_REDUCTION;
     const antiStratReductB = (teamAContext.mapAttributes?.antiStrat ?? 0) / 100 * SCRIM_ATTR_MODIFIERS.ANTISTRAT_REDUCTION;
+    const iglCallingA = ((teamAContext.iglStat ?? 50) / 100) * IGL_CONSTANTS.CALLING_BONUS_MAX;
+    const iglCallingB = ((teamBContext.iglStat ?? 50) / 100) * IGL_CONSTANTS.CALLING_BONUS_MAX;
     const strengthA = teamAContext.baseStrength * buyModA
       * (1 + teamAContext.compositionBonus * (1 - antiStratReductA))
       * (1 + ultDecisionA.impactModifier)
-      * (1 + situationalA);
+      * (1 + situationalA)
+      * (1 + iglCallingA);
     const strengthB = teamBContext.baseStrength * buyModB
       * (1 + teamBContext.compositionBonus * (1 - antiStratReductB))
       * (1 + ultDecisionB.impactModifier)
-      * (1 + situationalB);
+      * (1 + situationalB)
+      * (1 + iglCallingB);
     const strengthRatio = strengthA / (strengthA + strengthB);
 
     // 9. Combat loop

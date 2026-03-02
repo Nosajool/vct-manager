@@ -15,7 +15,8 @@ import type {
 } from '../../types';
 import { MAPS } from '../../utils/constants';
 
-import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS, NARRATIVE_CONSTANTS } from './constants';
+import { STAT_WEIGHTS, MAX_CHEMISTRY_BONUS, NARRATIVE_CONSTANTS, IGL_CONSTANTS } from './constants';
+import { getTeamIGL } from '../../utils/teamUtils';
 import { EconomyEngine } from './EconomyEngine';
 import { UltimateEngine } from './UltimateEngine';
 import { CompositionEngine } from './CompositionEngine';
@@ -74,8 +75,8 @@ export class MatchSimulator {
     const playoff = isPlayoffMatch ?? false;
 
     // Calculate base team strengths (includes morale modifier)
-    let strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall);
-    let strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall);
+    let strengthA = this.calculateTeamStrength(playersA, teamA.chemistry.overall, teamA);
+    let strengthB = this.calculateTeamStrength(playersB, teamB.chemistry.overall, teamB);
 
     // Apply narrative modifier (hype pressure + rivalry emotion + personality)
     const narrativeA = this.calculateNarrativeModifier(playersA, hypeA, rivalry, playoff, teamA.chemistry.overall);
@@ -115,6 +116,8 @@ export class MatchSimulator {
         map,
         strengthA,
         strengthB,
+        teamA,
+        teamB,
         playersA,
         playersB,
         teamAStrategy,
@@ -155,7 +158,7 @@ export class MatchSimulator {
   /**
    * Calculate overall team strength from player stats and chemistry
    */
-  calculateTeamStrength(players: Player[], chemistryScore: number): number {
+  calculateTeamStrength(players: Player[], chemistryScore: number, team?: Team): number {
     if (players.length === 0) return 50;
 
     // Calculate average weighted stats for all players
@@ -190,7 +193,16 @@ export class MatchSimulator {
     // Apply chemistry bonus (0-20%)
     const chemistryBonus = 1 + (chemistryScore / 100) * MAX_CHEMISTRY_BONUS;
 
-    return avgStrength * chemistryBonus;
+    // Apply IGL coordination bonus: designated IGL's stat drives team strategy quality
+    let iglBonus = 1;
+    if (team) {
+      const iglPlayer = getTeamIGL(team, players);
+      if (iglPlayer) {
+        iglBonus = 1 + (iglPlayer.stats.igl / 100) * IGL_CONSTANTS.TEAM_STRENGTH_BONUS_MAX;
+      }
+    }
+
+    return avgStrength * chemistryBonus * iglBonus;
   }
 
   /**
@@ -300,6 +312,8 @@ export class MatchSimulator {
     mapName: string,
     teamAStrength: number,
     teamBStrength: number,
+    teamA: Team,
+    teamB: Team,
     playersA: Player[],
     playersB: Player[],
     strategyA: TeamStrategy,
@@ -332,6 +346,12 @@ export class MatchSimulator {
 
     const agentsA = playersA.map((p) => agentSelectionA.assignments[p.id]);
     const agentsB = playersB.map((p) => agentSelectionB.assignments[p.id]);
+
+    // Compute effective IGL stat for per-round calling effectiveness
+    const iglA = getTeamIGL(teamA, playersA);
+    const iglB = getTeamIGL(teamB, playersB);
+    const iglStatA = iglA?.stats.igl ?? 50;
+    const iglStatB = iglB?.stats.igl ?? 50;
 
     // Initialize economy and ult states
     let economyA = this.economyEngine.initializeHalf();
@@ -399,6 +419,7 @@ export class MatchSimulator {
         previousRoundSurvival: previousSurvivalA,
         narrativeContext,
         mapAttributes: mapAttributesA,
+        iglStat: iglStatA,
       };
 
       const contextB: TeamRoundContext = {
@@ -414,6 +435,7 @@ export class MatchSimulator {
         previousRoundSurvival: previousSurvivalB,
         narrativeContext,
         mapAttributes: mapAttributesB,
+        iglStat: iglStatB,
       };
 
       // Simulate the round
