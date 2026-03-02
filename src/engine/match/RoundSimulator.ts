@@ -22,7 +22,7 @@ import { RoundStateMachine } from './RoundStateMachine';
 import { buyPhaseGenerator, type BuyPhaseTeamInput, type BuyPhasePlayerInfo } from './BuyPhaseGenerator';
 import { WEAPONS } from '../../data/weapons';
 import { SHIELDS } from '../../data/shields';
-import { AGENT_ABILITIES } from '../../data/abilities';
+import { AGENT_ABILITIES, getAbilityById } from '../../data/abilities';
 import type {
   PlayerRoundState,
   TimelineEvent,
@@ -30,6 +30,7 @@ import type {
   TeamSide,
   SimWinCondition,
   BuyPhaseEntry,
+  AssistInfo,
 } from '../../types/round-simulation';
 import type { MapStrengthAttributes } from '../../types/scrim';
 
@@ -307,19 +308,30 @@ export class RoundSimulator {
       spikePlanted, planterId, defuserId, winCondition);
 
     // 15. Update economy with actual buy costs
+    // Compute losing team's survivor indices for save mechanic
+    const losingTeamContext = teamAWins ? teamBContext : teamAContext;
+    const losingSide: 'attacker' | 'defender' = losingTeamContext.isAttacking ? 'attacker' : 'defender';
+    const losingAlivePlayers = sm.getAllPlayerStates()
+      .filter(p => p.teamSide === losingSide && p.state === 'alive');
+    const loserSurvivorIndices = losingTeamContext.players
+      .map((p, i) => (losingAlivePlayers.some(s => s.playerId === p.id) ? i : -1))
+      .filter(i => i !== -1);
+
     const updatedEconomyA = this.updateEconomy(
       teamAContext.economy, teamAWins, playerKillsA,
       spikePlanted && teamAContext.isAttacking,
       winCondition === 'spike_defused' && !teamAContext.isAttacking,
       buyTypeA,
-      actualBuyCostsA
+      actualBuyCostsA,
+      teamAWins ? undefined : loserSurvivorIndices
     );
     const updatedEconomyB = this.updateEconomy(
       teamBContext.economy, !teamAWins, playerKillsB,
       spikePlanted && teamBContext.isAttacking,
       winCondition === 'spike_defused' && !teamBContext.isAttacking,
       buyTypeB,
-      actualBuyCostsB
+      actualBuyCostsB,
+      teamAWins ? loserSurvivorIndices : undefined
     );
 
     // 16. Update ults
@@ -609,6 +621,15 @@ export class RoundSimulator {
       const delta = 2000 + Math.random() * 3000;
       time += delta;
 
+      // Re-synchronize state machine timestamp with cumulative game time so
+      // that subsequent applyDamage calls pass the chronological check.
+      // Without this, advanceTime(delta) in the previous iteration causes
+      // currentTimestamp to drift ahead of `time` whenever delta_next < delta_prev,
+      // silently rejecting all damage/kill events and preventing assists.
+      if (!sm.isRoundEnded()) {
+        sm.setTimestamp(time);
+      }
+
       // Determine combat phase based on time
       const phase = this.getCombatPhase(time, sm.isSpikePlanted());
 
@@ -627,7 +648,10 @@ export class RoundSimulator {
 
       // Maybe encounter
       if (!sm.isRoundEnded() && Math.random() < PHASE_ENCOUNTER_PROBABILITY[phase]) {
-        this.resolveEncounter(sm, attackerCtx, defenderCtx, strengthRatio, time);
+        // Post-plant: attackers hold pre-aimed angles (~8% strength boost)
+        const postPlantAdvantage = sm.isSpikePlanted() ? 0.08 : 0;
+        const effectiveStrengthRatio = Math.min(0.85, strengthRatio + postPlantAdvantage);
+        this.resolveEncounter(sm, attackerCtx, defenderCtx, effectiveStrengthRatio, time);
 
         // Check for trade kill after encounter
         if (!sm.isRoundEnded()) {
@@ -699,6 +723,11 @@ export class RoundSimulator {
     // Combat rating determines shot count — better players fire more effectively
     const hsProb = this.calculateHeadshotProbability(aggressorPlayer, weaponId);
 
+    // Pre-compute target weapon info (needed in both chip and full branches)
+    const targetWeaponId = targetState.weapon || targetState.sidearm || 'classic';
+    const targetWeaponProfile = weaponEngine.getWeaponProfileById(targetWeaponId);
+    const targetHsProb = this.calculateHeadshotProbability(targetPlayer, targetWeaponId);
+
     // Determine shot count from weapon data
     const weaponData = WEAPONS[weaponId.toLowerCase()];
     const minShots = weaponData?.shotsPerRound.min || 2;
@@ -707,15 +736,45 @@ export class RoundSimulator {
     // In a single encounter, fire a fraction of round total
     const shotCount = Math.max(3, Math.floor(baseShotCount * (0.5 + Math.random() * 0.3)));
 
+    // === CHIP ENCOUNTER (35%) ===
+    // Represents smoke sprays, wall bangs, brief corner peeks — aggressor retreats without a full duel
+    if (Math.random() < 0.35) {
+      const chipShots = 1 + Math.floor(Math.random() * 2); // 1 or 2 shots
+      this.fireShots(sm, aggressorId, targetId, distance, chipShots, hsProb, timestamp, weaponId, weaponProfile);
+
+      // 50% chance target peeks back briefly with 1 shot
+      if (sm.isPlayerAlive(targetId) && !sm.isRoundEnded() && Math.random() < 0.5) {
+        this.fireShots(sm, targetId, aggressorId, distance, 1, targetHsProb, timestamp + 100, targetWeaponId, targetWeaponProfile);
+      }
+      return;
+    }
+
+    // === FULL ENCOUNTER (65%) ===
+    let mainTimestamp = timestamp;
+
+    // Optional secondary attacker (25% of full encounters) — focus fire from a teammate
+    if (Math.random() < 0.25) {
+      const aggressorTeam = aggressorIsAttacker ? aliveAttackers : aliveDefenders;
+      const secondaryId = this.selectSecondaryAttacker(aggressorId, aggressorTeam);
+      if (secondaryId && sm.isPlayerAlive(secondaryId)) {
+        const secondaryState = sm.getPlayerState(secondaryId);
+        if (secondaryState) {
+          const secondaryWeaponId = secondaryState.weapon || secondaryState.sidearm || 'classic';
+          const secondaryWeaponProfile = weaponEngine.getWeaponProfileById(secondaryWeaponId);
+          const secondaryPlayer = this.findPlayer(secondaryId, attackerCtx, defenderCtx);
+          const secondaryHsProb = this.calculateHeadshotProbability(secondaryPlayer, secondaryWeaponId);
+          const chipShots = 1 + Math.floor(Math.random() * 2);
+          this.fireShots(sm, secondaryId, targetId, distance, chipShots, secondaryHsProb, timestamp, secondaryWeaponId, secondaryWeaponProfile);
+          mainTimestamp = timestamp + 100; // shift aggressor to after secondary
+        }
+      }
+    }
+
     // Aggressor fires
-    this.fireShots(sm, aggressorId, targetId, distance, shotCount, hsProb, timestamp, weaponId, weaponProfile);
+    this.fireShots(sm, aggressorId, targetId, distance, shotCount, hsProb, mainTimestamp, weaponId, weaponProfile);
 
     // Target fires back if still alive
     if (sm.isPlayerAlive(targetId) && !sm.isRoundEnded()) {
-      const targetWeaponId = targetState.weapon || targetState.sidearm || 'classic';
-      const targetWeaponProfile = weaponEngine.getWeaponProfileById(targetWeaponId);
-      const targetHsProb = this.calculateHeadshotProbability(targetPlayer, targetWeaponId);
-
       // Target gets slightly fewer shots (reacting)
       const targetShotCount = Math.max(1, shotCount - 1);
 
@@ -723,7 +782,7 @@ export class RoundSimulator {
       const targetIsAttacker = aliveAttackers.includes(targetId);
       const targetFavored = targetIsAttacker ? strengthRatio > 0.5 : strengthRatio < 0.5;
       if (targetFavored || Math.random() < 0.8) {
-        this.fireShots(sm, targetId, aggressorId, distance, targetShotCount, targetHsProb, timestamp + 100, targetWeaponId, targetWeaponProfile);
+        this.fireShots(sm, targetId, aggressorId, distance, targetShotCount, targetHsProb, mainTimestamp + 100, targetWeaponId, targetWeaponProfile);
       }
     }
   }
@@ -809,9 +868,9 @@ export class RoundSimulator {
     time: number,
     attackerCtx: TeamRoundContext
   ): void {
-    // Probability increases over time: 2% early -> 25% late
-    const timeFactor = Math.min(1, time / 80000);
-    let plantProb = 0.02 + timeFactor * 0.23;
+    // Probability increases over time: 4% early -> 32% late (peaks at ~72s, VCT timing)
+    const timeFactor = Math.min(1, time / 72000);
+    let plantProb = 0.04 + timeFactor * 0.28;
 
     // Aggressive strategy increases plant chance
     if (attackerCtx.strategy.playstyle === 'aggressive') {
@@ -859,8 +918,8 @@ export class RoundSimulator {
     const startResult = sm.startPlant(planterId, time, site);
     if (!startResult.isValid) return;
 
-    // Plant may be interrupted (20% chance)
-    if (Math.random() < 0.2) {
+    // Plant may be interrupted (13% chance — VCT pros complete plants reliably)
+    if (Math.random() < 0.13) {
       sm.interruptPlant(time + 2000, 'cancelled', Math.random() * 80);
       return;
     }
@@ -885,10 +944,10 @@ export class RoundSimulator {
     if (postPlantTime === null) return;
 
     const urgencyFactor = 1 - (postPlantTime / 45000);
-    let defuseProb = 0.05 + urgencyFactor * 0.4;
+    let defuseProb = 0.03 + urgencyFactor * 0.22;  // lower per-tick (~30% retake target)
 
     // More defenders alive = more likely to attempt defuse
-    defuseProb *= 0.5 + aliveDefenders.length * 0.15;
+    defuseProb *= 0.35 + aliveDefenders.length * 0.15;
 
     // Retakes attribute boosts post-plant recovery
     if (defenderCtx.mapAttributes?.retakes) {
@@ -904,9 +963,9 @@ export class RoundSimulator {
     const startResult = sm.startDefuse(defuserId, time);
     if (!startResult.isValid) return;
 
-    // Defuse may be interrupted (30% chance unless no attackers alive)
+    // Defuse may be interrupted (50% chance — attackers hold post-plant angles)
     const aliveAttackers = sm.getAliveAttackerCount();
-    if (aliveAttackers > 0 && Math.random() < 0.3) {
+    if (aliveAttackers > 0 && Math.random() < 0.5) {
       sm.interruptDefuse(time + 3000, 'cancelled', Math.random() * 60);
       return;
     }
@@ -937,6 +996,14 @@ export class RoundSimulator {
       bonus += (attrs.mapControl / 100) * M.MAP_CONTROL_BONUS;
     }
     return bonus;
+  }
+
+  /**
+   * Pick a random subset of arr with length in [min, max].
+   */
+  private randomSubset<T>(arr: T[], min: number, max: number): T[] {
+    const count = Math.min(arr.length, min + Math.floor(Math.random() * (max - min + 1)));
+    return [...arr].sort(() => Math.random() - 0.5).slice(0, count);
   }
 
   /**
@@ -979,14 +1046,79 @@ export class RoundSimulator {
       const chosen = available[Math.floor(Math.random() * available.length)];
       const ability = agentData.abilities[chosen.key];
 
+      const isAttacker = sm.getAliveAttackers().includes(playerId);
+      const aliveEnemies = isAttacker ? sm.getAliveDefenders() : sm.getAliveAttackers();
+      const aliveAllies  = isAttacker ? sm.getAliveAttackers() : sm.getAliveDefenders();
+
+      let targets: string[] | undefined;
+      const { effectType } = ability;
+      if (['flash', 'blind', 'concuss', 'slow', 'debuff', 'suppress'].includes(effectType)) {
+        targets = this.randomSubset(aliveEnemies, 1, 2);
+      } else if (effectType === 'smoke') {
+        targets = this.randomSubset(aliveEnemies, 0, 2);
+      } else if (effectType === 'recon' || effectType === 'reveal') {
+        targets = this.randomSubset(aliveEnemies, 1, 3);
+      } else if (effectType === 'stim') {
+        targets = this.randomSubset(aliveAllies, 1, 2);
+      } else if (effectType === 'damage') {
+        targets = this.randomSubset(aliveEnemies, 0, 1); // 0-1: projectile can miss
+      }
+
+      // Compute damage per target before recording so we can pass it to the event
+      let targetDamage: Record<string, number> | undefined;
+      if (ability.effectType === 'damage' && targets && targets.length > 0) {
+        const min = ability.damage?.min ?? 20;
+        const max = ability.damage?.max ?? 60;
+        targetDamage = {};
+        for (const targetId of targets) {
+          targetDamage[targetId] = min + Math.floor(Math.random() * (max - min + 1));
+        }
+      }
+
       sm.recordAbilityUse(
         playerId,
         playerState.agentId,
         ability.id,
         ability.name,
         chosen.slot,
-        time
+        time,
+        targets,
+        targetDamage
       );
+
+      // Apply damage to health pools
+      if (targetDamage) {
+        for (const [targetId, dmg] of Object.entries(targetDamage)) {
+          const defState = sm.getPlayerState(targetId);
+          if (!defState) continue;
+          const shieldAbsorbed = Math.min(defState.shieldHp, dmg);
+          const hpDamage = dmg - shieldAbsorbed;
+          const defenderHpAfter = Math.max(0, defState.hp - hpDamage);
+          const defenderShieldAfter = defState.shieldHp - shieldAbsorbed;
+          const isLethal = defenderHpAfter <= 0;
+
+          const damageResult = sm.applyDamage({
+            type: 'damage',
+            timestamp: time,
+            attackerId: playerId,
+            defenderId: targetId,
+            source: 'ability',
+            ability: ability.id,
+            distance: 0,
+            hits: [{ location: 'body', baseDamage: dmg, shieldAbsorbed, hpDamage, penetrated: false }],
+            totalDamage: dmg,
+            defenderHpAfter,
+            defenderShieldAfter,
+            isLethal,
+          });
+
+          if (damageResult.isValid && isLethal && sm.isPlayerAlive(targetId)) {
+            const lastEvent = sm.getTimeline()[sm.getTimeline().length - 1];
+            const assisters = this.findAssisters(sm, targetId, playerId);
+            sm.killPlayer(playerId, targetId, time, ability.id, false, lastEvent.id, assisters);
+          }
+        }
+      }
 
       // If it's a heal ability, apply healing to self or teammate
       if (ability.effectType === 'heal') {
@@ -1116,25 +1248,122 @@ export class RoundSimulator {
   }
 
   /**
-   * Find assisters — players who dealt damage to victim within 5s / 25+ damage
+   * Pick a random alive teammate to act as a secondary (chip) attacker in the same encounter
    */
-  private findAssisters(sm: RoundStateMachine, victimId: string, killerId: string): string[] {
+  private selectSecondaryAttacker(primaryId: string, aliveTeammates: string[]): string | null {
+    const others = aliveTeammates.filter(id => id !== primaryId);
+    if (others.length === 0) return null;
+    return others[Math.floor(Math.random() * others.length)];
+  }
+
+  /**
+   * Find assisters — players who dealt damage to victim within 5s / 25+ damage,
+   * or provided non-damage support (flash, smoke, recon, stim, heal).
+   */
+  private findAssisters(sm: RoundStateMachine, victimId: string, killerId: string): AssistInfo[] {
     const timeline = sm.getTimeline();
     const currentTime = sm.getCurrentTimestamp();
-    const assisters = new Set<string>();
+    // Map tracks best (first/most-specific) assist type per player
+    const assisters = new Map<string, AssistInfo>();
+    const damageByAttacker = new Map<string, number>();
+
+    const addAssist = (info: AssistInfo) => {
+      if (!assisters.has(info.playerId)) {
+        assisters.set(info.playerId, info);
+      }
+    };
 
     for (const event of timeline) {
       if (event.type !== 'damage') continue;
       if (event.defenderId !== victimId) continue;
       if (event.attackerId === killerId) continue;
 
-      // Within 5 seconds and at least 25 damage
-      if (currentTime - event.timestamp <= 5000 && event.totalDamage >= 25) {
-        assisters.add(event.attackerId);
+      const attackerId = event.attackerId;
+
+      // Ability/utility assist: within 5 seconds of kill, any damage amount
+      if (
+        (event.source === 'ability' || event.source === 'utility') &&
+        currentTime - event.timestamp <= 5000
+      ) {
+        const assistType: AssistInfo = {
+          playerId: attackerId,
+          type: event.source === 'ability' ? 'ability' : 'utility',
+          abilityId: event.ability,
+        };
+        addAssist(assistType);
+      }
+
+      // Accumulate total damage dealt to this victim during the round
+      damageByAttacker.set(attackerId, (damageByAttacker.get(attackerId) ?? 0) + event.totalDamage);
+    }
+
+    // Damage assist: >= 50 cumulative damage to victim at any point during the round
+    for (const [attackerId, totalDamage] of damageByAttacker) {
+      if (totalDamage >= 50) {
+        addAssist({ playerId: attackerId, type: 'damage' });
       }
     }
 
-    return Array.from(assisters);
+    // Heal/stim assists: healed the killer before the kill
+    for (const event of timeline) {
+      if (event.type !== 'heal') continue;
+      if (event.healerId === killerId) continue;
+      if (event.targetId !== killerId) continue;
+      if (event.timestamp >= currentTime) continue;
+      addAssist({ playerId: event.healerId, type: 'heal' });
+    }
+
+    // Ability-use assists: flash, smoke, recon, stim
+    for (const event of timeline) {
+      if (event.type !== 'ability_use') continue;
+      if (event.playerId === killerId) continue;
+      if (!event.targets || event.targets.length === 0) continue;
+
+      const ability = getAbilityById(event.abilityId);
+      if (!ability) continue;
+
+      const { effectType, durationMs } = ability;
+
+      // Flash/disruptive: victim affected within 3s of kill
+      if (['flash', 'blind', 'concuss', 'slow', 'debuff', 'suppress'].includes(effectType)) {
+        if (currentTime - event.timestamp <= 3000 && event.targets.includes(victimId)) {
+          addAssist({ playerId: event.playerId, type: 'flash' });
+        }
+      }
+
+      // Smoke: victim in active smoke at kill time
+      if (effectType === 'smoke') {
+        const duration = durationMs ?? 10000;
+        if (
+          event.timestamp <= currentTime &&
+          currentTime - event.timestamp <= duration &&
+          event.targets.includes(victimId)
+        ) {
+          addAssist({ playerId: event.playerId, type: 'smoke' });
+        }
+      }
+
+      // Recon/reveal: victim revealed within 5s of kill
+      if (effectType === 'recon' || effectType === 'reveal') {
+        if (currentTime - event.timestamp <= 5000 && event.targets.includes(victimId)) {
+          addAssist({ playerId: event.playerId, type: 'recon' });
+        }
+      }
+
+      // Stim/buff: killer was buffed within stim duration
+      if (effectType === 'stim') {
+        const duration = durationMs ?? 6000;
+        if (
+          event.timestamp <= currentTime &&
+          currentTime - event.timestamp <= duration &&
+          event.targets.includes(killerId)
+        ) {
+          addAssist({ playerId: event.playerId, type: 'stim' });
+        }
+      }
+    }
+
+    return Array.from(assisters.values());
   }
 
   /**
@@ -1220,8 +1449,8 @@ export class RoundSimulator {
           }
 
           // Assists
-          for (const assisterId of event.assisters) {
-            const assisterPerf = perf.get(assisterId);
+          for (const assist of event.assisters) {
+            const assisterPerf = perf.get(assist.playerId);
             if (assisterPerf) {
               assisterPerf.assists++;
             }
@@ -1504,10 +1733,11 @@ export class RoundSimulator {
     planted: boolean,
     defused: boolean,
     buyType: BuyType,
-    actualBuyCosts?: number[]
+    actualBuyCosts?: number[],
+    survivorIndices?: number[]
   ): TeamEconomyState {
     const update = this.economyEngine.calculateRoundCredits(
-      won, playerKills, planted, defused, economy
+      won, playerKills, planted, defused, economy, survivorIndices
     );
     return this.economyEngine.updateEconomyState(economy, update, buyType, actualBuyCosts);
   }

@@ -173,6 +173,17 @@ export interface SimDamageEvent extends BaseTimelineEvent {
   isLethal: boolean;
 }
 
+/** Type of assist contribution */
+export type AssistType = 'damage' | 'ability' | 'utility' | 'heal' | 'flash' | 'smoke' | 'recon' | 'stim';
+
+/** Structured assist record attached to a kill event */
+export interface AssistInfo {
+  playerId: string;
+  type: AssistType;
+  /** Set when type is 'ability' or 'utility' — which ability caused the assist */
+  abilityId?: AbilityId;
+}
+
 /** Kill event - always follows lethal damage */
 export interface SimKillEvent extends BaseTimelineEvent {
   type: 'kill';
@@ -183,8 +194,8 @@ export interface SimKillEvent extends BaseTimelineEvent {
   isHeadshot: boolean;
   /** The damage event that caused this kill */
   damageEventId: string;
-  /** Assisters who dealt damage to victim */
-  assisters: string[];
+  /** Assisters who contributed to the kill */
+  assisters: AssistInfo[];
 }
 
 /** Trade kill - kill that happened within trade window */
@@ -285,6 +296,8 @@ export interface AbilityUseEvent extends BaseTimelineEvent {
   slot: 'basic1' | 'basic2' | 'signature' | 'ultimate';
   /** Targets affected, if any */
   targets?: string[];
+  /** Per-target damage dealt (only for effectType === 'damage') */
+  targetDamage?: Record<string, number>;
 }
 
 /** Heal event (Sage, Skye, Phoenix, etc.) */

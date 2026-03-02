@@ -32,6 +32,9 @@ export const ECONOMY_CONSTANTS = {
   /** Base credits for losing a round (before loss bonus) */
   ROUND_LOSS_BASE: 1900,
 
+  /** Credits for surviving while on the losing team (save mechanic: pros die to spike for full 1,900) */
+  ROUND_SAVE_CREDITS: 1000,
+
   /** Loss streak bonus per consecutive loss (0, 1, 2, 3, 4+) */
   LOSS_STREAK_BONUS: [0, 500, 1000, 1500, 1900] as const,
 

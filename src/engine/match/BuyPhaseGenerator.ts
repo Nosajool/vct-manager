@@ -332,11 +332,12 @@ export class BuyPhaseGenerator {
       let chargesToBuy: number;
       switch (buyType) {
         case 'eco':
-          // Maybe buy 1 charge of cheaper ability
-          chargesToBuy = ability.cost <= 200 ? 1 : 0;
+          // Try max charges of cheap abilities; budget clamping will reduce if needed
+          chargesToBuy = ability.cost <= 200 ? ability.maxCharges : 0;
           break;
         case 'half_buy':
-          chargesToBuy = 1;
+          // Try max charges; budget clamping will reduce if needed
+          chargesToBuy = ability.maxCharges;
           break;
         case 'force_buy':
         case 'full_buy':

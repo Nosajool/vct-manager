@@ -26,6 +26,7 @@ import type {
   TeamSide,
   SimWinCondition,
   Position,
+  AssistInfo,
 } from '../../types/round-simulation';
 
 import { DEFAULT_ROUND_CONFIG } from '../../types/round-simulation';
@@ -318,6 +319,8 @@ export class RoundStateMachine {
     // Apply the damage
     const defender = this.playerStates.get(event.defenderId)!;
     defender.damageTakenThisRound += event.totalDamage;
+    defender.hp = event.defenderHpAfter;
+    defender.shieldHp = event.defenderShieldAfter;
 
     const attacker = this.playerStates.get(event.attackerId)!;
     attacker.damageDealtThisRound += event.totalDamage;
@@ -343,7 +346,7 @@ export class RoundStateMachine {
     weapon: string,
     isHeadshot: boolean,
     damageEventId: string,
-    assisters: string[] = []
+    assisters: AssistInfo[] = []
   ): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationError[] = [];
@@ -943,7 +946,8 @@ export class RoundStateMachine {
     abilityName: string,
     slot: 'basic1' | 'basic2' | 'signature' | 'ultimate',
     timestamp: number,
-    targets?: string[]
+    targets?: string[],
+    targetDamage?: Record<string, number>
   ): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationError[] = [];
@@ -984,6 +988,7 @@ export class RoundStateMachine {
       abilityName,
       slot,
       targets,
+      targetDamage,
     };
     this.timeline.push(event);
 

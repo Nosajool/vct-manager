@@ -32,6 +32,8 @@ export interface EconomyUpdate {
   newLossStreak: number;
   /** Whether this was a save round */
   wasSaveRound: boolean;
+  /** Indices of losing-team players who survived (get ROUND_SAVE_CREDITS instead of ROUND_LOSS_BASE) */
+  survivorIndices?: number[];
 }
 
 export class EconomyEngine {
@@ -135,7 +137,8 @@ export class EconomyEngine {
     kills: number[],
     planted: boolean,
     defused: boolean,
-    currentState: TeamEconomyState
+    currentState: TeamEconomyState,
+    survivorIndices?: number[]
   ): EconomyUpdate {
     const { ROUND_WIN_CREDITS, ROUND_LOSS_BASE, LOSS_STREAK_BONUS, KILL_CREDIT, PLANT_CREDIT, DEFUSE_CREDIT } =
       ECONOMY_CONSTANTS;
@@ -164,6 +167,7 @@ export class EconomyEngine {
       defuseCreditsPerPlayer,
       newLossStreak,
       wasSaveRound: currentState.lastBuyType === 'eco',
+      survivorIndices: !won ? survivorIndices : undefined,
     };
   }
 
@@ -184,9 +188,16 @@ export class EconomyEngine {
       const buyCost = actualBuyCosts?.[i] ?? this.getBuyCost(buyType);
       const remaining = Math.max(0, current - buyCost);
 
+      // Save mechanic: losing survivors get 1,000 instead of 1,900
+      // (pros intentionally die to spike to avoid the penalty)
+      const baseForPlayer =
+        update.survivorIndices?.includes(i)
+          ? ECONOMY_CONSTANTS.ROUND_SAVE_CREDITS
+          : update.baseCreditsPerPlayer;
+
       // Add round earnings (base + kills + plant + defuse)
       const roundEarnings =
-        update.baseCreditsPerPlayer +
+        baseForPlayer +
         update.playerKillCredits[i] +
         update.plantCreditsPerPlayer +
         update.defuseCreditsPerPlayer;
