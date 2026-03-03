@@ -23,7 +23,8 @@ export type DramaCategory =
   | 'meta_rumors'
   | 'visa_arc'           // all visa drama arc events
   | 'coaching_overhaul'  // all coaching overhaul arc events
-  | 'igl_crisis';        // all IGL crisis arc events
+  | 'igl_crisis'         // all IGL crisis arc events
+  | 'scrim_sharing';     // scrim VOD leak scandal arc
 
 /**
  * Severity level of drama events
@@ -94,8 +95,9 @@ export type DramaConditionType =
   | 'or'                 // At least one condition in anyOf must pass
 
   // Scrim history checks
-  | 'scrim_count_min'   // Team has completed at least N total scrims
-  | 'no_recent_match'   // No match played within threshold days (default 1)
+  | 'scrim_count_min'      // Team has completed at least N total scrims
+  | 'scrim_vod_risk_above' // Max vodLeakRisk across all scrim partners > threshold
+  | 'no_recent_match'      // No match played within threshold days (default 1)
 
   // Season timing checks
   | 'min_season_day'    // Season day >= threshold (day 1 = first day of season)
@@ -408,7 +410,8 @@ export interface DramaGameStateSnapshot {
   }>;
 
   // Scrim history
-  scrimCount?: number;   // Total number of completed scrims
+  scrimCount?: number;        // Total number of completed scrims
+  maxVodLeakRisk?: number;    // Highest vodLeakRisk across all scrim partners (0–100)
 
   // Drama state
   dramaState: DramaState;
@@ -500,6 +503,8 @@ export const DRAMA_CONSTANTS = {
     meta_rumors: 7,          // Unchanged
     visa_arc: 3,             // Short: arc is flag-chained, not random
     coaching_overhaul: 5,    // Short: arc events are flag-gated
+    igl_crisis: 5,           // Short: arc events are flag-gated
+    scrim_sharing: 14,       // Distinct arc, no cross-bleed with external_pressure
   },
 
   // Effect magnitude defaults

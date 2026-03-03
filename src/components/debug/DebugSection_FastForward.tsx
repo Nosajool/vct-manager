@@ -225,6 +225,13 @@ export function DebugSection_FastForward() {
               <span className="text-white">{result.totalDramaEventsResolved}</span>
             </div>
             <div className="text-vct-gray">
+              Training sessions:{' '}
+              <span className="text-white">{result.totalTrainingSessions}</span>
+              {' | '}
+              Scrims:{' '}
+              <span className="text-white">{result.totalScrims}</span>
+            </div>
+            <div className="text-vct-gray">
               Phase changes:{' '}
               {result.phaseChanges.length === 0 ? (
                 <span className="text-vct-gray/50">none</span>

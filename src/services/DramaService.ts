@@ -285,6 +285,11 @@ export class DramaService {
 
     const scrimCount = state.scrimHistory.length;
 
+    // Compute max VOD leak risk across all scrim partners
+    const scrimRelationships = playerTeam.scrimRelationships ?? {};
+    const maxVodLeakRisk = Object.values(scrimRelationships)
+      .reduce((max, rel) => Math.max(max, rel.vodLeakRisk), 0);
+
     // Get recent match results for streak-based conditions
     const matchHistory = state.getTeamMatchHistory(playerTeamId);
     const recentMatchResults = matchHistory.map(result => {
@@ -310,6 +315,7 @@ export class DramaService {
       players: playersSnapshot,
       recentMatchResults,
       scrimCount,
+      maxVodLeakRisk,
       dramaState,
       tournamentContext,
       playerTeamRegion: playerTeam.region,

@@ -74,6 +74,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-red-500/20 to-red-600/20 border-red-500/30',
     icon: '🎯',
   },
+  scrim_sharing: {
+    label: 'Scrim Scandal',
+    color: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30',
+    icon: '🎬',
+  },
 };
 
 /**

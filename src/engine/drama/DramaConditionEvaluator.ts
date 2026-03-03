@@ -114,6 +114,11 @@ export function evaluateCondition(
         ? (snapshot.scrimCount ?? 0) >= condition.threshold
         : false;
 
+    case 'scrim_vod_risk_above':
+      return condition.threshold !== undefined
+        ? (snapshot.maxVodLeakRisk ?? 0) > condition.threshold
+        : false;
+
     case 'min_season_day': {
       const seasonYear = 2025 + snapshot.currentSeason;
       const seasonStart = new Date(`${seasonYear}-01-01T00:00:00.000Z`);

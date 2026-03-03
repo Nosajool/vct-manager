@@ -7,6 +7,7 @@ import { interviewService } from './InterviewService';
 import { dramaService } from './DramaService';
 import { tournamentService } from './TournamentService';
 import { tournamentTransitionService } from './TournamentTransitionService';
+import { DayScheduleService } from './DayScheduleService';
 import type { PendingInterview } from '../types/interview';
 import type { DramaChoice } from '../types/drama';
 import type { Region } from '../types';
@@ -14,6 +15,8 @@ import type { StageCompletionModalData } from '../components/tournament/StageCom
 import type { MastersCompletionModalData } from '../components/tournament/MastersCompletionModal';
 import type { QualificationModalData } from '../components/tournament/QualificationModal';
 import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
+
+const dayScheduleService = new DayScheduleService();
 
 export type AutoResolveStrategy = 'first' | 'random' | 'best';
 
@@ -47,6 +50,8 @@ export interface FastForwardResult {
   playerTeamLosses: number;
   totalInterviewsResolved: number;
   totalDramaEventsResolved: number;
+  totalTrainingSessions: number;
+  totalScrims: number;
   phaseChanges: Array<{ fromPhase: string; toPhase: string; date: string }>;
 }
 
@@ -141,6 +146,8 @@ class FastForwardService {
     let playerTeamLosses = 0;
     let totalInterviewsResolved = 0;
     let totalDramaEventsResolved = 0;
+    let totalTrainingSessions = 0;
+    let totalScrims = 0;
     const phaseChanges: Array<{ fromPhase: string; toPhase: string; date: string }> = [];
 
     for (let day = 0; day < config.days; day++) {
@@ -203,11 +210,38 @@ class FastForwardService {
         action: 'Advancing day…',
       });
 
+      // Auto-schedule training and scrim if not already scheduled for this day
+      const eventsOnDay = state.calendar.scheduledEvents.filter(e => e.date === currentDate);
+      const hasTraining = eventsOnDay.some(e => e.type === 'scheduled_training');
+      const hasScrim = eventsOnDay.some(e => e.type === 'scheduled_scrim');
+      if (!hasTraining) {
+        try {
+          dayScheduleService.scheduleActivity(currentDate, 'training');
+        } catch {
+          // Ineligible day (match day, feature gate, season phase) — skip silently
+        }
+      }
+      if (!hasScrim) {
+        try {
+          dayScheduleService.scheduleActivity(currentDate, 'scrim');
+        } catch {
+          // Ineligible day — skip silently
+        }
+      }
+
       // Advance the day
       const result = await calendarService.advanceDay();
 
       endDate = result.newDate;
       daysSimulated++;
+
+      // Track training/scrim results
+      if (result.activityResults) {
+        totalTrainingSessions += result.activityResults.trainingResults.length;
+        if (result.activityResults.scrimResult !== null) {
+          totalScrims++;
+        }
+      }
 
       // Track match stats
       const storeAfterAdvance = useGameStore.getState();
@@ -320,6 +354,8 @@ class FastForwardService {
       playerTeamLosses,
       totalInterviewsResolved,
       totalDramaEventsResolved,
+      totalTrainingSessions,
+      totalScrims,
       phaseChanges,
     };
   }

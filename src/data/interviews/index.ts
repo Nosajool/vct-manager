@@ -13,6 +13,7 @@ import { COACHING_OVERHAUL_TEMPLATES } from './coaching_overhaul';
 import { AGENT_STRATEGY_TEMPLATES } from './agent_strategy';
 import { IGL_CRISIS_TEMPLATES } from './igl_crisis';
 import { GENERAL_TEMPLATES } from './general';
+import { SCRIM_SHARING_TEMPLATES } from './scrim_sharing';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -28,4 +29,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...AGENT_STRATEGY_TEMPLATES,
   ...IGL_CRISIS_TEMPLATES,
   ...GENERAL_TEMPLATES,
+  ...SCRIM_SHARING_TEMPLATES,
 ];

@@ -74,6 +74,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-red-500',
     icon: '🎯',
   },
+  scrim_sharing: {
+    label: 'Scrim Scandal',
+    color: 'text-cyan-400',
+    dotColor: 'bg-cyan-500',
+    icon: '🎬',
+  },
 };
 
 /**

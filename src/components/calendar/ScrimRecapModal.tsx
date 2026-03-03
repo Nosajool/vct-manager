@@ -69,8 +69,8 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
   const opponentName = scrimResult.partnerTeamName;
 
   // Count map wins for each side
-  const playerWins = scrimResult.maps.filter((m) => m.winner === playerTeamId).length;
-  const opponentWins = scrimResult.maps.filter((m) => m.winner !== playerTeamId).length;
+  const playerWins = scrimResult.maps.filter((m) => m.winner === 'teamA').length;
+  const opponentWins = scrimResult.maps.filter((m) => m.winner === 'teamB').length;
   const playerWon = scrimResult.overallWinner === playerTeamId;
 
   return (
@@ -129,7 +129,7 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
             <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Maps</h3>
             <div className="space-y-2">
               {scrimResult.maps.map((mapResult, idx) => {
-                const mapWon = mapResult.winner === playerTeamId;
+                const mapWon = mapResult.winner === 'teamA';
                 // Determine scores: teamA is player team
                 const playerScore = mapResult.teamAScore;
                 const opponentScore = mapResult.teamBScore;

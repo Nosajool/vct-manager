@@ -29,15 +29,21 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 | File | Purpose |
 |------|---------|
 | `src/types/interview.ts` | Types for interview templates, options, effects, `TournamentMatchContext` |
-| `src/types/drama.ts` | Types for drama conditions, effects, events; also `DRAMA_CONSTANTS` |
+| `src/types/drama.ts` | Types for drama conditions, effects, events; also `DRAMA_CONSTANTS` (incl. `cooldownDefaults`) |
 | `src/data/interviews/` | Interview templates split by context/arc — see "Which file to add your template to" |
+| `src/data/interviews/index.ts` | Registry — import and spread every interview file here |
 | `src/data/drama/` | Drama event templates split by category — see "Which file to add your template to" |
+| `src/data/drama/index.ts` | Registry — import and spread every drama file here |
 | `src/services/InterviewService.ts` | Applies interview effects via `InterviewEffectResolver`; filters options by personality |
 | `src/services/CalendarService.ts` | Computes `TournamentMatchContext` from bracket, passes to InterviewService |
-| `src/services/DramaService.ts` | Builds `DramaGameStateSnapshot` including `tournamentContext` |
-| `src/engine/drama/DramaConditionEvaluator.ts` | Evaluates `DramaCondition[]` — used by both drama and interview systems |
+| `src/services/DramaService.ts` | Builds `DramaGameStateSnapshot` — add new snapshot fields here when new condition types need data |
+| `src/engine/drama/DramaConditionEvaluator.ts` | Evaluates `DramaCondition[]` — add a `case` here for every new `DramaConditionType` |
 | `src/engine/interview/InterviewConditionEvaluator.ts` | `evaluateTemplateFlagGate()` — evaluates interview template `conditions[]` |
 | `src/engine/interview/InterviewEffectResolver.ts` | `resolveInterviewEffects()` — translates `InterviewEffects` into concrete mutations |
+| `src/components/drama/DramaEventModal.tsx` | Category label/color map — add an entry for every new `DramaCategory` |
+| `src/components/drama/DramaEventToast.tsx` | Category label/color/icon map — add an entry for every new `DramaCategory` |
+| `src/components/drama/DramaHistoryPanel.tsx` | Category label/color/icon map for history view — add an entry for every new `DramaCategory` |
+| `src/components/debug/DebugSection_Conditions.tsx` | Category color map for debug overlay — add an entry for every new `DramaCategory` |
 
 ---
 
@@ -113,6 +119,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | Visa arc | `visa_arc.ts` |
 | Coaching overhaul arc | `coaching_overhaul.ts` |
 | IGL crisis arc | `igl_crisis.ts` |
+| Scrim sharing scandal arc | `scrim_sharing.ts` |
 
 **Drama events** live in `src/data/drama/`:
 
@@ -129,6 +136,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | `visa_arc` | `visa_arc.ts` |
 | `coaching_overhaul` | `coaching_overhaul.ts` |
 | `igl_crisis` | `igl_crisis.ts` |
+| `scrim_sharing` | `scrim_sharing.ts` |
 
 ### Option structure
 
@@ -207,7 +215,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 
@@ -972,6 +980,69 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - Major events with strong conditions: `55–85`
 - Major events gated on a specific flag: `80–90` (they should almost always fire — they were earned)
 
+**Scrim sharing scandal arc flags**
+
+| Flag | Set by | Read by |
+|------|--------|---------|
+| `scrim_leak_arc_active` | `scrim_leak_suspicion_emerges` effects | `scrim_leak_confrontation` (trigger condition), `scrim_accused_by_rival` (guard) |
+| `scrim_accuse_public` | `scrim_leak_confrontation` choice A; `scrim_league_response` choice C | `crisis_scrim_leak_public` interview, `pre_match_scrim_controversy` interview, `scrim_public_fallout` drama |
+| `scrim_investigate_quietly` | `scrim_leak_confrontation` choice B | `scrim_investigation_result` (trigger condition) |
+| `scrim_leak_accepted` | `scrim_leak_confrontation` choice C | narrative flavor only |
+| `scrim_intel_accepted` | `scrim_intel_offer` choice A | `pre_match_intel_burden` interview, `scrim_intel_offer` (guard) |
+| `scrim_intel_declined` | `scrim_intel_offer` choice B | `pre_match_principled_stance` interview |
+| `scrim_intel_offer_resolved` | `scrim_intel_offer` all choices | `scrim_intel_offer` (guard against re-fire) |
+| `scrim_reported_to_league` | `scrim_intel_offer` choice C; `scrim_investigation_result` choice A | `scrim_league_response` (trigger condition) |
+| `scrim_league_sanctions_pushed` | `scrim_league_response` choice A | future events |
+| `scrim_league_deferred` | `scrim_league_response` choice B | narrative flavor only |
+| `scrim_accused_active` | `scrim_accused_by_rival` effects | `scrim_defending_accusations` (trigger condition), `pre_match_scrim_controversy` interview |
+| `scrim_deny_forceful` | `scrim_defending_accusations` choice A | `crisis_scrim_under_fire` interview |
+| `scrim_mediated_discussion` | `scrim_defending_accusations` choice B | narrative flavor only |
+| `scrim_dare_to_name` | `scrim_defending_accusations` choice C | future events |
+| `rivalry_intensified` | `scrim_defending_accusations` choices A/C | future events |
+| `media_narrative_scrim_controversy` | `scrim_public_fallout` effects | future events |
+
+**Scrim sharing arc flow**
+
+```
+BRANCH A (VICTIM) ──────────────────────────────────────────────────────────────
+
+[ENTRY]  scrim_leak_suspicion_emerges (minor) [vodLeakRisk>45, scrims≥8, tournament]
+           → sets scrim_leak_arc_active (35d)
+           → escalates → scrim_leak_confrontation (3d)
+
+[ACT 1]  scrim_leak_confrontation (major)
+           Choice A → scrim_accuse_public (21d), hype+6, sponsorTrust-8
+                       → scrim_public_fallout (minor) auto-fires
+                       → crisis_scrim_leak_public / pre_match_scrim_controversy interviews
+           Choice B → scrim_investigate_quietly (14d)
+                       → scrim_investigation_result (major, ~7d)
+                            choice A → scrim_reported_to_league → scrim_league_response
+                            choice B/C → arc ends (morale cost)
+           Choice C → scrim_leak_accepted, morale-3 all; arc ends
+
+BRANCH B (TEMPTATION) ──────────────────────────────────────────────────────────
+
+[ENTRY]  scrim_intel_offer (major) [vodLeakRisk>30, scrims≥5, tournament, standalone]
+           Choice A → scrim_intel_accepted → pre_match_intel_burden interview
+           Choice B → scrim_intel_declined → pre_match_principled_stance interview
+           Choice C → scrim_reported_to_league → scrim_league_response (major)
+                            choice A → scrim_league_sanctions_pushed
+                            choice B → scrim_league_deferred (Riot does nothing)
+                            choice C → merges into BRANCH A public path
+
+BRANCH C (ACCUSED) ─────────────────────────────────────────────────────────────
+
+[ENTRY]  scrim_accused_by_rival (minor) [vodLeakRisk>50, has_rivalry]
+           → sets scrim_accused_active (21d), hype-8, sponsorTrust-5
+           → escalates → scrim_defending_accusations (3d)
+
+[ACT 1]  scrim_defending_accusations (major)
+           Choice A → scrim_deny_forceful, rivalry_intensified
+                       → crisis_scrim_under_fire interview
+           Choice B → scrim_mediated_discussion; arc de-escalates
+           Choice C → scrim_dare_to_name, rivalry_intensified; arc escalates
+```
+
 **Cooldown guidelines (from actual defaults):**
 - `player_ego`: 7 days
 - `team_synergy`: 7 days
@@ -979,6 +1050,7 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - `practice_burnout`: 5 days
 - `breakthrough`: 7 days
 - `meta_rumors`: 7 days
+- `scrim_sharing`: 14 days
 
 ---
 
@@ -994,7 +1066,7 @@ From `DRAMA_CONSTANTS` in `src/types/drama.ts`:
 - **Don't use `oncePerSeason` on player-arc events** — `oncePerSeason` is template-scoped: once *any* player triggers the event, it blocks the template for all players for 90 days. For player-specific events, rely on the player-scoped flag's own duration as rate-limiter instead.
 - **Don't add conditions that require flags nothing sets** — before adding a `flag_active` condition, verify there is a concrete code path (interview option or drama effect) that sets that flag. Dead conditions silently make events unreachable.
 - **Don't forget to terminate arcs** — any escalation chain needs a terminal event that (a) sets a long-lived terminus flag immediately via `effects[]`, (b) clears intermediate arc flags in every choice, and (c) clears them in `autoResolveEffects` too. See Pattern 10.
-- **Scrim leak scandal and veteran/rookie rivalry are intentionally out of scope** — they require data structures not yet in `DramaGameStateSnapshot`.
+- **Veteran/rookie rivalry is intentionally out of scope** — it requires per-player relationship data structures not yet in `DramaGameStateSnapshot`.
 
 ### Pattern 12: Every flag is a promise — close the loop
 
