@@ -388,7 +388,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
         </div>
 
         {/* 3-Column Training Configuration View */}
-        <div className="flex-1 overflow-hidden grid grid-cols-[280px_1fr_320px] gap-4 p-4">
+        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-4 p-4">
           {/* LEFT COLUMN: Player List */}
           <PlayerListColumn
             startingPlayers={startingPlayers}
@@ -451,7 +451,7 @@ function PlayerListColumn({
         <h3 className="text-sm font-semibold text-vct-gray">Players</h3>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto max-h-[300px] lg:max-h-none">
         {/* Starting 5 (always expanded) */}
         <div className="p-2 space-y-1">
           <div className="text-xs font-medium text-vct-gray px-2 py-1">Starting 5</div>
@@ -678,7 +678,7 @@ function GoalSelectorColumn({
         <p className="text-xs text-vct-gray mt-1">{selectedPlayer.name}</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div className="flex-1 overflow-y-auto max-h-[300px] lg:max-h-none p-3 space-y-2">
         {allGoals.map((goal) => {
           const goalInfo = TRAINING_GOAL_MAPPINGS[goal];
           const isRecommended = goal === recommendedGoal;
@@ -802,7 +802,7 @@ function IntensityPreviewColumn({
         <h3 className="text-sm font-semibold text-vct-gray">Intensity & Preview</h3>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-4">
+      <div className="flex-1 overflow-y-auto max-h-[300px] lg:max-h-none p-3 space-y-4">
         {/* Auto-override warning */}
         {selectedPlayerPreview?.overrideReason && (
           <div className="p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">

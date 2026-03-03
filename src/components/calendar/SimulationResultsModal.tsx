@@ -427,14 +427,14 @@ function MatchCard({
           {matchLabel}
         </div>
       )}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         {/* Teams and Score */}
         <div className="flex items-center gap-4 flex-1">
           {/* Team A */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 justify-end">
               <span
-                className={`font-medium ${
+                className={`font-medium truncate ${
                   teamAWon ? 'text-green-400' : 'text-vct-light'
                 }`}
               >
@@ -452,7 +452,7 @@ function MatchCard({
           </div>
 
           {/* Score */}
-          <div className="flex items-center gap-2 px-3">
+          <div className="flex items-center gap-1 px-2 sm:px-3">
             <span
               className={`text-lg font-bold ${
                 teamAWon ? 'text-green-400' : 'text-vct-gray'
@@ -471,7 +471,7 @@ function MatchCard({
           </div>
 
           {/* Team B */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <GameImage
                 src={getTeamLogoUrl(teamBName)}
@@ -482,7 +482,7 @@ function MatchCard({
                 <RivalryIndicator opponentTeamId={opponentTeamId} />
               )}
               <span
-                className={`font-medium ${
+                className={`font-medium truncate ${
                   teamBWon ? 'text-green-400' : 'text-vct-light'
                 }`}
               >
@@ -495,14 +495,14 @@ function MatchCard({
         {/* View Details Button */}
         <button
           onClick={onViewDetails}
-          className="ml-4 px-3 py-1 text-sm bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded transition-colors"
+          className="px-3 py-1 text-sm bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded transition-colors w-full sm:w-auto sm:ml-4 text-center"
         >
           View Details
         </button>
       </div>
 
       {/* Map Scores Preview */}
-      <div className="mt-2 flex items-center justify-center gap-2 text-xs text-vct-gray">
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-1 sm:gap-2 text-xs text-vct-gray">
         {result.maps.map((map, index) => (
           <span key={index} className="flex items-center gap-1">
             <span className="text-vct-gray/60">{map.map}:</span>

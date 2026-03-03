@@ -100,8 +100,55 @@ export class ScrimService {
   }
 
   /**
+   * Get strength comparison between the player team and a potential scrim partner.
+   * Used to warn the player before scheduling a lopsided scrim.
+   */
+  getScrimStrengthComparison(partnerId: string): {
+    playerStrength: number;
+    partnerStrength: number;
+    winProbability: number;
+    difficulty: 'Favorable' | 'Even' | 'Tough' | 'Very Tough';
+  } | null {
+    const state = useGameStore.getState();
+    const playerTeamId = state.playerTeamId;
+    if (!playerTeamId) return null;
+
+    const playerTeam = state.teams[playerTeamId];
+    if (!playerTeam) return null;
+
+    const playerTeamPlayers = playerTeam.playerIds
+      .map(id => state.players[id])
+      .filter((p): p is Player => p !== undefined);
+
+    const partnerTeam = this.getPartnerTeam(partnerId);
+    if (!partnerTeam) return null;
+
+    const partnerPlayers = this.getPartnerPlayers(partnerTeam);
+
+    const playerStrength = this.calculateTeamStrength(playerTeam, playerTeamPlayers);
+    const partnerStrength = this.calculatePartnerStrength(partnerTeam, partnerPlayers);
+
+    // Base win probability (before variance), clamped to [0.2, 0.8]
+    const rawProb = playerStrength / (playerStrength + partnerStrength);
+    const winProbability = Math.round(Math.max(0.2, Math.min(0.8, rawProb)) * 100);
+
+    const difficulty: 'Favorable' | 'Even' | 'Tough' | 'Very Tough' =
+      winProbability > 55 ? 'Favorable' :
+      winProbability >= 45 ? 'Even' :
+      winProbability >= 35 ? 'Tough' :
+      'Very Tough';
+
+    return {
+      playerStrength: Math.round(playerStrength),
+      partnerStrength: Math.round(partnerStrength),
+      winProbability,
+      difficulty,
+    };
+  }
+
+  /**
    * Compute optimal scrim config for the "Auto-Assign" button
-   * Picks weakest maps, best available partner (scored by relationship/recency/tier/VOD risk),
+   * Picks weakest maps, best available partner (scored by relationship/recency/tier/VOD risk/strength),
    * and intensity based on average team morale.
    * Returns null if no partners are available.
    */
@@ -129,6 +176,12 @@ export class ScrimService {
 
     const currentDate = state.calendar.currentDate;
 
+    // Pre-compute player strength once
+    const playerTeamPlayers = playerTeam.playerIds
+      .map(id => state.players[id])
+      .filter((p): p is Player => p !== undefined);
+    const playerStrength = this.calculateTeamStrength(playerTeam, playerTeamPlayers);
+
     const scored = candidates.map(c => {
       const rel = playerTeam.scrimRelationships?.[c.id];
       const relScore = rel?.relationshipScore ?? SCRIM_CONSTANTS.BASE_RELATIONSHIP.SAME_REGION;
@@ -146,7 +199,22 @@ export class ScrimService {
       // Tier efficiency scaled 0-100
       const tierBonus = SCRIM_CONSTANTS.TIER_EFFICIENCY[c.tier] * 100;
 
-      let score = relScore * 0.4 + recencyBonus * 0.35 + tierBonus * 0.25;
+      // Strength-match bonus: prefer opponents within ±10 of player strength
+      const partnerTeam = this.getPartnerTeam(c.id);
+      let strengthMatchBonus = 0;
+      if (partnerTeam) {
+        const partnerPlayers = this.getPartnerPlayers(partnerTeam);
+        const partnerStrength = this.calculatePartnerStrength(partnerTeam, partnerPlayers);
+        const strengthDiff = Math.abs(playerStrength - partnerStrength);
+        strengthMatchBonus =
+          strengthDiff <= 10 ? 100 :
+          strengthDiff <= 20 ? 60 :
+          strengthDiff <= 30 ? 25 :
+          0;
+      }
+
+      // Weights: relationship 30%, recency 25%, tier 20%, strength-match 25%
+      let score = relScore * 0.3 + recencyBonus * 0.25 + tierBonus * 0.20 + strengthMatchBonus * 0.25;
 
       // Heavy penalty for high VOD leak risk
       if (vodRisk > 50) score *= 0.3;

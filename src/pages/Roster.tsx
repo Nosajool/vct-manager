@@ -140,91 +140,93 @@ export function Roster() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-vct-gray/20">
-        <button
-          onClick={() => setActiveTab('roster')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'roster'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Roster
-        </button>
-        <button
-          onClick={() => transfersUnlocked && setActiveTab('freeagents')}
-          disabled={!transfersUnlocked}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px relative ${
-            activeTab === 'freeagents'
-              ? 'text-vct-red border-vct-red'
-              : transfersUnlocked
-              ? 'text-vct-gray border-transparent hover:text-vct-light'
-              : 'text-vct-gray/40 border-transparent cursor-not-allowed'
-          }`}
-        >
-          Players
-          {!transfersUnlocked && (
-            <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 4</span>
-          )}
-        </button>
-        <button
-          onClick={() => transfersUnlocked && setActiveTab('allteams')}
-          disabled={!transfersUnlocked}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px relative ${
-            activeTab === 'allteams'
-              ? 'text-vct-red border-vct-red'
-              : transfersUnlocked
-              ? 'text-vct-gray border-transparent hover:text-vct-light'
-              : 'text-vct-gray/40 border-transparent cursor-not-allowed'
-          }`}
-        >
-          All Teams
-          {!transfersUnlocked && (
-            <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 4</span>
-          )}
-        </button>
-        <button
-          onClick={() => strategyUnlocked && setActiveTab('strategy')}
-          disabled={!strategyUnlocked}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px relative ${
-            activeTab === 'strategy'
-              ? 'text-vct-red border-vct-red'
-              : strategyUnlocked
-              ? 'text-vct-gray border-transparent hover:text-vct-light'
-              : 'text-vct-gray/40 border-transparent cursor-not-allowed'
-          }`}
-        >
-          Strategy
-          {!strategyUnlocked && (
-            <span className="ml-2 text-xs text-vct-gray/60">Unlocks at Stage 1</span>
-          )}
-        </button>
-        <button
-          onClick={() => setActiveTab('stats')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'stats'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Stats
-        </button>
-        <button
-          onClick={() => scrimsUnlocked && setActiveTab('scrims')}
-          disabled={!scrimsUnlocked}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px relative ${
-            activeTab === 'scrims'
-              ? 'text-vct-red border-vct-red'
-              : scrimsUnlocked
-              ? 'text-vct-gray border-transparent hover:text-vct-light'
-              : 'text-vct-gray/40 border-transparent cursor-not-allowed'
-          }`}
-        >
-          Scrims
-          {!scrimsUnlocked && (
-            <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 2</span>
-          )}
-        </button>
+      <div className="overflow-x-auto scrollbar-none">
+        <div className="flex gap-2 border-b border-vct-gray/20 min-w-max">
+          <button
+            onClick={() => setActiveTab('roster')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+              activeTab === 'roster'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Roster
+          </button>
+          <button
+            onClick={() => transfersUnlocked && setActiveTab('freeagents')}
+            disabled={!transfersUnlocked}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px relative ${
+              activeTab === 'freeagents'
+                ? 'text-vct-red border-vct-red'
+                : transfersUnlocked
+                ? 'text-vct-gray border-transparent hover:text-vct-light'
+                : 'text-vct-gray/40 border-transparent cursor-not-allowed'
+            }`}
+          >
+            Players
+            {!transfersUnlocked && (
+              <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 4</span>
+            )}
+          </button>
+          <button
+            onClick={() => transfersUnlocked && setActiveTab('allteams')}
+            disabled={!transfersUnlocked}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px relative ${
+              activeTab === 'allteams'
+                ? 'text-vct-red border-vct-red'
+                : transfersUnlocked
+                ? 'text-vct-gray border-transparent hover:text-vct-light'
+                : 'text-vct-gray/40 border-transparent cursor-not-allowed'
+            }`}
+          >
+            All Teams
+            {!transfersUnlocked && (
+              <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 4</span>
+            )}
+          </button>
+          <button
+            onClick={() => strategyUnlocked && setActiveTab('strategy')}
+            disabled={!strategyUnlocked}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px relative ${
+              activeTab === 'strategy'
+                ? 'text-vct-red border-vct-red'
+                : strategyUnlocked
+                ? 'text-vct-gray border-transparent hover:text-vct-light'
+                : 'text-vct-gray/40 border-transparent cursor-not-allowed'
+            }`}
+          >
+            Strategy
+            {!strategyUnlocked && (
+              <span className="ml-2 text-xs text-vct-gray/60">Unlocks at Stage 1</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('stats')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+              activeTab === 'stats'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Stats
+          </button>
+          <button
+            onClick={() => scrimsUnlocked && setActiveTab('scrims')}
+            disabled={!scrimsUnlocked}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px relative ${
+              activeTab === 'scrims'
+                ? 'text-vct-red border-vct-red'
+                : scrimsUnlocked
+                ? 'text-vct-gray border-transparent hover:text-vct-light'
+                : 'text-vct-gray/40 border-transparent cursor-not-allowed'
+            }`}
+          >
+            Scrims
+            {!scrimsUnlocked && (
+              <span className="ml-2 text-xs text-vct-gray/60">Unlocks Week 2</span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Content */}

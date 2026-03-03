@@ -85,6 +85,13 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
     return playerTeam.scrimRelationships?.[partnerId]?.relationshipScore ?? 50;
   };
 
+  const DIFFICULTY_STYLES: Record<string, { color: string; bg: string }> = {
+    Favorable: { color: 'text-green-400', bg: 'bg-green-400/10' },
+    Even:      { color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
+    Tough:     { color: 'text-orange-400', bg: 'bg-orange-400/10' },
+    'Very Tough': { color: 'text-red-400', bg: 'bg-red-400/10' },
+  };
+
   // Toggle map selection (max 3)
   const toggleMap = (mapName: string) => {
     const newSelected = new Set(selectedMaps);
@@ -278,19 +285,18 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                   {availablePartners[activeTier].map((partner) => {
                     const relationshipScore = getRelationshipScore(partner.id);
                     const isSelected = selectedPartner === partner.id;
+                    const comparison = scrimService.getScrimStrengthComparison(partner.id);
+                    const diffStyle = comparison ? DIFFICULTY_STYLES[comparison.difficulty] : null;
 
                     return (
                       <button
                         key={partner.id}
                         onClick={() => setSelectedPartner(partner.id)}
-                        disabled={!true}
                         className={`
                           p-3 rounded-lg border transition-all text-left
                           ${isSelected
                             ? 'border-vct-red bg-vct-red/10'
-                            : true
-                            ? 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'
-                            : 'border-vct-gray/10 bg-vct-gray/5 opacity-50 cursor-not-allowed'}
+                            : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'}
                         `}
                       >
                         <div className="flex items-center justify-between">
@@ -298,15 +304,22 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                             <p className="font-medium text-vct-light">{partner.name}</p>
                             <p className="text-xs text-vct-gray">{partner.region}</p>
                           </div>
-                          <div className="text-right">
-                            <p className={`text-sm font-medium ${
-                              relationshipScore >= 70 ? 'text-green-400' :
-                              relationshipScore >= 40 ? 'text-yellow-400' :
-                              'text-red-400'
-                            }`}>
-                              {relationshipScore}
-                            </p>
-                            <p className="text-xs text-vct-gray">Relationship</p>
+                          <div className="flex items-center gap-3">
+                            {comparison && diffStyle && (
+                              <div className={`px-2 py-0.5 rounded text-xs font-medium ${diffStyle.color} ${diffStyle.bg}`}>
+                                {comparison.difficulty} · {comparison.winProbability}%
+                              </div>
+                            )}
+                            <div className="text-right">
+                              <p className={`text-sm font-medium ${
+                                relationshipScore >= 70 ? 'text-green-400' :
+                                relationshipScore >= 40 ? 'text-yellow-400' :
+                                'text-red-400'
+                              }`}>
+                                {relationshipScore}
+                              </p>
+                              <p className="text-xs text-vct-gray">Relationship</p>
+                            </div>
                           </div>
                         </div>
                       </button>

@@ -619,31 +619,31 @@ export function TimeBar() {
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             {/* Left: Date and Phase Info */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-vct-gray text-sm">Date:</span>
+                <span className="hidden md:inline text-vct-gray text-sm">Date:</span>
                 <span className="text-vct-light font-medium">{formattedDate}</span>
               </div>
-              <div className="h-4 w-px bg-vct-gray/30" />
+              <div className="hidden md:block h-4 w-px bg-vct-gray/30" />
               <div className="flex items-center gap-2">
-                <span className="text-vct-gray text-sm">Phase:</span>
+                <span className="hidden md:inline text-vct-gray text-sm">Phase:</span>
                 <span className="text-vct-light font-medium">{phaseDisplay}</span>
               </div>
               {hasMatchToday && (
                 <>
-                  <div className="h-4 w-px bg-vct-gray/30" />
+                  <div className="hidden md:block h-4 w-px bg-vct-gray/30" />
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-0.5 bg-vct-red/20 text-vct-red text-xs font-semibold rounded uppercase">
                       Match Today
                     </span>
-                    <span className="text-vct-light text-sm">vs {opponentName}</span>
+                    <span className="hidden md:inline text-vct-light text-sm">vs {opponentName}</span>
                   </div>
                 </>
               )}
             </div>
 
-            {/* Right: Time Control Buttons */}
-            <div className="flex items-center gap-2">
+            {/* Right: Time Control Buttons (hidden on mobile — FAB used instead) */}
+            <div className="hidden md:flex items-center gap-2">
               {/* Advance Day */}
               <button
                 onClick={handleAdvanceDay}
@@ -665,6 +665,20 @@ export function TimeBar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile FAB — Advance Day / Play Match (hidden on md+) */}
+      <button
+        onClick={handleAdvanceDay}
+        disabled={isAdvancing}
+        title={hasMatchToday ? 'Play Match' : 'Advance Day'}
+        className={`fixed bottom-6 right-4 z-40 md:hidden w-14 h-14 rounded-full shadow-lg text-sm font-bold flex items-center justify-center transition-colors disabled:opacity-50 ${
+          hasMatchToday
+            ? 'bg-vct-red hover:bg-vct-red/80 text-white'
+            : 'bg-vct-gray/40 hover:bg-vct-gray/50 text-vct-light'
+        }`}
+      >
+        {isAdvancing ? '…' : hasMatchToday ? '▶' : '▷'}
+      </button>
 
       {/* Simulation Progress Modal - shown during worker simulation */}
       <SimulationProgressModal

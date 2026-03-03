@@ -205,7 +205,7 @@ export function TournamentPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-white">Tournament</h1>
           <p className="text-sm text-vct-gray">
@@ -214,7 +214,7 @@ export function TournamentPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           {/* Region Filter - only show on Current tab */}
           {activeTab === 'current' && (
             <>
@@ -251,7 +251,7 @@ export function TournamentPage() {
                     <button
                       key={mode}
                       onClick={() => setViewMode(mode)}
-                      className={`px-3 py-1.5 text-sm rounded ${
+                      className={`px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm rounded ${
                         effectiveViewMode === mode
                           ? 'bg-vct-red text-white'
                           : 'text-vct-gray hover:text-white'
@@ -270,27 +270,29 @@ export function TournamentPage() {
       </div>
 
       {/* Sub-tabs */}
-      <div className="flex gap-2 border-b border-vct-gray/20">
-        <button
-          onClick={() => setActiveTab('current')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'current'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Current
-        </button>
-        <button
-          onClick={() => setActiveTab('schedule')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'schedule'
-              ? 'text-vct-red border-vct-red'
-              : 'text-vct-gray border-transparent hover:text-vct-light'
-          }`}
-        >
-          Schedule
-        </button>
+      <div className="overflow-x-auto scrollbar-none">
+        <div className="flex gap-2 border-b border-vct-gray/20 min-w-max">
+          <button
+            onClick={() => setActiveTab('current')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+              activeTab === 'current'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Current
+          </button>
+          <button
+            onClick={() => setActiveTab('schedule')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+              activeTab === 'schedule'
+                ? 'text-vct-red border-vct-red'
+                : 'text-vct-gray border-transparent hover:text-vct-light'
+            }`}
+          >
+            Schedule
+          </button>
+        </div>
       </div>
 
       {/* Current Tab Content */}
