@@ -231,6 +231,10 @@ export class CalendarService {
         // Apply meta patch: update currentPatch and set drama flag
         this.processPatchNotesEvent(event);
         processedEvents.push(event);
+      } else if (event.type === 'patch_preview') {
+        // Announce upcoming patch without activating it
+        this.processPatchAnnouncementEvent(event);
+        processedEvents.push(event);
       } else if (event.type === 'match') {
         // Check if this match belongs to the current phase
         // League matches (stage1, stage2) have a phase property that must match current phase
@@ -646,6 +650,24 @@ export class CalendarService {
       console.log(`Patch applied: ${patch.version} - ${patch.title}`);
     } else {
       console.warn(`Patch not found: ${data.patchId}`);
+    }
+
+    state.markEventProcessed(event.id);
+  }
+
+  /**
+   * Process a patch preview event — announce the upcoming patch without activating it
+   */
+  processPatchAnnouncementEvent(event: CalendarEvent): void {
+    const state = useGameStore.getState();
+    const data = event.data as PatchNotesEventData;
+
+    const patch = META_PATCHES.find(p => p.id === data.patchId);
+    if (patch) {
+      state.setUpcomingPatch(patch);
+      console.log(`Patch announced: ${patch.version} - ${patch.title}`);
+    } else {
+      console.warn(`Patch not found for preview: ${data.patchId}`);
     }
 
     state.markEventProcessed(event.id);

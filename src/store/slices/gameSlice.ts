@@ -19,9 +19,13 @@ export interface GameSlice {
   // Active meta patch
   currentPatch: MetaPatch | null;
 
+  // Announced but not yet live patch
+  upcomingPatch: MetaPatch | null;
+
   // Actions
   setInitialized: (value: boolean) => void;
   setCurrentPatch: (patch: MetaPatch | null) => void;
+  setUpcomingPatch: (patch: MetaPatch | null) => void;
   setGameStarted: (value: boolean) => void;
 
   // Calendar actions
@@ -94,6 +98,7 @@ export const createGameSlice: StateCreator<
   calendar: defaultCalendar,
   lastSaveDate: null,
   currentPatch: null,
+  upcomingPatch: null,
 
   // Actions
   setInitialized: (value) =>
@@ -144,6 +149,9 @@ export const createGameSlice: StateCreator<
 
   setCurrentPatch: (patch) =>
     set({ currentPatch: patch }),
+
+  setUpcomingPatch: (patch) =>
+    set({ upcomingPatch: patch }),
 
   // Event actions
   addCalendarEvent: (event) =>

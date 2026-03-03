@@ -26,7 +26,8 @@ export type CalendarEventType =
   | 'scheduled_training'
   | 'scheduled_scrim'
   | 'team_activity'
-  | 'patch_notes';
+  | 'patch_notes'
+  | 'patch_preview';
 
 export type ActivityLifecycleState =
   | 'needs_setup'   // scheduled but unconfigured

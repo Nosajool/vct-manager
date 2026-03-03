@@ -15,9 +15,10 @@ import type { MetaPatch } from '../../types/meta';
 interface PatchNotesModalProps {
   patch: MetaPatch;
   onClose: () => void;
+  isPreview?: boolean;
 }
 
-export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
+export function PatchNotesModal({ patch, onClose, isPreview = false }: PatchNotesModalProps) {
   const [showDetails, setShowDetails] = useState(false);
 
   const getRankText = (position: number): string => {
@@ -37,6 +38,17 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
     }
   };
 
+  const groupedChanges = patch.changes.reduce((acc, change) => {
+    const key = `${change.agent}-${change.direction}-${change.toPosition}`;
+    if (!acc[key]) {
+      acc[key] = { agent: change.agent, direction: change.direction, toPosition: change.toPosition, maps: [] };
+    }
+    acc[key].maps.push(change.map);
+    return acc;
+  }, {} as Record<string, { agent: string; direction: 'buff' | 'nerf'; toPosition: number; maps: string[] }>);
+
+  const groupedChangesArray = Object.values(groupedChanges);
+
   return (
     <div
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
@@ -44,11 +56,17 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
     >
       <div className="bg-vct-darker rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-vct-gray/20 bg-gradient-to-b from-vct-dark to-vct-darker">
+        <div className={`p-6 border-b border-vct-gray/20 bg-gradient-to-b ${isPreview ? 'from-amber-950/40 to-vct-darker' : 'from-vct-dark to-vct-darker'}`}>
           <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-vct-red/20 text-vct-red text-sm font-bold rounded">
-              PATCH
-            </span>
+            {isPreview ? (
+              <span className="px-3 py-1 bg-amber-500/20 text-amber-400 text-sm font-bold rounded">
+                COMING SOON
+              </span>
+            ) : (
+              <span className="px-3 py-1 bg-vct-red/20 text-vct-red text-sm font-bold rounded">
+                PATCH
+              </span>
+            )}
             <span className="text-vct-light text-2xl font-bold">
               v{patch.version}
             </span>
@@ -59,6 +77,11 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
           <p className="text-vct-gray mt-2 text-center">
             {patch.summary}
           </p>
+          {isPreview && (
+            <p className="text-amber-400/80 text-sm mt-2 text-center italic">
+              Drops in a few days — prepare your strategy now
+            </p>
+          )}
         </div>
 
         {/* Agent Changes Summary */}
@@ -116,7 +139,7 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
               className="w-full px-6 py-3 text-left text-vct-gray hover:text-vct-light hover:bg-vct-gray/10 transition-colors flex items-center justify-between"
             >
               <span className="text-sm font-medium">
-                View Detailed Changes ({patch.changes.length})
+                View Detailed Changes ({groupedChangesArray.length})
               </span>
               <span className="text-lg transform transition-transform {showDetails ? 'rotate-180' : ''}">
                 {showDetails ? '▼' : '▶'}
@@ -129,19 +152,18 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-vct-gray uppercase text-xs border-b border-vct-gray/20">
-                        <th className="py-2 px-3">Map</th>
                         <th className="py-2 px-3">Agent</th>
                         <th className="py-2 px-3">Change</th>
+                        <th className="py-2 px-3">Maps</th>
                         <th className="py-2 px-3">New Rank</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {patch.changes.map((change, index) => (
+                      {groupedChangesArray.map((change) => (
                         <tr
-                          key={`${change.map}-${change.agent}-${index}`}
+                          key={`${change.agent}-${change.direction}-${change.toPosition}`}
                           className="border-b border-vct-gray/10"
                         >
-                          <td className="py-2 px-3 text-vct-light">{change.map}</td>
                           <td className="py-2 px-3 text-vct-light font-medium">
                             {change.agent}
                           </td>
@@ -156,6 +178,7 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
                               {change.direction === 'buff' ? '▲ Buff' : '▼ Nerf'}
                             </span>
                           </td>
+                          <td className="py-2 px-3 text-vct-light">{change.maps.join(', ')}</td>
                           <td className="py-2 px-3 text-vct-gray">
                             {getRankText(change.toPosition)}
                           </td>
@@ -173,9 +196,13 @@ export function PatchNotesModal({ patch, onClose }: PatchNotesModalProps) {
         <div className="p-4 border-t border-vct-gray/20 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
+            className={`px-6 py-2 text-white rounded-lg font-medium transition-colors ${
+              isPreview
+                ? 'bg-amber-600 hover:bg-amber-500'
+                : 'bg-vct-red hover:bg-vct-red/80'
+            }`}
           >
-            Continue
+            {isPreview ? 'Got It' : 'Continue'}
           </button>
         </div>
       </div>

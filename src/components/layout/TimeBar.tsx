@@ -93,6 +93,7 @@ export function TimeBar() {
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
   const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
+  const [pendingPatchPreview, setPendingPatchPreview] = useState<MetaPatch | null>(null);
   const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
@@ -180,6 +181,16 @@ export function TimeBar() {
 
   const handlePostModalClose = () => advancePostModals(postModalQueue);
 
+  const handlePatchPreviewClose = () => {
+    setPendingPatchPreview(null);
+    // After closing preview, proceed to rest of modal queue (live patch notes or post-sim)
+    if (pendingPatchNotes) {
+      // Live patch notes will show next (handled in JSX ordering)
+      return;
+    }
+    advancePostModals(postModalQueue);
+  };
+
   const handlePatchNotesClose = () => {
     setPendingPatchNotes(null);
     // After closing patch notes, proceed to rest of modal queue
@@ -187,9 +198,9 @@ export function TimeBar() {
   };
 
   const showPostSimulationModals = (result: TimeAdvanceResult | null) => {
-    // Check for pending patch notes first
-    if (pendingPatchNotes) {
-      // Patch modal will show first, handlePatchNotesClose will then show the rest
+    // Check for pending patch preview or notes first
+    if (pendingPatchPreview || pendingPatchNotes) {
+      // Patch modal will show first, its close handler will then show the rest
       return;
     }
 
@@ -219,24 +230,24 @@ export function TimeBar() {
       }
     }
 
-    // Check for patch notes after building queue
-    const patchAfterAdvance = useGameStore.getState().currentPatch;
-    if (patchAfterAdvance) {
-      setPendingPatchNotes(patchAfterAdvance);
-      return;
-    }
-
     advancePostModals(queue);
   };
 
   const handleTimeAdvance = async (advanceFn: (withProgress: boolean) => Promise<TimeAdvanceResult>) => {
     setIsAdvancing(true);
 
-    // Capture current patch before advancing
+    // Capture current and upcoming patches before advancing
     const patchBeforeAdvance = useGameStore.getState().currentPatch;
+    const upcomingPatchBefore = useGameStore.getState().upcomingPatch;
 
     try {
       const result = await advanceFn(true); // Pass true for withProgress
+
+      // Check if a new patch preview was announced
+      const upcomingPatchAfter = useGameStore.getState().upcomingPatch;
+      if (upcomingPatchAfter && upcomingPatchBefore?.id !== upcomingPatchAfter.id) {
+        setPendingPatchPreview(upcomingPatchAfter);
+      }
 
       // Check if a new patch was activated
       const patchAfterAdvance = useGameStore.getState().currentPatch;
@@ -699,6 +710,15 @@ export function TimeBar() {
         onReview={handleReviewEvents}
         onCancel={handleCancelValidation}
       />
+
+      {/* Patch Preview Modal - shown when an upcoming patch is announced */}
+      {pendingPatchPreview && !pendingPatchNotes && (
+        <PatchNotesModal
+          patch={pendingPatchPreview}
+          isPreview
+          onClose={handlePatchPreviewClose}
+        />
+      )}
 
       {/* Patch Notes Modal - shown when a new meta patch is activated */}
       {pendingPatchNotes && (

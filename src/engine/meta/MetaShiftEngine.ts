@@ -70,17 +70,25 @@ export class MetaShiftEngine {
 
   /**
    * Generate patch_notes CalendarEvents for each patch, scheduled at the
-   * start of their corresponding phase.
+   * start of their corresponding phase. Also generates patch_preview events
+   * PREVIEW_DAYS_BEFORE days earlier (skipped if the computed date is on or
+   * before the season start date, e.g. the kickoff patch).
    */
   schedulePatchEvents(
     seasonStartDate: string,
     patches: MetaPatch[]
   ): CalendarEvent[] {
-    return patches.map((patch) => {
+    const PREVIEW_DAYS_BEFORE = 5;
+    const seasonStart = new Date(seasonStartDate);
+    seasonStart.setHours(0, 0, 0, 0);
+
+    const events: CalendarEvent[] = [];
+
+    for (const patch of patches) {
       const phaseOffset = PHASE_START_OFFSETS[patch.scheduledPhase] ?? 0;
       const patchDate = this.addDays(seasonStartDate, phaseOffset + 1); // day 1 of phase
 
-      return {
+      events.push({
         id: `patch-notes-${patch.id}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         date: patchDate,
         type: 'patch_notes' as const,
@@ -91,8 +99,29 @@ export class MetaShiftEngine {
           version: patch.version,
           title: patch.title,
         },
-      };
-    });
+      });
+
+      const previewDate = this.addDays(seasonStartDate, phaseOffset + 1 - PREVIEW_DAYS_BEFORE);
+      const previewDay = new Date(previewDate);
+      previewDay.setHours(0, 0, 0, 0);
+
+      if (previewDay > seasonStart) {
+        events.push({
+          id: `patch-preview-${patch.id}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          date: previewDate,
+          type: 'patch_preview' as const,
+          processed: false,
+          required: false,
+          data: {
+            patchId: patch.id,
+            version: patch.version,
+            title: patch.title,
+          },
+        });
+      }
+    }
+
+    return events;
   }
 
   private addDays(isoDate: string, days: number): string {

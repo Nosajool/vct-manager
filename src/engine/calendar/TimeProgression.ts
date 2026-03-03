@@ -283,6 +283,7 @@ export class TimeProgression {
       scheduled_scrim: [],
       team_activity: [],
       patch_notes: [],
+      patch_preview: [],
     };
 
     for (const event of events) {
