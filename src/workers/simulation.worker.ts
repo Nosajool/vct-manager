@@ -169,6 +169,7 @@ function handleScrimSimulation(id: string, input: ScrimInput): void {
     partnerTeamStrength,
     chemistryBefore,
     relationshipBefore,
+    dramaFlags,
   } = input;
 
   sendProgress(id, 'Preparing scrim', 10);
@@ -234,7 +235,8 @@ function handleScrimSimulation(id: string, input: ScrimInput): void {
     relationship,
     partnerTeam,
     options.intensity,
-    currentDate
+    currentDate,
+    dramaFlags
   );
 
   // Calculate relationship change
@@ -267,6 +269,7 @@ function handleScrimSimulation(id: string, input: ScrimInput): void {
     relationshipChange,
     relationshipEvent,
     efficiencyMultiplier: efficiency,
+    intensity: options.intensity,
     duration: options.format === 'single_map' ? 1 : options.format === 'best_of_3' ? 3 : 5,
     chemistryBefore,
     relationshipBefore,

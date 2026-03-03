@@ -426,29 +426,38 @@ export class ScrimEngine {
     relationship: ScrimRelationship,
     partnerTeam: TierTeam | Team,
     intensity: ScrimIntensity,
-    currentDate: string
+    currentDate: string,
+    dramaFlags?: Record<string, { setDate: string; expiresDate?: string; value?: unknown }>
   ): RelationshipEvent | undefined {
+    // Check if a scrim-related drama arc is active — skip mechanical leak events
+    // so the narrative arc owns the VOD leak story beats
+    const arcActive =
+      dramaFlags &&
+      (dramaFlags['scrim_leak_arc_active'] ||
+        dramaFlags['scrim_accused_active'] ||
+        dramaFlags['scrim_intel_accepted']);
+
     // Higher VOD leak risk with more scrims
     const leakRisk = Math.min(0.15, relationship.vodLeakRisk / 100);
 
     // Check for negative events first
     if (Math.random() < leakRisk) {
-      // VOD leak - most damaging
-      if (Math.random() < 0.3) {
+      // VOD leak — skip if the drama arc is controlling this narrative
+      if (!arcActive && Math.random() < 0.3) {
         return {
           id: this.generateId('event'),
           date: currentDate,
           type: 'vod_leak',
           partnerTeamId: partnerTeam.id,
           partnerTeamName: partnerTeam.name,
-          description: `${partnerTeam.name} leaked your scrim VODs to an upcoming opponent!`,
+          description: `A clip from your scrim was shared in a private Discord — ${partnerTeam.name} may have a leak.`,
           relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.vod_leak,
           affectsAllTeams: false,
         };
       }
 
-      // Strat leak
-      if (Math.random() < 0.4) {
+      // Strat leak — skip if the drama arc is active
+      if (!arcActive && Math.random() < 0.4) {
         return {
           id: this.generateId('event'),
           date: currentDate,
@@ -474,6 +483,33 @@ export class ScrimEngine {
       };
     }
 
+    // Internal friction — more likely if relationship is low
+    const frictionChance = relationship.relationshipScore < 40 ? 0.08 : 0.03;
+    if (Math.random() < frictionChance) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'internal_friction',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `Players from both teams clashed during breaks — things got tense with ${partnerTeam.name}.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.internal_friction,
+      };
+    }
+
+    // Late cancel
+    if (Math.random() < 0.03) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'late_cancel',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `${partnerTeam.name} cancelled 30 minutes before the session with no explanation.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.late_cancel,
+      };
+    }
+
     // Scheduling issues
     if (Math.random() < 0.03) {
       return {
@@ -484,6 +520,97 @@ export class ScrimEngine {
         partnerTeamName: partnerTeam.name,
         description: `${partnerTeam.name} arrived late to the scrim.`,
         relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.scheduling_issue,
+      };
+    }
+
+    // Format dispute
+    if (Math.random() < 0.04) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'format_dispute',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `Disagreement over the map pool with ${partnerTeam.name} slowed things down.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.format_dispute,
+      };
+    }
+
+    // Roster gossip
+    if (Math.random() < 0.03) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'roster_gossip',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `Word got back that ${partnerTeam.name} players were discussing your roster changes internally.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.roster_gossip,
+      };
+    }
+
+    // Poor comms
+    if (Math.random() < 0.04) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'poor_comms',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `Technical issues and poor communication made the session frustrating for both sides.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.poor_comms,
+      };
+    }
+
+    // Bootcamp invite — only if relationship is strong
+    if (relationship.relationshipScore > 60 && Math.random() < 0.05) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'bootcamp_invite',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `${partnerTeam.name} invited your team to a joint bootcamp weekend — great opportunity to gel.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.bootcamp_invite,
+      };
+    }
+
+    // Mutual respect (hard-fought series)
+    if (intensity === 'competitive' && Math.random() < 0.08) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'mutual_respect',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `After a hard-fought series, both teams acknowledged each other's growth.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.mutual_respect,
+      };
+    }
+
+    // Coaching insight
+    if (Math.random() < 0.06) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'coaching_insight',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `${partnerTeam.name}'s analyst shared some useful warmup drills — your coaches took notes.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.coaching_insight,
+      };
+    }
+
+    // Social shoutout
+    if (Math.random() < 0.07) {
+      return {
+        id: this.generateId('event'),
+        date: currentDate,
+        type: 'social_shoutout',
+        partnerTeamId: partnerTeam.id,
+        partnerTeamName: partnerTeam.name,
+        description: `A player from ${partnerTeam.name} clipped your squad's play and posted it — minor good press.`,
+        relationshipChange: SCRIM_CONSTANTS.RELATIONSHIP_EVENTS.social_shoutout,
       };
     }
 

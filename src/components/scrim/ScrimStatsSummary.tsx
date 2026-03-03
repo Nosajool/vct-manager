@@ -43,10 +43,12 @@ export function ScrimStatsSummary({ stats }: ScrimStatsSummaryProps) {
           <span className="text-vct-gray text-sm">/100</span>
         </div>
 
-        {/* Total Scrims */}
+        {/* High VOD Risk Count */}
         <div className="bg-vct-darker rounded-lg p-3">
-          <p className="text-xs text-vct-gray mb-1">Total Scrims</p>
-          <span className="text-2xl font-bold text-vct-light">{stats.totalScrims}</span>
+          <p className="text-xs text-vct-gray mb-1">VOD Risk Partners</p>
+          <span className={`text-2xl font-bold ${stats.highVodRiskCount > 0 ? 'text-yellow-400' : 'text-vct-light'}`}>
+            {stats.highVodRiskCount}
+          </span>
         </div>
 
         {/* Partner Count */}

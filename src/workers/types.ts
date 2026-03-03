@@ -86,6 +86,8 @@ export interface ScrimInput {
   // "Before" snapshots for display
   chemistryBefore: number;
   relationshipBefore: number;
+  // Active drama flags — passed from main thread so worker can suppress conflicting events
+  dramaFlags?: Record<string, { setDate: string; expiresDate?: string; value?: unknown }>;
 }
 
 /** Input for drama evaluation */

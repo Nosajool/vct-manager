@@ -44,6 +44,16 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
     title: 'Smart Tools Unlocked',
   },
+  advancedTraining: {
+    icon: '📊',
+    color: 'from-blue-500/20 to-cyan-600/20 border-cyan-500/30',
+    title: 'Advanced Training Unlocked',
+  },
+  advancedScrims: {
+    icon: '🗺️',
+    color: 'from-purple-500/20 to-violet-600/20 border-violet-500/30',
+    title: 'Advanced Scrims Unlocked',
+  },
 };
 
 export function UnlockNotification({

@@ -9,7 +9,7 @@ import type { SeasonPhase } from '../types/calendar';
 // ============================================
 
 /** Available game features that can be unlocked */
-export type FeatureType = 'training' | 'scrims' | 'transfers' | 'strategy' | 'auto_assign';
+export type FeatureType = 'training' | 'scrims' | 'transfers' | 'strategy' | 'auto_assign' | 'advancedTraining' | 'advancedScrims';
 
 /** Unlock condition - either day-based or phase-based */
 export type UnlockCondition =
@@ -64,5 +64,15 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     feature: 'auto_assign',
     condition: { type: 'day', day: 22 },
     description: 'Smart coaching tools unlocked - auto-optimize lineup, training, and scrims',
+  },
+  {
+    feature: 'advancedTraining',
+    condition: { type: 'phase', phase: 'stage1_playoffs' },
+    description: 'Advanced training options unlock in Stage 1 Playoffs - per-player goals, intensity control, and bench training',
+  },
+  {
+    feature: 'advancedScrims',
+    condition: { type: 'phase', phase: 'stage2' },
+    description: 'Advanced scrim options unlock in Stage 2 - map selection and intensity control',
   },
 ];

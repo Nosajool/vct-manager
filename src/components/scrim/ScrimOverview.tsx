@@ -4,10 +4,25 @@
 import { useState } from 'react';
 import { useGameStore } from '../../store';
 import { scrimService } from '../../services';
+import { scrimEngine } from '../../engine/scrim';
 import { ScrimStatsSummary } from './ScrimStatsSummary';
 import { RelationshipPartnerCard } from './RelationshipPartnerCard';
 import { ScrimRecommendations } from './ScrimRecommendations';
 import { ScrimModal } from './ScrimModal';
+import type { MapStrengthAttributes } from '../../types/scrim';
+
+const ATTRIBUTE_KEYS: (keyof MapStrengthAttributes)[] = [
+  'retakes', 'executes', 'utility', 'mapControl', 'communication', 'antiStrat',
+];
+
+const ATTRIBUTE_SHORT: Record<keyof MapStrengthAttributes, string> = {
+  executes: 'Exec',
+  retakes: 'Retake',
+  utility: 'Util',
+  communication: 'Comms',
+  mapControl: 'Control',
+  antiStrat: 'AntiStrat',
+};
 
 export function ScrimOverview() {
   const [expandedPartner, setExpandedPartner] = useState<string | null>(null);
@@ -77,6 +92,54 @@ export function ScrimOverview() {
 
       {/* Summary Stats Section */}
       <ScrimStatsSummary stats={stats} />
+
+      {/* Map Skills Section */}
+      {playerTeam.mapPool && Object.keys(playerTeam.mapPool.maps).length > 0 && (
+        <div className="bg-vct-dark border border-vct-gray/20 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-vct-light mb-4">Map Pool Skills</h3>
+          <div className="space-y-3">
+            {Object.entries(playerTeam.mapPool.maps).map(([mapName, mapStrength]) => {
+              const attrs = mapStrength.attributes;
+              // Find the weakest attribute for highlighting
+              const weakestKey = ATTRIBUTE_KEYS.reduce((prev, cur) =>
+                attrs[cur] < attrs[prev] ? cur : prev
+              );
+              const overall = scrimEngine.calculateMapOverall(mapStrength);
+              return (
+                <div key={mapName} className="bg-vct-darker rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-vct-light">{mapName}</span>
+                    <span className="text-xs text-vct-gray">{Math.round(overall)} avg</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-x-4 gap-y-1.5">
+                    {ATTRIBUTE_KEYS.map((key) => {
+                      const val = attrs[key];
+                      const isWeakest = key === weakestKey;
+                      const barPct = Math.round((val / 85) * 100);
+                      return (
+                        <div key={key} className="flex items-center gap-1.5 text-xs">
+                          <span className={`w-12 truncate shrink-0 ${isWeakest ? 'text-amber-400' : 'text-vct-gray'}`}>
+                            {ATTRIBUTE_SHORT[key]}
+                          </span>
+                          <div className="flex-1 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${isWeakest ? 'bg-amber-500/60' : 'bg-blue-500/50'}`}
+                              style={{ width: `${barPct}%` }}
+                            />
+                          </div>
+                          <span className={`w-6 text-right font-mono ${isWeakest ? 'text-amber-400' : 'text-vct-gray/80'}`}>
+                            {Math.round(val)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Relationship Distribution */}
       <div className="bg-vct-dark border border-vct-gray/20 rounded-lg p-4">

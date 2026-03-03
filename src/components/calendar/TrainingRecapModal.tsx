@@ -4,6 +4,7 @@
 // Replaces the training section of DayRecapModal with a more visual, scan-friendly layout.
 
 import { useGameStore } from '../../store';
+import { useVisibleStats } from '../../hooks/useFeatureGate';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
@@ -30,9 +31,10 @@ const STAT_LABELS: Record<string, string> = {
 };
 
 export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: TrainingRecapModalProps) {
-  if (!isOpen) return null;
-
   const getPlayer = useGameStore((state) => state.getPlayer);
+  const visibleStats = useVisibleStats();
+
+  if (!isOpen) return null;
 
   const { trainingResults, skippedTraining } = activityResults;
 
@@ -64,7 +66,7 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
 
                 const goalMapping = result.goal ? TRAINING_GOAL_MAPPINGS[result.goal] : null;
                 const statChanges = Object.entries(result.statImprovements).filter(
-                  ([, value]) => value > 0
+                  ([stat, value]) => value > 0 && (visibleStats as string[]).includes(stat)
                 );
 
                 return (

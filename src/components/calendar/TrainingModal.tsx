@@ -70,6 +70,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
+  const advancedTrainingUnlocked = useFeatureUnlocked('advancedTraining');
 
   // Load existing config when modal opens
   useEffect(() => {
@@ -350,9 +351,37 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   };
 
 
+  // Simple confirm - auto-assign all starting 5 with selected goal + moderate intensity
+  const handleSimpleConfirm = (goal: TrainingGoal) => {
+    if (!eventId) return;
+    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
+    if (!event) return;
+
+    const assignments: TrainingPlayerAssignment[] = startingPlayers.map((player) => ({
+      playerId: player.id,
+      action: 'train',
+      goal,
+      intensity: 'moderate',
+    }));
+
+    const config: TrainingActivityConfig = {
+      type: 'training',
+      id: existingConfig?.id ?? crypto.randomUUID(),
+      date: event.date,
+      eventId,
+      status: 'configured',
+      assignments,
+      autoConfigured: false,
+    };
+
+    setActivityConfig(config);
+    updateEventLifecycleState(eventId, 'configured');
+    handleClose();
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker rounded-lg w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className={`bg-vct-darker rounded-lg w-full ${advancedTrainingUnlocked ? 'max-w-7xl' : 'max-w-md'} max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between flex-shrink-0">
           <h2 className="text-xl font-bold text-vct-light">Team Training</h2>
@@ -364,59 +393,69 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
           </button>
         </div>
 
-        {/* Auto-Assign Button */}
-        <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
-          <button
-            onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
-            disabled={!autoAssignUnlocked}
-            className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
-              autoAssignUnlocked
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
-            }`}
-            title={autoAssignUnlocked ? 'Starting 5 assigned with role-based recommendations at safe intensity' : 'Unlocks Week 3'}
-          >
-            <span className="text-lg">🎯</span>
-            <span>Auto-Assign Optimal Training</span>
-            {!autoAssignUnlocked && (
-              <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
-            )}
-          </button>
-          <p className="text-xs text-vct-gray mt-2 text-center">
-            Assigns recommended training goals to Starting 5 at safe intensity
-          </p>
-        </div>
+        {advancedTrainingUnlocked ? (
+          <>
+            {/* Auto-Assign Button */}
+            <div className="p-4 border-b border-vct-gray/20 flex-shrink-0">
+              <button
+                onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
+                disabled={!autoAssignUnlocked}
+                className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                  autoAssignUnlocked
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
+                }`}
+                title={autoAssignUnlocked ? 'Starting 5 assigned with role-based recommendations at safe intensity' : 'Unlocks Week 3'}
+              >
+                <span className="text-lg">🎯</span>
+                <span>Auto-Assign Optimal Training</span>
+                {!autoAssignUnlocked && (
+                  <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
+                )}
+              </button>
+              <p className="text-xs text-vct-gray mt-2 text-center">
+                Assigns recommended training goals to Starting 5 at safe intensity
+              </p>
+            </div>
 
-        {/* 3-Column Training Configuration View */}
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-4 p-4">
-          {/* LEFT COLUMN: Player List */}
-          <PlayerListColumn
+            {/* 3-Column Training Configuration View */}
+            <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-4 p-4">
+              {/* LEFT COLUMN: Player List */}
+              <PlayerListColumn
+                startingPlayers={startingPlayers}
+                benchPlayers={benchPlayers}
+                trainingPlan={trainingPlan}
+                selectedPlayerId={selectedPlayerId}
+                onTogglePlayer={togglePlayerAssignment}
+                onToggleSkip={togglePlayerSkip}
+              />
+
+              {/* MIDDLE COLUMN: Goal Selector */}
+              <GoalSelectorColumn
+                selectedPlayer={selectedPlayerId ? players[selectedPlayerId] : null}
+                currentGoal={currentAssignment?.action === 'train' ? currentAssignment.goal : null}
+                onSelectGoal={updateSelectedGoal}
+                isSkipping={currentAssignment?.action === 'skip'}
+              />
+
+              {/* RIGHT COLUMN: Intensity & Preview */}
+              <IntensityPreviewColumn
+                selectedPlayerPreview={selectedPlayerPreview}
+                currentIntensity={currentAssignment?.action === 'train' ? currentAssignment.intensity : 'moderate'}
+                onSelectIntensity={updateSelectedIntensity}
+                trainingPlan={trainingPlan}
+                onConfirmPlan={handleConfirmPlan}
+                eventId={eventId}
+              />
+            </div>
+          </>
+        ) : (
+          <SimpleTrainingView
             startingPlayers={startingPlayers}
-            benchPlayers={benchPlayers}
-            trainingPlan={trainingPlan}
-            selectedPlayerId={selectedPlayerId}
-            onTogglePlayer={togglePlayerAssignment}
-            onToggleSkip={togglePlayerSkip}
-          />
-
-          {/* MIDDLE COLUMN: Goal Selector */}
-          <GoalSelectorColumn
-            selectedPlayer={selectedPlayerId ? players[selectedPlayerId] : null}
-            currentGoal={currentAssignment?.action === 'train' ? currentAssignment.goal : null}
-            onSelectGoal={updateSelectedGoal}
-            isSkipping={currentAssignment?.action === 'skip'}
-          />
-
-          {/* RIGHT COLUMN: Intensity & Preview */}
-          <IntensityPreviewColumn
-            selectedPlayerPreview={selectedPlayerPreview}
-            currentIntensity={currentAssignment?.action === 'train' ? currentAssignment.intensity : 'moderate'}
-            onSelectIntensity={updateSelectedIntensity}
-            trainingPlan={trainingPlan}
-            onConfirmPlan={handleConfirmPlan}
             eventId={eventId}
+            onConfirm={handleSimpleConfirm}
           />
-        </div>
+        )}
       </div>
     </div>
   );
@@ -1015,6 +1054,81 @@ function IntensityPreviewColumn({
             : `Confirm Plan (${trainingPlan.size} player${trainingPlan.size > 1 ? 's' : ''})`}
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ========================================
+   SIMPLE TRAINING VIEW (early-game)
+   ======================================== */
+
+const SIMPLE_FOCUS_OPTIONS: {
+  goal: TrainingGoal;
+  label: string;
+  icon: string;
+  description: string;
+}[] = [
+  { goal: 'mechanical_ceiling', label: 'Mechanics', icon: '⚙️', description: 'Improve aim, gunplay, and raw mechanical skill' },
+  { goal: 'leadership_comms', label: 'IGL', icon: '📢', description: 'Strengthen in-game leadership and communication' },
+  { goal: 'role_mastery_entry', label: 'Entry', icon: '🎯', description: 'Sharpen aggressive first-contact and entry fragging' },
+  { goal: 'role_mastery_support', label: 'Support', icon: '🛡️', description: 'Develop utility usage and team support play' },
+];
+
+interface SimpleTrainingViewProps {
+  startingPlayers: Player[];
+  eventId?: string;
+  onConfirm: (goal: TrainingGoal) => void;
+}
+
+function SimpleTrainingView({ startingPlayers, eventId, onConfirm }: SimpleTrainingViewProps) {
+  const [selectedGoal, setSelectedGoal] = useState<TrainingGoal | null>(null);
+
+  return (
+    <div className="flex-1 overflow-y-auto flex flex-col p-6 gap-6">
+      <div>
+        <h3 className="text-sm font-semibold text-vct-gray mb-1">Training Focus</h3>
+        <p className="text-xs text-vct-gray/70">
+          All {startingPlayers.length} starting players will train the selected skill at moderate intensity.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {SIMPLE_FOCUS_OPTIONS.map((option) => {
+          const isSelected = selectedGoal === option.goal;
+          return (
+            <button
+              key={option.goal}
+              onClick={() => setSelectedGoal(option.goal)}
+              className={`
+                p-4 rounded-lg border text-left transition-all
+                ${isSelected
+                  ? 'border-vct-red bg-vct-red/10'
+                  : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'}
+              `}
+            >
+              <div className="text-2xl mb-2">{option.icon}</div>
+              <div className="font-semibold text-vct-light text-sm mb-1">{option.label}</div>
+              <div className="text-xs text-vct-gray">{option.description}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {selectedGoal && (
+        <div className="text-xs text-vct-gray bg-vct-dark/50 rounded-lg p-3">
+          <span className="text-vct-light font-medium">{startingPlayers.length} players</span> will train{' '}
+          <span className="text-blue-400">{TRAINING_GOAL_MAPPINGS[selectedGoal].displayName}</span>{' '}
+          at <span className="text-yellow-400">Moderate</span> intensity.
+        </div>
+      )}
+
+      <button
+        onClick={() => selectedGoal && onConfirm(selectedGoal)}
+        disabled={!selectedGoal || !eventId}
+        className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
+      >
+        {!selectedGoal ? 'Select a focus first' : 'Confirm Training Plan'}
+      </button>
     </div>
   );
 }

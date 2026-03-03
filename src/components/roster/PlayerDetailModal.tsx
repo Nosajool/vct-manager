@@ -7,6 +7,7 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating, formatKD } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
+import { useVisibleStats } from '../../hooks/useFeatureGate';
 import { AgentPreferenceEditor } from './AgentPreferenceEditor';
 import { useGameStore } from '../../store';
 import { contractService } from '../../services';
@@ -36,6 +37,7 @@ export function PlayerDetailModal({
   const [showAgentEditor, setShowAgentEditor] = useState(false);
 
   const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
+  const visibleStats = useVisibleStats();
   const { getTeam } = useGameStore();
 
   const canMakeIGL = isOnPlayerTeam && !isIGL && rosterPosition === 'active';
@@ -168,8 +170,9 @@ export function PlayerDetailModal({
               Attributes
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {(Object.entries(player.stats) as [keyof PlayerStats, number][]).map(
-                ([stat, value]) => (
+              {(Object.entries(player.stats) as [keyof PlayerStats, number][])
+                .filter(([stat]) => visibleStats.includes(stat))
+                .map(([stat, value]) => (
                   <div key={stat} className="flex items-center gap-3">
                     <span className="w-24 text-sm text-vct-gray">
                       {statLabels[stat]}
@@ -184,8 +187,7 @@ export function PlayerDetailModal({
                       {formatRating(value)}
                     </span>
                   </div>
-                )
-              )}
+                ))}
             </div>
           </div>
 

@@ -7,6 +7,8 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
+import { useVisibleStats } from '../../hooks/useFeatureGate';
+import type { PlayerStats } from '../../types';
 
 interface PlayerCardProps {
   player: Player;
@@ -24,6 +26,18 @@ interface PlayerCardProps {
   onMoveToReserve?: (playerId: string) => void;
 }
 
+const STAT_SHORT_LABELS: Record<keyof PlayerStats, string> = {
+  mechanics: 'MEC',
+  igl: 'IGL',
+  mental: 'MNT',
+  clutch: 'CLU',
+  vibes: 'VIB',
+  lurking: 'LRK',
+  entry: 'ENT',
+  support: 'SUP',
+  stamina: 'STA',
+};
+
 export function PlayerCard({
   player,
   onClick,
@@ -40,6 +54,7 @@ export function PlayerCard({
 }: PlayerCardProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
+  const visibleStats = useVisibleStats();
 
   // Get overall color based on rating
   const getOverallColor = (ovr: number): string => {
@@ -257,9 +272,9 @@ export function PlayerCard({
 
           {/* Stats Preview */}
           <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-            <StatMini label="MEC" value={player.stats.mechanics} />
-            <StatMini label="ENT" value={player.stats.entry} />
-            <StatMini label="CLU" value={player.stats.clutch} />
+            {visibleStats.slice(0, 3).map((stat) => (
+              <StatMini key={stat} label={STAT_SHORT_LABELS[stat]} value={player.stats[stat]} />
+            ))}
           </div>
         </div>
 

@@ -6,6 +6,7 @@
 import { useGameStore } from '../store';
 import { featureGateService } from '../services/FeatureGateService';
 import type { FeatureType, FeatureUnlock } from '../data/featureUnlocks';
+import type { PlayerStats } from '../types';
 
 /**
  * Hook to check if a feature is currently unlocked
@@ -57,4 +58,16 @@ export function useNextUnlock(): FeatureUnlock | null {
 
   // Re-compute when date or phase changes
   return featureGateService.getNextUnlock();
+}
+
+const BASIC_STATS: (keyof PlayerStats)[] = ['mechanics', 'igl', 'entry', 'support'];
+const ALL_STATS: (keyof PlayerStats)[] = ['mechanics', 'igl', 'mental', 'clutch', 'lurking', 'entry', 'support', 'stamina', 'vibes'];
+
+/**
+ * Hook to get the list of player stats that should be visible to the user.
+ * Returns a limited set of basic stats until advancedTraining is unlocked.
+ */
+export function useVisibleStats(): (keyof PlayerStats)[] {
+  const advancedTrainingUnlocked = useFeatureUnlocked('advancedTraining');
+  return advancedTrainingUnlocked ? ALL_STATS : BASIC_STATS;
 }

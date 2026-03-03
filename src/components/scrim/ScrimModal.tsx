@@ -60,6 +60,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
   const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
+  const advancedScrimsUnlocked = useFeatureUnlocked('advancedScrims');
 
   // Get available partners organized by tier - must be before early returns
   const availablePartners = useMemo(() => {
@@ -167,6 +168,38 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
     onClose();
   };
 
+  // Simple confirm - auto-select maps + moderate intensity, use selected partner
+  const handleSimpleConfirm = () => {
+    if (!eventId) return;
+    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
+    if (!event) return;
+
+    const config: ScrimActivityConfig = {
+      type: 'scrim',
+      id: existingConfig?.id ?? crypto.randomUUID(),
+      date: event.date,
+      eventId,
+      status: 'configured',
+      action: isSkipping ? 'skip' : 'play',
+      autoConfigured: false,
+    };
+
+    if (!isSkipping) {
+      if (!selectedPartner) return;
+      const mapSummary = scrimService.getMapPoolSummary();
+      const autoMaps = mapSummary.needsPractice.length > 0
+        ? mapSummary.needsPractice.slice(0, 3)
+        : MAPS.slice(0, 3);
+      config.partnerTeamId = selectedPartner;
+      config.maps = autoMaps;
+      config.intensity = 'moderate';
+    }
+
+    setActivityConfig(config);
+    updateEventLifecycleState(eventId, 'configured');
+    handleClose();
+  };
+
   const handleAutoAssign = () => {
     const config = scrimService.autoAssignScrim();
     if (!config) return; // No partners available
@@ -181,7 +214,7 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className={`bg-vct-darker rounded-lg w-full ${advancedScrimsUnlocked ? 'max-w-3xl' : 'max-w-md'} max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between">
           <div>
@@ -198,32 +231,227 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
           </button>
         </div>
 
-        {/* Auto-Assign Button */}
-        <div className="p-4 border-b border-vct-gray/20">
-          <button
-            onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
-            disabled={!autoAssignUnlocked}
-            className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
-              autoAssignUnlocked
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
-            }`}
-            title={autoAssignUnlocked ? 'Pre-fills weakest maps, best available partner, and intensity based on team morale' : 'Unlocks Week 3'}
-          >
-            <span className="text-lg">🎯</span>
-            <span>Auto-Assign Optimal Scrim</span>
-            {!autoAssignUnlocked && (
-              <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
-            )}
-          </button>
-          <p className="text-xs text-vct-gray mt-2 text-center">
-            Selects weak maps, best partner, and intensity based on team morale
-          </p>
-        </div>
+        {advancedScrimsUnlocked ? (
+          <>
+            {/* Auto-Assign Button */}
+            <div className="p-4 border-b border-vct-gray/20">
+              <button
+                onClick={autoAssignUnlocked ? handleAutoAssign : undefined}
+                disabled={!autoAssignUnlocked}
+                className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                  autoAssignUnlocked
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-vct-gray/20 opacity-60 cursor-not-allowed text-vct-gray'
+                }`}
+                title={autoAssignUnlocked ? 'Pre-fills weakest maps, best available partner, and intensity based on team morale' : 'Unlocks Week 3'}
+              >
+                <span className="text-lg">🎯</span>
+                <span>Auto-Assign Optimal Scrim</span>
+                {!autoAssignUnlocked && (
+                  <span className="text-xs text-vct-gray/60 ml-2">Unlocks Week 3</span>
+                )}
+              </button>
+              <p className="text-xs text-vct-gray mt-2 text-center">
+                Selects weak maps, best partner, and intensity based on team morale
+              </p>
+            </div>
 
-        <div className="overflow-y-auto flex-1">
-          {/* Scrim Configuration */}
-          <div className="p-4 space-y-4">
+            <div className="overflow-y-auto flex-1">
+              {/* Scrim Configuration */}
+              <div className="p-4 space-y-4">
+                {/* Skip Scrim Toggle */}
+                <div className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isSkipping}
+                      onChange={(e) => setIsSkipping(e.target.checked)}
+                      className="w-4 h-4 rounded border-vct-gray/40 text-vct-red focus:ring-vct-red"
+                    />
+                    <div>
+                      <span className="text-vct-light font-medium">Skip Scrim</span>
+                      <p className="text-xs text-vct-gray">Team rests for a small morale boost</p>
+                    </div>
+                  </label>
+                </div>
+
+                {!isSkipping && (
+                  <>
+                    {/* Partner Selection */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-vct-gray">Select Scrim Partner</h4>
+
+                      {/* Tier Tabs */}
+                      <div className="flex gap-2 mb-3">
+                        {(['T1', 'T2', 'T3'] as TeamTier[]).map((tier) => (
+                          <button
+                            key={tier}
+                            onClick={() => setActiveTier(tier)}
+                            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                              activeTier === tier
+                                ? 'bg-vct-red text-white'
+                                : 'bg-vct-dark text-vct-gray hover:text-vct-light'
+                            }`}
+                          >
+                            {TIER_LABELS[tier].label} ({availablePartners[tier].length})
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Efficiency Info */}
+                      <div className="text-xs text-vct-gray mb-2">
+                        {TIER_LABELS[activeTier].label} provide{' '}
+                        <span className={TIER_LABELS[activeTier].color}>
+                          {TIER_LABELS[activeTier].efficiency}
+                        </span>{' '}
+                        training efficiency
+                      </div>
+
+                      {/* Region Info */}
+                      <div className="text-xs text-vct-gray mb-2 flex items-center gap-2">
+                        <span>📍</span>
+                        <span>
+                          Showing {playerTeam.region} teams only - scrims are region-restricted
+                        </span>
+                      </div>
+
+                      {/* Partner List */}
+                      <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+                        {availablePartners[activeTier].map((partner) => {
+                          const relationshipScore = getRelationshipScore(partner.id);
+                          const isSelected = selectedPartner === partner.id;
+                          const comparison = scrimService.getScrimStrengthComparison(partner.id);
+                          const diffStyle = comparison ? DIFFICULTY_STYLES[comparison.difficulty] : null;
+
+                          return (
+                            <button
+                              key={partner.id}
+                              onClick={() => setSelectedPartner(partner.id)}
+                              className={`
+                                p-3 rounded-lg border transition-all text-left
+                                ${isSelected
+                                  ? 'border-vct-red bg-vct-red/10'
+                                  : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'}
+                              `}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium text-vct-light">{partner.name}</p>
+                                  <p className="text-xs text-vct-gray">{partner.region}</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  {comparison && diffStyle && (
+                                    <div className={`px-2 py-0.5 rounded text-xs font-medium ${diffStyle.color} ${diffStyle.bg}`}>
+                                      {comparison.difficulty} · {comparison.winProbability}%
+                                    </div>
+                                  )}
+                                  <div className="text-right">
+                                    <p className={`text-sm font-medium ${
+                                      relationshipScore >= 70 ? 'text-green-400' :
+                                      relationshipScore >= 40 ? 'text-yellow-400' :
+                                      'text-red-400'
+                                    }`}>
+                                      {relationshipScore}
+                                    </p>
+                                    <p className="text-xs text-vct-gray">Relationship</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                        {availablePartners[activeTier].length === 0 && (
+                          <p className="text-vct-gray text-sm text-center py-4">
+                            No {TIER_LABELS[activeTier].label.toLowerCase()} available in {playerTeam.region}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Map Selection */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-vct-gray">
+                        Select Maps (1-3) - {selectedMaps.size} selected
+                      </h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {MAPS.map((mapName) => {
+                          const isSelected = selectedMaps.has(mapName);
+                          const strength = getMapStrength(mapName);
+
+                          return (
+                            <button
+                              key={mapName}
+                              onClick={() => toggleMap(mapName)}
+                              disabled={!isSelected && selectedMaps.size >= 3}
+                              className={`
+                                p-2 rounded-lg border transition-all text-center
+                                ${isSelected
+                                  ? 'border-vct-red bg-vct-red/10'
+                                  : selectedMaps.size >= 3
+                                  ? 'border-vct-gray/10 bg-vct-gray/5 opacity-50 cursor-not-allowed'
+                                  : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'}
+                              `}
+                            >
+                              <p className="font-medium text-vct-light text-sm">{mapName}</p>
+                              <p className={`text-xs ${
+                                strength >= 70 ? 'text-green-400' :
+                                strength >= 50 ? 'text-yellow-400' :
+                                'text-red-400'
+                              }`}>
+                                Strength: {strength}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Intensity Selection */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-vct-gray">Scrim Intensity</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {SCRIM_INTENSITIES.map((i) => (
+                          <button
+                            key={i.value}
+                            onClick={() => setIntensity(i.value)}
+                            className={`
+                              p-2 rounded-lg border transition-colors text-center
+                              ${intensity === i.value
+                                ? 'border-vct-red bg-vct-red/10 text-vct-red'
+                                : 'border-vct-gray/20 bg-vct-dark text-vct-light hover:border-vct-gray/40'}
+                            `}
+                          >
+                            <p className="font-medium">{i.label}</p>
+                            <p className="text-xs text-vct-gray mt-1">{i.description}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Confirm Button */}
+                <button
+                  onClick={handleConfirm}
+                  disabled={!isSkipping && (!selectedPartner || selectedMaps.size === 0 || !true)}
+                  className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
+                >
+                  {isSkipping
+                    ? 'Confirm Skip'
+                    : !true
+                    ? 'Weekly Limit Reached'
+                    : !selectedPartner
+                    ? 'Select a Partner'
+                    : selectedMaps.size === 0
+                    ? 'Select Maps to Practice'
+                    : `Confirm Scrim (${selectedMaps.size} map${selectedMaps.size > 1 ? 's' : ''})`}
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Simple scrim view */
+          <div className="overflow-y-auto flex-1 p-4 space-y-4">
             {/* Skip Scrim Toggle */}
             <div className="bg-vct-dark p-3 rounded-lg border border-vct-gray/20">
               <label className="flex items-center gap-3 cursor-pointer">
@@ -241,10 +469,8 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
             </div>
 
             {!isSkipping && (
-              <>
-                {/* Partner Selection */}
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-vct-gray">Select Scrim Partner</h4>
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-vct-gray">Select Scrim Partner</h4>
 
                 {/* Tier Tabs */}
                 <div className="flex gap-2 mb-3">
@@ -272,16 +498,8 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                   training efficiency
                 </div>
 
-                {/* Region Info */}
-                <div className="text-xs text-vct-gray mb-2 flex items-center gap-2">
-                  <span>📍</span>
-                  <span>
-                    Showing {playerTeam.region} teams only - scrims are region-restricted
-                  </span>
-                </div>
-
                 {/* Partner List */}
-                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                   {availablePartners[activeTier].map((partner) => {
                     const relationshipScore = getRelationshipScore(partner.id);
                     const isSelected = selectedPartner === partner.id;
@@ -331,89 +549,23 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
                     </p>
                   )}
                 </div>
+
+                <p className="text-xs text-vct-gray/60 mt-2">
+                  Maps will be auto-selected based on your weakest areas. Intensity: Moderate.
+                </p>
               </div>
-
-              {/* Map Selection */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-vct-gray">
-                  Select Maps (1-3) - {selectedMaps.size} selected
-                </h4>
-                <div className="grid grid-cols-3 gap-2">
-                  {MAPS.map((mapName) => {
-                    const isSelected = selectedMaps.has(mapName);
-                    const strength = getMapStrength(mapName);
-
-                    return (
-                      <button
-                        key={mapName}
-                        onClick={() => toggleMap(mapName)}
-                        disabled={!isSelected && selectedMaps.size >= 3}
-                        className={`
-                          p-2 rounded-lg border transition-all text-center
-                          ${isSelected
-                            ? 'border-vct-red bg-vct-red/10'
-                            : selectedMaps.size >= 3
-                            ? 'border-vct-gray/10 bg-vct-gray/5 opacity-50 cursor-not-allowed'
-                            : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'}
-                        `}
-                      >
-                        <p className="font-medium text-vct-light text-sm">{mapName}</p>
-                        <p className={`text-xs ${
-                          strength >= 70 ? 'text-green-400' :
-                          strength >= 50 ? 'text-yellow-400' :
-                          'text-red-400'
-                        }`}>
-                          Strength: {strength}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Intensity Selection */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-vct-gray">Scrim Intensity</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  {SCRIM_INTENSITIES.map((i) => (
-                    <button
-                      key={i.value}
-                      onClick={() => setIntensity(i.value)}
-                      className={`
-                        p-2 rounded-lg border transition-colors text-center
-                        ${intensity === i.value
-                          ? 'border-vct-red bg-vct-red/10 text-vct-red'
-                          : 'border-vct-gray/20 bg-vct-dark text-vct-light hover:border-vct-gray/40'}
-                      `}
-                    >
-                      <p className="font-medium">{i.label}</p>
-                      <p className="text-xs text-vct-gray mt-1">{i.description}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              </>
             )}
 
             {/* Confirm Button */}
             <button
-              onClick={handleConfirm}
-              disabled={!isSkipping && (!selectedPartner || selectedMaps.size === 0 || !true)}
+              onClick={handleSimpleConfirm}
+              disabled={!isSkipping && !selectedPartner}
               className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
             >
-              {isSkipping
-                ? 'Confirm Skip'
-                : !true
-                ? 'Weekly Limit Reached'
-                : !selectedPartner
-                ? 'Select a Partner'
-                : selectedMaps.size === 0
-                ? 'Select Maps to Practice'
-                : `Confirm Scrim (${selectedMaps.size} map${selectedMaps.size > 1 ? 's' : ''})`}
+              {isSkipping ? 'Confirm Skip' : !selectedPartner ? 'Select a Partner' : 'Confirm Scrim'}
             </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

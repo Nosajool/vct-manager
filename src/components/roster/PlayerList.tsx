@@ -6,6 +6,7 @@ import { PlayerCard } from './PlayerCard';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import { playerGenerator } from '../../engine/player';
 import { useGameStore } from '../../store';
+import { useVisibleStats } from '../../hooks/useFeatureGate';
 
 interface PlayerListProps {
   players: Player[];
@@ -43,6 +44,7 @@ export function PlayerList({ players, onSignPlayer }: PlayerListProps) {
 
   const PAGE_SIZE = 30;
   const teams = useGameStore((state) => state.teams);
+  const visibleStats = useVisibleStats();
 
   // Filter and sort players
   const filteredPlayers = useMemo(() => {
@@ -273,15 +275,15 @@ export function PlayerList({ players, onSignPlayer }: PlayerListProps) {
               <option value="name">Name</option>
             </optgroup>
             <optgroup label="Stats">
-              <option value="mechanics">Mechanics</option>
-              <option value="igl">Leadership</option>
-              <option value="mental">Mental</option>
-              <option value="clutch">Clutch</option>
-              <option value="vibes">Vibes</option>
-              <option value="lurking">Lurking</option>
-              <option value="entry">Entry</option>
-              <option value="support">Support</option>
-              <option value="stamina">Stamina</option>
+              {visibleStats.includes('mechanics') && <option value="mechanics">Mechanics</option>}
+              {visibleStats.includes('igl') && <option value="igl">Leadership</option>}
+              {visibleStats.includes('mental') && <option value="mental">Mental</option>}
+              {visibleStats.includes('clutch') && <option value="clutch">Clutch</option>}
+              {visibleStats.includes('vibes') && <option value="vibes">Vibes</option>}
+              {visibleStats.includes('lurking') && <option value="lurking">Lurking</option>}
+              {visibleStats.includes('entry') && <option value="entry">Entry</option>}
+              {visibleStats.includes('support') && <option value="support">Support</option>}
+              {visibleStats.includes('stamina') && <option value="stamina">Stamina</option>}
             </optgroup>
           </select>
           <button

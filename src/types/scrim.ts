@@ -45,12 +45,21 @@ export interface ScrimRelationship {
  * Types of events that can affect scrim relationships
  */
 export type RelationshipEventType =
-  | 'vod_leak' // VOD leaked to opponent (-30 relationship)
+  | 'vod_leak' // A clip from your scrim was shared in a private Discord (-30)
   | 'strat_leak' // Strategy leaked before tournament (-20)
   | 'positive_feedback' // Good scrim partner (+10)
   | 'unprofessional' // Team was unprofessional (-15)
   | 'scheduling_issue' // Team cancelled last minute (-5)
-  | 'rivalry_game'; // Intense rivalry match (+5 excitement, -5 trust)
+  | 'rivalry_game' // Intense rivalry match (+5 excitement, -5 trust)
+  | 'bootcamp_invite' // Partner invites your team to a joint bootcamp (+15)
+  | 'mutual_respect' // After a hard-fought series, both teams acknowledge growth (+8)
+  | 'coaching_insight' // Partner's analyst shared useful warmup drills (+6)
+  | 'social_shoutout' // A partner player clips your squad's play and posts it (+5)
+  | 'format_dispute' // Disagreement over map pool or scrim format (-8)
+  | 'late_cancel' // Partner cancelled 30 min before with no good reason (-10)
+  | 'internal_friction' // Players from both teams clashed during breaks (-12)
+  | 'roster_gossip' // Word got back that partner players discussed your roster (-8)
+  | 'poor_comms'; // Technical issues and poor communication (-6)
 
 /**
  * An event that affected a scrim relationship
@@ -148,6 +157,9 @@ export interface ScrimResult {
   // Efficiency factors
   efficiencyMultiplier: number; // Based on partner tier, relationship
 
+  // Session settings
+  intensity: ScrimIntensity;
+
   // Time cost
   duration: number; // hours
 
@@ -196,6 +208,15 @@ export const SCRIM_CONSTANTS = {
     unprofessional: -15,
     scheduling_issue: -5,
     rivalry_game: -5,
+    bootcamp_invite: 15,
+    mutual_respect: 8,
+    coaching_insight: 6,
+    social_shoutout: 5,
+    format_dispute: -8,
+    late_cancel: -10,
+    internal_friction: -12,
+    roster_gossip: -8,
+    poor_comms: -6,
   } as const,
 
   // Map decay rate per week unpracticed

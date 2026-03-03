@@ -213,11 +213,17 @@ export class ScrimService {
           0;
       }
 
+      // Cap relationship score contribution at 75 so near-equal partners rotate naturally
+      const cappedRelScore = Math.min(relScore, 75);
+
       // Weights: relationship 30%, recency 25%, tier 20%, strength-match 25%
-      let score = relScore * 0.3 + recencyBonus * 0.25 + tierBonus * 0.20 + strengthMatchBonus * 0.25;
+      let score = cappedRelScore * 0.3 + recencyBonus * 0.25 + tierBonus * 0.20 + strengthMatchBonus * 0.25;
 
       // Heavy penalty for high VOD leak risk
       if (vodRisk > 50) score *= 0.3;
+
+      // Add calibrated noise so near-equal candidates rotate naturally (±12.5 pts)
+      score += (Math.random() - 0.5) * 25;
 
       return { ...c, score };
     });
@@ -398,6 +404,7 @@ export class ScrimService {
       partnerTeamStrength,
       chemistryBefore,
       relationshipBefore,
+      dramaFlags: state.activeFlags,
     });
 
     // Apply results to store
