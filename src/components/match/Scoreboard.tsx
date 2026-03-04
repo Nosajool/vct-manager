@@ -280,7 +280,7 @@ function MapTab({
       <button
       onClick={onClick}
       className={`
-        rounded-lg border transition-all text-left flex-1 shrink-0 overflow-hidden w-[160px] sm:w-auto
+        rounded-lg border transition-all text-left shrink-0 overflow-hidden w-[160px] sm:w-auto
         ${
           isSelected
             ? 'border-vct-red/50'
