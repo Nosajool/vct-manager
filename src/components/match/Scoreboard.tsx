@@ -149,13 +149,11 @@ export function Scoreboard({ result, teamAName, teamBName, overallWinner }: Scor
               performances={aggregatedTeamA}
               teamName={teamAName}
               isWinner={overallWinner === 'teamA'}
-              showEnhanced={hasEnhancedRounds}
             />
             <PlayerStatsTable
               performances={aggregatedTeamB}
               teamName={teamBName}
               isWinner={overallWinner === 'teamB'}
-              showEnhanced={hasEnhancedRounds}
             />
           </div>
         </div>
@@ -226,13 +224,11 @@ export function Scoreboard({ result, teamAName, teamBName, overallWinner }: Scor
               performances={selectedMap.teamAPerformances}
               teamName={teamAName}
               isWinner={selectedMap.winner === 'teamA'}
-              showEnhanced={hasEnhancedRounds}
             />
             <PlayerStatsTable
               performances={selectedMap.teamBPerformances}
               teamName={teamBName}
               isWinner={selectedMap.winner === 'teamB'}
-              showEnhanced={hasEnhancedRounds}
             />
           </div>
         </div>

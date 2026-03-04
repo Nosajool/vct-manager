@@ -13,18 +13,15 @@ interface PlayerStatsTableProps {
   performances: PlayerMapPerformance[];
   teamName: string;
   isWinner: boolean;
-  showEnhanced?: boolean;
 }
 
 export function PlayerStatsTable({
   performances,
   teamName,
   isWinner,
-  showEnhanced = false,
 }: PlayerStatsTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('acs');
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
-  const [showAdvanced, setShowAdvanced] = useState(showEnhanced);
 
   // Check if enhanced stats are available
   const hasEnhancedStats = performances.some((p) => p.adr !== undefined);
@@ -56,22 +53,12 @@ export function PlayerStatsTable({
     <div className="rounded-lg border border-vct-gray/20 overflow-hidden">
       {/* Team Header */}
       <div
-        className={`px-4 py-2 font-semibold flex items-center justify-between ${
+        className={`px-4 py-2 font-semibold ${
           isWinner ? 'bg-green-500/10 text-green-400' : 'bg-vct-darker text-vct-light'
         }`}
       >
-        <div>
-          {teamName}
-          {isWinner && <span className="ml-2 text-xs">Winner</span>}
-        </div>
-        {hasEnhancedStats && (
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-xs px-2 py-1 rounded bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-gray transition-colors"
-          >
-            {showAdvanced ? 'Basic Stats' : 'Advanced Stats'}
-          </button>
-        )}
+        {teamName}
+        {isWinner && <span className="ml-2 text-xs">Winner</span>}
       </div>
 
       {/* Table */}
@@ -110,7 +97,7 @@ export function PlayerStatsTable({
               >
                 K/D{getSortIndicator('kd')}
               </th>
-              {showAdvanced && hasEnhancedStats && (
+              {hasEnhancedStats && (
                 <>
                   <th
                     className="px-2 py-2 text-center font-medium cursor-pointer hover:text-vct-light"
@@ -180,7 +167,7 @@ export function PlayerStatsTable({
                 <td className="px-2 py-2 text-center">
                   <KdBadge kd={perf.kd} />
                 </td>
-                {showAdvanced && hasEnhancedStats && (
+                {hasEnhancedStats && (
                   <>
                     <td className="px-2 py-2 text-center">
                       <AdrBadge adr={perf.adr ?? 0} />
