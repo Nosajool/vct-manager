@@ -137,6 +137,7 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
             result={result}
             teamAName={teamA.name}
             teamBName={teamB.name}
+            overallWinner={result.winnerId === teamA.id ? 'teamA' : 'teamB'}
           />
         </div>
 

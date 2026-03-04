@@ -195,7 +195,7 @@ export function PlayerStatsTable({
                       {perf.firstDeaths ?? 0}
                     </td>
                     <td className="px-2 py-2 text-center text-vct-light">
-                      {perf.hsPercent ?? 0}%
+                      {(perf.hsPercent ?? 0).toFixed(1)}%
                     </td>
                     <td className="px-2 py-2 text-center">
                       <ClutchBadge won={perf.clutchesWon ?? 0} attempted={perf.clutchesAttempted ?? 0} />
@@ -256,7 +256,7 @@ function KastBadge({ kast }: { kast: number }) {
     return 'text-red-400';
   };
 
-  return <span className={getColor(kast)}>{kast}%</span>;
+  return <span className={getColor(kast)}>{kast.toFixed(1)}%</span>;
 }
 
 // Clutch Badge showing won/attempted

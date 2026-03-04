@@ -1,7 +1,7 @@
 // Scoreboard Component - Map-by-map breakdown with player stats
 
 import { useState } from 'react';
-import type { MatchResult, MapResult } from '../../types';
+import type { MatchResult, MapResult, PlayerMapPerformance } from '../../types';
 import { PlayerStatsTable } from './PlayerStatsTable';
 import { RoundTimeline } from './RoundTimeline';
 import { GameImage } from '../shared/GameImage';
@@ -11,20 +11,122 @@ interface ScoreboardProps {
   result: MatchResult;
   teamAName: string;
   teamBName: string;
+  overallWinner: 'teamA' | 'teamB';
 }
 
-export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
-  const [selectedMapIndex, setSelectedMapIndex] = useState(0);
-  const [showTimeline, setShowTimeline] = useState(false);
-  const selectedMap = result.maps[selectedMapIndex];
+function aggregatePerformances(
+  maps: MapResult[],
+  teamKey: 'teamAPerformances' | 'teamBPerformances'
+): PlayerMapPerformance[] {
+  const playerMap = new Map<string, {
+    playerId: string;
+    playerName: string;
+    agents: Set<string>;
+    kills: number;
+    deaths: number;
+    assists: number;
+    firstKills: number;
+    firstDeaths: number;
+    clutchesAttempted: number;
+    clutchesWon: number;
+    plants: number;
+    defuses: number;
+    ultsUsed: number;
+    acsWeighted: number;
+    adrWeighted: number;
+    adrRounds: number;
+    kastWeighted: number;
+    kastRounds: number;
+    hsWeighted: number;
+    hsKills: number;
+    totalRounds: number;
+  }>();
 
-  // Check if enhanced round data is available
-  const hasEnhancedRounds = selectedMap?.enhancedRounds && selectedMap.enhancedRounds.length > 0;
+  for (const map of maps) {
+    const rounds = map.totalRounds;
+    for (const p of map[teamKey]) {
+      if (!playerMap.has(p.playerId)) {
+        playerMap.set(p.playerId, {
+          playerId: p.playerId,
+          playerName: p.playerName,
+          agents: new Set(),
+          kills: 0, deaths: 0, assists: 0,
+          firstKills: 0, firstDeaths: 0,
+          clutchesAttempted: 0, clutchesWon: 0,
+          plants: 0, defuses: 0, ultsUsed: 0,
+          acsWeighted: 0,
+          adrWeighted: 0, adrRounds: 0,
+          kastWeighted: 0, kastRounds: 0,
+          hsWeighted: 0, hsKills: 0,
+          totalRounds: 0,
+        });
+      }
+      const a = playerMap.get(p.playerId)!;
+      a.agents.add(p.agent);
+      a.kills += p.kills;
+      a.deaths += p.deaths;
+      a.assists += p.assists;
+      a.firstKills += p.firstKills ?? 0;
+      a.firstDeaths += p.firstDeaths ?? 0;
+      a.clutchesAttempted += p.clutchesAttempted ?? 0;
+      a.clutchesWon += p.clutchesWon ?? 0;
+      a.plants += p.plants ?? 0;
+      a.defuses += p.defuses ?? 0;
+      a.ultsUsed += p.ultsUsed ?? 0;
+      a.acsWeighted += p.acs * rounds;
+      a.totalRounds += rounds;
+      if (p.adr !== undefined) { a.adrWeighted += p.adr * rounds; a.adrRounds += rounds; }
+      if (p.kast !== undefined) { a.kastWeighted += p.kast * rounds; a.kastRounds += rounds; }
+      if (p.hsPercent !== undefined) { a.hsWeighted += p.hsPercent * p.kills; a.hsKills += p.kills; }
+    }
+  }
+
+  return Array.from(playerMap.values()).map(a => ({
+    playerId: a.playerId,
+    playerName: a.playerName,
+    agent: Array.from(a.agents).join(', '),
+    kills: a.kills,
+    deaths: a.deaths,
+    assists: a.assists,
+    kd: a.deaths > 0 ? a.kills / a.deaths : a.kills,
+    acs: a.totalRounds > 0 ? Math.round(a.acsWeighted / a.totalRounds) : 0,
+    firstKills: a.firstKills,
+    firstDeaths: a.firstDeaths,
+    clutchesAttempted: a.clutchesAttempted,
+    clutchesWon: a.clutchesWon,
+    plants: a.plants,
+    defuses: a.defuses,
+    ultsUsed: a.ultsUsed,
+    adr: a.adrRounds > 0 ? Math.round(a.adrWeighted / a.adrRounds) : undefined,
+    kast: a.kastRounds > 0 ? a.kastWeighted / a.kastRounds : undefined,
+    hsPercent: a.hsKills > 0 ? a.hsWeighted / a.hsKills : undefined,
+  }));
+}
+
+export function Scoreboard({ result, teamAName, teamBName, overallWinner }: ScoreboardProps) {
+  const [selectedMapIndex, setSelectedMapIndex] = useState<number | null>(null);
+  const [showTimeline, setShowTimeline] = useState(false);
+
+  const isAllMaps = selectedMapIndex === null;
+  const selectedMap = isAllMaps ? null : result.maps[selectedMapIndex];
+
+  const hasEnhancedRounds = isAllMaps
+    ? result.maps.some(m => m.enhancedRounds && m.enhancedRounds.length > 0)
+    : !!(selectedMap?.enhancedRounds && selectedMap.enhancedRounds.length > 0);
+
+  const aggregatedTeamA = isAllMaps ? aggregatePerformances(result.maps, 'teamAPerformances') : null;
+  const aggregatedTeamB = isAllMaps ? aggregatePerformances(result.maps, 'teamBPerformances') : null;
+  const totalRounds = isAllMaps ? result.maps.reduce((sum, m) => sum + m.totalRounds, 0) : 0;
 
   return (
     <div className="space-y-4">
       {/* Map Tabs */}
       <div className="flex gap-2">
+        <AllMapsTab
+          isSelected={isAllMaps}
+          onClick={() => setSelectedMapIndex(null)}
+          result={result}
+        />
         {result.maps.map((map, idx) => (
           <MapTab
             key={idx}
@@ -36,8 +138,31 @@ export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
         ))}
       </div>
 
-      {/* Selected Map Details */}
-      {selectedMap && (
+      {/* All Maps View */}
+      {isAllMaps && aggregatedTeamA && aggregatedTeamB && (
+        <div className="space-y-4">
+          <div className="text-center text-sm text-vct-gray">
+            {totalRounds} total rounds across {result.maps.length} maps
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <PlayerStatsTable
+              performances={aggregatedTeamA}
+              teamName={teamAName}
+              isWinner={overallWinner === 'teamA'}
+              showEnhanced={hasEnhancedRounds}
+            />
+            <PlayerStatsTable
+              performances={aggregatedTeamB}
+              teamName={teamBName}
+              isWinner={overallWinner === 'teamB'}
+              showEnhanced={hasEnhancedRounds}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Individual Map View */}
+      {!isAllMaps && selectedMap && (
         <div className="space-y-4">
           {/* Map Score Header */}
           <MapScoreHeader
@@ -64,7 +189,6 @@ export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
 
           {/* Round Timeline */}
           {showTimeline && hasEnhancedRounds && selectedMap.enhancedRounds && (() => {
-            // Extract player data for RoundTimeline
             const playerNames: Record<string, string> = {};
             const playerAgents: Record<string, string> = {};
             const teamAPlayerIds: string[] = [];
@@ -114,6 +238,33 @@ export function Scoreboard({ result, teamAName, teamBName }: ScoreboardProps) {
         </div>
       )}
     </div>
+  );
+}
+
+// All Maps Tab Component
+function AllMapsTab({
+  isSelected,
+  onClick,
+  result,
+}: {
+  isSelected: boolean;
+  onClick: () => void;
+  result: MatchResult;
+}) {
+  const teamAWins = result.maps.filter(m => m.winner === 'teamA').length;
+  const teamBWins = result.maps.filter(m => m.winner === 'teamB').length;
+
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        rounded-lg border transition-all px-3 py-2 text-left min-w-[80px]
+        ${isSelected ? 'border-vct-red/50 bg-vct-red/10' : 'border-vct-gray/20 hover:border-vct-gray/40'}
+      `}
+    >
+      <p className="text-xs text-vct-gray">All Maps</p>
+      <p className="text-sm font-medium text-vct-light">{teamAWins} – {teamBWins}</p>
+    </button>
   );
 }
 

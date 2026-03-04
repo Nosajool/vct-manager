@@ -155,7 +155,7 @@ export function RelationshipPartnerCard({
             <div className="bg-vct-darker rounded-lg p-3">
               <p className="text-xs text-vct-gray mb-1">VOD Risk</p>
               <p className={`text-xl font-bold ${vodRiskHigh ? 'text-red-400' : 'text-green-400'}`}>
-                {relationship.vodLeakRisk}%
+                {Math.round(relationship.vodLeakRisk)}%
               </p>
             </div>
           </div>
