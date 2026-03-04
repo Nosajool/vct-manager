@@ -121,7 +121,7 @@ export function Scoreboard({ result, teamAName, teamBName, overallWinner }: Scor
   return (
     <div className="space-y-4">
       {/* Map Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 lg:mx-0 lg:px-0">
         <AllMapsTab
           isSelected={isAllMaps}
           onClick={() => setSelectedMapIndex(null)}
@@ -254,7 +254,7 @@ function AllMapsTab({
     <button
       onClick={onClick}
       className={`
-        rounded-lg border transition-all px-3 py-2 text-left min-w-[80px]
+        rounded-lg border transition-all px-3 py-2 text-left min-w-[80px] shrink-0 w-[100px] sm:w-auto
         ${isSelected ? 'border-vct-red/50 bg-vct-red/10' : 'border-vct-gray/20 hover:border-vct-gray/40'}
       `}
     >
@@ -277,10 +277,10 @@ function MapTab({
   onClick: () => void;
 }) {
   return (
-    <button
+      <button
       onClick={onClick}
       className={`
-        rounded-lg border transition-all text-left flex-1 overflow-hidden
+        rounded-lg border transition-all text-left flex-1 shrink-0 overflow-hidden w-[160px] sm:w-auto
         ${
           isSelected
             ? 'border-vct-red/50'
