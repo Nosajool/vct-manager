@@ -9,6 +9,7 @@ import type { DramaCategory, DramaChoice, DramaEventInstance } from '../../types
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { NewBadge } from '../narrative/NewBadge';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (narrative) and choices from the template.
@@ -217,6 +218,7 @@ export function DramaEventModal({
                 >
                   {metadata.label}
                 </span>
+                {event.isNew && <NewBadge />}
               </div>
               <h2 className="text-xl font-bold text-vct-light">
                 Critical Decision Required

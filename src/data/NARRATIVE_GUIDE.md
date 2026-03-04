@@ -42,8 +42,42 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 | `src/engine/interview/InterviewEffectResolver.ts` | `resolveInterviewEffects()` — translates `InterviewEffects` into concrete mutations |
 | `src/components/drama/DramaEventModal.tsx` | Category label/color map — add an entry for every new `DramaCategory` |
 | `src/components/drama/DramaEventToast.tsx` | Category label/color/icon map — add an entry for every new `DramaCategory` |
-| `src/components/drama/DramaHistoryPanel.tsx` | Category label/color/icon map for history view — add an entry for every new `DramaCategory` |
+| `src/components/narrative/NarrativeHistoryPanel.tsx` | Unified drama+interview history feed; add `DramaCategory` metadata here for new categories |
+| `src/components/drama/DramaHistoryPanel.tsx` | Legacy drama-only history panel (kept for reference; superseded by NarrativeHistoryPanel) |
 | `src/components/debug/DebugSection_Conditions.tsx` | Category color map for debug overlay — add an entry for every new `DramaCategory` |
+
+---
+
+## Narrative Collection System
+
+The collection system gives players a Pokédex-style reason to replay and discover all story branches. It persists globally across playthroughs via `localStorage` (key: `vct-narrative-collection`), independent of save files.
+
+### Architecture
+
+- **`NarrativeCategory`** (`src/types/drama.ts`): A subset type of `DramaCategory` covering curated arcs: `visa_arc | coaching_overhaul | igl_crisis | scrim_sharing`.
+- **`narrativeCollectionSlice`** (`src/store/slices/narrativeCollectionSlice.ts`): Zustand slice tracking `seenTemplateIds: string[]`. Loads from and saves to localStorage on every mutation.
+- **`DramaService.evaluateDay`** / **`InterviewService.toPendingInterview`**: Both check `isTemplateSeen(templateId)` before creating the event/interview. If unseen → calls `markTemplateSeen()` and sets `isNew = true` on the instance.
+- **`NewBadge`** (`src/components/narrative/NewBadge.tsx`): Amber "NEW" chip rendered when `event.isNew` or `interview.isNew` is true. Displayed in DramaEventToast, DramaEventModal, and InterviewModal.
+
+### Adding a new arc to the collection
+
+1. Add the new category to `NarrativeCategory` union in `src/types/drama.ts`.
+2. For interview templates: use the post-process map pattern in the arc's data file:
+   ```typescript
+   export const MY_ARC_TEMPLATES: InterviewTemplate[] =
+     RAW_MY_ARC_TEMPLATES.map((t) => ({ ...t, narrativeCategory: 'my_arc' as const }));
+   ```
+3. For drama templates: they are already matched via `template.category` — no change needed.
+4. Add the category to `NARRATIVE_CATEGORIES` array in `NarrativeCollectionModal.tsx`.
+5. Add display config to `CATEGORY_CONFIG` in `NarrativeCollectionModal.tsx`.
+
+### Components
+
+| Component | Purpose |
+|-----------|---------|
+| `src/components/narrative/NarrativeHistoryPanel.tsx` | Unified history feed (drama + interviews), with Collection button |
+| `src/components/narrative/NarrativeCollectionModal.tsx` | Modal showing all discovered/locked entries per category |
+| `src/components/narrative/NewBadge.tsx` | "NEW" amber chip for first-time encounters |
 
 ---
 

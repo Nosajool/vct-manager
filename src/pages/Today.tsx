@@ -11,7 +11,7 @@ import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
 import { TournamentContextPanel, AlertsPanel, TodayPlanPanel, WeekPlannerPanel } from '../components/today';
 import { ScrimModal } from '../components/scrim';
-import { DramaHistoryPanel } from '../components/drama';
+import { NarrativeHistoryPanel } from '../components/narrative/NarrativeHistoryPanel';
 
 export function Today() {
   const [scrimModalOpen, setScrimModalOpen] = useState(false);
@@ -113,7 +113,7 @@ export function Today() {
       </div>
 
       {/* Recent Events Section */}
-      <DramaHistoryPanel limit={20} />
+      <NarrativeHistoryPanel limit={20} />
 
       {/* Scrim Modal for Alerts (DayPlanPanel has its own modals for event cards) */}
       <ScrimModal

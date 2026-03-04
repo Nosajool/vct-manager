@@ -1,6 +1,6 @@
 import type { InterviewTemplate } from '../../types/interview';
 
-export const IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
+const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
   // IGL CRISIS ARC (8 templates)
   // ==========================================================================
@@ -444,3 +444,6 @@ export const IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
   },
 
 ];
+
+export const IGL_CRISIS_TEMPLATES: InterviewTemplate[] =
+  RAW_IGL_CRISIS_TEMPLATES.map((t) => ({ ...t, narrativeCategory: 'igl_crisis' as const }));

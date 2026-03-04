@@ -21,6 +21,7 @@ import { createDramaSlice, type DramaSlice } from './slices/dramaSlice';
 import { createActivityPlanSlice, type ActivityPlanSlice } from './slices/activityPlanSlice';
 import { createRivalrySlice, type RivalrySlice } from './slices/rivalrySlice';
 import { createInterviewSlice, type InterviewSlice } from './slices/interviewSlice';
+import { createNarrativeCollectionSlice, type NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';
 import {
   saveManager,
   applyLoadedState,
@@ -29,7 +30,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice;
 
 // Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
@@ -49,6 +50,7 @@ export const useGameStore = create<GameState>()(
     ...createActivityPlanSlice(...args),
     ...createRivalrySlice(...args),
     ...createInterviewSlice(...args),
+    ...createNarrativeCollectionSlice(...args),
   })
 );
 
@@ -68,6 +70,7 @@ export type { DramaSlice } from './slices/dramaSlice';
 export type { ActivityPlanSlice } from './slices/activityPlanSlice';
 export type { RivalrySlice } from './slices/rivalrySlice';
 export type { InterviewSlice } from './slices/interviewSlice';
+export type { NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';
 
 // ============================================
 // Save/Load API

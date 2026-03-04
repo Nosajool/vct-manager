@@ -711,6 +711,13 @@ export class InterviewService {
       }
     }
 
+    // Check if this templateId has been seen before; mark as new if not
+    const storeState = useGameStore.getState();
+    const isNew = !storeState.isTemplateSeen(template.id);
+    if (isNew) {
+      storeState.markTemplateSeen(template.id);
+    }
+
     return {
       templateId: template.id,
       context: template.context,
@@ -719,6 +726,7 @@ export class InterviewService {
       matchId,
       prompt: template.prompt,
       options,
+      isNew,
     };
   }
 

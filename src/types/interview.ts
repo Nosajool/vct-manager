@@ -2,7 +2,7 @@
 // Part of the narrative layer (System 2: Interview System)
 
 import type { PlayerPersonality } from './player';
-import type { DramaCondition, DramaGameStateSnapshot } from './drama';
+import type { DramaCondition, DramaGameStateSnapshot, NarrativeCategory } from './drama';
 import type { CompositionPattern } from './strategy';
 import type { MetaPatch } from './meta';
 
@@ -54,6 +54,7 @@ export interface InterviewTemplate {
   options: InterviewOption[]; // Always exactly 3 options
   conditions?: DramaCondition[]; // Template-level gate: all must pass for eligibility
   matchOutcome?: 'win' | 'loss' | 'any'; // POST_MATCH only: restrict to win, loss, or either
+  narrativeCategory?: NarrativeCategory; // Which arc this interview belongs to (for collection)
 }
 
 // A pending interview waiting for the player to respond
@@ -65,6 +66,8 @@ export interface PendingInterview {
   matchId?: string;     // PRE_MATCH and POST_MATCH; derive opponent/score/round from store
   prompt: string;
   options: InterviewOption[];
+  // Collection tracking: true when this templateId was seen for the first time globally
+  isNew?: boolean;
 }
 
 // Tournament context passed into interview evaluation

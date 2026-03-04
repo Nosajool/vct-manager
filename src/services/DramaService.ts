@@ -52,6 +52,13 @@ export class DramaService {
           : null
       );
 
+      // Check if this templateId has been seen before; mark as new if not
+      const freshState = useGameStore.getState();
+      if (!freshState.isTemplateSeen(template.id)) {
+        freshState.markTemplateSeen(template.id);
+        eventInstance.isNew = true;
+      }
+
       // Handle minor events: apply auto-effects immediately
       if (template.severity === 'minor') {
         if (template.effects) {

@@ -12,6 +12,16 @@ import type { MetaPatch } from './meta';
 // ============================================================================
 
 /**
+ * Narrative arc categories tracked in the global collection
+ * Subset of DramaCategory representing curated storyline arcs
+ */
+export type NarrativeCategory =
+  | 'visa_arc'
+  | 'coaching_overhaul'
+  | 'igl_crisis'
+  | 'scrim_sharing';
+
+/**
  * Categories of drama events that can occur
  */
 export type DramaCategory =
@@ -327,6 +337,9 @@ export interface DramaEventInstance {
   severity: DramaSeverity;
   teamId: string;
   affectedPlayerIds?: string[]; // Players involved in this event
+
+  // Collection tracking: true when this templateId was seen for the first time globally
+  isNew?: boolean;
 
   // Timing
   triggeredDate: string;    // ISO date string

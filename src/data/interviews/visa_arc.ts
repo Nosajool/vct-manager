@@ -1,6 +1,6 @@
 import type { InterviewTemplate } from '../../types/interview';
 
-export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
+const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
   // VISA DRAMA ARC (6 templates)
   // ==========================================================================
@@ -257,3 +257,6 @@ export const VISA_ARC_TEMPLATES: InterviewTemplate[] = [
   },
 
 ];
+
+export const VISA_ARC_TEMPLATES: InterviewTemplate[] =
+  RAW_VISA_ARC_TEMPLATES.map((t) => ({ ...t, narrativeCategory: 'visa_arc' as const }));

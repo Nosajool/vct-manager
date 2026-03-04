@@ -12,6 +12,7 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { PostMatchHeader } from '../match/PostMatchHeader';
 import { PreMatchHeader } from '../match/PreMatchHeader';
+import { NewBadge } from './NewBadge';
 
 interface InterviewModalProps {
   interview: PendingInterview;
@@ -229,9 +230,12 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
           <>
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor} mb-3`}>
-                {contextMeta.label}
-              </span>
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
+                  {contextMeta.label}
+                </span>
+                {interview.isNew && <NewBadge />}
+              </div>
               <div className="flex items-center gap-4 mb-3">
                 {subjectImageUrl ? (
                   <GameImage

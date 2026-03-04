@@ -1,6 +1,6 @@
 import type { InterviewTemplate } from '../../types/interview';
 
-export const SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
+const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
   // SCRIM SHARING SCANDAL ARC (5 templates)
   // ==========================================================================
@@ -183,3 +183,6 @@ export const SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 ];
+
+export const SCRIM_SHARING_TEMPLATES: InterviewTemplate[] =
+  RAW_SCRIM_SHARING_TEMPLATES.map((t) => ({ ...t, narrativeCategory: 'scrim_sharing' as const }));

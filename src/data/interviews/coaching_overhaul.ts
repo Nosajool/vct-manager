@@ -1,6 +1,6 @@
 import type { InterviewTemplate } from '../../types/interview';
 
-export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
+const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
   // COACHING OVERHAUL ARC (6 templates)
   // ==========================================================================
@@ -395,3 +395,6 @@ export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 ];
+
+export const COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] =
+  RAW_COACHING_OVERHAUL_TEMPLATES.map((t) => ({ ...t, narrativeCategory: 'coaching_overhaul' as const }));

@@ -8,6 +8,7 @@ import type { DramaCategory, DramaEventInstance } from '../../types/drama';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { NewBadge } from '../narrative/NewBadge';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (title, narrative) before being passed as props.
@@ -197,10 +198,11 @@ export function DramaEventToast({
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-baseline gap-1 mb-1">
+              <div className="flex items-baseline gap-2 mb-1">
                 <h3 className="text-lg font-bold text-vct-light">
                   {event.title}
                 </h3>
+                {event.isNew && <NewBadge />}
                 {isExpanded && (
                   <span className="text-xs text-vct-gray/60 ml-1">Paused</span>
                 )}
