@@ -12,10 +12,6 @@ import { ScrimModal } from './ScrimModal';
 import { useVisibleMapStats } from '../../hooks/useFeatureGate';
 import type { MapStrengthAttributes } from '../../types/scrim';
 
-const ATTRIBUTE_KEYS: (keyof MapStrengthAttributes)[] = [
-  'retakes', 'executes', 'utility', 'mapControl', 'communication', 'antiStrat',
-];
-
 const ATTRIBUTE_SHORT: Record<keyof MapStrengthAttributes, string> = {
   executes: 'Exec',
   retakes: 'Retake',
