@@ -85,6 +85,28 @@ export function NarrativeCollectionModal({ onClose }: NarrativeCollectionModalPr
   const resetCollection = useGameStore((state) => state.resetCollection);
   const [confirmReset, setConfirmReset] = useState(false);
 
+  const [expandedCategories, setExpandedCategories] = useState<Set<NarrativeCategory>>(() => {
+    const initial = new Set<NarrativeCategory>();
+    NARRATIVE_CATEGORIES.forEach((category) => {
+      const entries = getCategoryEntries(category);
+      const seenCount = entries.filter((e) => seenTemplateIds.includes(e.templateId)).length;
+      if (seenCount > 0) initial.add(category);
+    });
+    return initial;
+  });
+
+  const toggleCategory = (category: NarrativeCategory) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
+
   const handleReset = () => {
     resetCollection(currentDate);
     setConfirmReset(false);
@@ -144,8 +166,21 @@ export function NarrativeCollectionModal({ onClose }: NarrativeCollectionModalPr
             return (
               <div key={category} className="p-4">
                 {/* Category header */}
-                <div className="flex items-center justify-between mb-3">
+                <div
+                  className="flex items-center justify-between mb-3 cursor-pointer hover:opacity-80"
+                  onClick={() => toggleCategory(category)}
+                >
                   <div className="flex items-center gap-2">
+                    <svg
+                      className={`w-4 h-4 text-vct-gray/60 transition-transform ${
+                        expandedCategories.has(category) ? 'rotate-90' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                     <span className={`text-sm font-semibold uppercase tracking-wide ${config.color}`}>
                       {config.label}
                     </span>
@@ -156,8 +191,9 @@ export function NarrativeCollectionModal({ onClose }: NarrativeCollectionModalPr
                 </div>
 
                 {/* Entry list */}
-                <div className="space-y-2">
-                  {entries.map((entry) => {
+                {expandedCategories.has(category) && (
+                  <div className="space-y-2">
+                    {entries.map((entry) => {
                     const isSeen = seenTemplateIds.includes(entry.templateId);
                     return (
                       <div
@@ -190,6 +226,7 @@ export function NarrativeCollectionModal({ onClose }: NarrativeCollectionModalPr
                     );
                   })}
                 </div>
+                )}
               </div>
             );
           })}
