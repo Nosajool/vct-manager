@@ -70,7 +70,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     description:
       "Clips of questionable rotations and stalled attacks have gone viral. Fans are asking if {playerName} should still be calling the shots.",
     conditions: [
-      { type: 'flag_active', flag: 'igl_on_notice' },
+      { type: 'flag_active', flag: 'igl_on_notice', playerSelector: 'igl_player' },
       { type: 'team_loss_streak', streakLength: 3 },
     ],
     probability: 75,
@@ -123,7 +123,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     description:
       "Management must decide whether {playerName} continues as IGL. The team is at a crossroads — stick with current leadership or make a change?",
     conditions: [
-      { type: 'flag_active', flag: 'igl_replacement_considered' },
+      { type: 'flag_active', flag: 'igl_replacement_considered', playerSelector: 'igl_player' },
     ],
     probability: 90,
     cooldownDays: 7,
@@ -182,7 +182,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     description:
       "After weeks of scrutiny, {playerName} has led the team to crucial victories. The narrative has shifted — critics are now calling the IGL a 'different player.'",
     conditions: [
-      { type: 'flag_active', flag: 'igl_redemption_path' },
+      { type: 'flag_active', flag: 'igl_redemption_path', playerSelector: 'igl_player' },
       { type: 'team_win_streak', streakLength: 2 },
     ],
     probability: 70,
@@ -366,7 +366,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     description:
       "The leadership change hasn't worked out. The team is struggling without {playerName}'s experience, and the org is questioning the decision.",
     conditions: [
-      { type: 'flag_active', flag: 'igl_removed' },
+      { type: 'flag_active', flag: 'igl_removed', playerSelector: 'igl_player' },
       { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 60,
