@@ -63,15 +63,15 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
           {/* Match Score */}
           <div className="flex items-center justify-between">
             {/* Team A */}
-            <div className="flex-1 text-left flex items-center gap-3">
+            <div className="flex-1 text-left flex items-center gap-2 sm:gap-3">
               <GameImage
                 src={getTeamLogoUrl(teamA.name)}
                 alt={teamA.name}
-                className="w-10 h-10"
+                className="w-8 h-8 sm:w-10 sm:h-10"
               />
-              <div>
+              <div className="min-w-0">
                 <p
-                  className={`text-2xl font-bold ${
+                  className={`text-xl sm:text-2xl font-bold truncate ${
                     result.winnerId === teamA.id ? 'text-green-400' : 'text-vct-light'
                   }`}
                 >
@@ -82,7 +82,7 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
             </div>
 
             {/* Score */}
-            <div className="flex items-center gap-4 px-8">
+            <div className="flex items-center gap-2 sm:gap-4 px-2 sm:px-8">
               <span
                 className={`text-5xl font-bold ${
                   result.winnerId === teamA.id ? 'text-green-400' : 'text-vct-gray'
@@ -101,10 +101,10 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
             </div>
 
             {/* Team B */}
-            <div className="flex-1 text-right flex items-center justify-end gap-3">
-              <div>
+            <div className="flex-1 text-right flex items-center justify-end gap-2 sm:gap-3">
+              <div className="min-w-0">
                 <p
-                  className={`text-2xl font-bold ${
+                  className={`text-xl sm:text-2xl font-bold truncate ${
                     result.winnerId === teamB.id ? 'text-green-400' : 'text-vct-light'
                   }`}
                 >
@@ -115,7 +115,7 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
               <GameImage
                 src={getTeamLogoUrl(teamB.name)}
                 alt={teamB.name}
-                className="w-10 h-10"
+                className="w-8 h-8 sm:w-10 sm:h-10"
               />
             </div>
           </div>
