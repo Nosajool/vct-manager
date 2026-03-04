@@ -87,3 +87,13 @@ export function getEventLogoUrl(eventName: string): string {
   const slug = slugify(eventName);
   return `${import.meta.env.BASE_URL}images/events/${slug}.png`;
 }
+
+/**
+ * Get the URL for a map splash image
+ * @param mapName - Map name (e.g., "Ascent", "Bind")
+ * @returns URL path to the map webp image
+ */
+export function getMapImageUrl(mapName: string): string {
+  const slug = slugify(mapName);
+  return `${import.meta.env.BASE_URL}images/maps/${slug}.webp`;
+}

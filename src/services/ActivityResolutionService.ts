@@ -180,16 +180,9 @@ export class ActivityResolutionService {
     config: ScrimActivityConfig,
     efficiencyModifier: number
   ): Promise<ScrimResult | null> {
-    if (config.action === 'skip') {
-      // Apply team morale boost for skipping scrim
-      this.applyTeamRestMoraleBoost();
-      return null;
-    }
-
     // Validate required fields for scrim execution
     if (!config.partnerTeamId || !config.maps || !config.intensity) {
       console.warn('Scrim config missing required fields - skipping');
-      this.applyTeamRestMoraleBoost(); // Treat as skip
       return null;
     }
 
@@ -250,7 +243,6 @@ export class ActivityResolutionService {
       trainingResults: [],
       scrimResult: null,
       skippedTraining: false,
-      skippedScrim: false,
     };
 
     for (const config of configs) {
@@ -267,10 +259,6 @@ export class ActivityResolutionService {
         const trainingResults = await this.resolveTrainingConfig(config, efficiencyModifier);
         result.trainingResults.push(...trainingResults);
       } else if (config.type === 'scrim') {
-        if (config.action === 'skip') {
-          result.skippedScrim = true;
-        }
-
         result.scrimResult = await this.resolveScrimConfig(config, efficiencyModifier);
       }
     }
@@ -374,38 +362,8 @@ export class ActivityResolutionService {
     state.updatePlayer(playerId, { morale: newMorale });
   }
 
-  /**
-   * Apply morale boost to the entire team
-   * Used when scrim is skipped
-   */
-  private applyTeamRestMoraleBoost(): void {
-    const state = useGameStore.getState();
-    const playerTeamId = state.playerTeamId;
-
-    if (!playerTeamId) {
-      console.warn('No player team found - cannot apply team rest morale boost');
-      return;
-    }
-
-    const team = state.teams[playerTeamId];
-    if (!team) {
-      console.warn('Player team not found - cannot apply team rest morale boost');
-      return;
-    }
-
-    // Apply small morale boost to all players on the team
-    const allPlayerIds = [...team.playerIds, ...team.reservePlayerIds];
-    const moraleBoost = Math.floor(Math.random() * 2) + 1; // +1 to +2
-
-    for (const playerId of allPlayerIds) {
-      const player = state.players[playerId];
-      if (player) {
-        const newMorale = Math.min(100, player.morale + moraleBoost);
-        state.updatePlayer(playerId, { morale: newMorale });
-      }
-    }
-  }
 }
+
 
 // Export singleton instance
 export const activityResolutionService = new ActivityResolutionService();

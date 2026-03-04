@@ -210,7 +210,7 @@ export function TimeBar() {
     if (activities && (activities.trainingResults.length > 0 || activities.skippedTraining)) {
       queue.push('training');
     }
-    if (activities && (activities.scrimResult !== null || activities.skippedScrim)) {
+    if (activities && activities.scrimResult !== null) {
       queue.push('scrim');
     }
     if (result?.moraleChanges) {
@@ -519,18 +519,8 @@ export function TimeBar() {
 
           state.setActivityConfig(config);
         } else {
-          // If auto-config fails, skip the scrim
-          const config: ScrimActivityConfig = {
-            type: 'scrim',
-            id: crypto.randomUUID(),
-            date: event.date,
-            eventId: event.id,
-            status: 'configured',
-            action: 'skip',
-            autoConfigured: true,
-          };
-
-          state.setActivityConfig(config);
+          // If auto-config fails, cancel the scrim (no partners available)
+          state.updateEventLifecycleState(event.id, 'cancelled');
         }
       }
     }

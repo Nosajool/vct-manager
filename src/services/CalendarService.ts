@@ -186,20 +186,9 @@ export class CalendarService {
             state.updateEventLifecycleState(event.id, 'locked');
             console.log(`  Auto-configured scrim activity (${event.id}) at 80% efficiency`);
           } else {
-            // Auto-config failed - skip the scrim
-            const skipConfig: ScrimActivityConfig = {
-              type: 'scrim',
-              id: crypto.randomUUID(),
-              date: event.date,
-              eventId: event.id,
-              status: 'locked',
-              action: 'skip',
-              autoConfigured: true,
-            };
-
-            state.setActivityConfig(skipConfig);
-            state.updateEventLifecycleState(event.id, 'locked');
-            console.log(`  Auto-configured scrim to skip (${event.id}) - no partner available`);
+            // Auto-config failed - cancel the scrim (no partners available)
+            state.updateEventLifecycleState(event.id, 'cancelled');
+            console.log(`  Cancelled scrim (${event.id}) - no partner available`);
           }
         }
       }

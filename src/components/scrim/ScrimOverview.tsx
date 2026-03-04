@@ -9,6 +9,7 @@ import { ScrimStatsSummary } from './ScrimStatsSummary';
 import { RelationshipPartnerCard } from './RelationshipPartnerCard';
 import { ScrimRecommendations } from './ScrimRecommendations';
 import { ScrimModal } from './ScrimModal';
+import { useVisibleMapStats } from '../../hooks/useFeatureGate';
 import type { MapStrengthAttributes } from '../../types/scrim';
 
 const ATTRIBUTE_KEYS: (keyof MapStrengthAttributes)[] = [
@@ -28,6 +29,7 @@ export function ScrimOverview() {
   const [expandedPartner, setExpandedPartner] = useState<string | null>(null);
   const [isScrimModalOpen, setIsScrimModalOpen] = useState(false);
 
+  const visibleMapStats = useVisibleMapStats();
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const tierTeams = useGameStore((state) => state.tierTeams);
@@ -101,7 +103,7 @@ export function ScrimOverview() {
             {Object.entries(playerTeam.mapPool.maps).map(([mapName, mapStrength]) => {
               const attrs = mapStrength.attributes;
               // Find the weakest attribute for highlighting
-              const weakestKey = ATTRIBUTE_KEYS.reduce((prev, cur) =>
+              const weakestKey = visibleMapStats.reduce((prev, cur) =>
                 attrs[cur] < attrs[prev] ? cur : prev
               );
               const overall = scrimEngine.calculateMapOverall(mapStrength);
@@ -112,7 +114,7 @@ export function ScrimOverview() {
                     <span className="text-xs text-vct-gray">{Math.round(overall)} avg</span>
                   </div>
                   <div className="grid grid-cols-3 gap-x-4 gap-y-1.5">
-                    {ATTRIBUTE_KEYS.map((key) => {
+                    {visibleMapStats.map((key) => {
                       const val = attrs[key];
                       const isWeakest = key === weakestKey;
                       const barPct = Math.round((val / 85) * 100);

@@ -7,6 +7,7 @@ import { useGameStore } from '../store';
 import { featureGateService } from '../services/FeatureGateService';
 import type { FeatureType, FeatureUnlock } from '../data/featureUnlocks';
 import type { PlayerStats } from '../types';
+import type { MapStrengthAttributes } from '../types/scrim';
 
 /**
  * Hook to check if a feature is currently unlocked
@@ -70,4 +71,16 @@ const ALL_STATS: (keyof PlayerStats)[] = ['mechanics', 'igl', 'mental', 'clutch'
 export function useVisibleStats(): (keyof PlayerStats)[] {
   const advancedTrainingUnlocked = useFeatureUnlocked('advancedTraining');
   return advancedTrainingUnlocked ? ALL_STATS : BASIC_STATS;
+}
+
+const BASIC_MAP_STATS: (keyof MapStrengthAttributes)[] = ['executes', 'communication', 'mapControl'];
+const ALL_MAP_STATS: (keyof MapStrengthAttributes)[] = ['executes', 'retakes', 'utility', 'communication', 'mapControl', 'antiStrat'];
+
+/**
+ * Hook to get the list of map stats that should be visible to the user.
+ * Returns basic stats (executes, comms, mapControl) until advancedScrims is unlocked.
+ */
+export function useVisibleMapStats(): (keyof MapStrengthAttributes)[] {
+  const advancedScrimsUnlocked = useFeatureUnlocked('advancedScrims');
+  return advancedScrimsUnlocked ? ALL_MAP_STATS : BASIC_MAP_STATS;
 }

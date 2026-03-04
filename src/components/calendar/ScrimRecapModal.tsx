@@ -5,7 +5,8 @@
 
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
-import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { getTeamLogoUrl, getMapImageUrl } from '../../utils/imageAssets';
+import { useVisibleMapStats } from '../../hooks/useFeatureGate';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
 import type { MapStrengthAttributes } from '../../types/scrim';
 
@@ -66,48 +67,16 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
 
   const getPlayerTeam = useGameStore((state) => state.getPlayerTeam);
   const playerTeam = getPlayerTeam();
+  const visibleMapStats = useVisibleMapStats();
 
-  const { scrimResult, skippedScrim } = activityResults;
-
-  if (skippedScrim) {
-    return (
-      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-        <div className="bg-vct-darker rounded-lg w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-          <div className="p-4 border-b border-vct-gray/20">
-            <h2 className="text-xl font-bold text-vct-light">Scrim Session</h2>
-            <p className="text-sm text-vct-gray">{date}</p>
-          </div>
-          <div className="p-6 flex items-center justify-center py-12">
-            <div className="text-center bg-vct-dark/50 rounded-lg p-8 max-w-sm w-full">
-              <div className="text-4xl mb-3">🎮</div>
-              <div className="text-vct-light font-semibold text-lg">Scrim Skipped</div>
-              <div className="text-vct-gray text-sm mt-1">Team takes a break</div>
-              <div className="text-green-400 text-sm mt-2">+Morale for the squad</div>
-            </div>
-          </div>
-          <div className="p-4 border-t border-vct-gray/20 flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-vct-red hover:bg-vct-red/80 text-white rounded-lg font-medium transition-colors"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { scrimResult } = activityResults;
 
   if (!scrimResult) return null;
 
-  const playerTeamId = playerTeam?.id;
   const playerTeamName = playerTeam?.name ?? 'Your Team';
   const opponentName = scrimResult.partnerTeamName;
 
-  // Count map wins for each side
-  const playerWins = scrimResult.maps.filter((m) => m.winner === 'teamA').length;
-  const opponentWins = scrimResult.maps.filter((m) => m.winner === 'teamB').length;
-  const playerWon = scrimResult.overallWinner === playerTeamId;
+  const mapsPlayed = scrimResult.maps.length;
 
   // Relationship data
   const relChange = scrimResult.relationshipChange;
@@ -118,6 +87,19 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
   const intensity = INTENSITY_LABELS[scrimResult.intensity] ?? INTENSITY_LABELS['moderate'];
   const efficiencyPct = Math.round(scrimResult.efficiencyMultiplier * 100);
   const efficiencyColor = efficiencyPct >= 90 ? 'text-green-400' : efficiencyPct >= 65 ? 'text-yellow-400' : 'text-red-400';
+
+  // Compute skills improved count for headline
+  const skillsImproved = Object.values(scrimResult.mapImprovements).reduce((total, improvements) => {
+    return total + Object.entries(improvements).filter(
+      ([attr, d]) => (d ?? 0) > 0 && (visibleMapStats as string[]).includes(attr)
+    ).length;
+  }, 0);
+
+  const mapsWithImprovements = Object.values(scrimResult.mapImprovements).filter((improvements) =>
+    Object.entries(improvements).some(
+      ([attr, d]) => (d ?? 0) > 0 && (visibleMapStats as string[]).includes(attr)
+    )
+  ).length;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -130,7 +112,18 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
 
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-5">
-          {/* Matchup bar */}
+          {/* Session headline */}
+          {skillsImproved > 0 && (
+            <p className="text-sm text-vct-gray">
+              <span className="text-vct-light font-medium">{skillsImproved} skill{skillsImproved !== 1 ? 's' : ''} improved</span>
+              {mapsWithImprovements > 0 && <span> across {mapsWithImprovements} map{mapsWithImprovements !== 1 ? 's' : ''}</span>}
+              {scrimResult.chemistryChange !== 0 && (
+                <span> · Team Chemistry {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange}</span>
+              )}
+            </p>
+          )}
+
+          {/* Opponent card — who you played, not who won */}
           <div className="flex items-center justify-between bg-vct-dark/50 rounded-lg p-4">
             <div className="flex items-center gap-3 flex-1">
               <GameImage
@@ -139,23 +132,15 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
                 className="w-10 h-10 object-contain"
                 fallbackClassName="w-10 h-10"
               />
-              <span className={`font-semibold ${playerWon ? 'text-green-400' : 'text-vct-light'}`}>
-                {playerTeamName}
-              </span>
+              <span className="font-semibold text-vct-light">{playerTeamName}</span>
             </div>
-            <div className="flex items-center gap-3 px-4">
-              <span className={`text-2xl font-bold ${playerWon ? 'text-green-400' : 'text-vct-gray'}`}>
-                {playerWins}
-              </span>
-              <span className="text-vct-gray text-lg">–</span>
-              <span className={`text-2xl font-bold ${!playerWon ? 'text-green-400' : 'text-vct-gray'}`}>
-                {opponentWins}
+            <div className="px-4">
+              <span className="px-3 py-1 rounded-full bg-vct-gray/20 text-vct-gray text-sm">
+                {mapsPlayed} map{mapsPlayed !== 1 ? 's' : ''}
               </span>
             </div>
             <div className="flex items-center gap-3 flex-1 justify-end">
-              <span className={`font-semibold ${!playerWon ? 'text-green-400' : 'text-vct-light'}`}>
-                {opponentName}
-              </span>
+              <span className="font-semibold text-vct-light">{opponentName}</span>
               <GameImage
                 src={getTeamLogoUrl(opponentName)}
                 alt={opponentName}
@@ -164,6 +149,44 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
               />
             </div>
           </div>
+
+          {/* Skills Developed — before/after attribute bars (hero section) */}
+          {Object.keys(scrimResult.mapImprovements).length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Skills Developed</h3>
+              {Object.entries(scrimResult.mapImprovements).map(([mapName, improvements]) => {
+                const beforeSnapshot = scrimResult.mapStatsBefore[mapName];
+                const positiveAttrs = Object.entries(improvements).filter(
+                  ([attr, d]) => (d ?? 0) > 0 && (visibleMapStats as string[]).includes(attr)
+                );
+                if (positiveAttrs.length === 0) return null;
+                return (
+                  <div key={mapName} className="bg-vct-dark/50 rounded-lg overflow-hidden space-y-2">
+                    <div className="relative h-14">
+                      <img src={getMapImageUrl(mapName)} alt={mapName} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/55" />
+                      <div className="absolute inset-0 flex items-center px-4">
+                        <span className="text-vct-light font-medium text-sm">{mapName}</span>
+                      </div>
+                    </div>
+                    <div className="px-4 pb-3 space-y-2">
+                      {positiveAttrs.map(([attr, delta]) => {
+                        const before = beforeSnapshot?.[attr as keyof MapStrengthAttributes] ?? 0;
+                        return (
+                          <AttributeBar
+                            key={attr}
+                            label={ATTRIBUTE_LABELS[attr as keyof MapStrengthAttributes] ?? attr}
+                            before={before}
+                            delta={delta as number}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Session metadata row */}
           <div className="flex items-center gap-3 flex-wrap">
@@ -199,12 +222,11 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
             )}
           </div>
 
-          {/* Per-map result cards */}
+          {/* Per-map result cards — score as subtle secondary info */}
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Maps</h3>
             <div className="space-y-2">
               {scrimResult.maps.map((mapResult, idx) => {
-                const mapWon = mapResult.winner === 'teamA';
                 const playerScore = mapResult.teamAScore;
                 const opponentScore = mapResult.teamBScore;
                 return (
@@ -213,53 +235,14 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
                     className="flex items-center justify-between bg-vct-dark/50 rounded-lg px-4 py-3"
                   >
                     <span className="text-vct-light font-medium">{mapResult.map}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-vct-light">
-                        {playerScore} – {opponentScore}
-                      </span>
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                          mapWon
-                            ? 'bg-green-500/20 text-green-400'
-                            : 'bg-red-500/20 text-red-400'
-                        }`}
-                      >
-                        {mapWon ? 'W' : 'L'}
-                      </span>
-                    </div>
+                    <span className="font-mono text-xs text-vct-gray">
+                      {playerScore} – {opponentScore}
+                    </span>
                   </div>
                 );
               })}
             </div>
           </div>
-
-          {/* Map improvements — before/after attribute bars */}
-          {Object.keys(scrimResult.mapImprovements).length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Map Improvements</h3>
-              {Object.entries(scrimResult.mapImprovements).map(([mapName, improvements]) => {
-                const beforeSnapshot = scrimResult.mapStatsBefore[mapName];
-                const positiveAttrs = Object.entries(improvements).filter(([, d]) => (d ?? 0) > 0);
-                if (positiveAttrs.length === 0) return null;
-                return (
-                  <div key={mapName} className="bg-vct-dark/50 rounded-lg px-4 py-3 space-y-2">
-                    <div className="text-vct-light font-medium text-sm">{mapName}</div>
-                    {positiveAttrs.map(([attr, delta]) => {
-                      const before = beforeSnapshot?.[attr as keyof MapStrengthAttributes] ?? 0;
-                      return (
-                        <AttributeBar
-                          key={attr}
-                          label={ATTRIBUTE_LABELS[attr as keyof MapStrengthAttributes] ?? attr}
-                          before={before}
-                          delta={delta as number}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
 
         {/* Footer */}

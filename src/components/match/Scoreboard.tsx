@@ -5,7 +5,7 @@ import type { MatchResult, MapResult } from '../../types';
 import { PlayerStatsTable } from './PlayerStatsTable';
 import { RoundTimeline } from './RoundTimeline';
 import { GameImage } from '../shared/GameImage';
-import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { getTeamLogoUrl, getMapImageUrl } from '../../utils/imageAssets';
 
 interface ScoreboardProps {
   result: MatchResult;
@@ -133,29 +133,35 @@ function MapTab({
     <button
       onClick={onClick}
       className={`
-        px-4 py-2 rounded-lg border transition-all text-left flex-1
+        rounded-lg border transition-all text-left flex-1 overflow-hidden
         ${
           isSelected
-            ? 'bg-vct-red/10 border-vct-red/50 text-vct-light'
-            : 'bg-vct-darker border-vct-gray/20 text-vct-gray hover:border-vct-gray/40'
+            ? 'border-vct-red/50'
+            : 'border-vct-gray/20 hover:border-vct-gray/40'
         }
       `}
     >
-      <div className="flex items-center justify-between">
-        <span className="font-medium">Map {index + 1}</span>
-        {map.overtime && (
-          <span className="text-xs text-yellow-400">OT</span>
-        )}
-      </div>
-      <p className="text-xs mt-1">{map.map}</p>
-      <div className="flex items-center gap-1 mt-1 text-xs">
-        <span className={map.winner === 'teamA' ? 'text-green-400' : ''}>
-          {map.teamAScore}
-        </span>
-        <span>-</span>
-        <span className={map.winner === 'teamB' ? 'text-green-400' : ''}>
-          {map.teamBScore}
-        </span>
+      <div className="relative h-12">
+        <img src={getMapImageUrl(map.map)} alt={map.map} className="w-full h-full object-cover" />
+        <div className={`absolute inset-0 ${isSelected ? 'bg-black/50' : 'bg-black/65'}`} />
+        <div className="absolute inset-0 flex items-center justify-between px-3">
+          <div>
+            <p className="text-xs text-vct-gray">Map {index + 1}</p>
+            <p className="text-sm font-medium text-vct-light">{map.map}</p>
+          </div>
+          <div className="text-right">
+            {map.overtime && <p className="text-xs text-yellow-400">OT</p>}
+            <div className="flex items-center gap-1 text-xs">
+              <span className={map.winner === 'teamA' ? 'text-green-400' : 'text-vct-gray'}>
+                {map.teamAScore}
+              </span>
+              <span className="text-vct-gray">-</span>
+              <span className={map.winner === 'teamB' ? 'text-green-400' : 'text-vct-gray'}>
+                {map.teamBScore}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </button>
   );

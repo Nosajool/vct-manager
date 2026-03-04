@@ -2,6 +2,7 @@
 
 import { useGameStore } from '../../store';
 import { MAPS } from '../../utils/constants';
+import { getMapImageUrl } from '../../utils/imageAssets';
 import type { MapStrengthAttributes } from '../../types';
 
 interface MapPoolViewProps {
@@ -65,10 +66,16 @@ export function MapPoolView({ teamId, compact = false }: MapPoolViewProps) {
             return (
               <div
                 key={mapName}
-                className="bg-vct-dark p-2 rounded text-center border border-vct-gray/20"
+                className="rounded overflow-hidden border border-vct-gray/20"
               >
-                <p className="text-xs text-vct-gray truncate">{mapName}</p>
-                <p className={`font-bold ${getStrengthColor(avg)}`}>{avg}</p>
+                <div className="relative h-12">
+                  <img src={getMapImageUrl(mapName)} alt={mapName} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/60" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <p className="text-xs text-vct-light truncate px-1">{mapName}</p>
+                    <p className={`text-xs font-bold ${getStrengthColor(avg)}`}>{avg}</p>
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -93,14 +100,17 @@ export function MapPoolView({ teamId, compact = false }: MapPoolViewProps) {
           return (
             <div
               key={mapName}
-              className="bg-vct-dark p-4 rounded-lg border border-vct-gray/20"
+              className="bg-vct-dark rounded-lg border border-vct-gray/20 overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-medium text-vct-light">{mapName}</span>
-                <span className={`text-lg font-bold ${getStrengthColor(avg)}`}>
-                  {avg}
-                </span>
+              <div className="relative h-20">
+                <img src={getMapImageUrl(mapName)} alt={mapName} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/55" />
+                <div className="absolute inset-0 flex items-center justify-between px-4">
+                  <span className="font-semibold text-vct-light">{mapName}</span>
+                  <span className={`text-lg font-bold ${getStrengthColor(avg)}`}>{avg}</span>
+                </div>
               </div>
+              <div className="p-4">
 
               <div className="grid grid-cols-3 gap-2">
                 {ATTRIBUTE_LABELS.map(({ key, label, color }) => {
@@ -127,6 +137,7 @@ export function MapPoolView({ teamId, compact = false }: MapPoolViewProps) {
                 Last practiced: {mapStrength.lastPracticedDate
                   ? new Date(mapStrength.lastPracticedDate).toLocaleDateString()
                   : 'Never'}
+              </div>
               </div>
             </div>
           );

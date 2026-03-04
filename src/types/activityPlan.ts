@@ -34,7 +34,7 @@ export interface ScrimActivityConfig {
   date: string;                         // ISO date string for which day this is for
   eventId: string;                      // Links to the calendar event
   status: ActivityLifecycleState;       // Full lifecycle state
-  action: 'play' | 'skip';
+  action: 'play';
   partnerTeamId?: string;
   maps?: string[];
   intensity?: 'light' | 'moderate' | 'competitive';
@@ -53,5 +53,4 @@ export interface ActivityResolutionResult {
   trainingResults: TrainingResult[];
   scrimResult: ScrimResult | null;
   skippedTraining: boolean;
-  skippedScrim: boolean;
 }
