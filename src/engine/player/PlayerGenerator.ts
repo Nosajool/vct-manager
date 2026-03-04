@@ -234,10 +234,10 @@ export class PlayerGenerator {
    */
   private generateContract(
     overall: number,
-    yearsRemaining?: number
+    yearsRemaining?: number,
+    isFreeAgent: boolean = false
   ): Player['contract'] | null {
-    // 20% chance of being a free agent (no contract)
-    if (Math.random() < 0.2) {
+    if (isFreeAgent && Math.random() < 0.2) {
       return null;
     }
 
@@ -380,7 +380,7 @@ export class PlayerGenerator {
       form: this.randomBetween(60, 90),
       morale: this.randomBetween(65, 95),
       potential: this.generatePotential(age, overall),
-      contract: teamId ? this.generateContract(overall) : null,
+      contract: teamId ? this.generateContract(overall, undefined, teamId === null) : null,
       careerStats: this.generateCareerStats(age),
       seasonStats: this.generateSeasonStats(),
       preferences: this.generatePreferences(),

@@ -122,7 +122,7 @@ export const GAMING_NAMES = [
   'Shadow', 'Shire', 'Skull', 'Sky', 'Smoke', 'Snake', 'Spark', 'Spect',
   'Spirit', 'Steel', 'Storm', 'Swift', 'Tac', 'Tank', 'Toxic', 'Trace',
   'Trick', 'Turbo', 'Venom', 'Vipen', 'Volt', 'Wolf', 'Wrath', 'Zero',
-  'Zest', 'Zoom', 'Alpha', 'Beta', 'Omega', 'Delta', 'Sigma', 'Theta',
+  'Zesk', 'Zoom', 'Alpha', 'Beta', 'Omega', 'Delta', 'Sigma', 'Theta',
 ];
 
 /**
