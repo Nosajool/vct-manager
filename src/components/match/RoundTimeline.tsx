@@ -124,7 +124,7 @@ export function RoundTimeline({
       {/* First Half */}
       <div className="space-y-1">
         <div className="text-xs text-vct-gray">First Half ({teamAName} Attack)</div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 overflow-x-auto pb-2">
           {firstHalf.map((round) => (
             <RoundCell
               key={round.roundNumber}
@@ -140,7 +140,7 @@ export function RoundTimeline({
       {secondHalf.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs text-vct-gray">Second Half ({teamBName} Attack)</div>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto pb-2">
             {secondHalf.map((round) => (
               <RoundCell
                 key={round.roundNumber}
@@ -157,7 +157,7 @@ export function RoundTimeline({
       {overtime.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs text-yellow-400">Overtime</div>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto pb-2">
             {overtime.map((round) => (
               <RoundCell
                 key={round.roundNumber}
