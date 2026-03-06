@@ -80,6 +80,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30',
     icon: '🎬',
   },
+  org_culture: {
+    label: 'Org Culture',
+    color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
+    icon: '🍗',
+  },
 };
 
 /**

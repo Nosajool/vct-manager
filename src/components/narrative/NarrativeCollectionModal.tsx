@@ -26,6 +26,7 @@ const CATEGORY_CONFIG: Record<
   coaching_overhaul:{ label: 'Coaching Overhaul', color: 'text-amber-400',  badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
   igl_crisis:       { label: 'IGL Crisis',        color: 'text-red-400',    badgeColor: 'bg-red-500/20 text-red-400 border-red-500/30'       },
   scrim_sharing:    { label: 'Scrim Sharing',      color: 'text-cyan-400',   badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'    },
+  org_culture:      { label: 'Org Culture',        color: 'text-yellow-400', badgeColor: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
 };
 
 const NARRATIVE_CATEGORIES: NarrativeCategory[] = [
@@ -33,6 +34,7 @@ const NARRATIVE_CATEGORIES: NarrativeCategory[] = [
   'visa_arc',
   'igl_crisis',
   'coaching_overhaul',
+  'org_culture',
 ];
 
 // ============================================================================

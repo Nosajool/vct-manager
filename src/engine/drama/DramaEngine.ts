@@ -507,6 +507,8 @@ function getPlayerCandidatesForCondition(
       return teamPlayers.filter(
         p => p.region !== undefined && p.region !== snapshot.playerTeamRegion
       );
+    case 'player_on_active_roster':
+      return teamPlayers.filter(p => p.isActive === true);
     case 'player_morale_below':
       if (condition.threshold === undefined) return teamPlayers;
       return teamPlayers.filter(p => p.morale < condition.threshold!);

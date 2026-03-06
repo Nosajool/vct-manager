@@ -19,6 +19,7 @@ const CATEGORY_COLORS: Record<DramaCategory, string> = {
   coaching_overhaul: 'bg-amber-900/40 text-amber-300',
   igl_crisis: 'bg-red-900/40 text-red-300',
   scrim_sharing: 'bg-teal-900/40 text-teal-300',
+  org_culture: 'bg-yellow-900/40 text-yellow-300',
 };
 
 const CATEGORIES = Object.keys(CATEGORY_COLORS) as DramaCategory[];

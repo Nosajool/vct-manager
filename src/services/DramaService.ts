@@ -264,6 +264,7 @@ export class DramaService {
       personality: player.personality,
       region: player.region,
       agentPreferences: state.playerAgentPreferences[player.id],
+      isActive: playerTeam.playerIds.includes(player.id),
     }));
 
     // Build drama state for snapshot
@@ -327,6 +328,7 @@ export class DramaService {
       tournamentContext,
       playerTeamRegion: playerTeam.region,
       activePatch: state.currentPatch ?? null,
+      teamBudget: playerTeam.finances.balance,
     };
   }
 

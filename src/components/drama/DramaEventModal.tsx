@@ -83,6 +83,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-cyan-500/20 to-cyan-600/20',
     badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
   },
+  org_culture: {
+    label: 'Org Culture',
+    color: 'from-yellow-500/20 to-yellow-600/20',
+    badgeColor: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  },
 };
 
 /**

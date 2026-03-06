@@ -12,6 +12,7 @@ import { VISA_ARC_EVENTS } from './visa_arc';
 import { COACHING_OVERHAUL_EVENTS } from './coaching_overhaul';
 import { IGL_CRISIS_EVENTS } from './igl_crisis';
 import { SCRIM_SHARING_EVENTS } from './scrim_sharing';
+import { ORG_CULTURE_EVENTS } from './org_culture';
 
 export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...PLAYER_EGO_EVENTS,
@@ -26,4 +27,5 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...COACHING_OVERHAUL_EVENTS,
   ...IGL_CRISIS_EVENTS,
   ...SCRIM_SHARING_EVENTS,
+  ...ORG_CULTURE_EVENTS,
 ];

@@ -80,6 +80,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-cyan-500',
     icon: '🎬',
   },
+  org_culture: {
+    label: 'Org Culture',
+    color: 'text-yellow-400',
+    dotColor: 'bg-yellow-500',
+    icon: '🍗',
+  },
 };
 
 /**

@@ -19,7 +19,8 @@ export type NarrativeCategory =
   | 'visa_arc'
   | 'coaching_overhaul'
   | 'igl_crisis'
-  | 'scrim_sharing';
+  | 'scrim_sharing'
+  | 'org_culture';
 
 /**
  * Categories of drama events that can occur
@@ -34,7 +35,8 @@ export type DramaCategory =
   | 'visa_arc'           // all visa drama arc events
   | 'coaching_overhaul'  // all coaching overhaul arc events
   | 'igl_crisis'         // all IGL crisis arc events
-  | 'scrim_sharing';     // scrim VOD leak scandal arc
+  | 'scrim_sharing'      // scrim VOD leak scandal arc
+  | 'org_culture';       // org wealth / chicken nugget arc
 
 /**
  * Severity level of drama events
@@ -113,10 +115,15 @@ export type DramaConditionType =
   | 'min_season_day'    // Season day >= threshold (day 1 = first day of season)
 
   // Player origin checks
-  | 'player_is_import'  // Any player's home region differs from the team's league region
+  | 'player_is_import'           // Any player's home region differs from the team's league region
+  | 'player_on_active_roster'    // Player is on the active (non-reserve) roster
 
   // Random chance
   | 'random_chance'
+
+  // Team budget checks
+  | 'team_budget_below'           // Team balance < threshold
+  | 'team_budget_above'           // Team balance > threshold
 
   // Agent composition / strategy checks (populated on InterviewSnapshot)
   | 'composition_type'            // Checks role distribution in last match
@@ -406,6 +413,7 @@ export interface DramaGameStateSnapshot {
     personality?: PlayerPersonality;
     region?: Region;        // Player's home region (for import detection)
     agentPreferences?: PlayerAgentPreferences;
+    isActive?: boolean;     // true = active roster, false = reserve
   }>;
 
   // Active meta patch (null if no patch has fired yet)
@@ -413,6 +421,7 @@ export interface DramaGameStateSnapshot {
 
   playerTeamRegion?: Region;  // The team's (league) region
   iglPlayerId?: string;       // Team's designated IGL player ID
+  teamBudget?: number;        // Team's current financial balance
 
   // Recent match results
   recentMatchResults?: Array<{
@@ -518,6 +527,7 @@ export const DRAMA_CONSTANTS = {
     coaching_overhaul: 5,    // Short: arc events are flag-gated
     igl_crisis: 5,           // Short: arc events are flag-gated
     scrim_sharing: 14,       // Distinct arc, no cross-bleed with external_pressure
+    org_culture: 5,          // Short: arc events are flag-gated
   },
 
   // Effect magnitude defaults

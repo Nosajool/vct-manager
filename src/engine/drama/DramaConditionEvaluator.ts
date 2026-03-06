@@ -139,6 +139,19 @@ export function evaluateCondition(
       );
     }
 
+    case 'player_on_active_roster': {
+      const teamPlayers = snapshot.players.filter(
+        (p) => p.teamId === snapshot.playerTeamId
+      );
+      return teamPlayers.some((p) => p.isActive === true);
+    }
+
+    // Team budget checks
+    case 'team_budget_below':
+      return condition.threshold !== undefined ? (snapshot.teamBudget ?? 0) < condition.threshold : false;
+    case 'team_budget_above':
+      return condition.threshold !== undefined ? (snapshot.teamBudget ?? 0) > condition.threshold : false;
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined

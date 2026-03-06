@@ -14,6 +14,7 @@ import { AGENT_STRATEGY_TEMPLATES } from './agent_strategy';
 import { IGL_CRISIS_TEMPLATES } from './igl_crisis';
 import { GENERAL_TEMPLATES } from './general';
 import { SCRIM_SHARING_TEMPLATES } from './scrim_sharing';
+import { ORG_CULTURE_INTERVIEWS } from './org_culture';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -30,4 +31,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...IGL_CRISIS_TEMPLATES,
   ...GENERAL_TEMPLATES,
   ...SCRIM_SHARING_TEMPLATES,
+  ...ORG_CULTURE_INTERVIEWS,
 ];
