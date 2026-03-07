@@ -121,6 +121,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'or',
+        playerSelector: 'condition_match',
         anyOf: [
           { type: 'flag_active', flag: 'home_visit_paid_{playerId}' },
           { type: 'flag_active', flag: 'home_visit_approved_{playerId}' },
