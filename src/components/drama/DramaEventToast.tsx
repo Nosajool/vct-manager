@@ -9,6 +9,7 @@ import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { NewBadge } from '../narrative/NewBadge';
+import { NarrativeCollectionModal } from '../narrative/NarrativeCollectionModal';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (title, narrative) before being passed as props.
@@ -123,6 +124,7 @@ export function DramaEventToast({
 }: DramaEventToastProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showCollection, setShowCollection] = useState(false);
 
   const players = useGameStore((state) => state.players);
   const affectedPlayer = event.affectedPlayerIds?.[0]
@@ -162,6 +164,7 @@ export function DramaEventToast({
   };
 
   return (
+    <>
     <div
       className={`
         fixed top-20 right-6 z-50
@@ -222,28 +225,41 @@ export function DramaEventToast({
             </div>
           </div>
 
-          {/* Close Button */}
-          <button
-            onClick={handleManualDismiss}
-            className="flex-shrink-0 text-vct-gray hover:text-vct-light transition-colors"
-            aria-label="Dismiss notification"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* Action buttons - right column */}
+          <div className="flex-shrink-0 flex flex-col items-center gap-1.5">
+            <button
+              onClick={handleManualDismiss}
+              className="text-vct-gray hover:text-vct-light transition-colors"
+              aria-label="Dismiss notification"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={() => setShowCollection(true)}
+              className="text-vct-gray/60 hover:text-vct-light transition-colors"
+              aria-label="View collection"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    {showCollection && <NarrativeCollectionModal onClose={() => setShowCollection(false)} />}
+    </>
   );
 }

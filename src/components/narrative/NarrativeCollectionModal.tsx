@@ -114,13 +114,20 @@ export function NarrativeCollectionModal({ onClose }: NarrativeCollectionModalPr
     setConfirmReset(false);
   };
 
+  const allEntries = NARRATIVE_CATEGORIES.flatMap(getCategoryEntries);
+  const totalSeen = allEntries.filter(e => seenTemplateIds.includes(e.templateId)).length;
+  const totalAvailable = allEntries.length;
+
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
 
         {/* Header */}
-        <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-vct-light">Narrative Collection</h2>
+        <div className="p-4 border-b border-vct-gray/20 flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-vct-light">Narrative Collection</h2>
+            <p className="text-sm text-vct-gray/60 mt-0.5">{totalSeen} / {totalAvailable} collected</p>
+          </div>
           <div className="flex items-center gap-2">
             {confirmReset ? (
               <>

@@ -13,6 +13,7 @@ import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { PostMatchHeader } from '../match/PostMatchHeader';
 import { PreMatchHeader } from '../match/PreMatchHeader';
 import { NewBadge } from './NewBadge';
+import { NarrativeCollectionModal } from './NarrativeCollectionModal';
 
 interface InterviewModalProps {
   interview: PendingInterview;
@@ -100,6 +101,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
   const [showOutcome, setShowOutcome] = useState(false);
   const [effectsSummary, setEffectsSummary] = useState('');
+  const [showCollection, setShowCollection] = useState(false);
 
   const players = useGameStore((state) => state.players);
   const teams = useGameStore((state) => state.teams);
@@ -166,14 +168,24 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   })();
 
   return (
+    <>
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
 
         {showOutcome ? (
           // ── Outcome view ────────────────────────────────────────────────
           <>
-            <div className="p-4 border-b border-vct-gray/20">
+            <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between">
               <h2 className="text-xl font-bold text-vct-light">Response Delivered</h2>
+              <button
+                onClick={() => setShowCollection(true)}
+                className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                Collection
+              </button>
             </div>
 
             <div className="overflow-y-auto flex-1">
@@ -230,11 +242,22 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
           <>
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
-                  {contextMeta.label}
-                </span>
-                {interview.isNew && <NewBadge />}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
+                    {contextMeta.label}
+                  </span>
+                  {interview.isNew && <NewBadge />}
+                </div>
+                <button
+                  onClick={() => setShowCollection(true)}
+                  className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  Collection
+                </button>
               </div>
               <div className="flex items-center gap-4 mb-3">
                 {subjectImageUrl ? (
@@ -302,5 +325,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
         )}
       </div>
     </div>
+    {showCollection && <NarrativeCollectionModal onClose={() => setShowCollection(false)} />}
+    </>
   );
 }

@@ -10,6 +10,7 @@ import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { NewBadge } from '../narrative/NewBadge';
+import { NarrativeCollectionModal } from '../narrative/NarrativeCollectionModal';
 
 // NOTE: This component expects DramaEventInstance to be enriched with
 // template data (narrative) and choices from the template.
@@ -120,6 +121,7 @@ export function DramaEventModal({
   const [showOutcome, setShowOutcome] = useState(false);
   const [outcomeText, setOutcomeText] = useState('');
   const [outcomeEffects, setOutcomeEffects] = useState('');
+  const [showCollection, setShowCollection] = useState(false);
 
   const players = useGameStore((state) => state.players);
 
@@ -155,31 +157,43 @@ export function DramaEventModal({
   };
 
   return (
+    <>
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="bg-vct-darker border border-vct-gray/20 rounded-lg max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
         {showOutcome ? (
           // Outcome View
           <>
             {/* Header */}
-            <div className="p-4 border-b border-vct-gray/20">
-              <h2 className="text-xl font-bold text-vct-light">Decision Made</h2>
-              {affectedPlayer && (
-                <div className="flex items-center gap-3 mt-2">
-                  {playerImageUrl ? (
-                    <GameImage
-                      src={playerImageUrl}
-                      alt={affectedPlayer.name}
-                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
-                      fallbackClassName="w-16 h-16 rounded-full flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl font-bold text-vct-gray">{playerInitial}</span>
-                    </div>
-                  )}
-                  <span className="text-base font-semibold text-vct-light">{affectedPlayer.name}</span>
-                </div>
-              )}
+            <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-vct-light">Decision Made</h2>
+                {affectedPlayer && (
+                  <div className="flex items-center gap-3 mt-2">
+                    {playerImageUrl ? (
+                      <GameImage
+                        src={playerImageUrl}
+                        alt={affectedPlayer.name}
+                        className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                        fallbackClassName="w-16 h-16 rounded-full flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xl font-bold text-vct-gray">{playerInitial}</span>
+                      </div>
+                    )}
+                    <span className="text-base font-semibold text-vct-light">{affectedPlayer.name}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => setShowCollection(true)}
+                className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors self-start"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                Collection
+              </button>
             </div>
 
             {/* Outcome Content */}
@@ -214,16 +228,27 @@ export function DramaEventModal({
           <>
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
-              <div className="flex items-center gap-2 mb-2">
-                <span
-                  className={`
-                    inline-block px-3 py-1 rounded-full text-xs font-medium border
-                    ${metadata.badgeColor}
-                  `}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`
+                      inline-block px-3 py-1 rounded-full text-xs font-medium border
+                      ${metadata.badgeColor}
+                    `}
+                  >
+                    {metadata.label}
+                  </span>
+                  {event.isNew && <NewBadge />}
+                </div>
+                <button
+                  onClick={() => setShowCollection(true)}
+                  className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors"
                 >
-                  {metadata.label}
-                </span>
-                {event.isNew && <NewBadge />}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  Collection
+                </button>
               </div>
               <h2 className="text-xl font-bold text-vct-light">
                 Critical Decision Required
@@ -291,5 +316,7 @@ export function DramaEventModal({
         )}
       </div>
     </div>
+    {showCollection && <NarrativeCollectionModal onClose={() => setShowCollection(false)} />}
+    </>
   );
 }
