@@ -556,6 +556,30 @@ function getPlayerCandidatesForCondition(
       });
     }
 
+    case 'or': {
+      if (!condition.anyOf || condition.anyOf.length === 0) {
+        return teamPlayers;
+      }
+
+      const candidateSets = condition.anyOf.map(subCondition =>
+        getPlayerCandidatesForCondition(subCondition, teamPlayers, snapshot)
+      );
+
+      const playerIdSet = new Set<string>();
+      const combined: typeof teamPlayers = [];
+
+      for (const candidates of candidateSets) {
+        for (const player of candidates) {
+          if (!playerIdSet.has(player.id)) {
+            playerIdSet.add(player.id);
+            combined.push(player);
+          }
+        }
+      }
+
+      return combined;
+    }
+
     default:
       return teamPlayers;
   }

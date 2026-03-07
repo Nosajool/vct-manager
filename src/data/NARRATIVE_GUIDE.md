@@ -310,6 +310,16 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 // Logical grouping
 { type: 'or', anyOf: [{ type: '...' }, { type: '...' }] }  // At least one condition must pass
+// OR with playerSelector - playerSelector goes on the OUTER or, NOT on inner anyOf[]
+// This ensures selectInvolvedPlayer correctly extracts the player from flag conditions inside or.anyOf[]
+{
+  type: 'or',
+  playerSelector: 'condition_match',  // <-- HERE, on outer
+  anyOf: [
+    { type: 'flag_active', flag: 'home_visit_paid_{playerId}' },      // no selector needed
+    { type: 'flag_active', flag: 'home_visit_approved_{playerId}' },
+  ],
+}
 
 // Random
 { type: 'random_chance', chance: 20 }  // 0-100
