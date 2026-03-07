@@ -29,6 +29,67 @@ export interface ReleaseResult {
 }
 
 /**
+ * Types of player roster restrictions that prevent promotion
+ */
+export type RestrictionType = 'VISA' | 'AWAY' | 'SUSPENDED' | 'INJURED';
+
+/**
+ * Describes a player's roster restriction status
+ */
+export interface PlayerRestriction {
+  isRestricted: boolean;
+  type: RestrictionType;
+  label: string;
+  tooltip: string;
+}
+
+/**
+ * Configuration for roster restriction patterns.
+ * Add new restriction types here to make them block player promotions.
+ */
+const ROSTER_RESTRICTION_PATTERNS: Array<{
+  pattern: string;
+  type: RestrictionType;
+  label: string;
+  tooltip: string;
+}> = [
+  {
+    pattern: 'visa_delayed_',
+    type: 'VISA',
+    label: 'VISA',
+    tooltip: 'Player unavailable — visa processing pending',
+  },
+  {
+    pattern: 'home_visit_paid_',
+    type: 'AWAY',
+    label: 'AWAY',
+    tooltip: 'Player is on home visit',
+  },
+  {
+    pattern: 'home_visit_approved_',
+    type: 'AWAY',
+    label: 'AWAY',
+    tooltip: 'Player is on home visit',
+  },
+];
+
+/**
+ * Gets the roster restriction status for a player based on active flags.
+ * This is the single source of truth for determining if a player can be promoted.
+ */
+export function getPlayerRestriction(
+  playerId: string,
+  activeFlags: Record<string, unknown>
+): PlayerRestriction {
+  for (const { pattern, type, label, tooltip } of ROSTER_RESTRICTION_PATTERNS) {
+    if (`${pattern}${playerId}` in activeFlags) {
+      return { isRestricted: true, type, label, tooltip };
+    }
+  }
+  return { isRestricted: false, type: 'VISA', label: '', tooltip: '' };
+}
+
+/**
  * ContractService - Handles all contract and roster operations
  */
 export class ContractService {
@@ -269,10 +330,10 @@ export class ContractService {
       if (team.playerIds.length >= 5) {
         return { success: false, error: 'Active roster is full (5/5)' };
       }
-      // Check for visa restriction — player cannot be promoted while visa is pending
-      const isRestricted = `visa_delayed_${playerId}` in state.activeFlags;
-      if (isRestricted) {
-        return { success: false, error: 'Player is unavailable — visa processing still pending' };
+      // Check for roster restriction — player cannot be promoted while restricted
+      const restriction = getPlayerRestriction(playerId, state.activeFlags);
+      if (restriction.isRestricted) {
+        return { success: false, error: restriction.tooltip };
       }
       // Move from reserve to active
       state.movePlayerToActive(player.teamId, playerId);

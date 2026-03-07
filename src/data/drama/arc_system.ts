@@ -2947,6 +2947,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'prodigy_hype_{playerId}',
+        playerSelector: 'condition_match'
       },
       {
         type: 'team_win_streak',

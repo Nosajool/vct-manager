@@ -11,6 +11,7 @@ import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
 import { lineupOptimizer } from '../../engine/team/LineupOptimizer';
 import type { LineupResult } from '../../engine/team/LineupOptimizer';
+import { getPlayerRestriction } from '../../services/ContractService';
 
 interface RosterListProps {
   team: Team;
@@ -80,8 +81,8 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
   const isPlayerTeam = team.id === playerTeamId;
 
-  const isPlayerRestricted = (playerId: string) =>
-    `visa_delayed_${playerId}` in activeFlags;
+  const getPlayerRestrictionForCard = (playerId: string) =>
+    getPlayerRestriction(playerId, activeFlags);
 
   // Check for lineup optimization opportunities
   useEffect(() => {
@@ -300,7 +301,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
                   rosterPosition="reserve"
                   isPlayerTeam={isPlayerTeam}
                   canPromote={canPromote}
-                  isRestricted={isPlayerRestricted(player.id)}
+                  restriction={getPlayerRestrictionForCard(player.id)}
                   onMoveToActive={handleMoveToActive}
                 />
               ))}

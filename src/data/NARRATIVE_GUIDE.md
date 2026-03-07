@@ -575,6 +575,42 @@ Use `{playerId}` in flag keys when the flag is specific to one player (the drama
 
 ---
 
+## Player Roster Restrictions
+
+Some drama flags can restrict a player from being promoted from reserve to active roster. When a player has an active restriction flag, they cannot be moved to the active roster and the UI displays a disabled button with the restriction label.
+
+### How it works
+
+The system checks for specific flag patterns in `ContractService.getPlayerRestriction()`. When a matching flag is active:
+1. The player cannot be promoted via `ContractService.movePlayerPosition()`
+2. The roster UI shows a disabled button with a label (e.g., "VISA", "AWAY")
+3. Auto-fill logic in `TimeBar` also respects restrictions
+
+### Adding a new restriction
+
+In `src/services/ContractService.ts`, add an entry to `ROSTER_RESTRICTION_PATTERNS`:
+
+```typescript
+{
+  pattern: 'your_new_flag_prefix_',  // flag key prefix (without {playerId})
+  type: 'AWAY',                        // VISA | AWAY | SUSPENDED | INJURED
+  label: 'AWAY',                       // shown on UI button
+  tooltip: 'Player unavailable — reason here'
+}
+```
+
+The flag key must be `<pattern><playerId>` (e.g., `home_visit_paid_{playerId}`).
+
+### Existing restriction patterns
+
+| Pattern | Type | Label | Triggered By |
+|---------|------|-------|--------------|
+| `visa_delayed_` | VISA | VISA | `visa_delay_crisis` drama event |
+| `home_visit_paid_` | AWAY | AWAY | `home_visit_request` drama (org pays) |
+| `home_visit_approved_` | AWAY | AWAY | `home_visit_request` drama (player pays) |
+
+---
+
 ## Design Patterns
 
 ### Pattern 1: Interview → Drama Bridge

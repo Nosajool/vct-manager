@@ -34,6 +34,7 @@ import { PreAdvanceValidationModal } from '../today/PreAdvanceValidationModal';
 import { trainingService } from '../../services/TrainingService';
 import { scrimService } from '../../services/ScrimService';
 import { DayScheduleService } from '../../services/DayScheduleService';
+import { getPlayerRestriction } from '../../services/ContractService';
 import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
 import type { MetaPatch } from '../../types/meta';
@@ -445,7 +446,7 @@ export function TimeBar() {
       const needed = 5 - team.playerIds.length;
 
       const available = team.reservePlayerIds
-        .filter(id => !(`visa_delayed_${id}` in state.activeFlags))
+        .filter(id => !getPlayerRestriction(id, state.activeFlags).isRestricted)
         .map(id => state.players[id])
         .filter(Boolean)
         .sort((a, b) => {

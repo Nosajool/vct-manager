@@ -9,6 +9,7 @@ import { formatRating } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
 import { useVisibleStats } from '../../hooks/useFeatureGate';
 import type { PlayerStats } from '../../types';
+import type { PlayerRestriction } from '../../services/ContractService';
 
 interface PlayerCardProps {
   player: Player;
@@ -21,7 +22,7 @@ interface PlayerCardProps {
   rosterPosition?: 'active' | 'reserve';
   isPlayerTeam?: boolean;
   canPromote?: boolean;
-  isRestricted?: boolean;
+  restriction?: PlayerRestriction;
   onMoveToActive?: (playerId: string) => void;
   onMoveToReserve?: (playerId: string) => void;
 }
@@ -48,7 +49,7 @@ export function PlayerCard({
   rosterPosition,
   isPlayerTeam = false,
   canPromote = false,
-  isRestricted = false,
+  restriction,
   onMoveToActive,
   onMoveToReserve,
 }: PlayerCardProps) {
@@ -132,8 +133,8 @@ export function PlayerCard({
 
   // Determine if we should show roster actions
   const showRosterActions = isPlayerTeam && rosterPosition;
-  const canMoveToActive = rosterPosition === 'reserve' && canPromote && onMoveToActive && !isRestricted;
-  const showRestrictedPromote = rosterPosition === 'reserve' && isPlayerTeam && isRestricted;
+  const canMoveToActive = rosterPosition === 'reserve' && canPromote && onMoveToActive && !restriction?.isRestricted;
+  const showRestrictedPromote = rosterPosition === 'reserve' && isPlayerTeam && restriction?.isRestricted;
   const canMoveToReserve = rosterPosition === 'active' && onMoveToReserve;
 
   return (
@@ -188,12 +189,12 @@ export function PlayerCard({
               className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md
                          bg-gray-700/90 text-gray-400 cursor-not-allowed
                          shadow-lg backdrop-blur-sm"
-              title="Player unavailable — visa processing pending"
+              title={restriction?.tooltip || 'Player unavailable'}
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              VISA
+              {restriction?.label || 'UNAVAILABLE'}
             </button>
           )}
           {canMoveToReserve && (

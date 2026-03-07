@@ -100,7 +100,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     description:
       '{playerName} made it back but missed key scrim sessions. They look a step behind in practice today.',
     conditions: [
-      { type: 'flag_active', flag: 'home_visit_delayed_{playerId}' },
+      { type: 'flag_active', flag: 'home_visit_delayed_{playerId}', playerSelector: 'condition_match' },
     ],
     probability: 85,
     requiresPlayerTeam: true,
