@@ -538,7 +538,7 @@ function getPlayerCandidatesForCondition(
           if (player) return [player];
         }
       }
-      return teamPlayers;
+      return [];
     }
     case 'flag_not_active': {
       const flagPattern = condition.flag;
