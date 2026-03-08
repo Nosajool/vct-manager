@@ -81,6 +81,13 @@ export interface TournamentMatchContext {
     recentWinStreak: number;    // consecutive wins coming in
     rivalryLevel: number;       // 0-100 from RivalrySlice
   };
+  // Extended tournament narrative fields
+  roundNumber?: number;           // 1-based round in this bracket section
+  teamRecord?: { wins: number; losses: number };  // player team's record in this tournament
+  tournamentType?: string;        // tournament.type: 'kickoff' | 'masters' | 'champions' | 'stage1' | 'stage2'
+  tournamentDisplayName?: string; // tournament.name e.g. "Masters Santiago"
+  isOpeningMatch?: boolean;       // true if this is/was the team's first match in the tournament
+  qualifiesFor?: string;          // what this tournament feeds into, e.g. "Masters Santiago"
 }
 
 // Snapshot of game state used for interview condition evaluation

@@ -438,6 +438,73 @@ Combine with flag gates freely in the same array:
 
 ---
 
+## Tournament Context Interviews
+
+### Purpose
+
+These are always-on narrative bookends injected into every press conference for tournament matches. They reference exact tournament details — name, round, record, bracket position — so players always understand what a match *meant* to their campaign.
+
+- **Pre-match**: injected at the **start** of the press conference queue
+- **Post-match**: injected at the **end** of the press conference queue
+- **No probability gate**: they always appear when `TournamentMatchContext` is available
+- **Additive**: they don't count toward the normal 2–4 question max
+
+### Generation
+
+Dynamic interpolation via `src/data/interviews/tournament_context.ts`. These are **not** registered in `INTERVIEW_TEMPLATES` and are not stored in the template registry. They return `PendingInterview` objects directly.
+
+Functions:
+- `generateTournamentContextPreMatchInterview(context)` → `PendingInterview | null`
+- `generateTournamentContextPostMatchInterview(context, won)` → `PendingInterview | null`
+
+### Available context fields (`TournamentMatchContext`)
+
+```typescript
+bracketPosition: 'upper' | 'lower' | null  // null = group/Swiss stage
+eliminationRisk: boolean                    // one more loss = out
+isGrandFinal: boolean
+opponent?: { teamId, droppedFromUpper, recentWinStreak, rivalryLevel }
+roundNumber?: number           // 1-based round in the bracket section
+teamRecord?: { wins, losses }  // team's record in this tournament (after result for post, before for pre)
+tournamentType?: string        // 'kickoff' | 'masters' | 'champions' | 'stage1' | 'stage2'
+tournamentDisplayName?: string // e.g. "Masters Santiago", "Kickoff"
+isOpeningMatch?: boolean       // first match of the tournament for this team
+qualifiesFor?: string          // downstream event: "Masters Santiago", "Champions", etc.
+```
+
+### Pre-match scenarios
+
+| Scenario ID | Condition |
+|-------------|-----------|
+| `tc_pre_grand_final` | `isGrandFinal === true` |
+| `tc_pre_opening` | `isOpeningMatch === true` |
+| `tc_pre_lower_elimination` | `bracketPosition === 'lower'` + `eliminationRisk` |
+| `tc_pre_lower_survival` | `bracketPosition === 'lower'` |
+| `tc_pre_upper_bracket` | `bracketPosition === 'upper'` |
+| `tc_pre_record_based` | Swiss/league (uses `teamRecord`) |
+
+### Post-match scenarios
+
+| Scenario ID | Condition |
+|-------------|-----------|
+| `tc_post_win_grand_final` | Won + `isGrandFinal` |
+| `tc_post_win_first_match` | Won + `isOpeningMatch` |
+| `tc_post_win_lower_advancing` | Won + `bracketPosition === 'lower'` |
+| `tc_post_win_upper_advancing` | Won + `bracketPosition === 'upper'` |
+| `tc_post_win_swiss` | Won + Swiss/league |
+| `tc_post_loss_eliminated` | Lost + `eliminationRisk` |
+| `tc_post_loss_grand_final` | Lost + `isGrandFinal` |
+| `tc_post_loss_dropped_to_lower` | Lost + `bracketPosition === 'upper'` |
+| `tc_post_loss_lower_survival` | Lost + `bracketPosition === 'lower'` |
+| `tc_post_loss_first_match` | Lost + `isOpeningMatch` |
+| `tc_post_loss_swiss` | Lost + Swiss/league |
+
+### How to add new scenarios
+
+Add a new condition block in `src/data/interviews/tournament_context.ts` inside `generateTournamentContextPreMatchInterview` or `generateTournamentContextPostMatchInterview`. Pick a unique `templateId` prefix (`tc_pre_*` or `tc_post_*`), write 3–4 prompt variants, and supply 3 response options.
+
+---
+
 ## Arc System (Phase 2)
 
 ### Overview

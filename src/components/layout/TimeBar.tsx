@@ -313,12 +313,20 @@ export function TimeBar() {
     const team = state.teams[playerTeamId];
     const isPlayoffMatch = matchData.isPlayoffMatch ?? false;
 
+    const match = state.matches[matchId];
+    const tournamentContext = match?.tournamentId
+      ? calendarService.computePreMatchTournamentContext(
+          matchId, playerTeamId, match.tournamentId, state.tournaments
+        )
+      : undefined;
+
     // Check for pre-match press conference
     const queue = interviewService.checkPreMatchPressConference(
       matchId,
       playerTeamId,
       team,
-      isPlayoffMatch
+      isPlayoffMatch,
+      tournamentContext,
     );
 
     if (queue.length > 0) {

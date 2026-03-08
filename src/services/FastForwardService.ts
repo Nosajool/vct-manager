@@ -186,11 +186,18 @@ class FastForwardService {
           if (matchId) {
             const team = state.teams[playerTeamId];
             const isPlayoffMatch = matchData.isPlayoffMatch ?? false;
+            const match = state.matches[matchId];
+            const tournamentContext = match?.tournamentId
+              ? calendarService.computePreMatchTournamentContext(
+                  matchId, playerTeamId, match.tournamentId, state.tournaments
+                )
+              : undefined;
             const preQueue = interviewService.checkPreMatchPressConference(
               matchId,
               playerTeamId,
               team,
               isPlayoffMatch,
+              tournamentContext,
             );
             for (const interview of preQueue) {
               if (interview.options.length > 0) {

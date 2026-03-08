@@ -16,6 +16,10 @@ import type {
 } from '../types/interview';
 import { evaluateTemplateFlagGate, resolveInterviewEffects } from '../engine/interview';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
+import {
+  generateTournamentContextPreMatchInterview,
+  generateTournamentContextPostMatchInterview,
+} from '../data/interviews/tournament_context';
 import { useGameStore } from '../store';
 
 export interface InterviewEffectResult {
@@ -239,21 +243,28 @@ export class InterviewService {
     // Only tournament matches
     if (!match.tournamentId) return [];
 
-    // Roll probability
+    // Always generate tournament context interview (no probability gate)
+    const contextInterview = context
+      ? generateTournamentContextPreMatchInterview(context)
+      : null;
+
+    // Roll probability for normal press conference questions
     let chance = 80;
     if (isPlayoffMatch) chance += 20;
 
-    if (Math.random() * 100 >= chance) return [];
+    let normal: PendingInterview[] = [];
+    if (Math.random() * 100 < chance) {
+      const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+      const snapshot = this.buildInterviewSnapshot({
+        isPlayoffMatch,
+        opponentTeamId,
+        tournamentContext: context,
+      });
+      const count = isPlayoffMatch ? 3 : 2;
+      normal = this.generatePressConference(count, 'PRE_MATCH', snapshot, matchId);
+    }
 
-    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
-    const snapshot = this.buildInterviewSnapshot({
-      isPlayoffMatch,
-      opponentTeamId,
-      tournamentContext: context,
-    });
-
-    const count = isPlayoffMatch ? 3 : 2;
-    return this.generatePressConference(count, 'PRE_MATCH', snapshot, matchId);
+    return contextInterview ? [contextInterview, ...normal] : normal;
   }
 
   /**
@@ -273,7 +284,14 @@ export class InterviewService {
     const match = state.matches[matchResult.matchId];
     if (!match) return [];
 
-    // Roll probability
+    const won = matchResult.winnerId === playerTeamId;
+
+    // Always generate tournament context interview (no probability gate)
+    const contextInterview = context
+      ? generateTournamentContextPostMatchInterview(context, won)
+      : null;
+
+    // Roll probability for normal press conference questions
     let chance = 80;
     if (isPlayoffMatch) chance += 20;
 
@@ -283,27 +301,29 @@ export class InterviewService {
     if (lossStreak >= 2) chance += 15;
     if (isUpsetWin) chance += 15;
 
-    if (Math.random() * 100 >= chance) return [];
+    let normal: PendingInterview[] = [];
+    if (Math.random() * 100 < chance) {
+      const outcome = won ? 'win' : 'loss';
+      const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
 
-    const won = matchResult.winnerId === playerTeamId;
-    const outcome = won ? 'win' : 'loss';
-    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+      const snapshot = this.buildInterviewSnapshot({
+        isPlayoffMatch,
+        isUpsetWin,
+        lastMatchWon: won,
+        opponentTeamId,
+        tournamentContext: context,
+        matchResult,
+      });
 
-    const snapshot = this.buildInterviewSnapshot({
-      isPlayoffMatch,
-      isUpsetWin,
-      lastMatchWon: won,
-      opponentTeamId,
-      tournamentContext: context,
-      matchResult,
-    });
+      let count = 2;
+      if (isPlayoffMatch) count++;
+      if (isUpsetWin || context?.isGrandFinal) count++;
+      count = Math.min(count, 4);
 
-    let count = 2;
-    if (isPlayoffMatch) count++;
-    if (isUpsetWin || context?.isGrandFinal) count++;
-    count = Math.min(count, 4);
+      normal = this.generatePressConference(count, 'POST_MATCH', snapshot, matchResult.matchId, outcome, isUpsetWin);
+    }
 
-    return this.generatePressConference(count, 'POST_MATCH', snapshot, matchResult.matchId, outcome, isUpsetWin);
+    return contextInterview ? [...normal, contextInterview] : normal;
   }
 
   /**

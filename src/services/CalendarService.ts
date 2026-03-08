@@ -908,6 +908,20 @@ export class CalendarService {
 
     const bracket = tournament.bracket;
 
+    // Compute team record for this tournament (after result)
+    const state = useGameStore.getState();
+    const allHistory = state.getTeamMatchHistory(playerTeamId);
+    const tournamentMatchIds = new Set<string>();
+    for (const m of Object.values(state.matches)) {
+      if (m.tournamentId === tournamentId) tournamentMatchIds.add(m.id);
+    }
+    const tournamentHistory = allHistory.filter((r) => tournamentMatchIds.has(r.matchId));
+    const wins = tournamentHistory.filter((r) => r.winnerId === playerTeamId).length;
+    const losses = tournamentHistory.filter((r) => r.winnerId !== playerTeamId).length;
+    const teamRecord = { wins, losses };
+    const isOpeningMatch = wins + losses === 1; // post-match: 1 total = this was the first
+    const qualifiesFor = computeQualifiesFor(tournament.type);
+
     // Find the BracketMatch corresponding to this match result
     const bracketEntry = findBracketMatchById(bracket, matchResult.matchId);
     if (!bracketEntry) {
@@ -922,6 +936,11 @@ export class CalendarService {
           opponent: opponentTeamId
             ? this.buildOpponentContext(opponentTeamId, bracket, matchResult.matchId, tournaments)
             : undefined,
+          teamRecord,
+          isOpeningMatch,
+          tournamentType: tournament.type,
+          tournamentDisplayName: tournament.name,
+          qualifiesFor,
         };
       }
       return undefined;
@@ -938,6 +957,88 @@ export class CalendarService {
       opponent: opponentTeamId
         ? this.buildOpponentContext(opponentTeamId, bracket, matchResult.matchId, tournaments)
         : undefined,
+      roundNumber: round.roundNumber,
+      teamRecord,
+      isOpeningMatch,
+      tournamentType: tournament.type,
+      tournamentDisplayName: tournament.name,
+      qualifiesFor,
+    };
+  }
+
+  /**
+   * Compute TournamentMatchContext for an upcoming (pre-match) match.
+   * Used to enrich pre-match press conferences with bracket awareness.
+   */
+  public computePreMatchTournamentContext(
+    matchId: string,
+    playerTeamId: string,
+    tournamentId: string | undefined,
+    tournaments: Record<string, Tournament>,
+  ): TournamentMatchContext | undefined {
+    if (!tournamentId) return undefined;
+    const tournament = tournaments[tournamentId];
+    if (!tournament) return undefined;
+
+    const bracket = tournament.bracket;
+    const state = useGameStore.getState();
+
+    // Compute team record before this match (exclude current matchId)
+    const allHistory = state.getTeamMatchHistory(playerTeamId);
+    const tournamentMatchIds = new Set<string>();
+    for (const m of Object.values(state.matches)) {
+      if (m.tournamentId === tournamentId) tournamentMatchIds.add(m.id);
+    }
+    const tournamentHistory = allHistory.filter(
+      (r) => tournamentMatchIds.has(r.matchId) && r.matchId !== matchId
+    );
+    const wins = tournamentHistory.filter((r) => r.winnerId === playerTeamId).length;
+    const losses = tournamentHistory.filter((r) => r.winnerId !== playerTeamId).length;
+    const teamRecord = { wins, losses };
+    const isOpeningMatch = wins + losses === 0; // pre-match: 0 total = this is the first
+    const qualifiesFor = computeQualifiesFor(tournament.type);
+
+    // Find the BracketMatch for this matchId
+    const bracketEntry = findBracketMatchById(bracket, matchId);
+    if (!bracketEntry) {
+      // Could be grand final
+      const gf = bracket.grandfinal;
+      if (gf && gf.matchId === matchId) {
+        const opponentTeamId = gf.teamAId === playerTeamId ? gf.teamBId : gf.teamAId;
+        return {
+          bracketPosition: 'upper',
+          eliminationRisk: gf.loserDestination.type === 'eliminated',
+          isGrandFinal: true,
+          opponent: opponentTeamId
+            ? this.buildOpponentContext(opponentTeamId, bracket, matchId, tournaments)
+            : undefined,
+          teamRecord,
+          isOpeningMatch,
+          tournamentType: tournament.type,
+          tournamentDisplayName: tournament.name,
+          qualifiesFor,
+        };
+      }
+      return undefined;
+    }
+
+    const { match, round } = bracketEntry;
+    const bracketPosition: 'upper' | 'lower' = round.bracketType === 'lower' ? 'lower' : 'upper';
+    const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+
+    return {
+      bracketPosition,
+      eliminationRisk: match.loserDestination.type === 'eliminated',
+      isGrandFinal: false,
+      opponent: opponentTeamId
+        ? this.buildOpponentContext(opponentTeamId, bracket, matchId, tournaments)
+        : undefined,
+      roundNumber: round.roundNumber,
+      teamRecord,
+      isOpeningMatch,
+      tournamentType: tournament.type,
+      tournamentDisplayName: tournament.name,
+      qualifiesFor,
     };
   }
 
@@ -1036,5 +1137,21 @@ function didTeamDropFromUpper(bracket: BracketStructure, teamId: string): boolea
     }
   }
   return false;
+}
+
+/**
+ * Map a tournament type to the name of the downstream event it qualifies for.
+ */
+function computeQualifiesFor(tournamentType: string): string | undefined {
+  switch (tournamentType) {
+    case 'kickoff': return 'Masters Santiago';
+    case 'stage1':
+    case 'stage1_playoffs': return 'Masters London';
+    case 'stage2':
+    case 'stage2_playoffs': return 'Champions';
+    case 'masters': return 'Champions';
+    case 'champions': return undefined;
+    default: return undefined;
+  }
 }
 
