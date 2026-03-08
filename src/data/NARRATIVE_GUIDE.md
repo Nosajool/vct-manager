@@ -460,9 +460,10 @@ Functions:
 ### Available context fields (`TournamentMatchContext`)
 
 ```typescript
-bracketPosition: 'upper' | 'lower' | null  // null = group/Swiss stage
-eliminationRisk: boolean                    // one more loss = out
+bracketPosition: 'upper' | 'middle' | 'lower' | null  // null = group/Swiss stage
+eliminationRisk: boolean                               // one more loss = out
 isGrandFinal: boolean
+isBracketFinal?: boolean       // true when winner qualifies (winnerDestination.type === 'champion' or 'placement')
 opponent?: { teamId, droppedFromUpper, recentWinStreak, rivalryLevel }
 roundNumber?: number           // 1-based round in the bracket section
 teamRecord?: { wins, losses }  // team's record in this tournament (after result for post, before for pre)
@@ -478,8 +479,10 @@ qualifiesFor?: string          // downstream event: "Masters Santiago", "Champio
 |-------------|-----------|
 | `tc_pre_grand_final` | `isGrandFinal === true` |
 | `tc_pre_opening` | `isOpeningMatch === true` |
+| `tc_pre_bracket_final` | `isBracketFinal && qualifiesFor` |
 | `tc_pre_lower_elimination` | `bracketPosition === 'lower'` + `eliminationRisk` |
 | `tc_pre_lower_survival` | `bracketPosition === 'lower'` |
+| `tc_pre_middle_bracket` | `bracketPosition === 'middle'` |
 | `tc_pre_upper_bracket` | `bracketPosition === 'upper'` |
 | `tc_pre_record_based` | Swiss/league (uses `teamRecord`) |
 
@@ -489,12 +492,15 @@ qualifiesFor?: string          // downstream event: "Masters Santiago", "Champio
 |-------------|-----------|
 | `tc_post_win_grand_final` | Won + `isGrandFinal` |
 | `tc_post_win_first_match` | Won + `isOpeningMatch` |
+| `tc_post_win_bracket_final` | Won + `isBracketFinal && qualifiesFor` |
 | `tc_post_win_lower_advancing` | Won + `bracketPosition === 'lower'` |
+| `tc_post_win_middle_advancing` | Won + `bracketPosition === 'middle'` |
 | `tc_post_win_upper_advancing` | Won + `bracketPosition === 'upper'` |
 | `tc_post_win_swiss` | Won + Swiss/league |
 | `tc_post_loss_eliminated` | Lost + `eliminationRisk` |
 | `tc_post_loss_grand_final` | Lost + `isGrandFinal` |
-| `tc_post_loss_dropped_to_lower` | Lost + `bracketPosition === 'upper'` |
+| `tc_post_loss_dropped_to_lower` | Lost + `bracketPosition === 'upper'` (uses "middle bracket" in kickoff) |
+| `tc_post_loss_middle_dropped` | Lost + `bracketPosition === 'middle'` |
 | `tc_post_loss_lower_survival` | Lost + `bracketPosition === 'lower'` |
 | `tc_post_loss_first_match` | Lost + `isOpeningMatch` |
 | `tc_post_loss_swiss` | Lost + Swiss/league |

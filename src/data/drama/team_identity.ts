@@ -448,6 +448,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'team_identity_star_carry',
+        playerSelector: 'star_player',
       },
       {
         type: 'team_chemistry_above',

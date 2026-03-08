@@ -107,6 +107,9 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'player_form', effectPlayerSelector: 'triggering', delta: -10 },
       { target: 'team_chemistry', delta: -5 },
+      { target: 'clear_flag', flag: 'home_visit_paid_{playerId}' },
+      { target: 'clear_flag', flag: 'home_visit_approved_{playerId}' },
+      { target: 'clear_flag', flag: 'home_visit_delayed_{playerId}' },
       { target: 'move_to_active', effectPlayerSelector: 'triggering' },
     ],
   },
@@ -134,6 +137,8 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 10 },
       { target: 'player_form', effectPlayerSelector: 'triggering', delta: 5 },
+      { target: 'clear_flag', flag: 'home_visit_paid_{playerId}' },
+      { target: 'clear_flag', flag: 'home_visit_approved_{playerId}' },
       { target: 'move_to_active', effectPlayerSelector: 'triggering' },
     ],
   },

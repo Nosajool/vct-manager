@@ -72,9 +72,10 @@ export interface PendingInterview {
 
 // Tournament context passed into interview evaluation
 export interface TournamentMatchContext {
-  bracketPosition: 'upper' | 'lower' | null; // null for group stage / non-bracket
-  eliminationRisk: boolean;                   // one more loss = out
+  bracketPosition: 'upper' | 'middle' | 'lower' | null; // null for group stage / non-bracket
+  eliminationRisk: boolean;                              // one more loss = out
   isGrandFinal: boolean;
+  isBracketFinal?: boolean;                              // true when winner qualifies (winnerDestination.type === 'champion' or 'placement')
   opponent?: {
     teamId: string;
     droppedFromUpper: boolean;  // opponent just came from upper bracket
@@ -99,7 +100,7 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
   hasRivalry: boolean;
   // Widened tournamentContext: adds opponent context for interview conditions
   tournamentContext?: {
-    bracketPosition: 'upper' | 'lower' | null;
+    bracketPosition: 'upper' | 'middle' | 'lower' | null;
     eliminationRisk: boolean;
     isGrandFinal: boolean;
     opponent?: { droppedFromUpper: boolean };

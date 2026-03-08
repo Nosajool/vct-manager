@@ -182,7 +182,7 @@ export interface DramaCondition {
   contractYearsThreshold?: number; // Used with player_contract_expiring (default: 1)
 
   // For bracket_position check
-  bracketPosition?: 'upper' | 'lower'; // Used with bracket_position type
+  bracketPosition?: 'upper' | 'middle' | 'lower'; // Used with bracket_position type
 
   // For 'or' type: at least one sub-condition must pass
   anyOf?: DramaCondition[];
@@ -440,7 +440,7 @@ export interface DramaGameStateSnapshot {
 
   // Tournament context (Phase 1 — populated when team is in a tournament bracket)
   tournamentContext?: {
-    bracketPosition: 'upper' | 'lower' | null;
+    bracketPosition: 'upper' | 'middle' | 'lower' | null;
     eliminationRisk: boolean;
     isGrandFinal: boolean;
     opponent?: { droppedFromUpper: boolean }; // Populated in interview context

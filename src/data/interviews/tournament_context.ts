@@ -167,6 +167,27 @@ const POST_WIN_OPTIONS_ADVANCE: InterviewOption[] = [
   },
 ];
 
+const POST_WIN_OPTIONS_QUALIFY: InterviewOption[] = [
+  {
+    tone: 'CONFIDENT',
+    label: 'We earned this',
+    quote: '"That\'s what we trained for. We\'re not done yet — there\'s still a tournament to win."',
+    effects: { morale: 4, hype: 3, fanbase: 5 },
+  },
+  {
+    tone: 'HUMBLE',
+    label: 'Overwhelmed and grateful',
+    quote: '"It hasn\'t fully sunk in yet. This team fought incredibly hard to get here. I\'m so proud."',
+    effects: { morale: 3, hype: 2, fanbase: 4 },
+  },
+  {
+    tone: 'DEFLECTIVE',
+    label: 'Eyes on the next match',
+    quote: '"We celebrate tonight, but tomorrow we get back to work. This was a step, not the finish line."',
+    effects: { morale: 2, dramaChance: 3 },
+  },
+];
+
 const POST_WIN_OPTIONS_GRAND_FINAL: InterviewOption[] = [
   {
     tone: 'CONFIDENT',
@@ -274,6 +295,16 @@ export function generateTournamentContextPreMatchInterview(
     return makePending('tc_pre_opening', prompt, PRE_OPTIONS_READY, context.opponent?.teamId);
   }
 
+  // Bracket final — qualifying stakes
+  if (context.isBracketFinal && context.qualifiesFor) {
+    const prompt = pick([
+      interpolate('Winning this match means qualifying for {qualifiesFor}. What does that mean to you and your team?', vars),
+      interpolate('You\'re one win away from {qualifiesFor}. How does the team prepare for a match this significant?', vars),
+      interpolate('This match could send you to {qualifiesFor}. How do you handle the weight of what\'s at stake?', vars),
+    ]);
+    return makePending('tc_pre_bracket_final', prompt, PRE_OPTIONS_PRESSURE, context.opponent?.teamId);
+  }
+
   // Lower bracket — elimination risk
   if (context.bracketPosition === 'lower' && context.eliminationRisk) {
     const prompt = pick([
@@ -292,6 +323,16 @@ export function generateTournamentContextPreMatchInterview(
       interpolate('Another lower bracket match in {tournamentName}. You\'re still alive at {wins}-{losses}. What does this match mean to the team?', vars),
     ]);
     return makePending('tc_pre_lower_survival', prompt, PRE_OPTIONS_SURVIVAL, context.opponent?.teamId);
+  }
+
+  // Middle bracket
+  if (context.bracketPosition === 'middle') {
+    const prompt = pick([
+      interpolate('You\'re in the middle bracket of {tournamentName} with a {wins}-{losses} record. How does the team stay focused after the setback?', vars),
+      interpolate('Middle bracket of {tournamentName}, round {roundNumber}. You\'ve still got a path forward — what\'s the mindset?', vars),
+      interpolate('You dropped to the middle bracket in {tournamentName}. What does the team need to do to keep the run alive?', vars),
+    ]);
+    return makePending('tc_pre_middle_bracket', prompt, PRE_OPTIONS_SURVIVAL, context.opponent?.teamId);
   }
 
   // Upper bracket — not grand final, not opening
@@ -360,6 +401,16 @@ export function generateTournamentContextPostMatchInterview(
       return makePostPending('tc_post_win_first_match', prompt, POST_WIN_OPTIONS_ADVANCE);
     }
 
+    // Win — bracket final (qualifies for next event)
+    if (context.isBracketFinal && qualifiesForStr) {
+      const prompt = pick([
+        interpolate('Congratulations! You\'ve qualified for {qualifiesFor}! What does it mean to your team to reach that stage?', vars),
+        interpolate('That win books your ticket to {qualifiesFor}! Are you excited for what\'s next?', vars),
+        interpolate('You\'re going to {qualifiesFor}! Let that sink in — what are you feeling right now?', vars),
+      ]);
+      return makePostPending('tc_post_win_bracket_final', prompt, POST_WIN_OPTIONS_QUALIFY);
+    }
+
     // Win — lower bracket
     if (context.bracketPosition === 'lower') {
       const prompt = pick([
@@ -368,6 +419,16 @@ export function generateTournamentContextPostMatchInterview(
         interpolate('You stay alive in the lower bracket of {tournamentName}. That makes you {wins}-{losses} in the tournament. What did this match mean?', vars),
       ]);
       return makePostPending('tc_post_win_lower_advancing', prompt, POST_WIN_OPTIONS_ADVANCE);
+    }
+
+    // Win — middle bracket
+    if (context.bracketPosition === 'middle') {
+      const prompt = pick([
+        interpolate('You stay alive in the middle bracket of {tournamentName} — now {wins}-{losses}. The fight continues. What\'s next?', vars),
+        interpolate('Another win in the middle bracket of {tournamentName}. You\'re {wins}-{losses} and still in it. What keeps the team going?', vars),
+        interpolate('Middle bracket, another win. You\'re {wins}-{losses} in {tournamentName} and not done yet. What did this match mean?', vars),
+      ]);
+      return makePostPending('tc_post_win_middle_advancing', prompt, POST_WIN_OPTIONS_ADVANCE);
     }
 
     // Win — upper bracket
@@ -409,14 +470,25 @@ export function generateTournamentContextPostMatchInterview(
       return makePostPending('tc_post_loss_grand_final', prompt, POST_LOSS_OPTIONS_ELIMINATED);
     }
 
-    // Loss — dropped from upper
+    // Loss — dropped from upper bracket
     if (context.bracketPosition === 'upper') {
+      const dropsTo = context.tournamentType === 'kickoff' ? 'middle' : 'lower';
       const prompt = pick([
-        interpolate('That loss sends you to the lower bracket of {tournamentName}. You\'re still alive but the margin for error just got smaller. What changes are you making?', vars),
-        interpolate('You drop to the lower bracket with a {wins}-{losses} record in {tournamentName}. How does the team respond to adversity?', vars),
-        interpolate('From upper to lower bracket in {tournamentName} — that\'s a tough result at {wins}-{losses}. What\'s the mindset now?', vars),
+        interpolate(`That loss sends you to the ${dropsTo} bracket of {tournamentName}. You\'re still alive but the margin for error just got smaller. What changes are you making?`, vars),
+        interpolate(`You drop to the ${dropsTo} bracket with a {wins}-{losses} record in {tournamentName}. How does the team respond to adversity?`, vars),
+        interpolate(`From upper to ${dropsTo} bracket in {tournamentName} — that\'s a tough result at {wins}-{losses}. What\'s the mindset now?`, vars),
       ]);
       return makePostPending('tc_post_loss_dropped_to_lower', prompt, POST_LOSS_OPTIONS_LOWER);
+    }
+
+    // Loss — dropped from middle bracket
+    if (context.bracketPosition === 'middle') {
+      const prompt = pick([
+        interpolate('That loss sends you to the lower bracket of {tournamentName}. You\'re {wins}-{losses} — one more loss and you\'re out. What changes?', vars),
+        interpolate('You drop from the middle to the lower bracket in {tournamentName}. At {wins}-{losses}, the margin for error is gone. How does the team respond?', vars),
+        interpolate('From middle to lower bracket in {tournamentName} — that\'s a tough result at {wins}-{losses}. What\'s the mindset now?', vars),
+      ]);
+      return makePostPending('tc_post_loss_middle_dropped', prompt, POST_LOSS_OPTIONS_LOWER);
     }
 
     // Loss — lower bracket, survived

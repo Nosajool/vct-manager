@@ -947,13 +947,18 @@ export class CalendarService {
     }
 
     const { match, round } = bracketEntry;
-    const bracketPosition: 'upper' | 'lower' = round.bracketType === 'lower' ? 'lower' : 'upper';
+    const bracketPosition: 'upper' | 'middle' | 'lower' =
+      round.bracketType === 'lower' ? 'lower' :
+      round.bracketType === 'middle' ? 'middle' : 'upper';
+    const isBracketFinal = match.winnerDestination.type === 'champion'
+      || match.winnerDestination.type === 'placement';
     const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
 
     return {
       bracketPosition,
       eliminationRisk: match.loserDestination.type === 'eliminated',
       isGrandFinal: false,
+      isBracketFinal,
       opponent: opponentTeamId
         ? this.buildOpponentContext(opponentTeamId, bracket, matchResult.matchId, tournaments)
         : undefined,
@@ -1023,13 +1028,18 @@ export class CalendarService {
     }
 
     const { match, round } = bracketEntry;
-    const bracketPosition: 'upper' | 'lower' = round.bracketType === 'lower' ? 'lower' : 'upper';
+    const bracketPosition: 'upper' | 'middle' | 'lower' =
+      round.bracketType === 'lower' ? 'lower' :
+      round.bracketType === 'middle' ? 'middle' : 'upper';
+    const isBracketFinal = match.winnerDestination.type === 'champion'
+      || match.winnerDestination.type === 'placement';
     const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
 
     return {
       bracketPosition,
       eliminationRisk: match.loserDestination.type === 'eliminated',
       isGrandFinal: false,
+      isBracketFinal,
       opponent: opponentTeamId
         ? this.buildOpponentContext(opponentTeamId, bracket, matchId, tournaments)
         : undefined,
