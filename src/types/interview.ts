@@ -103,7 +103,11 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
     bracketPosition: 'upper' | 'middle' | 'lower' | null;
     eliminationRisk: boolean;
     isGrandFinal: boolean;
-    opponent?: { droppedFromUpper: boolean };
+    opponent?: {
+      droppedFromUpper: boolean;
+      recentWinStreak: number;
+      rivalryLevel: number;
+    };
   };
   // Agent composition from the last match
   lastMatchComposition?: {

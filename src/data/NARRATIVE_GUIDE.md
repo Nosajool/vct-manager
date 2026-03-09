@@ -116,6 +116,23 @@ Set `matchOutcome` to restrict a POST_MATCH template to win or loss matches:
 
 PRE_MATCH and CRISIS templates do not use `matchOutcome`.
 
+### Prompt interpolation
+
+Some templates use `{placeholder}` syntax in their `prompt` string for values that are only
+known at runtime (e.g. the specific map a comeback happened on). These placeholders are
+resolved in `InterviewService` before the template is passed to `toPendingInterview()` — the
+template registry stores the raw string with the placeholder.
+
+Currently used:
+
+| Template | Placeholder | Resolved by |
+|----------|-------------|-------------|
+| `post_win_comeback` | `{mapName}` | `InterviewService.findComebackMap()` — map with the biggest halftime deficit that was won; falls back to first won map |
+
+This is distinct from tournament context interpolation (which uses a separate generation
+function). Template prompt interpolation is inline in `checkPostMatchInterview()` and uses a
+shallow copy of the template object.
+
 ### `conditions[]` field
 
 Gate a template on any `DramaCondition` (same types used by drama events). All conditions must pass. Use any combination:
@@ -309,6 +326,8 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 { type: 'has_rivalry' }        // True when team has active rivalry with opponent
 { type: 'is_grand_final' }     // True when current match is the grand final
 { type: 'opponent_from_upper' } // True when opponent dropped from upper bracket
+{ type: 'opponent_win_streak', minStreak: 2 } // True when opponent's recent win streak >= minStreak (default 1)
+{ type: 'opponent_rivalry_level', minLevel: 50 } // True when opponent's rivalry intensity >= minLevel (default 50)
 
 // Logical grouping
 { type: 'or', anyOf: [{ type: '...' }, { type: '...' }] }  // At least one condition must pass
@@ -832,7 +851,7 @@ Detection events set team identity flags; reactive events and interview template
 2. pre_star_carry_identity (interview template)
    conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }]
    context: PRE_MATCH
-   // Reporter asks about building around one player
+   // Reporter asks about building around {starPlayerName} (resolved to highest-rated player at interview time)
 
 3. star_carry_friction (major drama event)
    conditions: [flag_active team_identity_star_carry, TEAM_FIRST personality, loss streak 2]

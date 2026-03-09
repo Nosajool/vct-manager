@@ -104,6 +104,8 @@ export type DramaConditionType =
   | 'has_rivalry'        // True when the player team has an active rivalry with the opponent
   | 'is_grand_final'     // True when the current match is the grand final
   | 'opponent_from_upper' // True when the opponent dropped from the upper bracket
+  | 'opponent_win_streak' // True when opponent's recent win streak >= minStreak (default 1)
+  | 'opponent_rivalry_level' // True when opponent's rivalry intensity >= minLevel (default 50)
 
   // Logical grouping
   | 'or'                 // At least one condition in anyOf must pass
@@ -188,6 +190,12 @@ export interface DramaCondition {
 
   // For tournament_type check
   tournamentType?: string; // Used with tournament_type type (e.g. 'kickoff', 'masters')
+
+  // For opponent_win_streak check
+  minStreak?: number; // Minimum win streak required (used with opponent_win_streak type)
+
+  // For opponent_rivalry_level check
+  minLevel?: number; // Minimum rivalry level required (used with opponent_rivalry_level type)
 
   // For 'or' type: at least one sub-condition must pass
   anyOf?: DramaCondition[];
@@ -450,7 +458,11 @@ export interface DramaGameStateSnapshot {
     isGrandFinal: boolean;
     isEliminated?: boolean;   // true if team has no remaining matches (was eliminated)
     tournamentType?: string;  // 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions'
-    opponent?: { droppedFromUpper: boolean }; // Populated in interview context
+    opponent?: {
+      droppedFromUpper: boolean;
+      recentWinStreak: number;
+      rivalryLevel: number;
+    }; // Populated in interview context
   };
 
   // Optional fields populated in interview context (InterviewSnapshot extends this)

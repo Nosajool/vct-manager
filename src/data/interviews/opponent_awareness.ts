@@ -100,7 +100,10 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_opponent_on_run',
     context: 'PRE_MATCH',
     subjectType: 'manager',
-    conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
+    conditions: [
+      { type: 'bracket_position', bracketPosition: 'lower' },
+      { type: 'opponent_win_streak', minStreak: 2 },
+    ],
     prompt: "The team you're facing has been on a strong run — consecutive wins, clear momentum behind them. How do you prepare a team to break an opponent who's clearly in form?",
     options: [
       {
@@ -185,25 +188,25 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 7. post_rivalry_win_elimination — POST_MATCH after eliminating a rival (→ winIds)
+  // 7. post_rivalry_win — POST_MATCH after beating a rival
   {
-    id: 'post_rivalry_win_elimination',
+    id: 'post_rivalry_win',
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "You just eliminated a rival from this tournament. After everything the two teams have been through — what does a result like this mean beyond the bracket points?",
+    prompt: "You just beat a rival team. After everything the two teams have been through — what does a result like this mean to you beyond the win itself?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is what we came here for",
-        quote: "I'm not going to be humble about it. We wanted to be the team that sent them home. The rivalry has been defined by big moments and today was ours. The players earned that.",
+        quote: "I'm not going to be humble about it. We wanted to be the team that beat them today. Rivalries are defined by big moments and today was ours. The players earned that.",
         effects: { hype: 6, morale: 4, fanbase: 4, rivalryDelta: 5 },
       },
       {
         tone: 'RESPECTFUL',
         label: "They pushed us to play our best",
-        quote: "This team brought everything. The rivalry sharpened us coming in and we needed every bit of that edge today. I have genuine respect for what they built — this result doesn't change that.",
+        quote: "This team brought everything. The history between us sharpened us coming in and we needed every bit of that edge today. I have genuine respect for what they built — this result doesn't change that.",
         effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
       },
       {

@@ -178,6 +178,12 @@ export function evaluateCondition(
     case 'opponent_from_upper':
       return snapshot.tournamentContext?.opponent?.droppedFromUpper === true;
 
+    case 'opponent_win_streak':
+      return (snapshot.tournamentContext?.opponent?.recentWinStreak ?? 0) >= (condition.minStreak ?? 1);
+
+    case 'opponent_rivalry_level':
+      return (snapshot.tournamentContext?.opponent?.rivalryLevel ?? 0) >= (condition.minLevel ?? 50);
+
     // OR logic: at least one sub-condition must pass
     case 'or':
       return condition.anyOf?.some((c) => evaluateCondition(c, snapshot)) ?? false;

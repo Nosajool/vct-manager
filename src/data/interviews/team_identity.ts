@@ -13,7 +13,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }],
-    prompt: "It looks like this team is being built around one player's performance right now. Is that a conscious decision — or just where the form is taking you?",
+    prompt: "It looks like this team is being built around {starPlayerName}'s performance right now. Is that a conscious decision — or just where the form is taking you?",
     options: [
       {
         tone: 'CONFIDENT',

@@ -37,6 +37,10 @@ export const TEAM_SYNERGY_EVENTS: DramaEventTemplate[] = [
         type: 'team_chemistry_below',
         threshold: 55,
       },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
     ],
     probability: 50,
     cooldownDays: 10,

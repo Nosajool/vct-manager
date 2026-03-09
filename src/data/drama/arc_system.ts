@@ -2656,8 +2656,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     description: "After surviving another must-win elimination match, something has visibly shifted in this team. The near-death experience of bracket play has lit a fire that regular-season pressure never could.",
     conditions: [
       {
-        type: 'team_loss_streak',
-        streakLength: 2,
+        type: 'bracket_position',
+        bracketPosition: 'lower',
+      },
+      {
+        type: 'team_win_streak',
+        streakLength: 1,
       },
       {
         type: 'tournament_active',
@@ -2800,6 +2804,10 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'tournament_active',
+      },
+      {
+        type: 'min_season_day',
+        threshold: 30,
       },
       {
         type: 'team_chemistry_below',

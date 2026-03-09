@@ -66,7 +66,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
-    prompt: "You came back from a serious deficit. What did you say to the team at halftime?",
+    prompt: "You came back from a serious deficit on {mapName}. What did you say to the team at halftime?",
     options: [
       {
         tone: 'CONFIDENT',

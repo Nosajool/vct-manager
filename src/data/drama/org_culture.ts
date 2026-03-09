@@ -76,6 +76,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     conditions: [
       {
         type: 'or',
+        playerSelector: 'condition_match',
         anyOf: [
           { type: 'flag_active', flag: 'home_visit_paid_{playerId}' },
           { type: 'flag_active', flag: 'home_visit_approved_{playerId}' },
@@ -279,7 +280,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Housing Upgrade',
     description:
-      "The org commits to a proper team house upgrade — new furniture, better internet, the whole package. It's small in the grand scheme of things, but players remember when an org actually invests in them.",
+      "The org had a great year financially and decided to commit to a proper team house upgrade. New furniture, better internet, the whole package. It's small in the grand scheme of things, but players remember when an org actually invests in them.",
     conditions: [
       { type: 'team_budget_above', threshold: 100000 },
       { type: 'flag_not_active', flag: 'housing_covered' },

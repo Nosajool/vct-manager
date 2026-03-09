@@ -96,7 +96,16 @@ export class InterviewService {
     const template = this.pickTemplate(pool.length > 0 ? pool : relevant);
     if (!template) return null;
 
-    return this.toPendingInterview(template, matchResult.matchId);
+    let finalTemplate = template;
+    if (won && template.id === 'post_win_comeback') {
+      const isTeamA = match.teamAId === playerTeamId;
+      const comebackMapName = this.findComebackMap(matchResult, isTeamA ? 'teamA' : 'teamB');
+      if (comebackMapName) {
+        finalTemplate = { ...template, prompt: template.prompt.replace('{mapName}', comebackMapName) };
+      }
+    }
+
+    return this.toPendingInterview(finalTemplate, matchResult.matchId);
   }
 
   /**
@@ -547,6 +556,28 @@ export class InterviewService {
   // Helpers
   // ============================================================================
 
+  private findComebackMap(matchResult: MatchResult, playerSide: 'teamA' | 'teamB'): string | null {
+    const wonMaps = matchResult.maps.filter((m) => m.winner === playerSide);
+    if (wonMaps.length === 0) return null;
+
+    let bestMap: (typeof wonMaps)[0] | null = null;
+    let bestDiff = 0;
+    for (const map of wonMaps) {
+      if (!map.enhancedRounds) continue;
+      const halftimeRound = map.enhancedRounds.find((r) => r.roundNumber === 12);
+      if (!halftimeRound) continue;
+      const playerScore = playerSide === 'teamA' ? halftimeRound.teamAScore : halftimeRound.teamBScore;
+      const opponentScore = playerSide === 'teamA' ? halftimeRound.teamBScore : halftimeRound.teamAScore;
+      const diff = playerScore - opponentScore; // negative = was behind at halftime
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestMap = map;
+      }
+    }
+
+    return (bestMap ?? wonMaps[0]).map;
+  }
+
   private pickTemplate(candidates: InterviewTemplate[]): InterviewTemplate | null {
     if (candidates.length === 0) return null;
     return candidates[Math.floor(Math.random() * candidates.length)];
@@ -593,7 +624,11 @@ export class InterviewService {
           eliminationRisk: options.tournamentContext.eliminationRisk,
           isGrandFinal: options.tournamentContext.isGrandFinal,
           opponent: options.tournamentContext.opponent
-            ? { droppedFromUpper: options.tournamentContext.opponent.droppedFromUpper }
+            ? {
+                droppedFromUpper: options.tournamentContext.opponent.droppedFromUpper,
+                recentWinStreak: options.tournamentContext.opponent.recentWinStreak,
+                rivalryLevel: options.tournamentContext.opponent.rivalryLevel,
+              }
             : undefined,
         }
       : undefined;
@@ -738,13 +773,28 @@ export class InterviewService {
       storeState.markTemplateSeen(template.id);
     }
 
+    let prompt = template.prompt;
+    if (prompt.includes('{starPlayerName}')) {
+      const team = state.teams[state.playerTeamId!];
+      const teamPlayerIds = team?.playerIds ?? [];
+      const teamPlayers = teamPlayerIds.map(id => state.players[id]).filter(Boolean);
+      if (teamPlayers.length > 0) {
+        const starPlayer = teamPlayers.reduce((best, current) => {
+          const score = (p: typeof current) =>
+            (p.stats.aim + p.stats.game_sense + p.stats.mechanics + p.stats.communication + p.stats.consistency) / 5;
+          return score(current) > score(best) ? current : best;
+        });
+        prompt = prompt.replace('{starPlayerName}', starPlayer.name);
+      }
+    }
+
     return {
       templateId: template.id,
       context: template.context,
       subjectType: template.subjectType,
       subjectId,
       matchId,
-      prompt: template.prompt,
+      prompt,
       options,
       isNew,
     };
