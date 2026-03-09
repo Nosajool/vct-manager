@@ -6,6 +6,7 @@ import { ManagerStoryStep } from './ManagerStoryStep';
 import { RegionSelectStep } from './RegionSelectStep';
 import { TeamSelectStep } from './TeamSelectStep';
 import { type Difficulty } from './DifficultySelectStep';
+import { SaveLoadModal } from '../shared';
 
 export interface SetupOptions {
   region: Region;
@@ -32,6 +33,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
     region: null,
     teamName: null,
   });
+  const [showLoadModal, setShowLoadModal] = useState(false);
 
   // Step 0: Story completed
   const handleStoryContinue = () => {
@@ -103,6 +105,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
             <ManagerStoryStep
               onContinue={handleStoryContinue}
               onCancel={onCancel}
+              onLoadSave={() => setShowLoadModal(true)}
             />
           )}
 
@@ -124,6 +127,9 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
 
         </div>
       </div>
+      {showLoadModal && (
+        <SaveLoadModal mode="load" onClose={() => setShowLoadModal(false)} />
+      )}
     </div>
   );
 }

@@ -35,6 +35,18 @@ export interface SaveSlot {
 /**
  * Serialized game state for storage
  * Matches the structure of GameState but with serializable types
+ *
+ * DEVELOPER INSTRUCTIONS:
+ * When adding a new slice or new state to persist:
+ * 1. Add an optional field here (always optional for forward compatibility)
+ * 2. Extract it in `serializeGameState()` in persistence.ts
+ * 3. Provide a default in `applyLoadedState()` in persistence.ts
+ * 4. Bump the minor version in SAVE_VERSION (e.g. 0.1.0 → 0.2.0)
+ *
+ * NOT persisted (intentionally):
+ * - UISlice — transient (selections, modals, loading states)
+ * - NarrativeCollectionSlice — uses localStorage intentionally
+ *   (survives across new-game resets, which is the intended behavior)
  */
 export interface SerializedGameState {
   // Player slice
@@ -53,6 +65,35 @@ export interface SerializedGameState {
     currentPhase: string;
     scheduledEvents: unknown[];
   };
+  currentPatch?: unknown;
+  upcomingPatch?: unknown;
+
+  // Match slice
+  matches?: Record<string, unknown>;
+  results?: Record<string, unknown>;
+
+  // Competition slice
+  tournaments?: Record<string, unknown>;
+  standings?: Record<string, unknown>;
+  qualifications?: Record<string, unknown>;
+
+  // Scrim slice
+  tierTeams?: Record<string, unknown>;
+  scrimHistory?: unknown[];
+
+  // Strategy slice
+  teamStrategies?: Record<string, unknown>;
+  playerAgentPreferences?: Record<string, unknown>;
+
+  // Match strategy slice
+  matchStrategies?: Record<string, unknown>;
+
+  // Round data slice
+  roundData?: Record<string, unknown>;
+  roundDataSeasonId?: string;
+
+  // Season stats slice
+  historicalSeasonStats?: Record<string, unknown>;
 
   // Drama slice (optional for backwards compatibility)
   drama?: {
@@ -67,6 +108,15 @@ export interface SerializedGameState {
 
   // Activity Plan slice (optional for backwards compatibility)
   activityConfigs?: Record<string, unknown>;
+
+  // Rivalry slice
+  rivalries?: Record<string, unknown>;
+
+  // Interview slice
+  pendingInterview?: unknown;
+  interviewQueue?: unknown[];
+  pendingDramaBoost?: number;
+  interviewHistory?: unknown[];
 
   // UI slice is NOT persisted (transient state)
 }
@@ -110,10 +160,30 @@ export interface CompressedSeasonHistory {
 }
 
 /**
- * Current version of the save format
- * Increment when making breaking changes to save structure
+ * Current version of the save format.
+ * - Bump minor (0.x.0 → 0.x+1.0) when adding new optional fields.
+ * - Bump major (0.x.0 → 1.0.0) only for structural breaking changes.
  */
-export const SAVE_VERSION = '1.0.0';
+export const SAVE_VERSION = '0.1.0';
+
+/**
+ * Oldest save version that can be loaded without a migration.
+ * Saves with a different major version are considered incompatible.
+ */
+export const MINIMUM_COMPATIBLE_VERSION = '0.1.0';
+
+/**
+ * Check whether a saved version is compatible with the current game.
+ * Same major version = compatible (minor differences handled via defaults).
+ * Different major version = incompatible (show warning, refuse to load).
+ */
+export function checkSaveCompatibility(
+  savedVersion: string
+): 'compatible' | 'incompatible' {
+  const savedMajor = parseInt(savedVersion.split('.')[0], 10);
+  const currentMajor = parseInt(SAVE_VERSION.split('.')[0], 10);
+  return savedMajor === currentMajor ? 'compatible' : 'incompatible';
+}
 
 /**
  * Auto-save interval in days

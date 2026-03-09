@@ -1,10 +1,6 @@
 // Persistence Middleware and SaveManager
 // Handles auto-save and manual save/load operations
 
-// NOTE: Save/load UI functionality has been removed from the application.
-// The backend persistence system remains intact for future development.
-// Auto-save is currently disabled for development purposes.
-
 import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
 import { db, isIndexedDBAvailable } from '../../db/database';
 import {
@@ -14,6 +10,7 @@ import {
   type SerializedGameState,
   SAVE_VERSION,
   AUTO_SAVE_INTERVAL_DAYS,
+  checkSaveCompatibility,
 } from '../../db/schema';
 
 // Forward declaration to avoid circular import
@@ -30,6 +27,21 @@ interface MinimalGameState {
     currentPhase: string;
     scheduledEvents: unknown[];
   };
+  currentPatch?: unknown;
+  upcomingPatch?: unknown;
+  matches?: Record<string, unknown>;
+  results?: Record<string, unknown>;
+  tournaments?: Record<string, unknown>;
+  standings?: Record<string, unknown>;
+  qualifications?: Record<string, unknown>;
+  tierTeams?: Record<string, unknown>;
+  scrimHistory?: unknown[];
+  teamStrategies?: Record<string, unknown>;
+  playerAgentPreferences?: Record<string, unknown>;
+  matchStrategies?: Record<string, unknown>;
+  roundData?: Record<string, unknown>;
+  roundDataSeasonId?: string;
+  historicalSeasonStats?: Record<string, unknown>;
   drama?: {
     activeEvents: unknown[];
     eventHistory: unknown[];
@@ -40,6 +52,11 @@ interface MinimalGameState {
     totalMajorDecisions: number;
   };
   activityConfigs?: Record<string, unknown>;
+  rivalries?: Record<string, unknown>;
+  pendingInterview?: unknown;
+  interviewQueue?: unknown[];
+  pendingDramaBoost?: number;
+  interviewHistory?: unknown[];
 }
 
 /**
@@ -65,24 +82,58 @@ export interface SaveSlotInfo {
 let lastAutoSaveDate: string | null = null;
 
 /**
+ * Cap/prune data before saving to prevent unbounded growth
+ */
+function sanitizeBeforeSave(state: MinimalGameState): MinimalGameState {
+  return {
+    ...state,
+    // Cap interview history to last 100 entries
+    interviewHistory: state.interviewHistory
+      ? state.interviewHistory.slice(-100)
+      : [],
+  };
+}
+
+/**
  * Extract serializable state from GameState
  * Excludes UI state and functions
  */
 function serializeGameState(state: MinimalGameState): SerializedGameState {
+  const sanitized = sanitizeBeforeSave(state);
   return {
-    players: state.players,
-    teams: state.teams,
-    playerTeamId: state.playerTeamId,
-    initialized: state.initialized,
-    gameStarted: state.gameStarted,
+    players: sanitized.players,
+    teams: sanitized.teams,
+    playerTeamId: sanitized.playerTeamId,
+    initialized: sanitized.initialized,
+    gameStarted: sanitized.gameStarted,
     calendar: {
-      currentDate: state.calendar.currentDate,
-      currentSeason: state.calendar.currentSeason,
-      currentPhase: state.calendar.currentPhase,
-      scheduledEvents: state.calendar.scheduledEvents,
+      currentDate: sanitized.calendar.currentDate,
+      currentSeason: sanitized.calendar.currentSeason,
+      currentPhase: sanitized.calendar.currentPhase,
+      scheduledEvents: sanitized.calendar.scheduledEvents,
     },
-    drama: state.drama,
-    activityConfigs: state.activityConfigs,
+    currentPatch: sanitized.currentPatch,
+    upcomingPatch: sanitized.upcomingPatch,
+    matches: sanitized.matches,
+    results: sanitized.results,
+    tournaments: sanitized.tournaments,
+    standings: sanitized.standings,
+    qualifications: sanitized.qualifications,
+    tierTeams: sanitized.tierTeams,
+    scrimHistory: sanitized.scrimHistory,
+    teamStrategies: sanitized.teamStrategies,
+    playerAgentPreferences: sanitized.playerAgentPreferences,
+    matchStrategies: sanitized.matchStrategies,
+    roundData: sanitized.roundData,
+    roundDataSeasonId: sanitized.roundDataSeasonId,
+    historicalSeasonStats: sanitized.historicalSeasonStats,
+    drama: sanitized.drama,
+    activityConfigs: sanitized.activityConfigs,
+    rivalries: sanitized.rivalries,
+    pendingInterview: sanitized.pendingInterview,
+    interviewQueue: sanitized.interviewQueue,
+    pendingDramaBoost: sanitized.pendingDramaBoost,
+    interviewHistory: sanitized.interviewHistory,
   };
 }
 
@@ -186,6 +237,7 @@ export class SaveManager {
     success: boolean;
     data?: SerializedGameState;
     metadata?: SaveMetadata;
+    compatibility?: 'compatible' | 'incompatible';
     error?: string;
   }> {
     if (!isIndexedDBAvailable()) {
@@ -199,12 +251,14 @@ export class SaveManager {
         return { success: false, error: 'Save slot is empty' };
       }
 
+      const compatibility = checkSaveCompatibility(saveSlot.metadata.version);
       this.setPlaytime(saveSlot.metadata.playtime);
       console.log(`Game loaded from slot ${slot}`);
       return {
         success: true,
         data: saveSlot.gameState,
         metadata: saveSlot.metadata,
+        compatibility,
       };
     } catch (error) {
       console.error('Load failed:', error);
@@ -356,27 +410,39 @@ export function applyLoadedState<T extends MinimalGameState>(
   const migratedFlags: Record<string, { setDate: string; expiresDate?: string }> = {};
   for (const [flag, data] of Object.entries(dramaState.activeFlags)) {
     if (typeof data === 'string') {
-      // Old format: string ISO date
-      migratedFlags[flag] = {
-        setDate: data,
-        expiresDate: undefined,
-      };
+      migratedFlags[flag] = { setDate: data, expiresDate: undefined };
     } else {
-      // New format: already an object
       migratedFlags[flag] = data;
     }
   }
   dramaState.activeFlags = migratedFlags;
 
-  // Backwards compatibility: initialize empty activity configs if missing
+  // Prune activity configs for past dates
   const activityConfigs = loadedState.activityConfigs || {};
-
-  // Prune activity configs for past dates (edge case handling)
-  // Only keep configs for current date or future dates
   const prunedActivityConfigs = pruneOldActivityConfigs(
     activityConfigs,
     loadedState.calendar
   );
+
+  // Defaults for all optional slices
+  const matches = loadedState.matches ?? {};
+  const results = loadedState.results ?? {};
+  const tournaments = loadedState.tournaments ?? {};
+  const standings = loadedState.standings ?? {};
+  const qualifications = loadedState.qualifications ?? {};
+  const tierTeams = loadedState.tierTeams ?? {};
+  const scrimHistory = loadedState.scrimHistory ?? [];
+  const teamStrategies = loadedState.teamStrategies ?? {};
+  const playerAgentPreferences = loadedState.playerAgentPreferences ?? {};
+  const matchStrategies = loadedState.matchStrategies ?? {};
+  const roundData = loadedState.roundData ?? {};
+  const roundDataSeasonId = loadedState.roundDataSeasonId ?? String(loadedState.calendar.currentSeason);
+  const historicalSeasonStats = loadedState.historicalSeasonStats ?? {};
+  const rivalries = loadedState.rivalries ?? {};
+  const pendingInterview = loadedState.pendingInterview ?? null;
+  const interviewQueue = loadedState.interviewQueue ?? [];
+  const pendingDramaBoost = loadedState.pendingDramaBoost ?? 0;
+  const interviewHistory = loadedState.interviewHistory ?? [];
 
   setState({
     players: loadedState.players,
@@ -385,8 +451,28 @@ export function applyLoadedState<T extends MinimalGameState>(
     initialized: loadedState.initialized,
     gameStarted: loadedState.gameStarted,
     calendar: loadedState.calendar,
+    currentPatch: loadedState.currentPatch ?? null,
+    upcomingPatch: loadedState.upcomingPatch ?? null,
+    matches,
+    results,
+    tournaments,
+    standings,
+    qualifications,
+    tierTeams,
+    scrimHistory,
+    teamStrategies,
+    playerAgentPreferences,
+    matchStrategies,
+    roundData,
+    roundDataSeasonId,
+    historicalSeasonStats,
     drama: dramaState,
     activityConfigs: prunedActivityConfigs,
+    rivalries,
+    pendingInterview,
+    interviewQueue,
+    pendingDramaBoost,
+    interviewHistory,
   } as Partial<T>);
 }
 

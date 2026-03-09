@@ -64,7 +64,8 @@ export const createInterviewSlice: StateCreator<
   },
 
   addInterviewHistory: (entry) =>
-    set((state) => ({
-      interviewHistory: [...state.interviewHistory, entry],
-    })),
+    set((state) => {
+      const updated = [...state.interviewHistory, entry];
+      return { interviewHistory: updated.slice(-100) };
+    }),
 });

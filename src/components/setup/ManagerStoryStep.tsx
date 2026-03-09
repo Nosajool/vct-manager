@@ -3,9 +3,10 @@
 interface ManagerStoryStepProps {
   onContinue: () => void;
   onCancel?: () => void;
+  onLoadSave?: () => void;
 }
 
-export function ManagerStoryStep({ onContinue, onCancel }: ManagerStoryStepProps) {
+export function ManagerStoryStep({ onContinue, onCancel, onLoadSave }: ManagerStoryStepProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -29,8 +30,8 @@ export function ManagerStoryStep({ onContinue, onCancel }: ManagerStoryStepProps
         </div>
       </div>
 
-      {/* Begin Button */}
-      <div className="flex justify-center">
+      {/* Begin / Load Save Buttons */}
+      <div className="flex flex-col items-center gap-3">
         <button
           onClick={onContinue}
           className="px-8 py-3 bg-vct-red hover:bg-vct-red/80
@@ -38,8 +39,16 @@ export function ManagerStoryStep({ onContinue, onCancel }: ManagerStoryStepProps
                      transition-all duration-200
                      transform hover:scale-105"
         >
-          Begin
+          Begin New Game
         </button>
+        {onLoadSave && (
+          <button
+            onClick={onLoadSave}
+            className="px-6 py-2 text-vct-gray hover:text-vct-light border border-vct-gray/30 hover:border-vct-gray/60 rounded-lg transition-colors text-sm"
+          >
+            Load Save
+          </button>
+        )}
       </div>
 
       {/* Cancel Button */}

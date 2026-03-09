@@ -1,6 +1,8 @@
 // Header Component - Game title, date display, and save/load buttons
 
+import { useState } from 'react';
 import { useCurrentDate, useGameStore } from '../../store';
+import { SaveLoadModal } from '../shared/SaveLoadModal';
 import { format } from 'date-fns';
 
 // Parse date string as local time to avoid timezone issues
@@ -14,6 +16,8 @@ export function Header() {
   const currentDate = useCurrentDate();
   const currentPhase = useGameStore((state) => state.calendar.currentPhase);
   const currentSeason = useGameStore((state) => state.calendar.currentSeason);
+  const gameStarted = useGameStore((state) => state.gameStarted);
+  const [modal, setModal] = useState<'save' | 'load' | null>(null);
 
   // Format the date for display (parse as local time to avoid timezone issues)
   const formattedDate = currentDate
@@ -49,10 +53,29 @@ export function Header() {
             </p>
           </div>
 
-          {/* Save/Load Buttons - REMOVED */}
+          {/* Save/Load Buttons */}
           <div className="flex items-center gap-2">
-            {/* Save and Load buttons removed - UI functionality removed */}
+            {gameStarted && (
+              <>
+                <button
+                  onClick={() => setModal('save')}
+                  className="px-3 py-1.5 text-sm bg-vct-dark border border-vct-gray/30 hover:border-vct-gray/60 text-vct-light rounded transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setModal('load')}
+                  className="px-3 py-1.5 text-sm bg-vct-dark border border-vct-gray/30 hover:border-vct-gray/60 text-vct-light rounded transition-colors"
+                >
+                  Load
+                </button>
+              </>
+            )}
           </div>
+
+          {modal && (
+            <SaveLoadModal mode={modal} onClose={() => setModal(null)} />
+          )}
         </div>
       </div>
     </header>

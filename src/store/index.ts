@@ -1,10 +1,6 @@
 // VCT Manager - Zustand Store
 // Combines all slices into a single store with persistence
 
-// NOTE: Save/load UI functionality has been removed from the application.
-// The backend persistence system remains intact for future development.
-// Auto-save is currently disabled for development purposes.
-
 import { create } from 'zustand';
 import { createPlayerSlice, type PlayerSlice } from './slices/playerSlice';
 import { createTeamSlice, type TeamSlice } from './slices/teamSlice';
@@ -25,6 +21,7 @@ import { createNarrativeCollectionSlice, type NarrativeCollectionSlice } from '.
 import {
   saveManager,
   applyLoadedState,
+  autoSave,
   type SaveSlotInfo,
 } from './middleware/persistence';
 import type { SaveSlotNumber } from '../db/schema';
@@ -32,26 +29,27 @@ import type { SaveSlotNumber } from '../db/schema';
 // Combined game state type
 export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice;
 
-// Create the combined store without auto-save middleware
 export const useGameStore = create<GameState>()(
-  (...args) => ({
-    ...createPlayerSlice(...args),
-    ...createTeamSlice(...args),
-    ...createGameSlice(...args),
-    ...createUISlice(...args),
-    ...createMatchSlice(...args),
-    ...createCompetitionSlice(...args),
-    ...createScrimSlice(...args),
-    ...createStrategySlice(...args),
-    ...createMatchStrategySlice(...args),
-    ...createRoundDataSlice(...args),
-    ...createSeasonStatsSlice(...args),
-    ...createDramaSlice(...args),
-    ...createActivityPlanSlice(...args),
-    ...createRivalrySlice(...args),
-    ...createInterviewSlice(...args),
-    ...createNarrativeCollectionSlice(...args),
-  })
+  autoSave(
+    (...args) => ({
+      ...createPlayerSlice(...args),
+      ...createTeamSlice(...args),
+      ...createGameSlice(...args),
+      ...createUISlice(...args),
+      ...createMatchSlice(...args),
+      ...createCompetitionSlice(...args),
+      ...createScrimSlice(...args),
+      ...createStrategySlice(...args),
+      ...createMatchStrategySlice(...args),
+      ...createRoundDataSlice(...args),
+      ...createSeasonStatsSlice(...args),
+      ...createDramaSlice(...args),
+      ...createActivityPlanSlice(...args),
+      ...createRivalrySlice(...args),
+      ...createInterviewSlice(...args),
+      ...createNarrativeCollectionSlice(...args),
+    })
+  )
 );
 
 // Re-export slice types for convenience
@@ -94,17 +92,25 @@ export async function saveGame(slot: SaveSlotNumber): Promise<{
  */
 export async function loadGame(slot: SaveSlotNumber): Promise<{
   success: boolean;
+  compatibility?: 'compatible' | 'incompatible';
   error?: string;
 }> {
   const result = await saveManager.loadGame(slot);
 
-  if (result.success && result.data) {
-    // Apply loaded state to store
-    applyLoadedState(useGameStore.setState, result.data);
-    return { success: true };
+  if (!result.success || !result.data) {
+    return { success: false, error: result.error };
   }
 
-  return { success: false, error: result.error };
+  if (result.compatibility === 'incompatible') {
+    return {
+      success: false,
+      compatibility: 'incompatible',
+      error: 'This save is from an incompatible version and cannot be loaded.',
+    };
+  }
+
+  applyLoadedState(useGameStore.setState, result.data);
+  return { success: true, compatibility: result.compatibility };
 }
 
 /**
