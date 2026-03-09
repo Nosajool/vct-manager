@@ -24,7 +24,7 @@ import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTo
 import type { Region, TournamentRegion, Match, Team } from '../types';
 
 type TournamentTab = 'current' | 'schedule';
-type ViewMode = 'bracket' | 'standings' | 'swiss' | 'league';
+type ViewMode = 'bracket' | 'swiss' | 'league';
 type RegionFilter = Region | 'International' | 'all';
 
 const REGION_OPTIONS: { value: RegionFilter; label: string }[] = [
@@ -164,19 +164,20 @@ export function TournamentPage() {
 
     // Playoff stage of multi-stage tournaments
     if (isInPlayoffStage) {
-      return ['bracket', 'standings'];
+      return ['bracket'];
     }
 
-    // Legacy league tournaments (stage1/stage2 round_robin) only have standings view
+    // stage1/stage2 league play (round_robin) — show league standings view
     if (
       currentTournament &&
       (currentTournament.type === 'stage1' || currentTournament.type === 'stage2') &&
       currentTournament.format === 'round_robin'
     ) {
-      return ['standings'];
+      return ['league'];
     }
 
-    return ['bracket', 'standings'];
+    // kickoff (triple_elim) and stage playoffs (double_elim)
+    return ['bracket'];
   };
 
   // Reset view mode when tournament changes
@@ -383,24 +384,14 @@ export function TournamentPage() {
                   <SwissStageView swissStage={currentTournament.swissStage} onMatchClick={handleMatchClick} />
                 )}
 
-                {effectiveViewMode === 'league' && isLeagueTournament && currentTournament.leagueStage && (
-                  <LeagueStageView leagueStage={currentTournament.leagueStage} onMatchClick={handleMatchClick} />
+                {effectiveViewMode === 'league' && (
+                  isLeagueTournament && currentTournament.leagueStage
+                    ? <LeagueStageView leagueStage={currentTournament.leagueStage} onMatchClick={handleMatchClick} />
+                    : <StandingsTable standings={tournamentStandings} highlightTop={8} />
                 )}
 
                 {effectiveViewMode === 'bracket' && (
                   <BracketView bracket={currentTournament.bracket} onMatchClick={handleMatchClick} />
-                )}
-
-                {effectiveViewMode === 'standings' && (
-                  <StandingsTable
-                    standings={tournamentStandings}
-                    highlightTop={
-                      currentTournament.type === 'stage1' ||
-                      currentTournament.type === 'stage2'
-                        ? 8 // Top 8 qualify for Stage Playoffs
-                        : 0
-                    }
-                  />
                 )}
               </div>
             </>
