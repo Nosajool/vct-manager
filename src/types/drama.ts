@@ -96,6 +96,8 @@ export type DramaConditionType =
   // Tournament bracket checks (Phase 1)
   | 'bracket_position'   // Check upper/lower bracket; uses bracketPosition field
   | 'elimination_risk'   // Team faces elimination with next loss
+  | 'tournament_eliminated' // Team has been eliminated from the active tournament
+  | 'tournament_type'    // Check the active tournament's type; uses tournamentType field
 
   // Interview-context checks (populated on InterviewSnapshot, not DramaGameStateSnapshot)
   | 'is_playoff_match'   // True when the current match is a playoff match
@@ -183,6 +185,9 @@ export interface DramaCondition {
 
   // For bracket_position check
   bracketPosition?: 'upper' | 'middle' | 'lower'; // Used with bracket_position type
+
+  // For tournament_type check
+  tournamentType?: string; // Used with tournament_type type (e.g. 'kickoff', 'masters')
 
   // For 'or' type: at least one sub-condition must pass
   anyOf?: DramaCondition[];
@@ -443,6 +448,8 @@ export interface DramaGameStateSnapshot {
     bracketPosition: 'upper' | 'middle' | 'lower' | null;
     eliminationRisk: boolean;
     isGrandFinal: boolean;
+    isEliminated?: boolean;   // true if team has no remaining matches (was eliminated)
+    tournamentType?: string;  // 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions'
     opponent?: { droppedFromUpper: boolean }; // Populated in interview context
   };
 

@@ -364,17 +364,32 @@ export class DramaService {
         bracketPosition: 'upper',
         eliminationRisk: gf.loserDestination.type === 'eliminated',
         isGrandFinal: true,
+        tournamentType: activeTournament.type,
       };
     }
 
     // Search upper and lower bracket rounds for the team's next match
     const result = findTeamCurrentBracketMatch(bracket, playerTeamId);
-    if (!result) return undefined;
+    if (!result) {
+      // No pending match found — check if the team was eliminated
+      const eliminated = findTeamEliminationMatch(bracket, playerTeamId);
+      if (eliminated) {
+        return {
+          bracketPosition: null,
+          eliminationRisk: false,
+          isGrandFinal: false,
+          isEliminated: true,
+          tournamentType: activeTournament.type,
+        };
+      }
+      return undefined;
+    }
 
     return {
       bracketPosition: result.round.bracketType === 'lower' ? 'lower' : 'upper',
       eliminationRisk: result.match.loserDestination.type === 'eliminated',
       isGrandFinal: false,
+      tournamentType: activeTournament.type,
     };
   }
 
@@ -662,6 +677,48 @@ function findTeamCurrentBracketMatch(
       }
     }
   }
+  return null;
+}
+
+/**
+ * Detect if a team has been eliminated: find a completed bracket match where
+ * the team was the loser and the loserDestination is 'eliminated'.
+ */
+function findTeamEliminationMatch(
+  bracket: BracketStructure,
+  teamId: string
+): BracketMatch | null {
+  const roundGroups: BracketRound[][] = [
+    bracket.upper,
+    ...(bracket.lower ? [bracket.lower] : []),
+    ...(bracket.middle ? [bracket.middle] : []),
+  ];
+
+  for (const rounds of roundGroups) {
+    for (const round of rounds) {
+      for (const match of round.matches) {
+        if (
+          match.status === 'completed' &&
+          match.loserId === teamId &&
+          match.loserDestination.type === 'eliminated'
+        ) {
+          return match;
+        }
+      }
+    }
+  }
+
+  // Also check grand final
+  const gf = bracket.grandfinal;
+  if (
+    gf &&
+    gf.status === 'completed' &&
+    gf.loserId === teamId &&
+    gf.loserDestination.type === 'eliminated'
+  ) {
+    return gf;
+  }
+
   return null;
 }
 

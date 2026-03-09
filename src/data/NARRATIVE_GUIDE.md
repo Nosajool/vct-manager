@@ -292,7 +292,9 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 // Tournament bracket checks (Phase 1)
 { type: 'bracket_position', bracketPosition: 'upper' | 'lower' }
-{ type: 'elimination_risk' }   // true if snapshot.tournamentContext.eliminationRisk
+{ type: 'elimination_risk' }              // true if snapshot.tournamentContext.eliminationRisk
+{ type: 'tournament_eliminated' }         // true if team has been eliminated (no remaining matches)
+{ type: 'tournament_type', tournamentType: 'kickoff' }  // matches active tournament type ('kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions')
 
 // Season timing checks
 { type: 'min_season_day', threshold: 8 }  // Day 1 = first day of season; blocks event in week 1
@@ -406,13 +408,19 @@ interface TournamentMatchContext {
 
 ### Tournament conditions in drama events
 
-Use `bracket_position` and `elimination_risk` condition types (not `flag_active`):
+Use `bracket_position`, `elimination_risk`, `tournament_eliminated`, and `tournament_type` condition types (not `flag_active`):
 ```typescript
 // Lower bracket check
 { type: 'bracket_position', bracketPosition: 'lower' }
 
-// Elimination risk check
+// Elimination risk check (team loses next → eliminated)
 { type: 'elimination_risk' }
+
+// Post-elimination check (team has already been eliminated)
+{ type: 'tournament_eliminated' }
+
+// Tournament type check (only fires in kickoff/masters/etc.)
+{ type: 'tournament_type', tournamentType: 'kickoff' }
 ```
 
 ### Tournament conditions in interview templates

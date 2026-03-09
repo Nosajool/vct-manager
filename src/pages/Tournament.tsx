@@ -154,12 +154,12 @@ export function TournamentPage() {
   const getAvailableViewModes = (): ViewMode[] => {
     // Swiss stage of swiss_to_playoff tournaments
     if (isInSwissStage) {
-      return ['swiss', 'standings'];
+      return ['swiss'];
     }
 
     // League stage of league_to_playoff tournaments
     if (isInLeagueStage) {
-      return ['league', 'standings'];
+      return ['league'];
     }
 
     // Playoff stage of multi-stage tournaments

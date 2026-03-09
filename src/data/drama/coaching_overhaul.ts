@@ -14,7 +14,8 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     title: 'Head Coach Dismissed After Disappointing Kickoff',
     description: 'Following a poor start to the tournament, the org has made the difficult decision to dismiss the head coach. The team is in flux.',
     conditions: [
-      { type: 'bracket_position', bracketPosition: 'lower' },
+      { type: 'tournament_eliminated' },
+      { type: 'tournament_type', tournamentType: 'kickoff' },
       { type: 'flag_active', flag: 'org_high_expectations' },
       { type: 'flag_not_active', flag: 'coaching_overhaul_active' },
       { type: 'flag_not_active', flag: 'coaching_overhaul_failed' },
