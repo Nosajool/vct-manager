@@ -67,7 +67,7 @@ function getCategoryEntries(category: DramaCategory): CollectionEntry[] {
     .map((t): CollectionEntry => ({
       templateId: t.id,
       type: 'INTERVIEW',
-      title: t.prompt.length > 60 ? t.prompt.slice(0, 57) + '...' : t.prompt,
+      title: (() => { const displayPrompt = t.prompt.replace(/\{[^}]+\}/g, 'a map'); return displayPrompt.length > 60 ? displayPrompt.slice(0, 57) + '...' : displayPrompt; })(),
     }));
 
   return [...dramaEntries, ...interviewEntries];

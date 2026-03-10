@@ -13,7 +13,7 @@ import type { MetaPatch } from './meta';
 
 /**
  * Narrative arc categories tracked in the global collection
- * Equals DramaCategory — all 11 categories are collectible
+ * Equals DramaCategory — all 12 categories are collectible
  */
 export type NarrativeCategory = DramaCategory;
 

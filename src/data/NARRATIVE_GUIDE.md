@@ -54,7 +54,7 @@ The collection system gives players a Pokédex-style reason to replay and discov
 
 ### Architecture
 
-- **`NarrativeCategory`** (`src/types/drama.ts`): A subset type of `DramaCategory` covering curated arcs: `visa_arc | coaching_overhaul | igl_crisis | scrim_sharing`.
+- **`NarrativeCategory`** (`src/types/drama.ts`): A type alias for `DramaCategory` — all 12 categories are tracked in the collection.
 - **`narrativeCollectionSlice`** (`src/store/slices/narrativeCollectionSlice.ts`): Zustand slice tracking `seenTemplateIds: string[]`. Loads from and saves to localStorage on every mutation.
 - **`DramaService.evaluateDay`** / **`InterviewService.toPendingInterview`**: Both check `isTemplateSeen(templateId)` before creating the event/interview. If unseen → calls `markTemplateSeen()` and sets `isNew = true` on the instance.
 - **`NewBadge`** (`src/components/narrative/NewBadge.tsx`): Amber "NEW" chip rendered when `event.isNew` or `interview.isNew` is true. Displayed in DramaEventToast, DramaEventModal, and InterviewModal.
@@ -266,7 +266,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 

@@ -163,11 +163,43 @@ function computeAgentPreferences(agents: string[]): AgentPreferences | null {
 const SNAPSHOTS_DIR = path.join(process.cwd(), 'src/data/statsSnapshots');
 const OUTPUT_PATH = path.join(process.cwd(), 'src/data/vlrSnapshot.ts');
 
-const PRIORITY_FILES = [
-  'vct_2026.html',
-  'vct_2025.html',
-  'vcl_2026.html',
-];
+const CURRENT_YEAR = 2026;
+
+function extractYearFromFilename(filename: string): number | null {
+  const match = filename.match(/(\d{4})/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function getStatMultiplier(filename: string): number {
+  const year = extractYearFromFilename(filename);
+  if (year === null) return 1.0;
+  return Math.max(0, 1 - (CURRENT_YEAR - year) * 0.05);
+}
+
+function applyStatMultiplier(player: VlrPlayerStats, multiplier: number): VlrPlayerStats {
+  if (multiplier === 1) return player;
+  const scale = (val: string): string => {
+    const isPercent = val.endsWith('%');
+    const num = parseFloat(isPercent ? val.slice(0, -1) : val);
+    if (isNaN(num)) return val;
+    const scaled = (num * multiplier).toFixed(isPercent ? 1 : 2).replace(/\.?0+$/, '');
+    return isPercent ? `${scaled}%` : scaled;
+  };
+  return {
+    ...player,
+    rating: scale(player.rating),
+    average_combat_score: scale(player.average_combat_score),
+    kill_deaths: scale(player.kill_deaths),
+    kill_assists_survived_traded: scale(player.kill_assists_survived_traded),
+    average_damage_per_round: scale(player.average_damage_per_round),
+    kills_per_round: scale(player.kills_per_round),
+    assists_per_round: scale(player.assists_per_round),
+    first_kills_per_round: scale(player.first_kills_per_round),
+    first_deaths_per_round: scale(player.first_deaths_per_round),
+    headshot_percentage: scale(player.headshot_percentage),
+    clutch_success_percentage: scale(player.clutch_success_percentage),
+  };
+}
 
 const colors = {
   reset: '\x1b[0m',
@@ -282,27 +314,20 @@ function discoverSnapshotFiles(): string[] {
       return stats.size > 0;
     });
   
-  const priorityFiles: string[] = [];
-  const otherFiles: string[] = [];
-  
-  for (const file of allFiles) {
-    if (PRIORITY_FILES.includes(file)) {
-      priorityFiles.push(file);
-    } else {
-      otherFiles.push(file);
-    }
-  }
-  
-  priorityFiles.sort((a, b) => PRIORITY_FILES.indexOf(a) - PRIORITY_FILES.indexOf(b));
-  otherFiles.sort();
-  
-  return [...priorityFiles, ...otherFiles];
+  allFiles.sort((a, b) => {
+    const yearA = extractYearFromFilename(a) ?? 0;
+    const yearB = extractYearFromFilename(b) ?? 0;
+    if (yearB !== yearA) return yearB - yearA; // newer first
+    return a.localeCompare(b); // alphabetical tiebreak
+  });
+
+  return allFiles;
 }
 
 interface MergeResult {
   players: VlrPlayerStats[];
   sources: string[];
-  stats: { file: string; total: number; added: number; skipped: number }[];
+  stats: { file: string; total: number; added: number; skipped: number; multiplier: number }[];
 }
 
 function mergePlayerStats(files: string[]): MergeResult {
@@ -318,10 +343,11 @@ function mergePlayerStats(files: string[]): MergeResult {
     let added = 0;
     let skipped = 0;
     
+    const multiplier = getStatMultiplier(file);
     for (const player of filePlayers) {
       const key = player.player.toLowerCase();
       if (!playerMap.has(key)) {
-        playerMap.set(key, player);
+        playerMap.set(key, applyStatMultiplier(player, multiplier));
         added++;
       } else {
         skipped++;
@@ -337,6 +363,7 @@ function mergePlayerStats(files: string[]): MergeResult {
       total: filePlayers.length,
       added,
       skipped,
+      multiplier,
     });
   }
   
@@ -470,10 +497,11 @@ async function main() {
   const { players, sources, stats } = mergePlayerStats(files);
   
   for (const stat of stats) {
+    const multiplierLabel = `(${(stat.multiplier * 100).toFixed(0)}%)`;
     if (stat.added > 0) {
-      log(`  ✓ ${stat.file}: ${stat.added} players added`, 'green');
+      log(`  ✓ ${stat.file} ${multiplierLabel}: ${stat.added} players added`, 'green');
     } else if (stat.total > 0) {
-      log(`  - ${stat.file}: ${stat.skipped} duplicates skipped`, 'dim');
+      log(`  - ${stat.file} ${multiplierLabel}: ${stat.skipped} duplicates skipped`, 'dim');
     }
   }
   

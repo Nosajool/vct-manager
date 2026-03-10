@@ -99,10 +99,11 @@ export class InterviewService {
     let finalTemplate = template;
     if (won && template.id === 'post_win_comeback') {
       const isTeamA = match.teamAId === playerTeamId;
-      const comebackMapName = this.findComebackMap(matchResult, isTeamA ? 'teamA' : 'teamB');
-      if (comebackMapName) {
-        finalTemplate = { ...template, prompt: template.prompt.replace('{mapName}', comebackMapName) };
-      }
+      const comebackMapName =
+        this.findComebackMap(matchResult, isTeamA ? 'teamA' : 'teamB') ??
+        matchResult.maps[0]?.map ??
+        'that map';
+      finalTemplate = { ...template, prompt: template.prompt.replace('{mapName}', comebackMapName) };
     }
 
     return this.toPendingInterview(finalTemplate, matchResult.matchId);
