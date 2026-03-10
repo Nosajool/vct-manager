@@ -111,10 +111,23 @@ function generatePreferences(): Player['preferences'] {
 
 function generatePersonality(stats: PlayerStats, age: number): PlayerPersonality {
   const { clutch, mental, vibes, support, mechanics, igl, entry } = stats;
-  if (clutch >= 70 && mental >= 70) return 'BIG_STAGE';
-  if (vibes >= 70 && support >= 70) return 'TEAM_FIRST';
-  if (mechanics >= 70 && age <= 21) return 'FAME_SEEKER';
-  if (igl >= 70 && entry < 55) return 'INTROVERT';
+
+  const ageMultiplier = age <= 21 ? 1.0 : age <= 24 ? 0.6 : 0.2;
+
+  const weights: Record<PlayerPersonality, number> = {
+    BIG_STAGE:   (clutch / 100) * (mental / 100) * 2.0,
+    TEAM_FIRST:  (vibes / 100) * (support / 100) * 2.0,
+    FAME_SEEKER: (mechanics / 100) * ageMultiplier * 2.0,
+    INTROVERT:   (igl / 100) * (1 - entry / 100) * 2.0,
+    STABLE:      0.8,
+  };
+
+  const total = Object.values(weights).reduce((sum, w) => sum + w, 0);
+  let rand = Math.random() * total;
+  for (const [personality, weight] of Object.entries(weights) as [PlayerPersonality, number][]) {
+    rand -= weight;
+    if (rand <= 0) return personality;
+  }
   return 'STABLE';
 }
 

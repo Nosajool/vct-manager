@@ -280,7 +280,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                 </div>
               </div>
               <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
-              {totalQuestions && totalQuestions > 1 && (
+              {(totalQuestions ?? 0) > 1 && (
                 <p className="text-sm text-vct-gray mt-0.5">
                   Question {questionNumber} of {totalQuestions}
                 </p>

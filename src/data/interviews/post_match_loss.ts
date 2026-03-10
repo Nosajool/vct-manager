@@ -153,4 +153,64 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  {
+    id: 'post_loss_clutch_defense',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
+    prompt: "You were in a 2v2 situation in the deciding round. Some people online are going to question that. What's your response?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "You try it then",
+        quote: "I mean what the f*** do you want me to do? We're in a 2 vs 2 against f****** brazilians. Why don't you try it? One of them's bald for god's sake. No shot we win that.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 1.5, STABLE: 0, TEAM_FIRST: 0.5 },
+        effects: { hype: 3, morale: -1, fanbase: 1, dramaChance: 15 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I should have found a way",
+        quote: "I had a chance to make it happen and I didn't. I'll go back and figure out what I could have done differently. That's on me.",
+        personalityWeights: { STABLE: 2, TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0 },
+        effects: { morale: -1, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The odds were just against us",
+        quote: "Those are situations where sometimes you're on the wrong end of the math. We fought every round regardless — we just couldn't convert.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_loss_opponent_apology',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
+    prompt: "You seemed confident coming into this one. After seeing what they brought today — did you have enough respect for this opponent?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "I owe them an apology",
+        quote: "I owe you an apology. I wasn't familiar with your game.",
+        effects: { fanbase: 3, sponsorTrust: 3, morale: 1, rivalryDelta: -3 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "They surprised us today",
+        quote: "Full credit to them — they came in with something we hadn't fully prepared for. That team is better than I gave them credit for going in.",
+        effects: { fanbase: 2, sponsorTrust: 2, morale: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "We respected them — prep let us down",
+        quote: "I always respect every opponent. The issue wasn't underestimating them — it was that our prep for their specific style wasn't sharp enough.",
+        effects: { morale: 1, dramaChance: 5 },
+      },
+    ],
+  },
+
 ];

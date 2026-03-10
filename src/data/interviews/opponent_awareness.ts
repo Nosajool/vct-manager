@@ -479,6 +479,40 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // post_win_rival_disrespect_ignition — POST_MATCH, player, win, has_rivalry
+  {
+    id: 'post_win_rival_disrespect_ignition',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "You looked dialed in from the second half onward. What switched?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "It became personal",
+        quote: "I saw {rivalTeamName} smiling after the first half of {mapName} and that was enough for it to become personal to me.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2.5, STABLE: 0, TEAM_FIRST: 1 },
+        effects: { hype: 5, rivalryDelta: 8, morale: 3, dramaChance: 12, setsFlags: [{ key: 'rivalry_scorched_earth', durationDays: 14 }] },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "We made the adjustments",
+        quote: "We saw what wasn't working and fixed it at halftime. The second half was ours.",
+        personalityWeights: { STABLE: 2, INTROVERT: 1 },
+        effects: { hype: 3, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The team pulled me through",
+        quote: "I was struggling early but my teammates kept things stable. When I got going, it was because they gave me the foundation to build on.",
+        personalityWeights: { TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0 },
+        effects: { morale: 4, fanbase: 3 },
+      },
+    ],
+  },
+
   // 8. post_lower_bracket_survival_player — POST_MATCH player survived elimination (→ winIds)
   {
     id: 'post_lower_bracket_survival_player',

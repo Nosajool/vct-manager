@@ -244,4 +244,35 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       },
     ],
   },
+
+  {
+    id: 'player_unconditional_commitment',
+    context: 'GENERAL',
+    subjectType: 'player',
+    narrativeCategory: 'team_synergy',
+    prompt: "There's been talk about your schedule and availability for the upcoming stretch. Can you put that to rest?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "I will be there no matter what",
+        quote: "I will be there no matter what.",
+        personalityWeights: { BIG_STAGE: 2, TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 0.5 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The team comes first",
+        quote: "My commitment to this team isn't in question. Whatever I have to do to show up, I'll do it.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1 },
+        effects: { morale: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "That's between me and the org",
+        quote: "Those conversations are between me and the organization. I'll be where I need to be.",
+        personalityWeights: { INTROVERT: 2, FAME_SEEKER: 1 },
+        effects: { morale: 1, dramaChance: 5 },
+      },
+    ],
+  },
 ];
