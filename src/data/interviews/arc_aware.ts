@@ -168,6 +168,9 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'player_ego',
+    conditions: [
+      { type: 'min_season_day', threshold: 30 },
+    ],
     prompt: "With contract situations looming for some of your players, how do you keep the focus on winning rather than off-field noise?",
     options: [
       {
