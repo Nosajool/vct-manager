@@ -7,6 +7,7 @@ import { strategyService } from '../../services';
 import type { Player, PlayerAgentPreferences, AgentRole } from '../../types';
 import { getAgentImageUrl } from '../../utils/imageAssets';
 import { GameImage } from '../shared/GameImage';
+import { COMPOSITION_CONSTANTS } from '../../engine/match/constants';
 
 interface AgentPreferenceEditorProps {
   player: Player;
@@ -14,13 +15,11 @@ interface AgentPreferenceEditorProps {
   onSave?: () => void;
 }
 
-const ROLES: AgentRole[] = ['Duelist', 'Initiator', 'Controller', 'Sentinel'];
-
 const ROLE_COLORS: Record<AgentRole, string> = {
-  Duelist: 'text-red-400 border-red-400/30 bg-red-400/10',
-  Initiator: 'text-green-400 border-green-400/30 bg-green-400/10',
-  Controller: 'text-purple-400 border-purple-400/30 bg-purple-400/10',
-  Sentinel: 'text-blue-400 border-blue-400/30 bg-blue-400/10',
+  Duelist: 'text-red-400',
+  Initiator: 'text-green-400',
+  Controller: 'text-purple-400',
+  Sentinel: 'text-blue-400',
 };
 
 const ROLE_RING_COLORS: Record<AgentRole, string> = {
@@ -28,20 +27,6 @@ const ROLE_RING_COLORS: Record<AgentRole, string> = {
   Initiator: 'ring-green-400',
   Controller: 'ring-purple-400',
   Sentinel: 'ring-blue-400',
-};
-
-const ROLE_TAB_ACTIVE: Record<AgentRole, string> = {
-  Duelist: 'bg-red-400/20 text-red-400 border-b-2 border-red-400',
-  Initiator: 'bg-green-400/20 text-green-400 border-b-2 border-green-400',
-  Controller: 'bg-purple-400/20 text-purple-400 border-b-2 border-purple-400',
-  Sentinel: 'bg-blue-400/20 text-blue-400 border-b-2 border-blue-400',
-};
-
-const ROLE_SLOT_ACTIVE: Record<AgentRole, string> = {
-  Duelist: 'ring-2 ring-red-400 bg-red-400/10 shadow-[0_0_8px_rgba(248,113,113,0.4)]',
-  Initiator: 'ring-2 ring-green-400 bg-green-400/10 shadow-[0_0_8px_rgba(74,222,128,0.4)]',
-  Controller: 'ring-2 ring-purple-400 bg-purple-400/10 shadow-[0_0_8px_rgba(192,132,252,0.4)]',
-  Sentinel: 'ring-2 ring-blue-400 bg-blue-400/10 shadow-[0_0_8px_rgba(96,165,250,0.4)]',
 };
 
 export function AgentPreferenceEditor({
@@ -60,24 +45,6 @@ export function AgentPreferenceEditor({
   });
 
   const [activeSlot, setActiveSlot] = useState<0 | 1 | 2>(0);
-
-  // Handle primary role change (via tab click)
-  const handlePrimaryRoleChange = (role: AgentRole) => {
-    setPreferences((prev) => {
-      const newPrefs = { ...prev, primaryRole: role };
-
-      // Update preferred agents to match the new role
-      const roleAgents = strategyService.getAgentsByRole(role);
-      newPrefs.preferredAgents = [
-        roleAgents[0] || prev.preferredAgents[0],
-        roleAgents[1] || prev.preferredAgents[1],
-        roleAgents[2] || prev.preferredAgents[2],
-      ] as [string, string, string];
-
-      return newPrefs;
-    });
-    setActiveSlot(0);
-  };
 
   // Handle agent image click — assigns agent to active slot
   const handleAgentImageClick = (agent: string) => {
@@ -115,23 +82,30 @@ export function AgentPreferenceEditor({
   const handleSlotClear = (slotIndex: 0 | 1 | 2) => {
     const current = [...preferences.preferredAgents] as [string, string, string];
     const otherAgents = current.filter((_, i) => i !== slotIndex);
-    const fallback = primaryRoleAgents.find((a) => !otherAgents.includes(a) && a !== current[slotIndex]);
+    const allAgents = Object.keys(COMPOSITION_CONSTANTS.AGENT_ROLES);
+    const fallback = allAgents.find((a) => !otherAgents.includes(a) && a !== current[slotIndex]);
     const newAgents = [...current] as [string, string, string];
-    newAgents[slotIndex] = fallback ?? primaryRoleAgents[slotIndex] ?? current[slotIndex];
+    newAgents[slotIndex] = fallback ?? current[slotIndex];
     setPreferences((prev) => ({ ...prev, preferredAgents: newAgents }));
     setActiveSlot(slotIndex);
   };
 
-  // Handle save
+  // Handle save — auto-derive primaryRole from first preferred agent
   const handleSave = () => {
-    strategyService.setPlayerAgentPreferences(player.id, preferences);
+    const derivedRole = (COMPOSITION_CONSTANTS.AGENT_ROLES as Record<string, AgentRole>)[preferences.preferredAgents[0]] ?? 'Duelist';
+    strategyService.setPlayerAgentPreferences(player.id, {
+      ...preferences,
+      primaryRole: derivedRole,
+    });
     onSave?.();
     onClose();
   };
 
-  // Get agents for current primary role
-  const primaryRoleAgents = strategyService.getAgentsByRole(preferences.primaryRole);
   const topAgent = preferences.preferredAgents[0];
+  const derivedRole = (COMPOSITION_CONSTANTS.AGENT_ROLES as Record<string, AgentRole>)[topAgent] ?? 'Duelist';
+
+  // Active slot ring color based on slot-1 agent's role
+  const activeSlotRingClass = `ring-2 ${ROLE_RING_COLORS[derivedRole]} bg-vct-dark shadow-[0_0_8px_rgba(0,0,0,0.4)]`;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -150,8 +124,8 @@ export function AgentPreferenceEditor({
               )}
               <div>
                 <h2 className="text-xl font-bold text-vct-light">{player.name}</h2>
-                <p className={`text-sm font-medium ${ROLE_COLORS[preferences.primaryRole].split(' ')[0]}`}>
-                  {preferences.primaryRole} · {topAgent}
+                <p className={`text-sm font-medium ${ROLE_COLORS[derivedRole]}`}>
+                  {derivedRole} · {topAgent}
                 </p>
               </div>
             </div>
@@ -162,23 +136,6 @@ export function AgentPreferenceEditor({
               ×
             </button>
           </div>
-        </div>
-
-        {/* Role Tabs */}
-        <div className="flex border-b border-vct-gray/20">
-          {ROLES.map((role) => (
-            <button
-              key={role}
-              onClick={() => handlePrimaryRoleChange(role)}
-              className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
-                preferences.primaryRole === role
-                  ? ROLE_TAB_ACTIVE[role]
-                  : 'text-vct-gray hover:text-vct-light'
-              }`}
-            >
-              {role}
-            </button>
-          ))}
         </div>
 
         {/* Priority Slot Tray */}
@@ -195,11 +152,11 @@ export function AgentPreferenceEditor({
                   onClick={() => handleSlotClick(slotIndex)}
                   className={`flex-1 relative flex flex-col items-center gap-1 p-2 rounded-lg border transition-all
                     ${isActive
-                      ? ROLE_SLOT_ACTIVE[preferences.primaryRole]
+                      ? activeSlotRingClass
                       : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40'
                     }`}
                 >
-                  <span className={`text-xs font-bold ${isActive ? ROLE_COLORS[preferences.primaryRole].split(' ')[0] : 'text-vct-gray'}`}>
+                  <span className={`text-xs font-bold ${isActive ? ROLE_COLORS[derivedRole] : 'text-vct-gray'}`}>
                     #{slotIndex + 1}
                   </span>
                   <GameImage
@@ -228,53 +185,58 @@ export function AgentPreferenceEditor({
           </div>
         </div>
 
-        {/* Agent Grid */}
-        <div className="flex-1 overflow-y-auto p-4 pt-2">
-          <div className="grid grid-cols-3 gap-3">
-            {primaryRoleAgents.map((agent) => {
-              const rankIndex = preferences.preferredAgents.indexOf(agent);
-              const isSelected = rankIndex !== -1;
-              const mastery = existingPrefs?.agentMastery?.[agent] ?? 0;
+        {/* Agent Grid — grouped by role */}
+        <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-4">
+          {(Object.entries(COMPOSITION_CONSTANTS.AGENTS_BY_ROLE) as [AgentRole, readonly string[]][]).map(([role, agents]) => (
+            <div key={role}>
+              <p className={`text-xs font-semibold mb-2 ${ROLE_COLORS[role]}`}>{role}</p>
+              <div className="grid grid-cols-3 gap-3">
+                {agents.map((agent) => {
+                  const rankIndex = preferences.preferredAgents.indexOf(agent);
+                  const isSelected = rankIndex !== -1;
+                  const mastery = existingPrefs?.agentMastery?.[agent] ?? 0;
 
-              return (
-                <button
-                  key={agent}
-                  onClick={() => handleAgentImageClick(agent)}
-                  className={`relative flex flex-col items-center gap-1.5 p-2 rounded-lg border transition-all
-                    ${isSelected
-                      ? `border-transparent ring-2 ${ROLE_RING_COLORS[preferences.primaryRole]} bg-vct-dark`
-                      : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40 opacity-60 hover:opacity-100'
-                    }`}
-                >
-                  {isSelected && (
-                    <span className="absolute top-1.5 left-1.5 text-xs font-bold text-white bg-black/60 rounded px-1 leading-tight z-10">
-                      #{rankIndex + 1}
-                    </span>
-                  )}
-                  <GameImage
-                    src={getAgentImageUrl(agent)}
-                    alt={agent}
-                    className="w-16 h-16 object-cover rounded-lg"
-                    fallbackClassName="w-16 h-16 rounded-lg"
-                  />
-                  <span className="text-xs text-vct-light text-center leading-tight w-full truncate">
-                    {agent}
-                  </span>
-                  <div className="w-full h-1 bg-vct-gray/20 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${
-                        mastery >= 80 ? 'bg-green-400'
-                        : mastery >= 60 ? 'bg-yellow-400'
-                        : mastery >= 30 ? 'bg-orange-400'
-                        : 'bg-red-400'
-                      }`}
-                      style={{ width: `${mastery}%` }}
-                    />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  return (
+                    <button
+                      key={agent}
+                      onClick={() => handleAgentImageClick(agent)}
+                      className={`relative flex flex-col items-center gap-1.5 p-2 rounded-lg border transition-all
+                        ${isSelected
+                          ? `border-transparent ring-2 ${ROLE_RING_COLORS[role]} bg-vct-dark`
+                          : 'border-vct-gray/20 bg-vct-dark hover:border-vct-gray/40 opacity-60 hover:opacity-100'
+                        }`}
+                    >
+                      {isSelected && (
+                        <span className="absolute top-1.5 left-1.5 text-xs font-bold text-white bg-black/60 rounded px-1 leading-tight z-10">
+                          #{rankIndex + 1}
+                        </span>
+                      )}
+                      <GameImage
+                        src={getAgentImageUrl(agent)}
+                        alt={agent}
+                        className="w-16 h-16 object-cover rounded-lg"
+                        fallbackClassName="w-16 h-16 rounded-lg"
+                      />
+                      <span className="text-xs text-vct-light text-center leading-tight w-full truncate">
+                        {agent}
+                      </span>
+                      <div className="w-full h-1 bg-vct-gray/20 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            mastery >= 80 ? 'bg-green-400'
+                            : mastery >= 60 ? 'bg-yellow-400'
+                            : mastery >= 30 ? 'bg-orange-400'
+                            : 'bg-red-400'
+                          }`}
+                          style={{ width: `${mastery}%` }}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Footer */}
