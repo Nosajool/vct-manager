@@ -10,6 +10,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'coach',
     matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
     prompt: "Great result today. What did the team execute particularly well from a tactical standpoint?",
     options: [
       {
@@ -38,6 +39,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'coach',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     prompt: "Tough result today. What tactical adjustments will you be making going forward?",
     options: [
       {
@@ -71,6 +73,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
     prompt: "Strong performance from you today. What clicked for you personally in this match?",
     options: [
       {
@@ -101,6 +104,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'loss',
+    narrativeCategory: 'player_ego',
     prompt: "It was a tough day for the team. How are you personally processing this loss?",
     options: [
       {
@@ -134,6 +138,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'post_loss_igl_blamed',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'igl_crisis',
     conditions: [{ type: 'flag_active', flag: 'interview_blamed_teammates' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "One of your players seemed to imply the game plan was the issue. Is there a communication breakdown between you and your IGL?",
     options: [
@@ -162,6 +167,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_contract_pressure',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'player_ego',
     prompt: "With contract situations looming for some of your players, how do you keep the focus on winning rather than off-field noise?",
     options: [
       {
@@ -190,6 +196,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'interview_trash_talked_rival' }, { type: 'has_rivalry' }],
     prompt: "After your comments before the match, this loss must be painful. Any regrets about what you said?",
     options: [
@@ -224,6 +231,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_transfer_window_active',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'transfer_window_scouting' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Reports suggest your org is actively scouting the transfer market. How do your current players square with that?",
     options: [
@@ -252,6 +260,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_burnout_pressure',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'practice_burnout',
     conditions: [{ type: 'flag_active', flag: 'burnout_risk_high' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "There are concerns that your team's training schedule is affecting player health and wellbeing. How do you respond?",
     options: [
@@ -280,6 +289,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_roster_exploration_fallout',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'flag_active', flag: 'org_open_to_trade' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Players are reportedly unsettled following your earlier comments about roster flexibility. Looking back, was that a mistake?",
     options: [
@@ -308,6 +318,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_igl_authority_undermined',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'igl_crisis',
     conditions: [{ type: 'flag_active', flag: 'igl_authority_undermined' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Reports suggest your IGL's shot-calling authority has been significantly reduced. How does that change your team's dynamic?",
     options: [
@@ -336,6 +347,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_burnout_crisis_ignored_fallout',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'practice_burnout',
     conditions: [{ type: 'flag_active', flag: 'burnout_crisis_ignored' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Multiple sources suggest your team pushed through serious burnout warning signs. Players weren't given adequate support — what happened?",
     options: [
@@ -369,6 +381,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_player_big_stage',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'breakthrough',
     conditions: [{ type: 'is_playoff_match' }],
     prompt: "This is a playoff match. Some players feel the pressure differently — how does a high-stakes environment affect you personally?",
     options: [
@@ -401,6 +414,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'loss',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'team_loss_streak', streakLength: 2 }],
     prompt: "You've been quiet through this rough stretch. How are you really processing what's happening with the team right now?",
     options: [
@@ -441,6 +455,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "You've been sent to the lower bracket. No more safety net. How does the team regroup from here?",
     options: [
@@ -470,6 +485,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'lower_bracket_survival',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "You've kept your tournament run alive through consecutive wins in the lower bracket. What's driving this team right now?",
     options: [
@@ -499,6 +515,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'elimination_risk_pre',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'elimination_risk' }],
     prompt: "One more loss and your tournament is over. How do you prepare a team for a match with everything on the line?",
     options: [
@@ -528,6 +545,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'grand_final_pre',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'is_grand_final' }],
     prompt: "This is the grand final. You've made it to the biggest match of the tournament. What does it mean to stand here?",
     options: [
@@ -558,6 +576,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'is_grand_final' }],
     prompt: "You're champions. After everything this team went through to get here — what does this moment mean?",
     options: [
@@ -588,6 +607,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'is_grand_final' }],
     prompt: "You made the grand final and fell short at the last step. How do you walk away from something like this?",
     options: [
@@ -617,6 +637,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'upper_bracket_confidence',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'upper' }],
     prompt: "You're still in the upper bracket with an extra life if you need it. How do you keep the team hungry without getting comfortable?",
     options: [
@@ -646,6 +667,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'opponent_dropped_from_upper_pre',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'opponent_from_upper' }],
     prompt: "Your next opponent just dropped from the upper bracket. They're experienced and hungry — does that change your approach at all?",
     options: [
@@ -675,6 +697,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'lower_bracket_vs_dropped_opponent',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "You're in the lower bracket, and your opponent just dropped from the upper. Two teams under the gun — what does that dynamic bring out?",
     options: [
@@ -705,6 +728,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
+    narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "Match after match, elimination on the line each time — and this team keeps winning. How do you describe what you've witnessed from this roster through this lower bracket run?",
     options: [
@@ -745,6 +769,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_redemption_push',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'breakthrough',
     conditions: [{ type: 'flag_active', flag: 'arc_redemption_{playerId}' }, { type: 'is_playoff_match' }],
     prompt: "You've spoken about wanting to prove yourself this season. With the playoffs here, does that motivation feel like fuel — or pressure?",
     options: [
@@ -777,6 +802,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'loss',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_fragile_{playerId}' }, { type: 'team_loss_streak', streakLength: 2 }],
     prompt: "You've had a difficult stretch and this was another tough result. There's a visible weight on you right now. How are you actually doing?",
     options: [
@@ -808,6 +834,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_contender_expectations',
     context: 'PRE_MATCH',
     subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'arc_contender_{playerId}' }, { type: 'elimination_risk' }],
     prompt: "Your team came in with championship expectations. Now you're one loss from going home. How do you manage expectations when the gap between narrative and reality is this sharp?",
     options: [
@@ -837,6 +864,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_momentum_{playerId}' }, { type: 'team_win_streak', streakLength: 2 }],
     prompt: "You've been in outstanding form. There's a real feeling right now that something special is happening. What does this stretch feel like from the inside?",
     options: [
@@ -868,6 +896,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_underdog_chip',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_underdog_{playerId}' }],
     prompt: "Not many people expected you to still be here. Has that changed how you think about yourself — or this tournament?",
     options: [
@@ -900,6 +929,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_resilient_{playerId}' }, { type: 'bracket_position', bracketPosition: 'lower' }],
     prompt: "You've watched one of your players come back from real adversity through this tournament run. What have you seen in them that the stats don't capture?",
     options: [
@@ -928,6 +958,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_prodigy_pressure',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_prodigy_{playerId}' }, { type: 'is_playoff_match' }],
     prompt: "Everyone has been calling you the next big thing since this tournament started. Heading into a playoff match — does the label help or does it start to feel like a weight?",
     options: [
@@ -959,6 +990,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_veteran_legacy_focus',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_veteran_legacy_{playerId}' }, { type: 'is_grand_final' }],
     prompt: "You've been chasing something like this for a long time. Standing at the grand final — what does this moment feel like compared to everything that came before?",
     options: [
@@ -991,6 +1023,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'arc_fallen_{playerId}' }, { type: 'team_loss_streak', streakLength: 2 }],
     prompt: "This has been a difficult stretch for you personally. Some are saying this might not be the same player we saw a year ago. How do you respond to that?",
     options: [
@@ -1022,6 +1055,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     id: 'pre_arc_clutch_expectation',
     context: 'PRE_MATCH',
     subjectType: 'player',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_clutch_{playerId}' }],
     prompt: "You've built a reputation for delivering in the biggest moments this tournament. Does knowing that change how you approach pressure situations — or does it just add to the weight?",
     options: [

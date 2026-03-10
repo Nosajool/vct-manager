@@ -13,14 +13,9 @@ import type { MetaPatch } from './meta';
 
 /**
  * Narrative arc categories tracked in the global collection
- * Subset of DramaCategory representing curated storyline arcs
+ * Equals DramaCategory — all 11 categories are collectible
  */
-export type NarrativeCategory =
-  | 'visa_arc'
-  | 'coaching_overhaul'
-  | 'igl_crisis'
-  | 'scrim_sharing'
-  | 'org_culture';
+export type NarrativeCategory = DramaCategory;
 
 /**
  * Categories of drama events that can occur
@@ -36,7 +31,8 @@ export type DramaCategory =
   | 'coaching_overhaul'  // all coaching overhaul arc events
   | 'igl_crisis'         // all IGL crisis arc events
   | 'scrim_sharing'      // scrim VOD leak scandal arc
-  | 'org_culture';       // org wealth / chicken nugget arc
+  | 'org_culture'        // org wealth / chicken nugget arc
+  | 'tournament_drama';  // bracket-specific tournament interviews
 
 /**
  * Severity level of drama events
@@ -547,6 +543,7 @@ export const DRAMA_CONSTANTS = {
     igl_crisis: 5,           // Short: arc events are flag-gated
     scrim_sharing: 14,       // Distinct arc, no cross-bleed with external_pressure
     org_culture: 5,          // Short: arc events are flag-gated
+    tournament_drama: 3,     // Short: bracket-specific, tournament-gated
   },
 
   // Effect magnitude defaults

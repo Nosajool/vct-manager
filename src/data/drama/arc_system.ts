@@ -2468,6 +2468,163 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // PSYCH SUPPORT ARC — Follow-up events for psych_support_given_{playerId}
+  // ==========================================================================
+
+  {
+    id: 'psych_support_breakthrough',
+    category: 'practice_burnout',
+    severity: 'minor',
+    title: 'Turning a Corner',
+    description: "{playerName} has been putting in quiet work behind the scenes. Something seems to have shifted.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'psych_support_given_{playerId}',
+        playerSelector: 'condition_match',
+      },
+      {
+        type: 'player_morale_above',
+        threshold: 45,
+        playerSelector: 'any',
+      },
+    ],
+    probability: 65,
+    cooldownDays: 60,
+    choices: [
+      {
+        id: 'give_spotlight',
+        text: 'Give them a starting spotlight',
+        description: 'Feature them prominently in the upcoming match — show the team you believe in them',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 10,
+          },
+          {
+            target: 'team_chemistry',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'psych_support_given_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_momentum_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "{playerName} steps into the spotlight with something to prove. The team rallies around them. Whatever was weighing on them, it no longer shows.",
+      },
+      {
+        id: 'keep_supporting_quietly',
+        text: 'Keep supporting quietly',
+        description: 'Continue the low-key approach — let them find their footing at their own pace',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'psych_support_given_{playerId}',
+          },
+        ],
+        outcomeText: "{playerName} appreciates the space. No grand gestures, no pressure — just steady improvement over time.",
+      },
+    ],
+  },
+
+  {
+    id: 'psych_support_setback',
+    category: 'practice_burnout',
+    severity: 'minor',
+    title: 'Still Struggling',
+    description: "Despite the sessions, {playerName} is still visibly off. The results aren't helping.",
+    conditions: [
+      {
+        type: 'flag_active',
+        flag: 'psych_support_given_{playerId}',
+        playerSelector: 'condition_match',
+      },
+      {
+        type: 'player_morale_below',
+        threshold: 40,
+        playerSelector: 'any',
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 50,
+    cooldownDays: 60,
+    choices: [
+      {
+        id: 'extend_support',
+        text: 'Extend the support — this takes time',
+        description: 'Double down on the investment. Recovery is not linear.',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 5,
+          },
+          {
+            target: 'team_budget',
+            delta: -500,
+          },
+          {
+            target: 'set_flag',
+            flag: 'arc_mod_resilient_{playerId}',
+            flagDuration: 14,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'psych_support_given_{playerId}',
+          },
+        ],
+        outcomeText: "You reaffirm your commitment. {playerName} notices. It doesn't fix everything overnight, but they know you haven't given up on them.",
+      },
+      {
+        id: 'bench_to_protect',
+        text: 'Bench them to protect confidence',
+        description: 'Pull them from the lineup before the losses erode what little confidence remains',
+        effects: [
+          {
+            target: 'player_form',
+            effectPlayerSelector: 'triggering',
+            delta: -5,
+          },
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'triggering',
+            delta: 3,
+          },
+          {
+            target: 'clear_flag',
+            flag: 'psych_support_given_{playerId}',
+          },
+          {
+            target: 'set_flag',
+            flag: 'reduced_training_time_{playerId}',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: "{playerName} is quietly relieved to step back. The pressure was mounting. They need time away from the spotlight before they can find themselves again.",
+      },
+    ],
+  },
+
   // Arc 4: IGL Community Scapegoat
   {
     id: 'igl_community_scapegoat',

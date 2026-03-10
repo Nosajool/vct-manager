@@ -995,7 +995,7 @@ These flags are already used in the system. Don't duplicate their meaning:
 | `transfer_window_scouting` | `rebuild_or_reload` drama | future events |
 | `management_committed_to_roster` | `rebuild_or_reload` drama | future events |
 | `igl_authority_undermined` | `igl_shotcalling_questioned` drama | future events |
-| `psych_support_given_{playerId}` | `silent_tilt` drama | future events |
+| `psych_support_given_{playerId}` | `silent_tilt`, `burnout_grind_culture`, `public_pressure_spiral` drama | `psych_support_breakthrough`, `psych_support_setback` drama |
 | `reduced_training_time` | `burnout_grind_culture`, `silent_tilt` drama | future events |
 | `burnout_risk_high` | `burnout_grind_culture`, `silent_tilt` drama | future events |
 | `ego_underutilized_{playerId}` | `ego_underutilized` drama | `ego_role_demand` drama |

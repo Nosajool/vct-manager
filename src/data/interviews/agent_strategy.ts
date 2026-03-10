@@ -1,6 +1,6 @@
 import type { InterviewTemplate } from '../../types/interview';
 
-export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = [
+const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   // ==========================================================================
   // POST_MATCH — WIN, double controller composition
   // ==========================================================================
@@ -338,3 +338,7 @@ export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 ];
+
+export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = AGENT_STRATEGY_TEMPLATES_RAW.map(
+  (t) => ({ ...t, narrativeCategory: 'meta_rumors' as const })
+);

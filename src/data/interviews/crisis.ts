@@ -9,6 +9,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_loss_streak',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'team_loss_streak', streakLength: 3 }],
     prompt: "Three straight losses. There are growing calls for roster changes. How do you respond?",
     options: [
@@ -37,6 +38,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_drama_spike',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "Reports of internal tension have leaked publicly. Can you address the locker room situation?",
     options: [
@@ -65,6 +67,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_sponsor',
     context: 'CRISIS',
     subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'sponsor_trust_low' }],
     prompt: "With results declining, are you concerned about your sponsorship relationships?",
     options: [
@@ -98,6 +101,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_coach_streak',
     context: 'CRISIS',
     subjectType: 'coach',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'team_loss_streak', streakLength: 3 }],
     prompt: "Three straight losses. Are you questioning your tactical approach at this point?",
     options: [
@@ -126,6 +130,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_coach_drama',
     context: 'CRISIS',
     subjectType: 'coach',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "There are reports of player frustration with the coaching staff's methods. How do you respond to that?",
     options: [
@@ -159,6 +164,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_player_drama',
     context: 'CRISIS',
     subjectType: 'player',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
     prompt: "There are reports of internal tension within the team. How is the locker room actually holding up?",
     options: [
@@ -187,6 +193,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
     id: 'crisis_player_morale',
     context: 'CRISIS',
     subjectType: 'player',
+    narrativeCategory: 'player_ego',
     conditions: [{ type: 'team_loss_streak', streakLength: 3 }],
     prompt: "After this difficult stretch, how do you personally stay motivated and keep your own confidence up?",
     options: [

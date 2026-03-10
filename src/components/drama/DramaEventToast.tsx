@@ -86,6 +86,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
     icon: '🍗',
   },
+  tournament_drama: {
+    label: 'Tournament',
+    color: 'from-rose-500/20 to-rose-600/20 border-rose-500/30',
+    icon: '🏆',
+  },
 };
 
 /**

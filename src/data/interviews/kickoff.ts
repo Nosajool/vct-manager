@@ -9,6 +9,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     id: 'kickoff_season_opener',
     context: 'KICKOFF',
     subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
     prompt: "You've just taken the helm for the 2026 VCT season. What message do you want to send to the league?",
     options: [
       {

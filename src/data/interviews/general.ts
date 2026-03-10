@@ -9,6 +9,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_practice_culture',
     context: 'GENERAL',
     subjectType: 'manager',
+    narrativeCategory: 'practice_burnout',
     prompt: "We hear your team puts in long practice hours. How do you balance intensity with player well-being off the server?",
     options: [
       {
@@ -36,6 +37,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_mid_season_goals',
     context: 'GENERAL',
     subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
     prompt: "Midway through the season, how would you grade the team's performance against your pre-season goals?",
     options: [
       {
@@ -63,6 +65,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_roster_chemistry',
     context: 'GENERAL',
     subjectType: 'manager',
+    narrativeCategory: 'team_synergy',
     conditions: [{ type: 'team_chemistry_above', threshold: 70 }],
     prompt: "The cohesion in your lineup has been noticeable. What's behind the chemistry you've built?",
     options: [
@@ -91,6 +94,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_team_identity',
     context: 'GENERAL',
     subjectType: 'manager',
+    narrativeCategory: 'team_synergy',
     prompt: "How would you describe the identity of this team — the way you want people to talk about you by the end of the year?",
     options: [
       {
@@ -122,6 +126,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_player_growth',
     context: 'GENERAL',
     subjectType: 'player',
+    narrativeCategory: 'player_ego',
     prompt: "You've been with this organization for a while now. What's the biggest way you've grown as a competitor?",
     options: [
       {
@@ -152,6 +157,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_player_travel',
     context: 'GENERAL',
     subjectType: 'player',
+    narrativeCategory: 'practice_burnout',
     prompt: "The tournament circuit is brutal on travel. How do you keep your performance consistent through the grind?",
     options: [
       {
@@ -181,6 +187,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     id: 'general_player_upcoming_hype',
     context: 'GENERAL',
     subjectType: 'player',
+    narrativeCategory: 'breakthrough',
     prompt: "There's a lot of excitement around what this team could do in upcoming competition. What has you most fired up heading into the next stretch?",
     options: [
       {

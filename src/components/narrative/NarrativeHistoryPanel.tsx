@@ -43,6 +43,7 @@ const DRAMA_CATEGORY_META: Record<
   igl_crisis:       { label: 'IGL Crisis',     color: 'text-red-400',    dotColor: 'bg-red-500',     icon: '🎯' },
   scrim_sharing:    { label: 'Scrim Scandal',  color: 'text-cyan-400',   dotColor: 'bg-cyan-500',    icon: '🎬' },
   org_culture:      { label: 'Org Culture',    color: 'text-yellow-400', dotColor: 'bg-yellow-500',  icon: '🍗' },
+  tournament_drama: { label: 'Tournament',     color: 'text-rose-400',   dotColor: 'bg-rose-500',    icon: '🏆' },
 };
 
 const INTERVIEW_CONTEXT_META: Record<

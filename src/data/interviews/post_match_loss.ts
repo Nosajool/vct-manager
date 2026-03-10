@@ -10,6 +10,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     prompt: "Tough loss today. What do you take away from this performance?",
     options: [
       {
@@ -38,6 +39,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'player',
     matchOutcome: 'loss',
+    narrativeCategory: 'player_ego',
     prompt: "That loss was hard to watch. Were you frustrated with how the team performed today?",
     options: [
       {
@@ -68,6 +70,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     prompt: "It came down to the wire. Painful to lose by such a small margin — what happened?",
     options: [
       {
@@ -96,6 +99,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     prompt: "That was a heavy loss. How do you keep morale up after a result like this?",
     options: [
       {
@@ -124,6 +128,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
     conditions: [{ type: 'is_playoff_match' }],
     prompt: "That's an elimination. What do you say to your players and fans right now?",
     options: [

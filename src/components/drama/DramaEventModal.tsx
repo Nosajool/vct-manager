@@ -89,6 +89,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-yellow-500/20 to-yellow-600/20',
     badgeColor: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
   },
+  tournament_drama: {
+    label: 'Tournament Drama',
+    color: 'from-rose-500/20 to-rose-600/20',
+    badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+  },
 };
 
 /**
