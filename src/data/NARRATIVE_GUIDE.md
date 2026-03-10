@@ -1317,3 +1317,64 @@ Example arc skeleton:
     prompt: "Fans are asking if [player] will be here next season..."
     options: confident they stay | acknowledge uncertainty | deflect
 ```
+
+---
+
+## Map Pool Narrative (map_pool category)
+
+### Overview
+
+The `map_pool` category surfaces team map pool data in the narrative layer. `mapPoolContext` is populated inside `buildInterviewSnapshot()` in `InterviewService.ts` by reading `team.mapPool` (a `MapPoolStrength` object) and the maps played in the last match (`options.matchResult?.maps[].map`).
+
+It provides the evaluator and templates with enough context to ask meaningful questions about veto decisions, weak-map struggles, comfort-pick losses, scrim preparation, and specific attribute weaknesses.
+
+### mapPoolContext fields
+
+| Field | Source | Purpose |
+|---|---|---|
+| `playedMaps` | `matchResult.maps[].map` | Maps actually played in the last match |
+| `weakMaps` | `team.mapPool.banPriority` | Team's 2 worst maps (ban priority) |
+| `strongMaps` | `team.mapPool.strongestMaps` | Team's top 3 maps |
+| `overallStrength` | Average of all `MapStrength.attributes` averages | 0-100 aggregate map pool health |
+| `recentScrimMaps` | Maps with `lastPracticedDate` in last 28 days | Maps actively being practiced |
+| `playedMapAttributes` | `mapPool.maps[playedMaps[0]].attributes` | Attribute breakdown of first played map |
+| `weakestAttribute` | Lowest attribute key from `playedMapAttributes` | e.g. `'retakes'`, `'executes'` |
+
+### New condition types
+
+| Condition | Key fields | What it checks |
+|---|---|---|
+| `map_pool_played_weak_map` | — | `playedMaps` intersects `weakMaps` (banPriority) |
+| `map_pool_played_strong_map` | — | `playedMaps` intersects `strongMaps` (top 3) |
+| `map_pool_overall_below` | `mapPoolThreshold` (default 45) | Average map strength across all maps |
+| `map_pool_has_scrim_data` | — | Any played map has scrim practice in last 4 weeks |
+| `map_pool_attribute_below` | `mapPoolAttribute`, `mapPoolThreshold` (default 40) | Specific attribute of first played map |
+
+### Example usage
+
+```typescript
+// Interview fires after winning on a weak map
+{ type: 'map_pool_played_weak_map' }
+
+// Drama fires when retake ability is poor on played map
+{ type: 'map_pool_attribute_below', mapPoolAttribute: 'retakes', mapPoolThreshold: 35 }
+
+// Fires when team has low overall map depth
+{ type: 'map_pool_overall_below', mapPoolThreshold: 45 }
+```
+
+### Source files
+
+- Interview templates: `src/data/interviews/map_pool.ts` (15 templates)
+- Drama events: `src/data/drama/map_pool.ts` (2 events)
+- Both use `narrativeCategory: 'map_pool'`
+
+### Flag naming
+
+Map pool flags use the `map_pool_*` prefix:
+- `map_pool_weakness_exposed` — set when team loses while playing a weak map (duration: 5 days)
+- `map_pool_crisis_active` — set during a major map pool crisis event (duration: 10 days)
+
+### {mapName} interpolation
+
+Templates may use `{mapName}` in their `prompt` string. `toPendingInterview()` in `InterviewService.ts` resolves this from `state.results[matchId]?.maps[0]?.map`, falling back to `'this map'` if unavailable.

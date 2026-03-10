@@ -6,6 +6,7 @@ import type { PlayerAgentPreferences } from './strategy';
 import type { SeasonPhase } from './calendar';
 import type { CompositionPattern } from './strategy';
 import type { MetaPatch } from './meta';
+import type { MapStrengthAttributes } from './scrim';
 
 // ============================================================================
 // Basic Enums (String Union Types)
@@ -32,7 +33,8 @@ export type DramaCategory =
   | 'igl_crisis'         // all IGL crisis arc events
   | 'scrim_sharing'      // scrim VOD leak scandal arc
   | 'org_culture'        // org wealth / chicken nugget arc
-  | 'tournament_drama';  // bracket-specific tournament interviews
+  | 'tournament_drama'   // bracket-specific tournament interviews
+  | 'map_pool';          // map pool narrative events
 
 /**
  * Severity level of drama events
@@ -132,7 +134,14 @@ export type DramaConditionType =
   | 'team_economy_discipline'     // Checks team economy discipline
 
   // Meta patch checks
-  | 'agent_is_meta_nerfed';       // Star player's preferred agents include a nerfed agent
+  | 'agent_is_meta_nerfed'        // Star player's preferred agents include a nerfed agent
+
+  // Map pool checks (populated on InterviewSnapshot)
+  | 'map_pool_played_weak_map'    // Last match included one of team's banPriority maps
+  | 'map_pool_played_strong_map'  // Last match included one of team's strongestMaps
+  | 'map_pool_overall_below'      // Team's average map pool strength < threshold (default 45)
+  | 'map_pool_has_scrim_data'     // A played map has recent scrim practice (last 4 weeks)
+  | 'map_pool_attribute_below';   // A played map's specific attribute < threshold (default 40)
 
 /**
  * Player selection method for condition evaluation
@@ -204,6 +213,10 @@ export interface DramaCondition {
 
   // For team_economy_discipline check
   economyDiscipline?: 'risky' | 'standard' | 'conservative';
+
+  // For map pool checks
+  mapPoolThreshold?: number;                        // Used with map_pool_overall_below and map_pool_attribute_below
+  mapPoolAttribute?: keyof MapStrengthAttributes;  // Used with map_pool_attribute_below
 }
 
 // ============================================================================
@@ -544,6 +557,7 @@ export const DRAMA_CONSTANTS = {
     scrim_sharing: 14,       // Distinct arc, no cross-bleed with external_pressure
     org_culture: 5,          // Short: arc events are flag-gated
     tournament_drama: 3,     // Short: bracket-specific, tournament-gated
+    map_pool: 7,             // Map pool events, match-gated
   },
 
   // Effect magnitude defaults

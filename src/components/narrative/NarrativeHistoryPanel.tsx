@@ -44,6 +44,7 @@ const DRAMA_CATEGORY_META: Record<
   scrim_sharing:    { label: 'Scrim Scandal',  color: 'text-cyan-400',   dotColor: 'bg-cyan-500',    icon: '🎬' },
   org_culture:      { label: 'Org Culture',    color: 'text-yellow-400', dotColor: 'bg-yellow-500',  icon: '🍗' },
   tournament_drama: { label: 'Tournament',     color: 'text-rose-400',   dotColor: 'bg-rose-500',    icon: '🏆' },
+  map_pool:         { label: 'Map Pool',       color: 'text-teal-400',   dotColor: 'bg-teal-500',    icon: '🗺️' },
 };
 
 const INTERVIEW_CONTEXT_META: Record<

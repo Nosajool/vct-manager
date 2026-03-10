@@ -235,6 +235,42 @@ export function evaluateCondition(
       return preferred.some(a => nerfed.includes(a));
     }
 
+    // Map pool checks (interview-only fields on InterviewSnapshot)
+    case 'map_pool_played_weak_map': {
+      const s = snapshot as { mapPoolContext?: { playedMaps: string[]; weakMaps: string[] } };
+      const ctx = s.mapPoolContext;
+      if (!ctx) return false;
+      return ctx.playedMaps.some(m => ctx.weakMaps.includes(m));
+    }
+
+    case 'map_pool_played_strong_map': {
+      const s = snapshot as { mapPoolContext?: { playedMaps: string[]; strongMaps: string[] } };
+      const ctx = s.mapPoolContext;
+      if (!ctx) return false;
+      return ctx.playedMaps.some(m => ctx.strongMaps.includes(m));
+    }
+
+    case 'map_pool_overall_below': {
+      const s = snapshot as { mapPoolContext?: { overallStrength: number } };
+      const ctx = s.mapPoolContext;
+      if (!ctx) return false;
+      return ctx.overallStrength < (condition.mapPoolThreshold ?? 45);
+    }
+
+    case 'map_pool_has_scrim_data': {
+      const s = snapshot as { mapPoolContext?: { playedMaps: string[]; recentScrimMaps: string[] } };
+      const ctx = s.mapPoolContext;
+      if (!ctx) return false;
+      return ctx.playedMaps.some(m => ctx.recentScrimMaps.includes(m));
+    }
+
+    case 'map_pool_attribute_below': {
+      const s = snapshot as { mapPoolContext?: { playedMapAttributes?: Record<string, number> } };
+      const ctx = s.mapPoolContext;
+      if (!ctx?.playedMapAttributes || !condition.mapPoolAttribute) return false;
+      return (ctx.playedMapAttributes[condition.mapPoolAttribute] ?? 100) < (condition.mapPoolThreshold ?? 40);
+    }
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;

@@ -94,6 +94,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-rose-500/20 to-rose-600/20',
     badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
   },
+  map_pool: {
+    label: 'Map Pool',
+    color: 'from-teal-500/20 to-teal-600/20',
+    badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30',
+  },
 };
 
 /**

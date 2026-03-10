@@ -13,6 +13,7 @@ import { COACHING_OVERHAUL_EVENTS } from './coaching_overhaul';
 import { IGL_CRISIS_EVENTS } from './igl_crisis';
 import { SCRIM_SHARING_EVENTS } from './scrim_sharing';
 import { ORG_CULTURE_EVENTS } from './org_culture';
+import { MAP_POOL_EVENTS } from './map_pool';
 
 export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...PLAYER_EGO_EVENTS,
@@ -28,4 +29,5 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...IGL_CRISIS_EVENTS,
   ...SCRIM_SHARING_EVENTS,
   ...ORG_CULTURE_EVENTS,
+  ...MAP_POOL_EVENTS,
 ];

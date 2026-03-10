@@ -669,6 +669,45 @@ export class InterviewService {
       ultUsageStyle: rawStrategy.ultUsageStyle,
     };
 
+    // Extract map pool context
+    let mapPoolContext: InterviewSnapshot['mapPoolContext'];
+    const mapPool = team?.mapPool;
+    if (mapPool) {
+      const allMaps = Object.values(mapPool.maps);
+      const overallStrength = allMaps.length > 0
+        ? Math.round(allMaps.reduce((sum, m) => {
+            const attrVals = Object.values(m.attributes);
+            return sum + attrVals.reduce((s, v) => s + v, 0) / attrVals.length;
+          }, 0) / allMaps.length)
+        : 0;
+
+      const playedMaps = options.matchResult?.maps.map(m => m.map) ?? [];
+
+      const fourWeeksAgo = new Date(state.calendar.currentDate);
+      fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+      const recentScrimMaps = Object.entries(mapPool.maps)
+        .filter(([, ms]) => ms.lastPracticedDate && new Date(ms.lastPracticedDate) >= fourWeeksAgo)
+        .map(([name]) => name);
+
+      let playedMapAttributes: NonNullable<InterviewSnapshot['mapPoolContext']>['playedMapAttributes'] = undefined;
+      let weakestAttribute: NonNullable<InterviewSnapshot['mapPoolContext']>['weakestAttribute'] = undefined;
+      if (playedMaps[0] && mapPool.maps[playedMaps[0]]) {
+        playedMapAttributes = mapPool.maps[playedMaps[0]].attributes;
+        weakestAttribute = (Object.entries(playedMapAttributes) as [keyof typeof playedMapAttributes, number][])
+          .reduce((a, b) => b[1] < a[1] ? b : a)[0];
+      }
+
+      mapPoolContext = {
+        playedMaps,
+        weakMaps: mapPool.banPriority,
+        strongMaps: mapPool.strongestMaps,
+        overallStrength,
+        recentScrimMaps,
+        playedMapAttributes,
+        weakestAttribute,
+      };
+    }
+
     return {
       currentDate: state.calendar.currentDate,
       currentSeason: state.calendar.currentSeason,
@@ -688,6 +727,7 @@ export class InterviewService {
       lastMatchComposition,
       teamStrategy,
       activePatch: state.currentPatch ?? null,
+      mapPoolContext,
     };
   }
 
@@ -786,6 +826,19 @@ export class InterviewService {
           return score(current) > score(best) ? current : best;
         });
         prompt = prompt.replace('{starPlayerName}', starPlayer.name);
+      }
+    }
+    if (prompt.includes('{mapName}')) {
+      // Try to get map name from pending interview matchId's match result
+      const mapName = (() => {
+        if (!matchId) return null;
+        const matchResult = useGameStore.getState().results[matchId];
+        return matchResult?.maps?.[0]?.map ?? null;
+      })();
+      if (mapName) {
+        prompt = prompt.replace(/\{mapName\}/g, mapName);
+      } else {
+        prompt = prompt.replace(/\{mapName\}/g, 'this map');
       }
     }
 

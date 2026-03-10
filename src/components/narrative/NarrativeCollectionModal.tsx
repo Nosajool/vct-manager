@@ -33,6 +33,7 @@ const CATEGORY_CONFIG: Record<
   breakthrough:      { label: 'Breakthrough',      color: 'text-emerald-400', badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'},
   meta_rumors:       { label: 'Meta Rumors',       color: 'text-violet-400',  badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30'},
   tournament_drama:  { label: 'Tournament Drama',  color: 'text-rose-400',    badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30'       },
+  map_pool:          { label: 'Map Pool',          color: 'text-teal-400',    badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30'        },
 };
 
 const NARRATIVE_CATEGORIES: DramaCategory[] = [
@@ -40,7 +41,7 @@ const NARRATIVE_CATEGORIES: DramaCategory[] = [
   'scrim_sharing', 'visa_arc', 'igl_crisis', 'coaching_overhaul', 'org_culture',
   // General drama categories
   'player_ego', 'team_synergy', 'external_pressure', 'practice_burnout', 'breakthrough', 'meta_rumors',
-  'tournament_drama',
+  'tournament_drama', 'map_pool',
 ];
 
 // ============================================================================

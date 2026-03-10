@@ -5,6 +5,7 @@ import type { PlayerPersonality } from './player';
 import type { DramaCondition, DramaGameStateSnapshot, NarrativeCategory } from './drama';
 import type { CompositionPattern } from './strategy';
 import type { MetaPatch } from './meta';
+import type { MapStrengthAttributes } from './scrim';
 
 export type { CompositionPattern };
 
@@ -122,6 +123,16 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
   };
   // Active meta patch (null if none has fired yet)
   activePatch?: MetaPatch | null;
+  // Map pool context from team.mapPool and last match
+  mapPoolContext?: {
+    playedMaps: string[];                           // Maps played in last match
+    weakMaps: string[];                             // team.mapPool.banPriority (weakest 2)
+    strongMaps: string[];                           // team.mapPool.strongestMaps (top 3)
+    overallStrength: number;                        // Average strength across all maps (0-100)
+    recentScrimMaps: string[];                      // Maps with scrim practice in last 4 weeks
+    playedMapAttributes?: MapStrengthAttributes;    // Attributes of first played map (if available)
+    weakestAttribute?: keyof MapStrengthAttributes; // Which attribute is lowest on the played map
+  };
 }
 
 // Historical record of a completed interview choice

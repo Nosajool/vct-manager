@@ -91,6 +91,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-rose-500/20 to-rose-600/20 border-rose-500/30',
     icon: '🏆',
   },
+  map_pool: {
+    label: 'Map Pool',
+    color: 'from-teal-500/20 to-teal-600/20 border-teal-500/30',
+    icon: '🗺️',
+  },
 };
 
 /**

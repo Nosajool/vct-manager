@@ -92,6 +92,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-rose-500',
     icon: '🏆',
   },
+  map_pool: {
+    label: 'Map Pool',
+    color: 'text-teal-400',
+    dotColor: 'bg-teal-500',
+    icon: '🗺️',
+  },
 };
 
 /**

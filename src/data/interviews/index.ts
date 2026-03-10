@@ -15,6 +15,7 @@ import { IGL_CRISIS_TEMPLATES } from './igl_crisis';
 import { GENERAL_TEMPLATES } from './general';
 import { SCRIM_SHARING_TEMPLATES } from './scrim_sharing';
 import { ORG_CULTURE_INTERVIEWS } from './org_culture';
+import { MAP_POOL_INTERVIEW_TEMPLATES } from './map_pool';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -32,4 +33,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...GENERAL_TEMPLATES,
   ...SCRIM_SHARING_TEMPLATES,
   ...ORG_CULTURE_INTERVIEWS,
+  ...MAP_POOL_INTERVIEW_TEMPLATES,
 ];
