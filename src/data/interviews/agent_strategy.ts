@@ -398,5 +398,8 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
 ];
 
 export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = AGENT_STRATEGY_TEMPLATES_RAW.map(
-  (t) => ({ ...t, narrativeCategory: 'meta_rumors' as const })
+  (t) => ({
+    ...t,
+    narrativeCategory: (t.id === 'post_harbor_cove_incident' ? 'cove_incident' : 'meta_rumors') as 'cove_incident' | 'meta_rumors',
+  })
 );

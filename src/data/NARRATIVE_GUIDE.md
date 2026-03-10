@@ -54,7 +54,7 @@ The collection system gives players a Pokédex-style reason to replay and discov
 
 ### Architecture
 
-- **`NarrativeCategory`** (`src/types/drama.ts`): A type alias for `DramaCategory` — all 12 categories are tracked in the collection.
+- **`NarrativeCategory`** (`src/types/drama.ts`): A type alias for `DramaCategory` — all 14 categories are tracked in the collection.
 - **`narrativeCollectionSlice`** (`src/store/slices/narrativeCollectionSlice.ts`): Zustand slice tracking `seenTemplateIds: string[]`. Loads from and saves to localStorage on every mutation.
 - **`DramaService.evaluateDay`** / **`InterviewService.toPendingInterview`**: Both check `isTemplateSeen(templateId)` before creating the event/interview. If unseen → calls `markTemplateSeen()` and sets `isNew = true` on the instance.
 - **`NewBadge`** (`src/components/narrative/NewBadge.tsx`): Amber "NEW" chip rendered when `event.isNew` or `interview.isNew` is true. Displayed in DramaEventToast, DramaEventModal, and InterviewModal.
@@ -193,6 +193,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | `practice_burnout` | `practice_burnout.ts` |
 | `breakthrough` | `breakthrough.ts` |
 | `meta_rumors` | `meta_rumors.ts` |
+| `cove_incident` | `meta_rumors.ts` (event: `cove_meme_viral`) |
 | Arc system events | `arc_system.ts` |
 | Team identity events | `team_identity.ts` |
 | `visa_arc` | `visa_arc.ts` |
@@ -277,7 +278,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `cove_incident` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama` | `map_pool`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 
@@ -1393,9 +1394,11 @@ Templates may use `{mapName}` in their `prompt` string. `toPendingInterview()` i
 
 ---
 
-## Cove Incident Arc
+## Cove Incident Arc (`cove_incident` category)
 
 Triggered whenever a player on the manager's team plays **Harbor** in a match. Based on the real VCT "Cove Incident" (s0m, NRG, 13-13 vs PRX).
+
+Both the interview (`post_harbor_cove_incident`, `narrativeCategory: 'cove_incident'`) and the drama event (`cove_meme_viral`, `category: 'cove_incident'`) use the dedicated category so they appear together in the NarrativeCollectionModal under "Cove Incident" (cyan) — separate from the general `meta_rumors` bucket.
 
 ### Entry point
 
@@ -1417,13 +1420,13 @@ Interview template `post_harbor_cove_incident` fires in the post-match press con
 
 ### Drama event
 
-`cove_meme_viral` (category: `meta_rumors`, severity: `major`) fires when `cove_meme_unaddressed` is active (75% random chance). Three choices:
+`cove_meme_viral` (category: `cove_incident`, severity: `major`) fires when `cove_meme_unaddressed` is active (75% random chance). Three choices:
 - **Lean into it** — sell "Cove Gaming" merch: +hype, −sponsor trust, clears flag
 - **Player addresses it on stream** — +chemistry, +sponsor trust, clears flag
 - **Say nothing** — morale and sponsor trust penalty, sets `cove_meme_ignored`
 
 ### Source files
 
-- Interview template: `src/data/interviews/agent_strategy.ts` (`post_harbor_cove_incident`)
-- Drama event: `src/data/drama/meta_rumors.ts` (`cove_meme_viral`)
+- Interview template: `src/data/interviews/agent_strategy.ts` (`post_harbor_cove_incident`, `narrativeCategory: 'cove_incident'`)
+- Drama event: `src/data/drama/meta_rumors.ts` (`cove_meme_viral`, `category: 'cove_incident'`)
 - Condition evaluator: `src/engine/drama/DramaConditionEvaluator.ts` (`case 'agent_played'`)

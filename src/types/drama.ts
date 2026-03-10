@@ -28,6 +28,7 @@ export type DramaCategory =
   | 'practice_burnout'
   | 'breakthrough'
   | 'meta_rumors'
+  | 'cove_incident'      // Harbor cove viral meme arc
   | 'visa_arc'           // all visa drama arc events
   | 'coaching_overhaul'  // all coaching overhaul arc events
   | 'igl_crisis'         // all IGL crisis arc events
@@ -555,6 +556,7 @@ export const DRAMA_CONSTANTS = {
     practice_burnout: 5,     // Reduced from 28
     breakthrough: 7,         // Reduced from 30
     meta_rumors: 7,          // Unchanged
+    cove_incident: 60,       // Aligned with cooldownDays on the event
     visa_arc: 3,             // Short: arc is flag-chained, not random
     coaching_overhaul: 5,    // Short: arc events are flag-gated
     igl_crisis: 5,           // Short: arc events are flag-gated

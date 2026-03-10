@@ -167,7 +167,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
   {
     id: 'cove_meme_viral',
-    category: 'meta_rumors',
+    category: 'cove_incident',
     severity: 'major',
     title: 'The Cove Goes Viral',
     description: "Clip compilations of the Harbor play are dominating VCT socials. Every stream is running the Cove as a meme template. 'Just run Cove' is now the answer to every question in your team's chat.",

@@ -38,6 +38,7 @@ const DRAMA_CATEGORY_META: Record<
   practice_burnout: { label: 'Staff',          color: 'text-yellow-400', dotColor: 'bg-yellow-500',  icon: '📋' },
   breakthrough:     { label: 'Breakthrough',   color: 'text-green-400',  dotColor: 'bg-green-500',   icon: '⭐' },
   meta_rumors:      { label: 'Intel',          color: 'text-purple-400', dotColor: 'bg-purple-500',  icon: '📰' },
+  cove_incident:    { label: 'Cove Incident',  color: 'text-cyan-400',   dotColor: 'bg-cyan-500',    icon: '🌊' },
   visa_arc:         { label: 'Visa Crisis',    color: 'text-blue-400',   dotColor: 'bg-blue-500',    icon: '🛂' },
   coaching_overhaul:{ label: 'Coaching',       color: 'text-amber-400',  dotColor: 'bg-amber-500',   icon: '📋' },
   igl_crisis:       { label: 'IGL Crisis',     color: 'text-red-400',    dotColor: 'bg-red-500',     icon: '🎯' },

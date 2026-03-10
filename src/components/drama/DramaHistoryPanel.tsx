@@ -56,6 +56,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-purple-500',
     icon: '📰',
   },
+  cove_incident: {
+    label: 'Cove Incident',
+    color: 'text-cyan-400',
+    dotColor: 'bg-cyan-500',
+    icon: '🌊',
+  },
   visa_arc: {
     label: 'Visa Crisis',
     color: 'text-blue-400',

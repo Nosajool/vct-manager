@@ -352,24 +352,9 @@ export class DayPlanService {
       });
     }
 
-    // Low morale alert
     const players = [...team.playerIds, ...team.reservePlayerIds]
       .map(id => state.players[id])
       .filter(Boolean);
-
-    const lowMoralePlayers = players.filter(p => p.morale < 40);
-    if (lowMoralePlayers.length >= 2) {
-      alerts.push({
-        id: 'alert-low-morale',
-        category: 'alert',
-        label: 'Team Morale Low',
-        description: `${lowMoralePlayers.length} players have low morale. Consider rest days or lighter training.`,
-        priority: PRIORITY.HIGH,
-        completed: false,
-        severity: 'warning',
-        action: { view: 'team' },
-      });
-    }
 
     // Expiring contracts alert
     const currentDate = new Date(state.calendar.currentDate);

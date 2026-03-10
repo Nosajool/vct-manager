@@ -1,6 +1,6 @@
 // NarrativeCollectionModal - Pokédex-style view of discovered narrative entries
 //
-// Shows all 12 DramaCategory values (5 arc categories + 6 general drama categories + tournament_drama)
+// Shows all 14 DramaCategory values (5 arc categories + 7 general drama categories + cove_incident + tournament_drama)
 // with discovered vs locked entries. Locked entries show type hint but not the title.
 
 import { useState } from 'react';
@@ -32,6 +32,7 @@ const CATEGORY_CONFIG: Record<
   practice_burnout:  { label: 'Practice Burnout',  color: 'text-orange-300',  badgeColor: 'bg-orange-400/20 text-orange-300 border-orange-400/30'},
   breakthrough:      { label: 'Breakthrough',      color: 'text-emerald-400', badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'},
   meta_rumors:       { label: 'Meta Rumors',       color: 'text-violet-400',  badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30'},
+  cove_incident:     { label: 'Cove Incident',     color: 'text-cyan-400',    badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'         },
   tournament_drama:  { label: 'Tournament Drama',  color: 'text-rose-400',    badgeColor: 'bg-rose-500/20 text-rose-400 border-rose-500/30'       },
   map_pool:          { label: 'Map Pool',          color: 'text-teal-400',    badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30'        },
 };
@@ -41,7 +42,7 @@ const NARRATIVE_CATEGORIES: DramaCategory[] = [
   'scrim_sharing', 'visa_arc', 'igl_crisis', 'coaching_overhaul', 'org_culture',
   // General drama categories
   'player_ego', 'team_synergy', 'external_pressure', 'practice_burnout', 'breakthrough', 'meta_rumors',
-  'tournament_drama', 'map_pool',
+  'cove_incident', 'tournament_drama', 'map_pool',
 ];
 
 // ============================================================================

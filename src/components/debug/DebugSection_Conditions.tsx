@@ -15,6 +15,7 @@ const CATEGORY_COLORS: Record<DramaCategory, string> = {
   practice_burnout: 'bg-yellow-900/40 text-yellow-300',
   breakthrough: 'bg-green-900/40 text-green-300',
   meta_rumors: 'bg-purple-900/40 text-purple-300',
+  cove_incident: 'bg-cyan-900/40 text-cyan-300',
   visa_arc: 'bg-cyan-900/40 text-cyan-300',
   coaching_overhaul: 'bg-amber-900/40 text-amber-300',
   igl_crisis: 'bg-red-900/40 text-red-300',
