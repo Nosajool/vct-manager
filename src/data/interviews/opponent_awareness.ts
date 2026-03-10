@@ -359,7 +359,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "I'm sending him to the graveyard",
-        quote: "I'm going to send him to the graveyard if he peeks me.",
+        quote: "I'm going to send {rivalPlayerName} to the graveyard if he peeks me.",
         personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0 },
         effects: { hype: 4, rivalryDelta: 4, dramaChance: 10, setsFlags: [{ key: 'interview_player_called_out_rival', durationDays: 5 }] },
       },
@@ -410,6 +410,40 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         quote: "It was a team effort. We came in prepared and executed.",
         personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // post_win_opponent_whiff_callout — POST_MATCH, player, win, has_rivalry
+  {
+    id: 'post_win_opponent_whiff_callout',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'player_ego',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "There were a few moments where the opposing players really struggled. Did you notice that in the moment?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "Call them out",
+        quote: "You're 14! How are you missing that?",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2 },
+        effects: { hype: 4, rivalryDelta: 6, fanbase: 2, dramaChance: 14 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "We put them in hard spots",
+        quote: "We put them in positions where there was no good answer. That's the game plan working.",
+        personalityWeights: { STABLE: 1.5, BIG_STAGE: 1.5 },
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "Those moments happen",
+        quote: "Those moments happen in high-pressure games. We've all been there.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2 },
+        effects: { morale: 2, fanbase: 1, rivalryDelta: -1 },
       },
     ],
   },

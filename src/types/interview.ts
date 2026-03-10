@@ -114,6 +114,7 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
   lastMatchComposition?: {
     roleCounts: Record<string, number>;  // e.g. { Duelist: 2, Controller: 1, ... }
     offPreferredPlayerIds: string[];     // playerIds who played outside their top-3
+    agentsPlayed: string[];              // flat deduped list of agents played
   };
   // Team strategy settings
   teamStrategy?: {

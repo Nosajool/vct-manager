@@ -210,6 +210,13 @@ export function evaluateCondition(
       return (interviewSnap.lastMatchComposition?.offPreferredPlayerIds.length ?? 0) > 0;
     }
 
+    case 'agent_played': {
+      const interviewSnap = snapshot as { lastMatchComposition?: { agentsPlayed: string[] } };
+      const agentsPlayed = interviewSnap.lastMatchComposition?.agentsPlayed;
+      if (!agentsPlayed || !condition.agentName) return false;
+      return agentsPlayed.includes(condition.agentName);
+    }
+
     case 'team_playstyle': {
       const interviewSnap = snapshot as { teamStrategy?: { playstyle: string } };
       if (!interviewSnap.teamStrategy || !condition.playstyle) return false;

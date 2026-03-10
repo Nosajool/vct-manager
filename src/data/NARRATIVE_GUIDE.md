@@ -339,6 +339,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 { type: 'opponent_from_upper' } // True when opponent dropped from upper bracket
 { type: 'opponent_win_streak', minStreak: 2 } // True when opponent's recent win streak >= minStreak (default 1)
 { type: 'opponent_rivalry_level', minLevel: 50 } // True when opponent's rivalry intensity >= minLevel (default 50)
+{ type: 'agent_played', agentName: 'Harbor' } // True when specific agent was in last match lineup (interview-only; uses lastMatchComposition.agentsPlayed)
 
 // Logical grouping
 { type: 'or', anyOf: [{ type: '...' }, { type: '...' }] }  // At least one condition must pass
@@ -1389,3 +1390,40 @@ Map pool flags use the `map_pool_*` prefix:
 ### {mapName} interpolation
 
 Templates may use `{mapName}` in their `prompt` string. `toPendingInterview()` in `InterviewService.ts` resolves this from `state.results[matchId]?.maps[0]?.map`, falling back to `'this map'` if unavailable.
+
+---
+
+## Cove Incident Arc
+
+Triggered whenever a player on the manager's team plays **Harbor** in a match. Based on the real VCT "Cove Incident" (s0m, NRG, 13-13 vs PRX).
+
+### Entry point
+
+Interview template `post_harbor_cove_incident` fires in the post-match press conference when:
+1. `agent_played` condition passes (`agentName: 'Harbor'`)
+2. `cove_interview_cooldown` flag is **not** active
+
+### Flag flow
+
+| Flag | Duration | Set by | Purpose |
+|------|----------|--------|---------|
+| `cove_interview_cooldown` | 30d | All three interview options | Prevents the interview re-firing |
+| `cove_meme_unaddressed` | 5d | DEFLECTIVE option | Seeds the `cove_meme_viral` drama event |
+| `cove_incident_acknowledged` | 5d | HUMBLE option | No drama fires — arc resolves gracefully |
+| `cove_manager_defended` | 5d | AGGRESSIVE option | Mild residual drama chance (dramaChance: 10) |
+| `cove_meme_resolved_leaned_in` | 90d | Drama choice: lean into it | Completion record |
+| `cove_meme_resolved_player_owned` | 90d | Drama choice: player addresses it | Completion record |
+| `cove_meme_ignored` | 30d | Drama choice: stay silent | Available for future escalation |
+
+### Drama event
+
+`cove_meme_viral` (category: `meta_rumors`, severity: `major`) fires when `cove_meme_unaddressed` is active (75% random chance). Three choices:
+- **Lean into it** — sell "Cove Gaming" merch: +hype, −sponsor trust, clears flag
+- **Player addresses it on stream** — +chemistry, +sponsor trust, clears flag
+- **Say nothing** — morale and sponsor trust penalty, sets `cove_meme_ignored`
+
+### Source files
+
+- Interview template: `src/data/interviews/agent_strategy.ts` (`post_harbor_cove_incident`)
+- Drama event: `src/data/drama/meta_rumors.ts` (`cove_meme_viral`)
+- Condition evaluator: `src/engine/drama/DramaConditionEvaluator.ts` (`case 'agent_played'`)

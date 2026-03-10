@@ -1102,7 +1102,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_TEAM',
         label: "The players need to do better",
-        quote: "You're 14! How are you missing that?",
+        quote: "Some of those errors were unacceptable. At this level, you can't be giving away rounds like that.",
         effects: { morale: -4, dramaChance: 15, fanbase: -1, setsFlags: [{ key: 'crisis_active', durationDays: 7 }] },
       },
       {

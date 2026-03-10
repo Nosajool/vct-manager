@@ -658,7 +658,8 @@ export class InterviewService {
         })
         .map((perf) => perf.playerId);
 
-      lastMatchComposition = { roleCounts, offPreferredPlayerIds };
+      const agentsPlayed = [...new Set(playerPerfs.map((perf) => perf.agent))];
+      lastMatchComposition = { roleCounts, offPreferredPlayerIds, agentsPlayed };
     }
 
     // Extract team strategy

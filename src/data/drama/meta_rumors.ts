@@ -162,4 +162,61 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // COVE INCIDENT ARC — viral drama event
+  // ==========================================================================
+  {
+    id: 'cove_meme_viral',
+    category: 'meta_rumors',
+    severity: 'major',
+    title: 'The Cove Goes Viral',
+    description: "Clip compilations of the Harbor play are dominating VCT socials. Every stream is running the Cove as a meme template. 'Just run Cove' is now the answer to every question in your team's chat.",
+    conditions: [
+      { type: 'flag_active', flag: 'cove_meme_unaddressed' },
+      { type: 'random_chance', chance: 75 },
+    ],
+    probability: 75,
+    requiresPlayerTeam: true,
+    cooldownDays: 60,
+    choices: [
+      {
+        id: 'lean_into_meme',
+        text: 'Lean into it — sell "Cove Gaming" merch',
+        description: "If you can't beat the meme, monetize it. The org posts a tongue-in-cheek tweet and the community eats it up.",
+        effects: [
+          { target: 'team_hype', delta: 8 },
+          { target: 'team_sponsor_trust', delta: -3 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 4 },
+          { target: 'clear_flag', flag: 'cove_meme_unaddressed' },
+          { target: 'set_flag', flag: 'cove_meme_resolved_leaned_in', flagDuration: 90 },
+        ],
+        outcomeText: "The org posts a \"Cove Gaming\" graphic on Twitter. It gets 20k retweets in six hours. Sponsors are confused but the fans are delighted. The player who ran Harbor becomes a cult hero.",
+      },
+      {
+        id: 'player_addresses_it',
+        text: 'Have the player address it directly on stream',
+        description: "Let the player own the moment. A self-aware explanation tends to land well with fans — and takes the heat off you.",
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 3 },
+          { target: 'team_chemistry', delta: 4 },
+          { target: 'team_sponsor_trust', delta: 2 },
+          { target: 'clear_flag', flag: 'cove_meme_unaddressed' },
+          { target: 'set_flag', flag: 'cove_meme_resolved_player_owned', flagDuration: 90 },
+        ],
+        outcomeText: "The player goes live and says, 'Yeah, the Cove got cooked. I believed in it. I regret nothing.' Chat explodes with Pog emotes. The incident becomes a fan-favorite story rather than a controversy.",
+      },
+      {
+        id: 'stay_silent',
+        text: 'Say nothing — let it die on its own',
+        description: "Don't feed the beast. Some memes fade in a week if you ignore them. Some don't.",
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -4 },
+          { target: 'team_sponsor_trust', delta: -5 },
+          { target: 'set_flag', flag: 'cove_meme_ignored', flagDuration: 30 },
+        ],
+        outcomeText: "You say nothing. The meme doesn't die. A week later a rival manager makes a 'no Cove in our comp' joke at a press conference. The crowd loses it. You watch from the corner of the room.",
+      },
+    ],
+  },
+
 ];

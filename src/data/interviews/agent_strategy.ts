@@ -305,6 +305,64 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
+  // POST_MATCH — Harbor played (Cove Incident arc)
+  // ==========================================================================
+  {
+    id: 'post_harbor_cove_incident',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'any',
+    prompt: "One of your players ran Harbor today, and the community is already calling it 'the Cove moment.' Was that call intentional — and are you prepared to defend it?",
+    conditions: [
+      { type: 'agent_played', agentName: 'Harbor' },
+      { type: 'flag_not_active', flag: 'cove_interview_cooldown' },
+    ],
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "The Cove did its job",
+        quote: "I'm not going to get into the theology of Harbor viability with Reddit. The Cove blocked the spike defuse, the round happened, we moved on. Next question.",
+        effects: {
+          fanbase: 2,
+          hype: 3,
+          setsFlags: [
+            { key: 'cove_interview_cooldown', durationDays: 30 },
+            { key: 'cove_meme_unaddressed', durationDays: 5 },
+          ],
+        },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It was a read that didn't fully land",
+        quote: "Look — Harbor on that map was a calculated read on their setup. Was it the cleanest execution? No. Is the player being roasted for it? Apparently yes. We'll reflect, we'll adjust. The player worked hard and that matters.",
+        effects: {
+          morale: 3,
+          fanbase: 4,
+          sponsorTrust: 2,
+          setsFlags: [
+            { key: 'cove_interview_cooldown', durationDays: 30 },
+            { key: 'cove_incident_acknowledged', durationDays: 5 },
+          ],
+        },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "Harbor is underrated and I'll die on this hill",
+        quote: "I love this team's creativity. Harbor's kit has legitimate utility and our player played it well. The people saying it was a throw have never coordinated a retake in their lives. We don't pick agents for the crowd.",
+        effects: {
+          hype: 6,
+          fanbase: 3,
+          dramaChance: 10,
+          setsFlags: [
+            { key: 'cove_interview_cooldown', durationDays: 30 },
+            { key: 'cove_manager_defended', durationDays: 5 },
+          ],
+        },
+      },
+    ],
+  },
+
+  // ==========================================================================
   // POST_MATCH — WIN, patch active
   // ==========================================================================
   {
