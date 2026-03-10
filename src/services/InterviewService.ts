@@ -814,8 +814,23 @@ export class InterviewService {
       storeState.markTemplateSeen(template.id);
     }
 
-    let prompt = template.prompt;
-    if (prompt.includes('{starPlayerName}')) {
+    // Derive opponentTeamId from matchId for rival-related substitutions
+    let opponentTeamId: string | undefined;
+    if (matchId) {
+      const match = state.matches[matchId];
+      if (match) {
+        const playerTeamId = state.playerTeamId;
+        opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;
+      }
+    }
+
+    // Build substitution map for all placeholders
+    const substitutions: Record<string, string> = {};
+
+    const hasPlaceholder = (key: string) =>
+      template.prompt.includes(key) || template.options.some(o => o.quote?.includes(key));
+
+    if (hasPlaceholder('{starPlayerName}')) {
       const team = state.teams[state.playerTeamId!];
       const teamPlayerIds = team?.playerIds ?? [];
       const teamPlayers = teamPlayerIds.map(id => state.players[id]).filter(Boolean);
@@ -825,22 +840,51 @@ export class InterviewService {
             (p.stats.mechanics + p.stats.igl + p.stats.mental + p.stats.support + p.stats.stamina) / 5;
           return score(current) > score(best) ? current : best;
         });
-        prompt = prompt.replace('{starPlayerName}', starPlayer.name);
+        substitutions['{starPlayerName}'] = starPlayer.name;
       }
     }
-    if (prompt.includes('{mapName}')) {
-      // Try to get map name from pending interview matchId's match result
-      const mapName = (() => {
-        if (!matchId) return null;
-        const matchResult = useGameStore.getState().results[matchId];
-        return matchResult?.maps?.[0]?.map ?? null;
-      })();
-      if (mapName) {
-        prompt = prompt.replace(/\{mapName\}/g, mapName);
+
+    if (hasPlaceholder('{mapName}')) {
+      const matchResult = matchId ? useGameStore.getState().results[matchId] : null;
+      substitutions['{mapName}'] = matchResult?.maps?.[0]?.map ?? 'this map';
+    }
+
+    if (hasPlaceholder('{rivalTeamName}')) {
+      const rivalTeam = opponentTeamId ? state.teams[opponentTeamId] : undefined;
+      substitutions['{rivalTeamName}'] = rivalTeam?.name ?? 'them';
+    }
+
+    if (hasPlaceholder('{rivalPlayerName}')) {
+      const rivalPlayerIds = opponentTeamId ? (state.teams[opponentTeamId]?.playerIds ?? []) : [];
+      const rivalPlayers = rivalPlayerIds.map(id => state.players[id]).filter(Boolean);
+      if (rivalPlayers.length > 0) {
+        const rivalStar = rivalPlayers.reduce((best, current) => {
+          const score = (p: typeof current) =>
+            (p.stats.mechanics + p.stats.igl + p.stats.mental + p.stats.support + p.stats.stamina) / 5;
+          return score(current) > score(best) ? current : best;
+        });
+        substitutions['{rivalPlayerName}'] = rivalStar.name;
       } else {
-        prompt = prompt.replace(/\{mapName\}/g, 'this map');
+        substitutions['{rivalPlayerName}'] = 'that player';
       }
     }
+
+    if (hasPlaceholder('{tournamentName}')) {
+      const tournamentId = matchId ? state.matches[matchId]?.tournamentId : undefined;
+      substitutions['{tournamentName}'] = (tournamentId ? state.tournaments[tournamentId]?.name : undefined) ?? 'this tournament';
+    }
+
+    // Apply all substitutions to a string via simple split/join (no regex needed)
+    const applySubstitutions = (text: string): string =>
+      Object.entries(substitutions).reduce((acc, [key, val]) => acc.split(key).join(val), text);
+
+    let prompt = applySubstitutions(template.prompt);
+
+    // Apply substitutions to option quotes
+    options = options.map(opt => ({
+      ...opt,
+      quote: opt.quote ? applySubstitutions(opt.quote) : opt.quote,
+    }));
 
     return {
       templateId: template.id,

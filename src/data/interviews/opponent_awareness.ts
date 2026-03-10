@@ -20,7 +20,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "History makes this personal",
-        quote: "Every match we've played against this team has had layers to it. Add elimination pressure on top? This isn't just a bracket match. This is a statement. And we intend to make it.",
+        quote: "Good luck — you're gonna need it.",
         effects: { hype: 5, rivalryDelta: 6, morale: 3, dramaChance: 12, setsFlags: [{ key: 'rivalry_rematch_stakes', durationDays: 7 }] },
       },
       {
@@ -207,7 +207,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "This is what we came here for",
-        quote: "I'm not going to be humble about it. We wanted to be the team that beat them today. Rivalries are defined by big moments and today was ours. The players earned that.",
+        quote: "Forgive me lord, but I love watching their smiles fade.",
         effects: { hype: 6, morale: 4, fanbase: 4, rivalryDelta: 5 },
       },
       {
@@ -220,6 +220,260 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         tone: 'DEFLECTIVE',
         label: "We're thinking about what comes next",
         quote: "I'm proud of the result. But the tournament isn't over and I don't want this team spending energy on today. There's still work ahead.",
+        effects: { morale: 3, hype: 2 },
+      },
+    ],
+  },
+
+  // ---- NEW TEMPLATES ----
+
+  // pre_rivalry_guarantee — PRE_MATCH, manager, has_rivalry
+  {
+    id: 'pre_rivalry_guarantee',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "You're facing a team with real history against you. Feeling confident heading in?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We are not losing to them — guaranteed",
+        quote: "We are not losing to {rivalTeamName}. 100%. I can guarantee you that.",
+        effects: { hype: 5, rivalryDelta: 5, dramaChance: 10, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Good luck to them",
+        quote: "Good luck, you're gonna need it.",
+        effects: { hype: 3, rivalryDelta: 3, dramaChance: 8, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I'll let the match do the talking",
+        quote: "I'll let the match do the talking.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
+
+  // pre_rivalry_org_dismissal — PRE_MATCH, manager, has_rivalry
+  {
+    id: 'pre_rivalry_org_dismissal',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "How do you assess this rival organization heading into today's match?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "Good humans, bad players",
+        quote: "I think they're good humans. They're just dog shit players.",
+        effects: { hype: 4, rivalryDelta: 5, dramaChance: 12, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "They've had to prove me wrong",
+        quote: "I thought {rivalTeamName} was some kind of fried chicken company. They've had to prove me wrong.",
+        effects: { hype: 5, rivalryDelta: 6, fanbase: 1, dramaChance: 15, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "They've earned their place",
+        quote: "They've earned their place here. We'll see what happens on the server.",
+        effects: { morale: 1, fanbase: 1 },
+      },
+    ],
+  },
+
+  // pre_tournament_exclusion_threat — PRE_MATCH, manager, has_rivalry, is_playoff_match
+  {
+    id: 'pre_tournament_exclusion_threat',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }, { type: 'is_playoff_match' }],
+    prompt: "If you win today, you essentially end their tournament. Any message for them?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "A tournament without them",
+        quote: "We'll show you a {tournamentName} without {rivalTeamName}.",
+        effects: { hype: 5, rivalryDelta: 6, dramaChance: 12, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Eliminations are part of the bracket",
+        quote: "Eliminations are part of the bracket. We're focused on advancing.",
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I have a game plan, not a message",
+        quote: "I don't have a message for them. I have a game plan.",
+        effects: { morale: 2 },
+      },
+    ],
+  },
+
+  // pre_champ_dismissal — PRE_MATCH, manager, has_rivalry
+  {
+    id: 'pre_champ_dismissal',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "Your opponent is a former Champs winner. Does that legacy add pressure to this match?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "I wasn't playing when they won",
+        quote: "I wasn't playing when they won Champs.",
+        effects: { hype: 3, rivalryDelta: 4, dramaChance: 8, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Past wins don't win today's match",
+        quote: "Past Champs wins don't win today's match.",
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "That legacy means something",
+        quote: "That legacy means something. We'll have to be at our best.",
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // pre_match_player_callout — PRE_MATCH, player, has_rivalry, personality-gated
+  {
+    id: 'pre_match_player_callout',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    narrativeCategory: 'player_ego',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "Is there an individual matchup on the other team you're personally motivated to win?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "I'm sending him to the graveyard",
+        quote: "I'm going to send him to the graveyard if he peeks me.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0 },
+        effects: { hype: 4, rivalryDelta: 4, dramaChance: 10, setsFlags: [{ key: 'interview_player_called_out_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Come to LA with a sign",
+        quote: "Come to LA with a sign that says '{rivalPlayerName} my daddy'. Ask your org for a ticket and sit in the crowd cheering for the man who created you.",
+        personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2.5, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0 },
+        effects: { hype: 6, rivalryDelta: 8, dramaChance: 18, setsFlags: [{ key: 'interview_player_called_out_rival', durationDays: 7 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I want to beat the whole team",
+        quote: "I want to beat the whole team, not just one guy.",
+        personalityWeights: { STABLE: 2.5, TEAM_FIRST: 2.5, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // post_rivalry_win_player_callout — POST_MATCH, player, win, has_rivalry
+  {
+    id: 'post_rivalry_win_player_callout',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'player_ego',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "Big win over a rival — what was going through your head when it ended?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "This kid is retiring after this game",
+        quote: "Yo, what I just did to {rivalPlayerName} — this kid is retiring after this game.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2 },
+        effects: { hype: 5, rivalryDelta: 6, fanbase: 2, dramaChance: 15 },
+      },
+      {
+        tone: 'AGGRESSIVE',
+        label: "Are you okay???",
+        quote: "{rivalPlayerName}, ARE YOU OKAYYYY???",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 1.5 },
+        effects: { hype: 4, rivalryDelta: 5, fanbase: 2, dramaChance: 12 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Team effort, prepared and executed",
+        quote: "It was a team effort. We came in prepared and executed.",
+        personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2 },
+        effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // post_rivalry_tier_promotion — POST_MATCH, player, win, has_rivalry
+  {
+    id: 'post_rivalry_tier_promotion',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'player_ego',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "You've had history with players on that team from earlier in your career. What does tonight mean?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "Welcome to tier 1",
+        quote: "Owned him in tier 2. Welcome to tier 1.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2 },
+        effects: { hype: 5, rivalryDelta: 5, fanbase: 2, dramaChance: 12 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "I always believed I belonged here",
+        quote: "I always believed I belonged at this level. Now I'm proving it.",
+        personalityWeights: { FAME_SEEKER: 1.5, BIG_STAGE: 1.5, STABLE: 1 },
+        effects: { hype: 4, morale: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I learned from those earlier matches",
+        quote: "I learned a lot from those earlier matches. This is the next step.",
+        personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1.5 },
+        effects: { morale: 3, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  // post_international_upset_win — POST_MATCH, manager, win, opponent_from_upper / is_playoff_match
+  {
+    id: 'post_international_upset_win',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
+    conditions: [{ type: 'opponent_from_upper' }],
+    prompt: "You just knocked out an international powerhouse. What does that prove about this team?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Welcome to NA",
+        quote: "Welcome to NA.",
+        effects: { hype: 6, morale: 4, fanbase: 4, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 14 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It validates all the work",
+        quote: "We've been building toward this. It validates all the work.",
+        effects: { morale: 4, fanbase: 3, sponsorTrust: 3 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Eyes on the next one",
+        quote: "Tournament isn't over. Eyes on the next one.",
         effects: { morale: 3, hype: 2 },
       },
     ],

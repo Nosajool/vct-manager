@@ -184,6 +184,37 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
   },
 
   {
+    id: 'player_best_in_world_declaration',
+    context: 'GENERAL',
+    subjectType: 'player',
+    narrativeCategory: 'player_ego',
+    prompt: "Some analysts have you as one of the best players in the region. How do you see yourself?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Respect my name — I'm the best",
+        quote: "Respect my name. I'm the best player in the world.",
+        personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2.5, STABLE: 0, INTROVERT: 0 },
+        effects: { hype: 5, fanbase: 2, sponsorTrust: -1, dramaChance: 10 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I just do my job for the team",
+        quote: "I just try to do my job for the team.",
+        personalityWeights: { STABLE: 2.5, TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0 },
+        effects: { morale: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Rankings don't matter — trophies do",
+        quote: "Rankings don't matter to me. Trophies do.",
+        personalityWeights: { INTROVERT: 2, STABLE: 1.5 },
+        effects: { morale: 2, hype: 1 },
+      },
+    ],
+  },
+
+  {
     id: 'general_player_upcoming_hype',
     context: 'GENERAL',
     subjectType: 'player',

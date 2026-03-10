@@ -116,22 +116,32 @@ Set `matchOutcome` to restrict a POST_MATCH template to win or loss matches:
 
 PRE_MATCH and CRISIS templates do not use `matchOutcome`.
 
-### Prompt interpolation
+### Template interpolation (prompts and quotes)
 
-Some templates use `{placeholder}` syntax in their `prompt` string for values that are only
-known at runtime (e.g. the specific map a comeback happened on). These placeholders are
-resolved in `InterviewService` before the template is passed to `toPendingInterview()` — the
-template registry stores the raw string with the placeholder.
+Templates use `{placeholder}` syntax in their `prompt` string **and** in `option.quote` strings
+for values that are only known at runtime. `InterviewService.toPendingInterview()` resolves all
+placeholders in both the prompt and every option quote before the interview is shown.
 
-Currently used:
+#### Available placeholders
 
-| Template | Placeholder | Resolved by |
-|----------|-------------|-------------|
-| `post_win_comeback` | `{mapName}` | `InterviewService.findComebackMap()` — map with the biggest halftime deficit that was won; falls back to first won map |
+| Placeholder | Resolved value | Notes |
+|-------------|---------------|-------|
+| `{starPlayerName}` | Name of the player team's highest-rated player (avg of all stats) | Falls back silently if team has no players |
+| `{mapName}` | Name of the first map in the match result | Falls back to `'this map'` |
+| `{rivalTeamName}` | Name of the opponent team in the current match | Falls back to `'them'` |
+| `{rivalPlayerName}` | Name of the opponent team's highest-rated player | Falls back to `'that player'` |
+| `{tournamentName}` | Name of the tournament associated with the match | Falls back to `'this tournament'` |
+
+`{rivalTeamName}`, `{rivalPlayerName}`, and `{tournamentName}` require a `matchId` to be passed
+to `toPendingInterview()` — they resolve to fallback strings for GENERAL/CRISIS templates where
+no match is in context.
+
+`{mapName}` for `post_win_comeback` is still pre-substituted in `checkPostMatchInterview()` via
+`InterviewService.findComebackMap()` before `toPendingInterview()` is called — this is a legacy
+path that still works because `toPendingInterview()` would also resolve it.
 
 This is distinct from tournament context interpolation (which uses a separate generation
-function). Template prompt interpolation is inline in `checkPostMatchInterview()` and uses a
-shallow copy of the template object.
+function).
 
 ### `conditions[]` field
 
@@ -161,9 +171,10 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 |----------------|------|
 | `KICKOFF` | `kickoff.ts` |
 | `PRE_MATCH` (standard) | `pre_match.ts` |
-| `PRE_MATCH` (opponent/rivalry aware) | `opponent_awareness.ts` |
+| `PRE_MATCH` / `POST_MATCH` (opponent/rivalry aware) | `opponent_awareness.ts` |
 | `POST_MATCH` win | `post_match_win.ts` |
 | `POST_MATCH` loss | `post_match_loss.ts` |
+| `GENERAL` (manager or player) | `general.ts` |
 | `CRISIS` | `crisis.ts` |
 | Arc flag-gated (any context) | `arc_aware.ts` |
 | Team identity flag-gated | `team_identity.ts` |

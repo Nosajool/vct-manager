@@ -206,7 +206,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "I stand by every word",
-        quote: "Nothing I said was wrong. Today's result doesn't change how I feel about that team. We'll meet again.",
+        quote: "This is not a rivalry. They always kick our ass.",
         effects: { morale: -5, rivalryDelta: 10, fanbase: 2, setsFlags: [{ key: 'rivalry_scorched_earth', durationDays: 30 }] },
       },
       {
@@ -1082,6 +1082,68 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
         quote: "People talk about clutch moments but the truth is you just try to make the right call every time. Whether it's a pressure situation or not, the preparation is the same. Execute the fundamentals.",
         personalityWeights: { STABLE: 2, INTROVERT: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0 },
         effects: { morale: 3, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // NEW — POST_MATCH / GENERAL
+  // ==========================================================================
+
+  {
+    id: 'post_loss_internal_blame',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
+    conditions: [{ type: 'team_loss_streak', streakLength: 2 }],
+    prompt: "There were some costly individual errors in that match. Where do you place responsibility?",
+    options: [
+      {
+        tone: 'BLAME_TEAM',
+        label: "The players need to do better",
+        quote: "You're 14! How are you missing that?",
+        effects: { morale: -4, dramaChance: 15, fanbase: -1, setsFlags: [{ key: 'crisis_active', durationDays: 7 }] },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It falls on all of us",
+        quote: "We made costly mistakes at critical moments. That falls on all of us to fix.",
+        effects: { morale: 1, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "We'll address it privately",
+        quote: "There were execution issues. We'll address them in the debrief, not in front of cameras.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'media_overblown_deflection',
+    context: 'GENERAL',
+    subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
+    prompt: "Some analysts think this team's struggles are a bigger crisis than you're letting on. Are you downplaying the stakes?",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "The media is exaggerating",
+        quote: "You're making a chicken out of a feather.",
+        effects: { morale: 1, sponsorTrust: 1 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "We treat every match as critical",
+        quote: "The stakes are exactly what we treat them as. We treat every match as critical.",
+        effects: { hype: 2, morale: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Fair question — the play will answer it",
+        quote: "Fair question. Our play will answer it.",
+        effects: { morale: 2, fanbase: 1 },
       },
     ],
   },
