@@ -782,7 +782,7 @@ export class InterviewService {
       if (teamPlayers.length > 0) {
         const starPlayer = teamPlayers.reduce((best, current) => {
           const score = (p: typeof current) =>
-            (p.stats.aim + p.stats.game_sense + p.stats.mechanics + p.stats.communication + p.stats.consistency) / 5;
+            (p.stats.mechanics + p.stats.igl + p.stats.mental + p.stats.support + p.stats.stamina) / 5;
           return score(current) > score(best) ? current : best;
         });
         prompt = prompt.replace('{starPlayerName}', starPlayer.name);
