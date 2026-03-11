@@ -184,6 +184,37 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // post_loss_elimination_message — POST_MATCH, manager, loss
+  {
+    id: 'post_loss_elimination_message',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    narrativeCategory: 'external_pressure',
+    conditions: [{ type: 'is_playoff_match' }],
+    prompt: "Any words for the fans after the tournament ends here?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "We don't care — we'll only improve",
+        quote: "I know people are happy we're eliminated. But we don't care. We'll only improve.",
+        effects: { fanbase: 3, sponsorTrust: 2, morale: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Can I not answer this question?",
+        quote: "Um... I don't know how to say it. Can I not answer this question? I'd rather not answer.",
+        effects: { morale: 1, fanbase: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Perfect Tech Pause. GG.",
+        quote: "Perfect Tech Pause. GG.",
+        effects: { hype: 2, fanbase: 2, dramaChance: 8 },
+      },
+    ],
+  },
+
   {
     id: 'post_loss_opponent_apology',
     context: 'POST_MATCH',

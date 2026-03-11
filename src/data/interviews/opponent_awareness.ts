@@ -548,6 +548,260 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // post_win_rival_pointed_at_me — POST_MATCH, player, win, has_rivalry
+  {
+    id: 'post_win_rival_pointed_at_me',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "Was there a specific moment during the match that personally got you locked in?",
+    options: [
+      {
+        tone: 'AGGRESSIVE',
+        label: "He kept pointing at me",
+        quote:
+          "When I played on {mapName}, suddenly I saw {rivalPlayerName} keep pointing at me and standing up at me, and I just didn't understand why dude. I had like 11 kills, I didn't even do anything on the map.\n\nHe kept pointing at me, so I took it as a challenge and carried that into the next maps. That's why it was fun, I guess, because it's like I wanted to prove something, you know.",
+        personalityWeights: { BIG_STAGE: 2.5, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0 },
+        effects: { hype: 5, rivalryDelta: 7, morale: 3, dramaChance: 10 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "I just stayed in my game",
+        quote: "I wasn't thinking about {rivalPlayerName} or anyone else. I just played my game and let the scoreboard do the talking.",
+        personalityWeights: { STABLE: 2, BIG_STAGE: 1.5, TEAM_FIRST: 1 },
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "The team energy carried me",
+        quote: "I wasn't at my best early, but the guys kept me grounded. When it clicked, it was because everyone around me was locked in.",
+        personalityWeights: { TEAM_FIRST: 2.5, INTROVERT: 1.5, FAME_SEEKER: 0 },
+        effects: { morale: 4, fanbase: 2 },
+      },
+    ],
+  },
+
+  // pre_star_player_threat_assessment — PRE_MATCH, manager
+  {
+    id: 'pre_star_player_threat_assessment',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
+    prompt: "Your opponent has one player who's clearly operating on a different level. How does that shape your approach?",
+    options: [
+      {
+        tone: 'RESPECTFUL',
+        label: "Elite in their role, but one player doesn't make a team",
+        quote: "I think {rivalPlayerName} is probably the best in their role that I've ever seen. I tip my hat to them. But overall — I don't really have a read on how they play as a team. {rivalPlayerName} kind of steals the show when you watch their matches.",
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 2 },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Only one player can shoot",
+        quote: "They are easy to beat. Only {rivalPlayerName} can shoot.",
+        effects: { hype: 4, rivalryDelta: 5, dramaChance: 12, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 6 }] },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "They're very beatable",
+        quote: "{rivalTeamName} are not a super team. They are very beatable.",
+        effects: { hype: 4, morale: 3 },
+      },
+    ],
+  },
+
+  // pre_confident_spectator — PRE_MATCH, player
+  {
+    id: 'pre_confident_spectator',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    narrativeCategory: 'player_ego',
+    prompt: "What's your mindset heading into this match?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "I'm just here for the show",
+        quote: "I'm just there to watch the show and enjoy my popcorn.",
+        personalityWeights: { BIG_STAGE: 2.5, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { hype: 4, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "They talk too much",
+        quote: "I want to play {rivalTeamName} because {rivalPlayerName} talks too much.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 1.5, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0 },
+        effects: { hype: 5, rivalryDelta: 5, dramaChance: 12, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Don't shittalk or you're in for a bad game",
+        quote: "Don't shittalk {rivalTeamName} or else you're in for a bad game. I'm just focused on our execution.",
+        personalityWeights: { STABLE: 2.5, INTROVERT: 2, TEAM_FIRST: 1.5, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 3, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  // post_star_player_analysis — POST_MATCH, player, any outcome
+  {
+    id: 'post_star_player_analysis',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    narrativeCategory: 'external_pressure',
+    prompt: "What was it like dealing with {rivalPlayerName} in that match?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "He plays a completely different game",
+        quote: "The coaches were trying to prep us for two days on how to play against {rivalPlayerName}. It's very difficult. He plays a whole different game of VALORANT — I was so far away and he just one-bullets me with the shotgun. I don't even know how that's possible, but well played.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "His pace and decision-making is elite",
+        quote: "When you experience a pace that quick in the actual server, it can feel pretty overwhelming. {rivalPlayerName} is pretty creative — his pathing and on-the-fly decision-making is very strong. We were one bullet away from a 1v3 and winning. So tough luck.",
+        personalityWeights: { STABLE: 2, TEAM_FIRST: 1.5, INTROVERT: 1, BIG_STAGE: 1 },
+        effects: { morale: 2, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Why is he so good? He's bald.",
+        quote: "Why is he so good? He's bald.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2.5, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { hype: 4, fanbase: 3, dramaChance: 8 },
+      },
+    ],
+  },
+
+  // post_win_speedrun_callout — POST_MATCH, manager, win, has_rivalry
+  {
+    id: 'post_win_speedrun_callout',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'win',
+    narrativeCategory: 'tournament_drama',
+    conditions: [{ type: 'has_rivalry' }],
+    prompt: "That was a dominant performance. Anything to say to {rivalTeamName}?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "Is this their speedrun content?",
+        quote: "You guys think {rivalTeamName} is posting this game to their speedrunning YouTube?",
+        effects: { hype: 5, rivalryDelta: 6, fanbase: 2, dramaChance: 14, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Hope the VOD is useful",
+        quote: "Welcome to the bracket. Hope the VOD is useful.",
+        effects: { hype: 4, morale: 3, rivalryDelta: 3, dramaChance: 8 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The scoreboard says it all",
+        quote: "I'll let the scoreboard do the talking.",
+        effects: { morale: 2, hype: 2 },
+      },
+    ],
+  },
+
+  // post_win_duo_carry — POST_MATCH, player, win
+  {
+    id: 'post_win_duo_carry',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
+    prompt: "You and {starPlayerName} were everywhere tonight. How did that come together?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "They just needed us",
+        quote: "They just needed me and {starPlayerName}. Now we're here.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
+        effects: { hype: 5, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "My teammates are sick — not actually sick",
+        quote: "Fortunately, my teammates are sick — not sick as in ill, we're not ill, don't worry. I mean sick at the game.",
+        personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 4, fanbase: 4, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The whole team executed",
+        quote: "The whole team executed. I don't think it was about any one pairing.",
+        personalityWeights: { INTROVERT: 2.5, TEAM_FIRST: 2, STABLE: 1.5, FAME_SEEKER: 0, BIG_STAGE: 0 },
+        effects: { morale: 3, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  // post_win_agent_mission — POST_MATCH, manager, win
+  {
+    id: 'post_win_agent_mission',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'win',
+    narrativeCategory: 'breakthrough',
+    prompt: "What was the story behind today's agent picks?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Helping our player complete the mission",
+        quote: "We wanted to put {starPlayerName} on something new — we're helping him complete his mission of playing every single agent. He has one more left. Maybe you'll see it in this tournament.",
+        effects: { hype: 4, fanbase: 3, morale: 3 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Angles they couldn't prepare for",
+        quote: "We picked agents that gave us angles they couldn't prepare for.",
+        effects: { hype: 4, morale: 3 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Right call for the map",
+        quote: "It was the right call for the map. That's all I'll say.",
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  // pre_international_callout — PRE_MATCH, player
+  {
+    id: 'pre_international_callout',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    narrativeCategory: 'tournament_drama',
+    prompt: "What's your message going up against an international roster today?",
+    options: [
+      {
+        tone: 'TRASH_TALK',
+        label: "Get ready to learn Chinese",
+        quote: "Get ready to learn Chinese, buddy.",
+        personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0 },
+        effects: { hype: 5, rivalryDelta: 4, dramaChance: 13, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Every other team is bad",
+        quote: "It's only {rivalTeamName}. Every other team is bad.",
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 1.5, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0 },
+        effects: { hype: 4, rivalryDelta: 4, dramaChance: 10, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 5 }] },
+      },
+      {
+        tone: 'RESPECTFUL',
+        label: "International competition raises everyone's game",
+        quote: "International competition raises everyone's game. We have to be sharp.",
+        personalityWeights: { STABLE: 2.5, TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
+      },
+    ],
+  },
+
   // 8. post_lower_bracket_survival_player — POST_MATCH player survived elimination (→ winIds)
   {
     id: 'post_lower_bracket_survival_player',

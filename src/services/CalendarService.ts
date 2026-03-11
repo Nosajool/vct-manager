@@ -947,9 +947,11 @@ export class CalendarService {
     }
 
     const { match, round } = bracketEntry;
-    const bracketPosition: 'upper' | 'middle' | 'lower' =
+    const rawBracketPosition: 'upper' | 'middle' | 'lower' =
       round.bracketType === 'lower' ? 'lower' :
       round.bracketType === 'middle' ? 'middle' : 'upper';
+    const playerEliminated = matchResult.loserId === playerTeamId && match.loserDestination.type === 'eliminated';
+    const bracketPosition = playerEliminated ? null : rawBracketPosition;
     const isBracketFinal = match.winnerDestination.type === 'champion'
       || match.winnerDestination.type === 'placement';
     const opponentTeamId = match.teamAId === playerTeamId ? match.teamBId : match.teamAId;

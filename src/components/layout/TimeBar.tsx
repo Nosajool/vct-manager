@@ -71,6 +71,17 @@ function enrichEventWithNarrative(
     }
   }
 
+  // Add sponsor name for sponsor-related events
+  if (event.teamId) {
+    const teamForSponsor = state.teams[event.teamId];
+    const activeSponsorships = teamForSponsor?.finances?.activeSponsorships;
+    if (activeSponsorships && activeSponsorships.length > 0) {
+      context.sponsorName = activeSponsorships[0].sponsorName;
+    } else {
+      context.sponsorName = 'Your primary sponsor';
+    }
+  }
+
   // Substitute placeholders in the narrative
   const narrative = substituteNarrative(template.description, context);
 
