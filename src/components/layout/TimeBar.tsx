@@ -135,6 +135,9 @@ export function TimeBar() {
   const modalData = useGameStore((state) => state.modalData);
   const closeModal = useGameStore((state) => state.closeModal);
 
+  // Auto-save status indicator
+  const autoSaveStatus = useGameStore((state) => state.autoSaveStatus);
+
   // Use centralized match day detection
   const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
 
@@ -628,6 +631,24 @@ export function TimeBar() {
                 <span className="hidden md:inline text-vct-gray text-sm">Phase:</span>
                 <span className="text-vct-light font-medium">{phaseDisplay}</span>
               </div>
+              {autoSaveStatus !== 'idle' && (
+                <>
+                  <div className="hidden md:block h-4 w-px bg-vct-gray/30" />
+                  <div className="hidden md:flex items-center gap-1 text-xs text-vct-gray">
+                    {autoSaveStatus === 'saving' ? (
+                      <>
+                        <span className="inline-block w-3 h-3 border border-vct-gray/60 border-t-vct-gray rounded-full animate-spin" />
+                        <span>Auto-saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-green-500">✓</span>
+                        <span>Saved</span>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
               {hasMatchToday && (
                 <>
                   <div className="hidden md:block h-4 w-px bg-vct-gray/30" />

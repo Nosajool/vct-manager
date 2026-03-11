@@ -57,6 +57,7 @@ interface MinimalGameState {
   interviewQueue?: unknown[];
   pendingDramaBoost?: number;
   interviewHistory?: unknown[];
+  autoSaveStatus?: 'idle' | 'saving' | 'saved';
 }
 
 /**
@@ -362,24 +363,61 @@ type AutoSaveImpl = <T extends MinimalGameState>(
   f: StateCreator<T, [], []>
 ) => StateCreator<T, [], []>;
 
+let saveInProgress = false;
+let isUpdatingUI = false;
+
 /**
  * Create auto-save middleware for Zustand
  */
 const autoSaveImpl: AutoSaveImpl = (f) => (set, get, store) => {
   const wrappedSet: typeof set = (partial, replace) => {
-    // Call original set
     if (replace) {
       set(partial as Parameters<typeof set>[0], true);
     } else {
       set(partial);
     }
 
-    // Check if we should auto-save after state update
+    // Skip the save check when we ourselves are updating autoSaveStatus
+    if (isUpdatingUI) return;
+
     const state = get();
-    if (shouldAutoSave(state)) {
-      saveManager.autoSave(state).catch((error) => {
-        console.error('Auto-save error:', error);
-      });
+    if (!saveInProgress && shouldAutoSave(state)) {
+      saveInProgress = true;
+      lastAutoSaveDate = state.calendar.currentDate; // optimistic update
+
+      isUpdatingUI = true;
+      set({ autoSaveStatus: 'saving' } as Parameters<typeof set>[0]);
+      isUpdatingUI = false;
+
+      const doSave = () => {
+        const freshState = get();
+        saveManager.autoSave(freshState)
+          .then(() => {
+            isUpdatingUI = true;
+            set({ autoSaveStatus: 'saved' } as Parameters<typeof set>[0]);
+            isUpdatingUI = false;
+            setTimeout(() => {
+              isUpdatingUI = true;
+              set({ autoSaveStatus: 'idle' } as Parameters<typeof set>[0]);
+              isUpdatingUI = false;
+            }, 3000);
+          })
+          .catch((error) => {
+            console.error('Auto-save error:', error);
+            isUpdatingUI = true;
+            set({ autoSaveStatus: 'idle' } as Parameters<typeof set>[0]);
+            isUpdatingUI = false;
+          })
+          .finally(() => {
+            saveInProgress = false;
+          });
+      };
+
+      if (typeof requestIdleCallback !== 'undefined') {
+        requestIdleCallback(doSave, { timeout: 5000 });
+      } else {
+        setTimeout(doSave, 0);
+      }
     }
   };
 

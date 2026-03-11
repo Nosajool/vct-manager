@@ -78,6 +78,10 @@ export interface UISlice {
   setSimulationProgress: (progress: SimulationProgress | null) => void;
   updateSimulationProgress: (current: number, status?: string) => void;
 
+  // Auto-save status
+  autoSaveStatus: 'idle' | 'saving' | 'saved';
+  setAutoSaveStatus: (status: 'idle' | 'saving' | 'saved') => void;
+
   // Modal actions
   openModal: (type: string, data?: unknown) => void;
   closeModal: () => void;
@@ -103,6 +107,7 @@ export const createUISlice: StateCreator<
   isModalOpen: false,
   modalType: null,
   modalData: null,
+  autoSaveStatus: 'idle',
 
   // Selection actions
   setSelectedPlayer: (playerId) =>
@@ -180,6 +185,9 @@ export const createUISlice: StateCreator<
         },
       };
     }),
+
+  setAutoSaveStatus: (status) =>
+    set({ autoSaveStatus: status }),
 
   // Modal actions
   openModal: (type, data = null) =>
