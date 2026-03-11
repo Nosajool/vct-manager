@@ -10,7 +10,7 @@ import {
   type MonthlyFinanceResult,
   type PrizeDistribution,
 } from '../engine/team';
-import type { Transaction, Loan } from '../types';
+import type { Transaction, Loan, ActiveSponsorship } from '../types';
 
 /**
  * Result of accepting a sponsorship offer
@@ -235,6 +235,20 @@ export class EconomyService {
         ...team.finances.monthlyRevenue,
         sponsorships: newSponsorshipRevenue,
       },
+    });
+
+    // Persist sponsorship entity to activeSponsorships
+    const activeSponsorship: ActiveSponsorship = {
+      id: sponsorship.id,
+      sponsorName: sponsorship.sponsorName,
+      monthlyValue: sponsorship.monthlyValue,
+      endDate: sponsorship.endDate,
+    };
+    state.updateTeamFinances(id, {
+      activeSponsorships: [
+        ...(team.finances.activeSponsorships ?? []),
+        activeSponsorship,
+      ],
     });
 
     // Add signing bonus transaction (first month paid upfront)

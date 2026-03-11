@@ -86,6 +86,17 @@ export class DramaService {
           }
         }
 
+        // Add sponsor name for sponsor-related events
+        if (eventInstance.teamId) {
+          const teamForSponsor = state.teams[eventInstance.teamId];
+          const activeSponsorships = teamForSponsor?.finances?.activeSponsorships;
+          if (activeSponsorships && activeSponsorships.length > 0) {
+            context.sponsorName = activeSponsorships[0].sponsorName;
+          } else {
+            context.sponsorName = 'Your primary sponsor';
+          }
+        }
+
         // Substitute placeholders in description for minor events
         eventInstance.outcomeText = dramaEngine.substituteNarrative(template.description, context);
 
@@ -210,6 +221,17 @@ export class DramaService {
       const team = state.teams[event.teamId];
       if (team) {
         context.teamName = team.name;
+      }
+    }
+
+    // Add sponsor name for sponsor-related events
+    if (event.teamId) {
+      const teamForSponsor = state.teams[event.teamId];
+      const activeSponsorships = teamForSponsor?.finances?.activeSponsorships;
+      if (activeSponsorships && activeSponsorships.length > 0) {
+        context.sponsorName = activeSponsorships[0].sponsorName;
+      } else {
+        context.sponsorName = 'Your primary sponsor';
       }
     }
 

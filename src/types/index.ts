@@ -24,6 +24,7 @@ export type {
   Transaction,
   TransactionType,
   Loan,
+  ActiveSponsorship,
   MonthlyRevenue,
   MonthlyExpenses,
 } from './team';

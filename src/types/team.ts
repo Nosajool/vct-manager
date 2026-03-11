@@ -27,6 +27,13 @@ export interface Loan {
   remainingMonths: number;
 }
 
+export interface ActiveSponsorship {
+  id: string;
+  sponsorName: string;
+  monthlyValue: number;
+  endDate: string;
+}
+
 export interface MonthlyRevenue {
   sponsorships: number;
   merchandise: number;
@@ -58,6 +65,9 @@ export interface TeamFinances {
 
   // Financial stress tracking: incremented each month net < 0, reset on positive month
   consecutiveNegativeMonths: number;
+
+  // Active sponsorship deals (name + details)
+  activeSponsorships?: ActiveSponsorship[];
 }
 
 export interface TeamChemistry {
