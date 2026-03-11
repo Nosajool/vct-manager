@@ -21,7 +21,7 @@ export const PRACTICE_BURNOUT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 15,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -51,7 +51,7 @@ export const PRACTICE_BURNOUT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 20,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -80,7 +80,7 @@ export const PRACTICE_BURNOUT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'enforce_rest',

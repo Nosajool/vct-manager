@@ -13,7 +13,7 @@ export const MAP_POOL_EVENTS: DramaEventTemplate[] = [
       { type: 'random_chance', chance: 30 },
     ],
     probability: 30,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -5 },
       { target: 'set_flag', flag: 'map_pool_weakness_exposed', flagDuration: 5 },
@@ -31,7 +31,7 @@ export const MAP_POOL_EVENTS: DramaEventTemplate[] = [
       { type: 'random_chance', chance: 25 },
     ],
     probability: 25,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -10 },
       { target: 'team_chemistry', delta: -5 },

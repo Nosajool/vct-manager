@@ -25,7 +25,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       { type: 'scrim_count_min', threshold: 8 },
     ],
     probability: 35,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'spotlight',
@@ -116,7 +116,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'embrace_change',
@@ -189,7 +189,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 20 },
     ],
     probability: 35,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'counter_offer',
@@ -272,7 +272,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'appoint_leader',
@@ -354,7 +354,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 10 },
     ],
     probability: 35,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'damage_control',
@@ -437,7 +437,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       }
     ],
     probability: 40,
-    cooldownDays: 5,
+    cooldownDays: 3,
     choices: [
       {
         id: 'mandatory_break',
@@ -530,7 +530,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 85,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: false,
     choices: [
       {
@@ -635,7 +635,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'extend_premium',
@@ -722,7 +722,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'schedule_psychologist',
@@ -801,7 +801,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 90,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'respond_aggressively',
@@ -880,7 +880,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -970,7 +970,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 85,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'accommodate_now',
@@ -1058,7 +1058,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'make_changes_now',
@@ -1143,7 +1143,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 90,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'team_chemistry',
@@ -1179,7 +1179,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'force_reconciliation',
@@ -1270,7 +1270,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'immediate_rest',
@@ -1374,7 +1374,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'restore_player_agency',
@@ -1544,7 +1544,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 85,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'match_the_offer',
@@ -1640,7 +1640,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'extend_now',
@@ -1747,7 +1747,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       }
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -1789,7 +1789,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 30,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -1827,7 +1827,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'reassure_them',
@@ -1915,7 +1915,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 30,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'team_chemistry',
@@ -1957,7 +1957,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'private_check_in',
@@ -2045,7 +2045,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'targeted_igl_coaching',
@@ -2137,7 +2137,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -2176,7 +2176,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -2220,7 +2220,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 85,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -2306,7 +2306,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -2392,7 +2392,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'forced_rest',
@@ -2491,7 +2491,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 60,
+    cooldownDays: 3,
     choices: [
       {
         id: 'give_spotlight',
@@ -2567,7 +2567,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 60,
+    cooldownDays: 3,
     choices: [
       {
         id: 'extend_support',
@@ -2648,7 +2648,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'public_defense',
@@ -2733,7 +2733,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 85,
-    cooldownDays: 21,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -2829,7 +2829,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_form',
@@ -2870,7 +2870,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -2982,7 +2982,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'full_adoption',
@@ -3087,7 +3087,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 21,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3120,7 +3120,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3157,7 +3157,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 21,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3190,7 +3190,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3221,7 +3221,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     effects: [
       {
@@ -3259,7 +3259,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 30,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3300,7 +3300,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3333,7 +3333,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3372,7 +3372,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -3402,10 +3402,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         type: 'elimination_risk',
+        playerSelector: 'any'
       },
     ],
     probability: 70,
-    cooldownDays: 30,
+    cooldownDays: 3,
     choices: [
       {
         id: 'channel_the_fire',
@@ -3489,7 +3490,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -3532,7 +3533,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 30,
+    cooldownDays: 3,
     choices: [
       {
         id: 'lean_into_narrative',
@@ -3608,7 +3609,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -3646,7 +3647,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 30,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -3683,7 +3684,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3720,7 +3721,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3752,7 +3753,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3789,7 +3790,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'acknowledge_the_fall',
@@ -3882,7 +3883,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -3915,7 +3916,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 21,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -3996,7 +3997,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'clear_flag',
@@ -4042,7 +4043,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -4132,7 +4133,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -4220,7 +4221,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -4320,7 +4321,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 65,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {
@@ -4422,7 +4423,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 30,
+    cooldownDays: 3,
     oncePerSeason: true,
     choices: [
       {

@@ -21,7 +21,7 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
       { type: 'scrim_count_min', threshold: 3 },
     ],
     probability: 30,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -56,7 +56,7 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'accommodate',
@@ -146,7 +146,7 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 35,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'lean_into_star',
@@ -231,7 +231,7 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
       { type: 'random_chance', chance: 40 },
     ],
     probability: 50,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -266,7 +266,7 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'negotiate',

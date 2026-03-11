@@ -19,7 +19,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'player_stat_below', stat: 'igl', threshold: 75, playerSelector: 'igl_player' },
     ],
     probability: 60,
-    cooldownDays: 7,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
@@ -74,7 +74,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 3 },
     ],
     probability: 75,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'ignore_noise',
@@ -126,7 +126,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'igl_replacement_considered', playerSelector: 'igl_player' },
     ],
     probability: 90,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'keep_igl',
@@ -186,7 +186,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'team_win_streak', streakLength: 2 },
     ],
     probability: 70,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 10 },
       { target: 'team_hype', delta: 8 },
@@ -210,7 +210,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'player_morale_above', threshold: -1, playerSelector: 'igl_player' },
     ],
     probability: 75,
-    cooldownDays: 7,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     choices: [
       {
@@ -268,7 +268,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'team_win_streak', streakLength: 2 },
     ],
     probability: 70,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'codify_as_policy',
@@ -312,7 +312,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'player_morale_above', threshold: -1, playerSelector: 'igl_player' },
     ],
     probability: 75,
-    cooldownDays: 7,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     choices: [
       {
@@ -370,7 +370,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 60,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -8 },
       { target: 'team_chemistry', delta: -10 },

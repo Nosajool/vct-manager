@@ -18,7 +18,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'scrim_leak_arc_active' },
     ],
     probability: 18,
-    cooldownDays: 5,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'set_flag', flag: 'scrim_leak_arc_active', flagDuration: 35 },
@@ -85,7 +85,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'scrim_accuse_public' },
     ],
     probability: 95,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'set_flag', flag: 'media_narrative_scrim_controversy', flagDuration: 21 },
     ],
@@ -158,7 +158,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'scrim_intel_offer_resolved' },
     ],
     probability: 14,
-    cooldownDays: 7,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     choices: [
       {
@@ -263,7 +263,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'scrim_leak_arc_active' },
     ],
     probability: 12,
-    cooldownDays: 7,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_hype', delta: -8 },

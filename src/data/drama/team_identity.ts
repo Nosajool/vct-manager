@@ -24,7 +24,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -51,7 +51,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -78,7 +78,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 21,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -110,7 +110,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -148,7 +148,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 55,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'redistribute_roles',
@@ -229,7 +229,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'lean_on_chemistry',
@@ -321,7 +321,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -357,7 +357,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 70,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'emergency_reset',
@@ -460,7 +460,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 21,
+    cooldownDays: 3,
     choices: [
       {
         id: 'encourage_the_shift',
@@ -543,7 +543,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -571,7 +571,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -605,7 +605,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 15 },
     ],
     probability: 50,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -637,7 +637,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -673,7 +673,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -707,7 +707,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 1 },
     ],
     probability: 50,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'reaffirm',
@@ -754,7 +754,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       { type: 'no_recent_match' },
     ],
     probability: 40,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
       { target: 'team_chemistry', delta: 5 },
@@ -773,7 +773,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 1 },
     ],
     probability: 45,
-    cooldownDays: 14,
+    cooldownDays: 3,
     choices: [
       {
         id: 'use_as_fuel',

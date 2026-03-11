@@ -22,7 +22,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 8,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -49,7 +49,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 6,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'set_flag',
@@ -147,7 +147,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       { type: 'random_chance', chance: 60 },
     ],
     probability: 60,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -177,7 +177,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 75,
     requiresPlayerTeam: true,
-    cooldownDays: 60,
+    cooldownDays: 3,
     choices: [
       {
         id: 'lean_into_meme',

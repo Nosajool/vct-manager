@@ -405,7 +405,7 @@ export class DayPlanService {
       items.push({
         id: 'info-review-standings',
         category: 'info',
-        label: 'Review Standings',
+        label: 'Review Bracket',
         description: `Check your position in ${activeTournament.name || 'the tournament'}.`,
         priority: PRIORITY.LOW,
         completed: false,

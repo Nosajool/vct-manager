@@ -20,7 +20,7 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 15 },
     ],
     probability: 20,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -51,7 +51,7 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 15 },
     ],
     probability: 10,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_stat',
@@ -86,7 +86,7 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 12,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',

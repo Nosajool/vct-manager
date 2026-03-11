@@ -17,7 +17,7 @@ export const TEAM_SYNERGY_EVENTS: DramaEventTemplate[] = [
       { type: 'scrim_count_min', threshold: 10 },
     ],
     probability: 35,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'team_chemistry',
@@ -43,7 +43,7 @@ export const TEAM_SYNERGY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 50,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'mediate',
@@ -122,7 +122,7 @@ export const TEAM_SYNERGY_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 40,
-    cooldownDays: 5,
+    cooldownDays: 3,
     effects: [
       {
         target: 'team_chemistry',

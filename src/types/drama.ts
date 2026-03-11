@@ -548,22 +548,21 @@ export const DRAMA_CONSTANTS = {
   },
 
   // Default cooldown periods per category (in days)
-  // Reduced from 14-30 days to 5-10 days to increase event frequency
   cooldownDefaults: {
-    player_ego: 7,           // Reduced from 14
-    team_synergy: 7,         // Reduced from 21
-    external_pressure: 10,   // Reduced from 14
-    practice_burnout: 5,     // Reduced from 28
-    breakthrough: 7,         // Reduced from 30
-    meta_rumors: 7,          // Unchanged
-    cove_incident: 60,       // Aligned with cooldownDays on the event
+    player_ego: 3,
+    team_synergy: 3,
+    external_pressure: 3,
+    practice_burnout: 3,
+    breakthrough: 3,
+    meta_rumors: 3,          // Unchanged
+    cove_incident: 3,       // Aligned with cooldownDays on the event
     visa_arc: 3,             // Short: arc is flag-chained, not random
-    coaching_overhaul: 5,    // Short: arc events are flag-gated
-    igl_crisis: 5,           // Short: arc events are flag-gated
-    scrim_sharing: 14,       // Distinct arc, no cross-bleed with external_pressure
-    org_culture: 5,          // Short: arc events are flag-gated
+    coaching_overhaul: 3,    // Short: arc events are flag-gated
+    igl_crisis: 3,           // Short: arc events are flag-gated
+    scrim_sharing: 3,       // Distinct arc, no cross-bleed with external_pressure
+    org_culture: 3,          // Short: arc events are flag-gated
     tournament_drama: 3,     // Short: bracket-specific, tournament-gated
-    map_pool: 7,             // Map pool events, match-gated
+    map_pool: 3,             // Map pool events, match-gated
   },
 
   // Effect magnitude defaults

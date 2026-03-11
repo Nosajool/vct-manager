@@ -21,7 +21,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'coaching_overhaul_failed' },
     ],
     probability: 70,
-    cooldownDays: 5,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
       { target: 'team_chemistry', delta: -5 },
@@ -163,7 +163,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_not_active', flag: 'coaching_system_peak' },
     ],
     probability: 65,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'set_flag', flag: 'system_buyin_path_active', flagDuration: 45 },
       { target: 'set_flag', flag: 'coaching_system_peak', flagDuration: 45 },
@@ -336,7 +336,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       { type: 'min_season_day', threshold: 14 },
     ],
     probability: 40,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       { target: 'team_hype', delta: 5 },
       { target: 'player_morale', effectPlayerSelector: 'star_player', delta: -3 },
@@ -355,7 +355,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       { type: 'player_form_above', threshold: 55, playerSelector: 'star_player' },
     ],
     probability: 70,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'set_flag', flag: 'star_bought_in_{playerId}', flagDuration: 45 },
       { target: 'clear_flag', flag: 'star_silent_grind_{playerId}' },
@@ -432,7 +432,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 60,
-    cooldownDays: 14,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
       { target: 'team_sponsor_trust', delta: -5 },

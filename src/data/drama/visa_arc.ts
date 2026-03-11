@@ -234,7 +234,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'match_result', threshold: 1 },
     ],
     probability: 55,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'team_chemistry', delta: 5 },
       { target: 'team_sponsor_trust', delta: 5 },
@@ -255,7 +255,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'match_result', threshold: 1 },
     ],
     probability: 45,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -5 },
       { target: 'team_chemistry', delta: -3 },
@@ -321,7 +321,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'team_win_streak', streakLength: 1 },
     ],
     probability: 65,
-    cooldownDays: 7,
+    cooldownDays: 3,
     choices: [
       {
         id: 'lean_into_media',
@@ -372,7 +372,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 70,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'all', delta: -6 },
       { target: 'team_hype', delta: -5 },
@@ -392,7 +392,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       { type: 'random_chance', chance: 70 },
     ],
     probability: 80,
-    cooldownDays: 5,
+    cooldownDays: 3,
     choices: [
       {
         id: 'publish_concrete_results',

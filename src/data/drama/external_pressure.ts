@@ -18,7 +18,7 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 60,
-    cooldownDays: 10,
+    cooldownDays: 3,
     choices: [
       {
         id: 'public_confidence',
@@ -93,7 +93,7 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 30,
-    cooldownDays: 10,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
@@ -116,7 +116,7 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 45,
-    cooldownDays: 7,
+    cooldownDays: 3,
     effects: [
       {
         target: 'player_morale',
