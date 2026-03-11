@@ -318,6 +318,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
   },
 
   // pre_champ_dismissal — PRE_MATCH, manager, has_rivalry
+  // TODO switch this to tournament winner
   {
     id: 'pre_champ_dismissal',
     context: 'PRE_MATCH',

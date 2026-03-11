@@ -280,18 +280,18 @@ function OverviewTab({ summary, team, rosterCosts, formatCurrency }: OverviewTab
 
       {/* Top Salaries */}
       <div className="bg-vct-darker border border-vct-gray/30 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-vct-light mb-4">Roster Salaries</h3>
+        <h3 className="text-lg font-semibold text-vct-light mb-4">Roster Monthly Cost</h3>
         <div className="space-y-2">
-          {rosterCosts.players.slice(0, 5).map((player) => (
+          {rosterCosts.players.map((player) => (
             <div key={player.id} className="flex justify-between items-center">
               <span className="text-vct-gray">{player.name}</span>
-              <span className="text-vct-light">{formatCurrency(player.salary)}/yr</span>
+              <span className="text-vct-light">{formatCurrency(Math.round(player.salary / 12))}/mo</span>
             </div>
           ))}
           <div className="border-t border-vct-gray/30 pt-2 mt-2">
             <div className="flex justify-between font-semibold">
               <span className="text-vct-light">Total Roster Cost</span>
-              <span className="text-vct-light">{formatCurrency(rosterCosts.total)}/yr</span>
+              <span className="text-vct-light">{formatCurrency(Math.round(rosterCosts.total / 12))}/mo</span>
             </div>
           </div>
         </div>
