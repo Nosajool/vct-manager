@@ -104,6 +104,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-teal-500',
     icon: '🗺️',
   },
+  financial_stress: {
+    label: 'Financial Stress',
+    color: 'text-amber-400',
+    dotColor: 'bg-amber-500',
+    icon: '💸',
+  },
 };
 
 /**

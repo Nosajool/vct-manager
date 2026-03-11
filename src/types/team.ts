@@ -55,6 +55,9 @@ export interface TeamFinances {
 
   // Debt management
   loans: Loan[];
+
+  // Financial stress tracking: incremented each month net < 0, reset on positive month
+  consecutiveNegativeMonths: number;
 }
 
 export interface TeamChemistry {

@@ -421,6 +421,32 @@ export class GameInitService {
     store.updateTeamFinances(teamId, {
       balance: Math.round(team.finances.balance * multiplier),
     });
+
+    // Adjust monthly revenue and expenses based on difficulty
+    if (difficulty !== 'normal') {
+      const revenueMultipliers = { easy: 1.2, normal: 1.0, hard: 0.85 };
+      const expenseMultipliers = { easy: 0.85, normal: 1.0, hard: 1.15 };
+      const revMult = revenueMultipliers[difficulty];
+      const expMult = expenseMultipliers[difficulty];
+
+      const rev = team.finances.monthlyRevenue;
+      const exp = team.finances.monthlyExpenses;
+
+      store.updateTeamFinances(teamId, {
+        monthlyRevenue: {
+          ...rev,
+          sponsorships: Math.round(rev.sponsorships * revMult),
+          merchandise: Math.round(rev.merchandise * revMult),
+          fanDonations: Math.round(rev.fanDonations * revMult),
+        },
+        monthlyExpenses: {
+          ...exp,
+          coachSalaries: Math.round(exp.coachSalaries * expMult),
+          facilities: Math.round(exp.facilities * expMult),
+          travel: Math.round(exp.travel * expMult),
+        },
+      });
+    }
   }
 
   /**

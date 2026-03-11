@@ -200,6 +200,9 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | `coaching_overhaul` | `coaching_overhaul.ts` |
 | `igl_crisis` | `igl_crisis.ts` |
 | `scrim_sharing` | `scrim_sharing.ts` |
+| `org_culture` | `org_culture.ts` |
+| `map_pool` | `map_pool.ts` |
+| `financial_stress` | `financial_stress.ts` |
 
 ### Option structure
 
@@ -1430,3 +1433,75 @@ Interview template `post_harbor_cove_incident` fires in the post-match press con
 - Interview template: `src/data/interviews/agent_strategy.ts` (`post_harbor_cove_incident`, `narrativeCategory: 'cove_incident'`)
 - Drama event: `src/data/drama/meta_rumors.ts` (`cove_meme_viral`, `category: 'cove_incident'`)
 - Condition evaluator: `src/engine/drama/DramaConditionEvaluator.ts` (`case 'agent_played'`)
+
+---
+
+## Economy & Financial Stress Arc
+
+### Purpose
+
+The `financial_stress` drama category creates a multi-stage narrative arc around org financial instability. It activates automatically based on monthly cash flow data — no interview seeds required. Events escalate as the org's finances deteriorate and recover when the situation improves.
+
+### Data backing
+
+A new field `consecutiveNegativeMonths: number` on `TeamFinances` (in `src/types/team.ts`) tracks how many consecutive months the team has run a net cash flow deficit. It is:
+- Incremented by 1 each month when `netChange < 0`
+- Reset to `0` when `netChange >= 0`
+- Initialized to `0` on all new team objects
+
+This field is populated into `DramaGameStateSnapshot.teamFinances.consecutiveNegativeMonths` by `DramaService.buildSnapshot()`.
+
+### New condition type
+
+`consecutive_negative_months_above` — evaluates `snapshot.teamFinances.consecutiveNegativeMonths >= condition.threshold`. Use like any other condition:
+
+```typescript
+{ type: 'consecutive_negative_months_above', threshold: 3 }
+```
+
+### Three stages
+
+| Stage | Trigger | Events |
+|-------|---------|--------|
+| Warning (1-2 months negative) | `consecutiveNegativeMonths >= 1` or `>= 2` | `financial_stress_sponsor_warning`, `financial_stress_board_memo` |
+| Restricted (3 months negative) | `consecutiveNegativeMonths >= 3` | `financial_stress_emergency_review`, `financial_stress_star_demands` |
+| Critical (5+ months negative) | `consecutiveNegativeMonths >= 5` | `financial_stress_investor_offer` |
+
+There is also a **recovery** event (`financial_stress_recovery`) that fires when `board_watching` flag is still active but finances are now positive (effectively `consecutiveNegativeMonths === 0`).
+
+### Flag interactions
+
+| Flag | Set by | Read by | Duration |
+|------|--------|---------|---------|
+| `sponsor_on_notice` | `financial_stress_sponsor_warning` | future sponsor events | 30 days |
+| `board_watching` | `financial_stress_board_memo` | `financial_stress_star_demands`, `financial_stress_recovery` | 60 days |
+| `austerity_mode` | `financial_stress_emergency_review` choice A | `EconomyService` (20% expense reduction on facilities + travel) | 90 days |
+| `emergency_loan_requested` | `financial_stress_emergency_review` choice B | future events | permanent |
+| `turnaround_promised` | `financial_stress_emergency_review` choice C | future events | 60 days |
+| `contract_stalled` | `financial_stress_star_demands` choice B | future events | 45 days |
+| `player_on_market` | `financial_stress_star_demands` choice C | future events | 60 days |
+| `investor_control` | `financial_stress_investor_offer` choice A | future events | permanent |
+| `investor_minority` | `financial_stress_investor_offer` choice B | future events | permanent |
+
+### Austerity mode (Part 4)
+
+When `austerity_mode` flag is active, `EconomyService.processMonthlyFinances()` applies a 20% reduction to `facilities` and `travel` expenses before calculating the month's net change. This is the only drama flag that directly modifies financial calculations.
+
+### Template IDs
+
+| ID | Severity | Threshold | Once per season? |
+|----|----------|-----------|-----------------|
+| `financial_stress_sponsor_warning` | minor | 1 | no |
+| `financial_stress_board_memo` | minor | 2 | no |
+| `financial_stress_emergency_review` | major | 3 | yes |
+| `financial_stress_star_demands` | major | 3 (+ `board_watching` + contract expiring) | no |
+| `financial_stress_investor_offer` | major | 5 | no |
+| `financial_stress_recovery` | minor | 0 (+ `board_watching` active) | no |
+
+### Source files
+
+- Drama events: `src/data/drama/financial_stress.ts`
+- Type additions: `src/types/drama.ts` (`financial_stress` in `DramaCategory`; `consecutive_negative_months_above` in `DramaConditionType`; `teamFinances` field on `DramaGameStateSnapshot`)
+- Team type: `src/types/team.ts` (`consecutiveNegativeMonths` on `TeamFinances`)
+- Condition evaluator: `src/engine/drama/DramaConditionEvaluator.ts` (`case 'consecutive_negative_months_above'`)
+- Economy tracking: `src/services/EconomyService.ts` (updates `consecutiveNegativeMonths` monthly; checks `austerity_mode` flag)

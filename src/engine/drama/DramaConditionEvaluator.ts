@@ -278,6 +278,9 @@ export function evaluateCondition(
       return (ctx.playedMapAttributes[condition.mapPoolAttribute] ?? 100) < (condition.mapPoolThreshold ?? 40);
     }
 
+    case 'consecutive_negative_months_above':
+      return (snapshot.teamFinances?.consecutiveNegativeMonths ?? 0) >= (condition.threshold ?? 3);
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;

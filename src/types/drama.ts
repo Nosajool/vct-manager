@@ -35,7 +35,8 @@ export type DramaCategory =
   | 'scrim_sharing'      // scrim VOD leak scandal arc
   | 'org_culture'        // org wealth / chicken nugget arc
   | 'tournament_drama'   // bracket-specific tournament interviews
-  | 'map_pool';          // map pool narrative events
+  | 'map_pool'           // map pool narrative events
+  | 'financial_stress';  // org financial pressure arc
 
 /**
  * Severity level of drama events
@@ -143,7 +144,10 @@ export type DramaConditionType =
   | 'map_pool_played_strong_map'  // Last match included one of team's strongestMaps
   | 'map_pool_overall_below'      // Team's average map pool strength < threshold (default 45)
   | 'map_pool_has_scrim_data'     // A played map has recent scrim practice (last 4 weeks)
-  | 'map_pool_attribute_below';   // A played map's specific attribute < threshold (default 40)
+  | 'map_pool_attribute_below'    // A played map's specific attribute < threshold (default 40)
+
+  // Financial stress checks
+  | 'consecutive_negative_months_above'; // consecutiveNegativeMonths >= threshold
 
 /**
  * Player selection method for condition evaluation
@@ -449,6 +453,9 @@ export interface DramaGameStateSnapshot {
   playerTeamRegion?: Region;  // The team's (league) region
   iglPlayerId?: string;       // Team's designated IGL player ID
   teamBudget?: number;        // Team's current financial balance
+  teamFinances?: {
+    consecutiveNegativeMonths: number;
+  };
 
   // Recent match results
   recentMatchResults?: Array<{
@@ -563,6 +570,7 @@ export const DRAMA_CONSTANTS = {
     org_culture: 3,          // Short: arc events are flag-gated
     tournament_drama: 3,     // Short: bracket-specific, tournament-gated
     map_pool: 3,             // Map pool events, match-gated
+    financial_stress: 14,    // Financial stress arc events — longer cooldown
   },
 
   // Effect magnitude defaults

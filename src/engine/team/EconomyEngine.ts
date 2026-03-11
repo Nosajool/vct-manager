@@ -81,22 +81,22 @@ export class EconomyEngine {
   // Sponsor templates by tier
   private static readonly SPONSOR_TEMPLATES = {
     major: [
-      { name: 'Red Bull', baseValue: 150000 },
-      { name: 'BMW', baseValue: 120000 },
-      { name: 'Secretlab', baseValue: 100000 },
-      { name: 'HyperX', baseValue: 90000 },
+      { name: 'Red Bull', baseValue: 90000 },
+      { name: 'BMW', baseValue: 72000 },
+      { name: 'Secretlab', baseValue: 60000 },
+      { name: 'HyperX', baseValue: 54000 },
     ],
     mid: [
-      { name: 'Logitech G', baseValue: 60000 },
-      { name: 'Razer', baseValue: 55000 },
-      { name: 'SteelSeries', baseValue: 50000 },
-      { name: 'Corsair', baseValue: 45000 },
+      { name: 'Logitech G', baseValue: 36000 },
+      { name: 'Razer', baseValue: 33000 },
+      { name: 'SteelSeries', baseValue: 30000 },
+      { name: 'Corsair', baseValue: 27000 },
     ],
     minor: [
-      { name: 'ASUS ROG', baseValue: 30000 },
-      { name: 'MSI', baseValue: 25000 },
-      { name: 'Elgato', baseValue: 20000 },
-      { name: 'SCUF', baseValue: 15000 },
+      { name: 'ASUS ROG', baseValue: 18000 },
+      { name: 'MSI', baseValue: 15000 },
+      { name: 'Elgato', baseValue: 12000 },
+      { name: 'SCUF', baseValue: 9000 },
     ],
   };
 

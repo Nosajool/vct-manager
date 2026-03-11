@@ -329,6 +329,9 @@ export class DramaService {
       playerTeamRegion: playerTeam.region,
       activePatch: state.currentPatch ?? null,
       teamBudget: playerTeam.finances.balance,
+      teamFinances: {
+        consecutiveNegativeMonths: playerTeam.finances.consecutiveNegativeMonths ?? 0,
+      },
     };
   }
 

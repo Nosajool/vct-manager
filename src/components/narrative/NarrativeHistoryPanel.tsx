@@ -46,6 +46,7 @@ const DRAMA_CATEGORY_META: Record<
   org_culture:      { label: 'Org Culture',    color: 'text-yellow-400', dotColor: 'bg-yellow-500',  icon: '🍗' },
   tournament_drama: { label: 'Tournament',     color: 'text-rose-400',   dotColor: 'bg-rose-500',    icon: '🏆' },
   map_pool:         { label: 'Map Pool',       color: 'text-teal-400',   dotColor: 'bg-teal-500',    icon: '🗺️' },
+  financial_stress: { label: 'Financial Stress', color: 'text-amber-400', dotColor: 'bg-amber-500',   icon: '💸' },
 };
 
 const INTERVIEW_CONTEXT_META: Record<

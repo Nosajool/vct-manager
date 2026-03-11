@@ -57,7 +57,7 @@ export class TeamManager {
       balance: Math.round(orgValue * 0.4), // Start with 40% of org value
 
       monthlyRevenue: {
-        sponsorships: Math.round(100000 * scaleFactor * fanFactor),
+        sponsorships: Math.round(65000 * scaleFactor * fanFactor),
         merchandise: Math.round(30000 * scaleFactor * fanFactor),
         prizeWinnings: 0,
         fanDonations: Math.round(10000 * fanFactor),
@@ -65,13 +65,14 @@ export class TeamManager {
 
       monthlyExpenses: {
         playerSalaries: 0, // Will be calculated from roster
-        coachSalaries: Math.round(20000 * scaleFactor),
-        facilities: Math.round(15000 * scaleFactor),
-        travel: Math.round(10000 * scaleFactor),
+        coachSalaries: Math.round(23000 * scaleFactor),
+        facilities: Math.round(22000 * scaleFactor),
+        travel: Math.round(14000 * scaleFactor),
       },
 
       pendingTransactions: [],
       loans: [],
+      consecutiveNegativeMonths: 0,
     };
   }
 

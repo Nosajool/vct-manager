@@ -133,12 +133,39 @@ export class EconomyService {
 
     const currentDate = state.calendar.currentDate;
 
-    // Calculate monthly finances
-    const result = economyEngine.processMonthlyFinances(team, currentDate);
+    // Check for austerity_mode flag — apply 20% expense reduction to facilities and travel
+    let effectiveTeam = team;
+    const austFlagData = state.activeFlags?.['austerity_mode'];
+    const austActive = austFlagData
+      ? !austFlagData.expiresDate || new Date(currentDate) < new Date(austFlagData.expiresDate)
+      : false;
 
-    // Update team balance
+    if (austActive) {
+      effectiveTeam = {
+        ...team,
+        finances: {
+          ...team.finances,
+          monthlyExpenses: {
+            ...team.finances.monthlyExpenses,
+            facilities: Math.round(team.finances.monthlyExpenses.facilities * 0.8),
+            travel: Math.round(team.finances.monthlyExpenses.travel * 0.8),
+          },
+        },
+      };
+    }
+
+    // Calculate monthly finances
+    const result = economyEngine.processMonthlyFinances(effectiveTeam, currentDate);
+
+    // Update consecutiveNegativeMonths based on net change
+    const prevConsecutive = team.finances.consecutiveNegativeMonths ?? 0;
+    const newConsecutiveNegativeMonths =
+      result.netChange < 0 ? prevConsecutive + 1 : 0;
+
+    // Update team balance and consecutiveNegativeMonths
     state.updateTeamFinances(id, {
       balance: result.newBalance,
+      consecutiveNegativeMonths: newConsecutiveNegativeMonths,
     });
 
     // Process loan payments (reduce remaining months)

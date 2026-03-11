@@ -104,6 +104,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-teal-500/20 to-teal-600/20',
     badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30',
   },
+  financial_stress: {
+    label: 'Financial Stress',
+    color: 'from-amber-500/20 to-amber-600/20',
+    badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  },
 };
 
 /**
