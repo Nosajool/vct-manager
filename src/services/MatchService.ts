@@ -103,6 +103,7 @@ export class MatchService {
 
     // Advance tournament bracket if this is a tournament match
     if (match.tournamentId) {
+      console.log(`[PLAYOFF-DEBUG] simulateMatch: matchId=${matchId}, tournamentId=${match.tournamentId}`);
       tournamentService.advanceTournament(match.tournamentId, matchId, result);
     }
 
@@ -301,8 +302,9 @@ export class MatchService {
             // Trigger stage completion modal for player's tournament
             tournamentService.handleStageCompletion(tournamentId);
           } else {
-            // For other regions, just log completion (no modal)
-            console.log(`  (Not player's region - no modal shown)`);
+            // For other regions, auto-transition to playoffs (no modal)
+            console.log(`  (Not player's region - auto-transitioning to playoffs)`);
+            tournamentService.transitionLeagueToPlayoffs(tournamentId);
           }
         }
       }

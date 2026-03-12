@@ -1617,6 +1617,8 @@ export class BracketManager {
       return newBracket;
     }
 
+    console.error(`[PLAYOFF-DEBUG] CRITICAL: Match ${matchId} NOT FOUND in bracket! Available IDs:`,
+      newBracket.upper.flatMap(r => r.matches.map(m => m.matchId)).join(', '));
     return newBracket;
   }
 

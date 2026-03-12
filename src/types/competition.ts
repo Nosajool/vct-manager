@@ -4,7 +4,7 @@
 import type { Region } from './player';
 import type { MatchResult } from './match';
 
-export type CompetitionType = 'kickoff' | 'stage1' | 'stage2' | 'masters' | 'champions';
+export type CompetitionType = 'kickoff' | 'stage1' | 'stage1_playoffs' | 'stage2' | 'stage2_playoffs' | 'masters' | 'champions';
 export type TournamentFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin' | 'swiss_to_playoff' | 'league_to_playoff';
 export type TournamentStatus = 'upcoming' | 'in_progress' | 'completed';
 export type BracketFormat = 'single_elim' | 'double_elim' | 'triple_elim' | 'round_robin';

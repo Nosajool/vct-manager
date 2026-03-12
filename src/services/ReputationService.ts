@@ -28,7 +28,9 @@ interface RivalryContext {
 const TOURNAMENT_WEIGHT: Record<CompetitionType, number> = {
   kickoff: 1.5,
   stage1: 1.2,
+  stage1_playoffs: 1.5,
   stage2: 1.2,
+  stage2_playoffs: 1.5,
   masters: 2.0,
   champions: 3.0,
 };

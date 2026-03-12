@@ -129,6 +129,11 @@ export class TournamentService {
       result
     );
 
+    const bracketChanged = JSON.stringify(newBracket) !== JSON.stringify(tournament.bracket);
+    console.log(`[PLAYOFF-DEBUG] advanceTournament: matchId=${bracketMatchId}, bracketChanged=${bracketChanged}`);
+    const readyAfter = bracketManager.getReadyMatches(newBracket);
+    console.log(`[PLAYOFF-DEBUG]   ready matches after completion:`, readyAfter.map(m => `${m.matchId} (date: ${m.scheduledDate})`));
+
     // Update tournament bracket in store
     state.updateBracket(tournamentId, newBracket);
 
@@ -156,6 +161,15 @@ export class TournamentService {
         // Handle Kickoff completion - extract qualifiers and trigger modal
         if (tournament.type === 'kickoff') {
           this.handleKickoffCompletion(tournamentId);
+        }
+
+        // Handle Stage1/Stage2 playoff bracket completion - extract qualifiers and trigger modal
+        if (
+          (tournament.type === 'stage1' || tournament.type === 'stage2') &&
+          isLeagueToPlayoffTournament(tournament) &&
+          (tournament as MultiStageTournament).currentStage === 'playoff'
+        ) {
+          this.handleStagePlayoffCompletion(tournamentId, tournament.type);
         }
 
         // Handle Masters/Champions completion - show results modal
@@ -527,6 +541,87 @@ export class TournamentService {
       allRegionsQualifiers: allQualifications, // All 4 regions already available
       transitionConfigId: 'kickoff_to_masters1', // Transition to Masters Santiago
     });
+  }
+
+  /**
+   * Handle Stage 1 or Stage 2 playoff bracket completion - extract qualifiers and trigger modal
+   * Mirrors handleKickoffCompletion pattern.
+   *
+   * Saves QualificationRecord for ALL regions. Only triggers modal when ALL 4 are complete.
+   */
+  handleStagePlayoffCompletion(tournamentId: string, stageType: 'stage1' | 'stage2'): void {
+    const state = useGameStore.getState();
+    const tournament = state.tournaments[tournamentId];
+
+    if (!tournament) {
+      console.error(`Tournament not found for stage playoff completion: ${tournamentId}`);
+      return;
+    }
+
+    // Extract qualifiers from the playoff bracket
+    const qualifiers = bracketManager.getQualifiers(tournament.bracket);
+
+    if (!qualifiers.alpha || !qualifiers.beta || !qualifiers.omega) {
+      console.error(`${stageType} playoff completion: Not all qualifiers found`, qualifiers);
+      return;
+    }
+
+    const tournamentType: CompetitionType = stageType === 'stage1' ? 'stage1_playoffs' : 'stage2_playoffs';
+    const transitionConfigId = stageType === 'stage1' ? 'stage1_playoffs_to_masters2' : 'stage2_playoffs_to_champions';
+
+    // Build qualification record
+    const record: QualificationRecord = {
+      tournamentId,
+      tournamentType,
+      region: tournament.region as 'Americas' | 'EMEA' | 'Pacific' | 'China',
+      qualifiedTeams: [
+        { teamId: qualifiers.alpha, teamName: state.teams[qualifiers.alpha]?.name || 'Unknown', bracket: 'alpha' },
+        { teamId: qualifiers.beta, teamName: state.teams[qualifiers.beta]?.name || 'Unknown', bracket: 'beta' },
+        { teamId: qualifiers.omega, teamName: state.teams[qualifiers.omega]?.name || 'Unknown', bracket: 'omega' },
+      ],
+    };
+
+    // Save qualification for ALL regions
+    state.addQualification(record);
+
+    // Check if all 4 stage playoffs are complete - only show modal when all done
+    if (!this.areAllStagePlayoffsComplete(stageType)) {
+      return;
+    }
+
+    // All 4 complete - show modal
+    const playerTeam = state.playerTeamId ? state.teams[state.playerTeamId] : null;
+    if (!playerTeam) return;
+
+    const allQualifications = state.getQualificationsForType(tournamentType);
+    const playerRegionQual = allQualifications.find(q => q.region === playerTeam.region);
+
+    if (!playerRegionQual) {
+      console.error(`${stageType} playoff completion: Player region qualification not found`);
+      return;
+    }
+
+    state.openModal('qualification', {
+      phase: `${stageType}_playoffs`,
+      playerRegion: playerTeam.region,
+      playerRegionQualifiers: playerRegionQual,
+      allRegionsQualifiers: allQualifications,
+      transitionConfigId,
+    });
+  }
+
+  /**
+   * Check if all 4 regional stage playoffs are complete
+   */
+  private areAllStagePlayoffsComplete(stageType: 'stage1' | 'stage2'): boolean {
+    const state = useGameStore.getState();
+    const stageTournaments = Object.values(state.tournaments).filter(
+      t => t.type === stageType && isLeagueToPlayoffTournament(t) && (t as MultiStageTournament).currentStage === 'playoff'
+    );
+
+    if (stageTournaments.length !== 4) return false;
+
+    return stageTournaments.every(t => t.championId || t.status === 'completed');
   }
 
   /**
@@ -1192,7 +1287,7 @@ export class TournamentService {
     const playoffBracket = bracketManager.generateDoubleElimination(qualifiedTeamIds);
 
     // Prefix match IDs with tournament ID for uniqueness
-    const prefix = tournamentId.slice(-12);
+    const prefix = `po-${tournamentId.slice(-12)}`;
     this.prefixBracketMatchIds(playoffBracket, prefix);
 
     // Update tournament with playoff bracket
@@ -1721,6 +1816,7 @@ export class TournamentService {
             continue;
           }
 
+          console.log(`[PLAYOFF-DEBUG] createMatchEntity: ${bracketMatch.matchId}, date=${bracketMatch.scheduledDate}`);
           console.log(`  Creating Match entity for ${bracketMatch.matchId} (${bracketMatch.teamAId} vs ${bracketMatch.teamBId})`);
 
           // Create Match entity with same ID as bracket match
@@ -1979,6 +2075,13 @@ export class TournamentService {
 
     console.log(`scheduleNewlyReadyMatches called for tournament ${tournament.id}`);
 
+    // Determine playoff context for calendar events
+    const isPlayoffTournament = isLeagueToPlayoffTournament(tournament as any) &&
+      (tournament as any).currentStage === 'playoff';
+    const playoffPhase = isPlayoffTournament
+      ? (tournament.type === 'stage1' ? 'stage1_playoffs' : tournament.type === 'stage2' ? 'stage2_playoffs' : undefined)
+      : undefined;
+
     // Helper to process matches - only create calendar events for ready matches with teams
     const processMatches = (matches: BracketMatch[], isGrandFinal: boolean = false) => {
       for (const bracketMatch of matches) {
@@ -2001,12 +2104,17 @@ export class TournamentService {
           continue;
         }
 
-        // Warn if match doesn't have a scheduled date (shouldn't happen with upfront scheduling)
-        if (!bracketMatch.scheduledDate) {
-          console.warn(`  Match ${bracketMatch.matchId} missing scheduled date! Using tournament ${isGrandFinal ? 'end' : 'start'} date as fallback.`);
-          bracketMatch.scheduledDate = isGrandFinal ? tournament.endDate : tournament.startDate;
+        // If scheduled date is missing or in the past, reassign to next valid match day
+        const currentDate = state.calendar.currentDate;
+        if (!bracketMatch.scheduledDate || bracketMatch.scheduledDate < currentDate) {
+          const tomorrow = new Date(currentDate);
+          tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+          const newDate = tomorrow.toISOString();
+          console.warn(`[PLAYOFF-DEBUG] Reassigning match ${bracketMatch.matchId} from ${bracketMatch.scheduledDate} to ${newDate} (was missing or in the past)`);
+          bracketMatch.scheduledDate = newDate;
         }
 
+        console.log(`[PLAYOFF-DEBUG] scheduleNewlyReadyMatches: match=${bracketMatch.matchId}, scheduledDate=${bracketMatch.scheduledDate}, currentDate=${currentDate}, isPast=${bracketMatch.scheduledDate < currentDate}`);
         console.log(`  Creating calendar event for newly-ready match ${bracketMatch.matchId} on ${bracketMatch.scheduledDate}`);
 
         // Get team names
@@ -2027,6 +2135,8 @@ export class TournamentService {
             tournamentId: tournament.id,
             tournamentName: tournament.name,
             isGrandFinal,
+            isPlayoffMatch: isPlayoffTournament || undefined,
+            phase: playoffPhase,
           },
           processed: false,
           required: true,

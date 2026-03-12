@@ -49,6 +49,26 @@ const PRIZE_DISTRIBUTIONS: Record<CompetitionType, Record<number, number>> = {
     7: 0.05,
     8: 0.05,
   },
+  stage1_playoffs: {
+    1: 0.35,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
+  stage2_playoffs: {
+    1: 0.35,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05,
+    6: 0.05,
+    7: 0.05,
+    8: 0.05,
+  },
   masters: {
     1: 0.35,
     2: 0.20,
@@ -79,7 +99,9 @@ const PRIZE_DISTRIBUTIONS: Record<CompetitionType, Record<number, number>> = {
 const DEFAULT_PRIZE_POOLS: Record<CompetitionType, number> = {
   kickoff: 500000,
   stage1: 200000,
+  stage1_playoffs: 200000,
   stage2: 200000,
+  stage2_playoffs: 200000,
   masters: 1000000,
   champions: 2500000,
 };
@@ -339,7 +361,9 @@ export class TournamentEngine {
     const names: Record<CompetitionType, string> = {
       kickoff: 'Kickoff',
       stage1: 'Stage 1',
+      stage1_playoffs: 'Stage 1 Playoffs',
       stage2: 'Stage 2',
+      stage2_playoffs: 'Stage 2 Playoffs',
       masters: 'Masters',
       champions: 'Champions',
     };
@@ -524,7 +548,9 @@ export class TournamentEngine {
     const defaults: Record<CompetitionType, TournamentFormat> = {
       kickoff: 'triple_elim',
       stage1: 'round_robin',
+      stage1_playoffs: 'double_elim',
       stage2: 'round_robin',
+      stage2_playoffs: 'double_elim',
       masters: 'double_elim',
       champions: 'double_elim',
     };
@@ -538,7 +564,9 @@ export class TournamentEngine {
     const counts: Record<CompetitionType, number> = {
       kickoff: 16,
       stage1: 10,
+      stage1_playoffs: 8,
       stage2: 10,
+      stage2_playoffs: 8,
       masters: 12,
       champions: 16,
     };
