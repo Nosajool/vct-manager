@@ -24,6 +24,7 @@ import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } 
 import type { PatchNotesEventData } from '../types/calendar';
 import { META_PATCHES } from '../data/meta/patches';
 import type { BracketMatch, BracketRound, BracketStructure, Tournament } from '../types/competition';
+import type { MultiStageTournament } from '../types/competition';
 import type { TournamentMatchContext } from '../types/interview';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
@@ -400,6 +401,7 @@ export class CalendarService {
     // Always check during stage phases - the last match might have been yesterday
     if (currentPhase === 'stage1' || currentPhase === 'stage2') {
       this.checkStageCompletion(currentPhase);
+      this.autoTransitionOtherRegionLeagues(currentPhase);
     }
 
     // Check tournament completion for ALL regions
@@ -699,6 +701,41 @@ export class CalendarService {
     if (complete && tournamentId) {
       console.log(`${currentPhase} league complete! Triggering completion handler.`);
       tournamentService.handleStageCompletion(tournamentId);
+    }
+  }
+
+  /**
+   * Auto-transition non-player-region leagues to playoff stage.
+   * The player's region is handled via StageCompletionModal; other regions
+   * must be transitioned silently so areAllStagePlayoffsComplete() can fire.
+   */
+  private autoTransitionOtherRegionLeagues(currentPhase: string): void {
+    if (currentPhase !== 'stage1' && currentPhase !== 'stage2') return;
+
+    const state = useGameStore.getState();
+    const playerTeam = state.playerTeamId ? state.teams[state.playerTeamId] : null;
+    const playerRegion = playerTeam?.region;
+
+    for (const tournament of Object.values(state.tournaments)) {
+      if (tournament.type !== currentPhase) continue;
+      if (!isLeagueToPlayoffTournament(tournament)) continue;
+      const multi = tournament as MultiStageTournament;
+      if (multi.currentStage !== 'league') continue;
+      if (tournament.region === playerRegion) continue; // modal handles player's region
+
+      const leagueBracket = multi.leagueStage?.bracket;
+      if (!leagueBracket) continue;
+
+      const allComplete =
+        leagueBracket.upper.length > 0 &&
+        leagueBracket.upper.every(
+          round => round.matches.length > 0 && round.matches.every(m => m.status === 'completed')
+        );
+
+      if (allComplete) {
+        console.log(`Auto-transitioning ${tournament.name} from league to playoff`);
+        tournamentService.transitionLeagueToPlayoffs(tournament.id);
+      }
     }
   }
 

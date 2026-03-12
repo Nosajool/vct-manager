@@ -11,6 +11,7 @@ import type {
   CalendarEvent,
   BracketMatch,
   SwissStage,
+  SeasonPhase,
 } from '../types';
 import type { TeamSlot } from '../types/competition';
 import { isMultiStageTournament } from '../types';
@@ -595,6 +596,7 @@ export class TeamSlotResolver {
           tournamentId,
           isSwissMatch: true,
           swissRound: roundNumber,
+          phase: this.getTournamentPhase(tournament),
         },
         processed: false,
         required: true,
@@ -780,6 +782,14 @@ export class TeamSlotResolver {
     if (events.length > 0) {
       state.addCalendarEvents(events);
     }
+  }
+
+  private getTournamentPhase(tournament: Tournament): SeasonPhase | undefined {
+    if (tournament.type === 'masters') {
+      return tournament.name.toLowerCase().includes('santiago') ? 'masters1' : 'masters2';
+    }
+    if (tournament.type === 'champions') return 'champions';
+    return undefined;
   }
 }
 

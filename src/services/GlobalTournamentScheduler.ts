@@ -244,16 +244,21 @@ export class GlobalTournamentScheduler {
     // 8 beta/omega qualifiers (2 per region) - play Swiss first
     const teamSlots: TeamSlot[] = [];
 
+    // masters1 sources from kickoff; masters2 sources from stage1 playoffs
+    const sourceType = mastersId === 'masters1' ? 'kickoff' : 'stage1';
+
     // Alpha winners (playoff only)
     for (const region of this.regions) {
       teamSlots.push({
         type: 'qualified_from',
         source: {
-          tournamentType: 'kickoff',
+          tournamentType: sourceType,
           region,
           placement: 'alpha',
         },
-        description: `${region} Kickoff Alpha Winner`,
+        description: mastersId === 'masters1'
+          ? `${region} Kickoff Alpha Winner`
+          : `${region} Stage 1 Playoffs Winner`,
       });
     }
 
@@ -262,11 +267,13 @@ export class GlobalTournamentScheduler {
       teamSlots.push({
         type: 'qualified_from',
         source: {
-          tournamentType: 'kickoff',
+          tournamentType: sourceType,
           region,
           placement: 'beta',
         },
-        description: `${region} Kickoff Beta`,
+        description: mastersId === 'masters1'
+          ? `${region} Kickoff Beta`
+          : `${region} Stage 1 Beta`,
       });
     }
 
@@ -275,11 +282,13 @@ export class GlobalTournamentScheduler {
       teamSlots.push({
         type: 'qualified_from',
         source: {
-          tournamentType: 'kickoff',
+          tournamentType: sourceType,
           region,
           placement: 'omega',
         },
-        description: `${region} Kickoff Omega`,
+        description: mastersId === 'masters1'
+          ? `${region} Kickoff Omega`
+          : `${region} Stage 1 Omega`,
       });
     }
 
