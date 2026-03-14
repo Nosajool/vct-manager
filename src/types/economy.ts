@@ -37,7 +37,8 @@ export type TrainingGoal =
   | 'mechanical_ceiling'
   | 'decision_making'
   | 'leadership_comms'
-  | 'all_round_growth';
+  | 'all_round_growth'
+  | 'agent_mastery';
 
 export type TrainingIntensity = 'light' | 'moderate' | 'intense';
 
@@ -121,6 +122,15 @@ export const TRAINING_GOAL_MAPPINGS: Record<TrainingGoal, GoalMapping> = {
     secondaryStats: ['mechanics', 'igl', 'mental', 'clutch', 'vibes', 'lurking', 'entry', 'support', 'stamina'],
     previewDescriptors: ['+Overall Rating', '+Versatility', '+Consistency'],
     underlyingFocus: 'balanced',
+  },
+
+  agent_mastery: {
+    displayName: 'Agent Mechanics',
+    description: 'Drill agent-specific mechanics for your top 3 agents. Builds mastery and muscle memory.',
+    primaryStats: [],
+    secondaryStats: [],
+    previewDescriptors: ['+Agent Mastery', '+Agent Comfort', '+Signature Agent Skill'],
+    underlyingFocus: 'agents',
   },
 };
 

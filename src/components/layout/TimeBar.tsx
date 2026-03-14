@@ -824,6 +824,7 @@ export function TimeBar() {
           result={simulationResult.moraleChanges}
           teamName={playerTeamName}
           matchId={playerMatchId}
+          masteryResult={simulationResult.simulatedMatches.find(mr => mr.matchId === playerMatchId)?.masteryResult}
         />
       )}
 

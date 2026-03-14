@@ -1564,3 +1564,76 @@ Player-specific flags embed the player ID in the flag name (e.g. `iconic_knife_k
 - Drama events: `src/data/drama/iconic_moments.ts`
 - Integration: `CalendarService.advanceDay()` — after morale processing for player team matches
 - Type additions: `src/types/drama.ts` (`iconic_moments` in `DramaCategory`, `cooldownDefaults`)
+
+---
+
+## Agent Mastery Progression System
+
+### Overview
+
+Agent mastery is a meaningful progression system with three distinct sources, diminishing returns, decay, and narrative integration. It turns agent development into a strategic manager decision similar to map pool management.
+
+### Three Sources of Mastery
+
+| Source | Base Gain / Map | Rate vs Match |
+|--------|----------------|---------------|
+| Match play | +4 preferred, +2 non-preferred | 100% (fastest) |
+| Training (`agent_mastery` goal) | +2 on random preferred agent | 50% |
+| Scrims | +0.8 preferred (always preferred in scrims) | 20% |
+
+All gains are multiplied by **diminishing returns** and **career tendency multipliers** via `AgentMasteryEngine`.
+
+### Diminishing Returns Curve (`AgentMasteryEngine.getMasteryGainMultiplier`)
+
+```
+0–40:   ×1.00  (full gain)
+40–60:  ×0.75
+60–75:  ×0.50
+75–85:  ×0.25
+85–100: ×0.10
+```
+
+### Career Tendency Multipliers (`AgentMasteryEngine.getCareerTendencyMultiplier`)
+
+1. **Role match bonus**: ×1.25 if agent's role matches player's `primaryRole`
+2. **Signature agent streak**: track `agentStreaks: Record<string, number>` in `PlayerAgentPreferences`
+   - 3–5 consecutive appearances: ×1.25
+   - 6+ appearances: ×1.50
+   - Streak resets when player plays a different agent (updated in `MatchService.updateAgentMastery`)
+
+### Decay (Weekly — every Sunday in `CalendarService.advanceDay`)
+
+- 1.5% per week for agents not played that week (floor 20)
+- 0.75% per week for preferred agents (top 3) — sticky mains (floor 40)
+- "Played" = appeared in a match OR scrim that week
+- Applied via `AgentMasteryEngine.applyAgentMasteryDecay()`
+
+### New Condition Types (`DramaConditionType`)
+
+| Type | Fields | Description |
+|------|--------|-------------|
+| `player_agent_mastery_below` | `masteryThreshold` | Any player's main agent mastery < threshold |
+| `player_agent_mastery_above` | `masteryThreshold` | Any player's main agent mastery >= threshold |
+| `player_signature_agent_streak` | `streakThreshold` | Any player has N+ consecutive appearances on same agent |
+| `team_avg_mastery_below` | `masteryThreshold` | Team average mastery on preferred agents < threshold |
+
+### New Interview Templates (`src/data/interviews/agent_strategy.ts`)
+
+| Template ID | Context | Trigger |
+|-------------|---------|---------|
+| `post_agent_mastery_milestone` | POST_MATCH | Player hits 88+ mastery on main agent |
+| `post_mastery_forced_off_agent` | POST_MATCH LOSS | Patch + high mastery + off preferred agent |
+| `post_low_mastery_comp_loss` | POST_MATCH LOSS | Off preferred + team avg mastery < 55 |
+| `pre_signature_agent_pressure` | PRE_MATCH | Player on 6+ same-agent streak |
+
+### Source Files
+
+- Core engine: `src/engine/player/AgentMasteryEngine.ts`
+- Type additions: `src/types/strategy.ts` (`agentStreaks` on `PlayerAgentPreferences`); `src/types/match.ts` (`PlayerMasteryChange`, `MatchMasteryResult`); `src/types/economy.ts` (`agent_mastery` TrainingGoal); `src/types/drama.ts` (4 new condition types)
+- Match service: `src/services/MatchService.ts` (streak tracking, `MatchMasteryResult`)
+- Training: `src/services/TrainingService.ts` (`trainPlayerAgentMastery`); `src/types/economy.ts` (`agent_mastery` goal)
+- Scrim: `src/engine/scrim/ScrimEngine.ts` (`calculateScrimMasteryGains`); `src/services/ScrimService.ts` (applies gains in `applyScrimResults`)
+- Decay: `src/services/CalendarService.ts` (Sunday weekly tick)
+- UI: `src/components/match/MoraleChangeModal.tsx` (Agent Progress section with `masteryResult` prop)
+- Conditions: `src/engine/drama/DramaConditionEvaluator.ts` (4 new cases)
+- Interviews: `src/data/interviews/agent_strategy.ts` (4 new templates)

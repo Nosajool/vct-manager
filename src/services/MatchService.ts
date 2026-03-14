@@ -5,7 +5,8 @@ import { useGameStore } from '../store';
 import { simulationWorkerService } from './SimulationWorkerService';
 import { tournamentService } from './TournamentService';
 import { progressTrackingService } from './ProgressTrackingService';
-import type { Match, MatchResult, Player, Team } from '../types';
+import type { Match, MatchResult, MatchMasteryResult, PlayerMasteryChange, Player, Team } from '../types';
+import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
 import type { MatchEventData } from '../types';
 import { isLeagueToPlayoffTournament } from '../types';
 import type { TournamentStandingsEntry, LeagueStage } from '../types/competition';
@@ -205,7 +206,7 @@ export class MatchService {
     this.updatePlayerStats(playersB, result, match.teamBId, match, updatePlayer);
 
     // 7. Update agent mastery from match performances
-    this.updateAgentMastery(result);
+    result.masteryResult = this.updateAgentMastery(result);
   }
 
   /**
@@ -471,34 +472,88 @@ export class MatchService {
   }
 
   /**
-   * Update agent mastery for all players after a match
+   * Update agent mastery for all players after a match.
+   * Returns a MatchMasteryResult with per-player deltas (positive changes only).
    */
-  private updateAgentMastery(result: MatchResult): void {
+  private updateAgentMastery(result: MatchResult): MatchMasteryResult {
     const state = useGameStore.getState();
-    const { updateAgentMastery, getPlayerAgentPreferences, updatePlayer, players } = state;
+    const { updateAgentMastery, getPlayerAgentPreferences, updatePlayer, players,
+            setPlayerAgentPreferences } = state;
 
+    // Track one agent per player per match (use last map's agent for simplicity)
+    const playerAgentMap: Record<string, string> = {};
     for (const mapResult of result.maps) {
       for (const perf of [...mapResult.teamAPerformances, ...mapResult.teamBPerformances]) {
-        const agentPlayed = perf.agent;
-        if (!agentPlayed) continue;
-
-        const prefs = getPlayerAgentPreferences(perf.playerId);
-        const mastery = prefs?.agentMastery ?? {};
-        const currentMastery = mastery[agentPlayed] ?? 0;
-
-        const isPreferred = prefs?.preferredAgents.includes(agentPlayed) ?? false;
-        const gain = isPreferred ? 4 : 2;
-        updateAgentMastery(perf.playerId, agentPlayed, gain);
-
-        // Morale penalty for playing a very unfamiliar agent (mastery < 30)
-        if (currentMastery < 30) {
-          const player = players[perf.playerId];
-          if (player) {
-            updatePlayer(perf.playerId, { morale: Math.max(0, player.morale - 5) });
-          }
+        if (perf.agent) {
+          playerAgentMap[perf.playerId] = perf.agent;
         }
       }
     }
+
+    const playerChanges: PlayerMasteryChange[] = [];
+
+    for (const [playerId, agentPlayed] of Object.entries(playerAgentMap)) {
+      const prefs = getPlayerAgentPreferences(playerId);
+      if (!prefs) continue;
+
+      const mastery = prefs.agentMastery ?? {};
+      const currentMastery = mastery[agentPlayed] ?? 0;
+      const isPreferred = prefs.preferredAgents.includes(agentPlayed);
+
+      // Gain per map played (apply per map, not aggregate)
+      let totalGain = 0;
+      let mapsWithThisAgent = 0;
+      for (const mapResult of result.maps) {
+        const allPerfs = [...mapResult.teamAPerformances, ...mapResult.teamBPerformances];
+        const perf = allPerfs.find(p => p.playerId === playerId);
+        if (perf?.agent === agentPlayed) {
+          mapsWithThisAgent++;
+        }
+      }
+
+      // Calculate gain for each map
+      let runningMastery = currentMastery;
+      for (let i = 0; i < mapsWithThisAgent; i++) {
+        const mapGain = agentMasteryEngine.getMasteryGain(
+          isPreferred,
+          runningMastery,
+          prefs,
+          agentPlayed,
+          'match'
+        );
+        totalGain += mapGain;
+        runningMastery = Math.min(100, runningMastery + mapGain);
+      }
+
+      if (totalGain > 0) {
+        updateAgentMastery(playerId, agentPlayed, totalGain);
+        const newMastery = Math.min(100, currentMastery + totalGain);
+
+        playerChanges.push({
+          playerId,
+          playerName: players[playerId]?.name ?? playerId,
+          agentName: agentPlayed,
+          delta: Math.round(totalGain * 10) / 10,
+          newMastery: Math.round(newMastery),
+        });
+      }
+
+      // Morale penalty for playing a very unfamiliar agent (mastery < 30)
+      if (currentMastery < 30) {
+        const player = players[playerId];
+        if (player) {
+          updatePlayer(playerId, { morale: Math.max(0, player.morale - 5) });
+        }
+      }
+
+      // Update streak tracking
+      const currentStreaks = prefs.agentStreaks ?? {};
+      const updatedStreaks = agentMasteryEngine.updateAgentStreaks(agentPlayed, currentStreaks);
+      const updatedPrefs = { ...prefs, agentStreaks: updatedStreaks };
+      setPlayerAgentPreferences(playerId, updatedPrefs);
+    }
+
+    return { playerChanges };
   }
 
   /**

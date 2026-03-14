@@ -397,7 +397,152 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 ];
 
-export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = AGENT_STRATEGY_TEMPLATES_RAW.map(
+// ==========================================================================
+// New agent mastery interview templates
+// ==========================================================================
+const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
+  // ==========================================================================
+  // POST_MATCH — player has hit 90+ mastery on main agent
+  // ==========================================================================
+  {
+    id: 'post_agent_mastery_milestone',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    prompt: "Some analysts are saying your player has become one of the region's most refined players on that agent. What does that level of mastery mean for your team?",
+    conditions: [
+      { type: 'player_agent_mastery_above', masteryThreshold: 88 },
+    ],
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Mastery is identity",
+        quote: "When a player owns an agent that completely — when the kit is an extension of their instincts — it changes how opponents have to prepare. You can't just ban an agent and neutralize a player at that level of mastery.",
+        effects: { hype: 6, fanbase: 4, morale: 3 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Long road to get here",
+        quote: "It took a lot of reps. A lot of matches where it wasn't perfect. Watching him grow into this agent has been one of the highlights of my season. The team is better for it.",
+        effects: { morale: 5, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "One agent doesn't win series",
+        quote: "I appreciate the recognition, but mastery on one agent means nothing if the team around it isn't executing. We win as five, not as one.",
+        effects: { fanbase: 2, morale: 3 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // POST_MATCH — LOSS, patch forced off high-mastery agent
+  // ==========================================================================
+  {
+    id: 'post_mastery_forced_off_agent',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    prompt: "Your player has spent months mastering their signature agent, and now the patch has changed how viable it is. Does that hurt more than a normal loss?",
+    conditions: [
+      { type: 'flag_active', flag: 'patch_active' },
+      { type: 'player_agent_mastery_above', masteryThreshold: 75 },
+      { type: 'player_off_preferred_agent' },
+    ],
+    options: [
+      {
+        tone: 'BLAME_SELF',
+        label: "We over-relied on that identity",
+        quote: "That's on me. I built too much of our game around one player's agent identity and didn't prepare alternatives deeply enough. When the meta moved, we were exposed. We need to rebuild that mastery on new agents — fast.",
+        effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Mastery takes time to transfer",
+        quote: "What took hundreds of matches to build doesn't transfer overnight. We're asking the player to rebuild something that took a full year — in two weeks. The team is handling it better than I could've hoped, but today showed the gap.",
+        effects: { morale: -2, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The agent isn't dead, just different",
+        quote: "The agent isn't dead — the patch changed the ceiling, not the floor. We'll adjust the playstyle around it. The player's mastery is still there. Today was about reads, not the agent.",
+        effects: { morale: -1, fanbase: 2 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // POST_MATCH — LOSS, players on low-mastery agents
+  // ==========================================================================
+  {
+    id: 'post_low_mastery_comp_loss',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    matchOutcome: 'loss',
+    prompt: "Your lineup today had players on agents we don't typically see from them. Was the comfort factor a real issue in how this series went?",
+    conditions: [
+      { type: 'player_off_preferred_agent' },
+      { type: 'team_avg_mastery_below', masteryThreshold: 55 },
+    ],
+    options: [
+      {
+        tone: 'BLAME_SELF',
+        label: "We asked too much too soon",
+        quote: "We asked players to perform at a high level on agents they haven't fully internalized. The mastery gap was real — you could see it in the decision-making under pressure. That's a coaching problem. I need to give the team more runway on new picks.",
+        effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Building mastery takes time",
+        quote: "There's a reason players spend hundreds of hours on their mains. We were running agents we've only practiced for a few weeks against a team that's been playing their comp for months. The difference showed.",
+        effects: { morale: -2, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Mechanics were there, reads weren't",
+        quote: "The mechanics were fine — it was the game sense that lagged. When you're not fully comfortable, you rely on muscle memory and it wasn't there for the reads. That'll come with more reps.",
+        effects: { morale: -1, fanbase: 1 },
+      },
+    ],
+  },
+
+  // ==========================================================================
+  // PRE_MATCH — player on signature agent streak (6+ consecutive)
+  // ==========================================================================
+  {
+    id: 'pre_signature_agent_pressure',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    prompt: "Your player has been on the same agent for their last six-plus matches. Opponents are starting to build entire game plans around countering that. Are you concerned about being readable?",
+    conditions: [
+      { type: 'player_signature_agent_streak', streakThreshold: 6 },
+    ],
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Let them prepare — we'll still win",
+        quote: "You can gameplan around the agent all you want. When mastery is that deep, you're not just countering a pick — you're trying to counter a player's instincts. Good luck with that.",
+        effects: { hype: 6, fanbase: 4, morale: 3, dramaChance: 8 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "Diversifying the threat",
+        quote: "It's something we're actively working on. The player has invested heavily in this agent — that mastery is real. But we don't want to become a one-dimensional threat. We're building depth.",
+        effects: { morale: 3, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Readable to who?",
+        quote: "I don't think the concern is as large as outsiders make it. Predictability matters less when the execution is elite. Every team knows what we're going to do — very few can stop it.",
+        effects: { hype: 4, fanbase: 3, morale: 2 },
+      },
+    ],
+  },
+];
+
+export const AGENT_STRATEGY_TEMPLATES: InterviewTemplate[] = [
+  ...AGENT_STRATEGY_TEMPLATES_RAW,
+  ...AGENT_MASTERY_TEMPLATES_RAW,
+].map(
   (t) => ({
     ...t,
     narrativeCategory: (t.id === 'post_harbor_cove_incident' ? 'cove_incident' : 'meta_rumors') as 'cove_incident' | 'meta_rumors',

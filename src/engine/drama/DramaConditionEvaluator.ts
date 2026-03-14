@@ -281,6 +281,42 @@ export function evaluateCondition(
     case 'consecutive_negative_months_above':
       return (snapshot.teamFinances?.consecutiveNegativeMonths ?? 0) >= (condition.threshold ?? 3);
 
+    // Agent mastery checks
+    case 'player_agent_mastery_below':
+      return evaluateAgentMasteryCondition(condition, snapshot, 'below');
+
+    case 'player_agent_mastery_above':
+      return evaluateAgentMasteryCondition(condition, snapshot, 'above');
+
+    case 'player_signature_agent_streak': {
+      const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
+      const required = condition.streakThreshold ?? 5;
+      return teamPlayers.some(p => {
+        const streaks = p.agentPreferences?.agentStreaks ?? {};
+        return Object.values(streaks).some(s => s >= required);
+      });
+    }
+
+    case 'team_avg_mastery_below': {
+      const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
+      if (teamPlayers.length === 0) return false;
+      const threshold = condition.masteryThreshold ?? 50;
+      let totalMastery = 0;
+      let count = 0;
+      for (const p of teamPlayers) {
+        const mastery = p.agentPreferences?.agentMastery ?? {};
+        const preferred = p.agentPreferences?.preferredAgents ?? [];
+        for (const agent of preferred) {
+          if (agent) {
+            totalMastery += mastery[agent] ?? 0;
+            count++;
+          }
+        }
+      }
+      if (count === 0) return false;
+      return (totalMastery / count) < threshold;
+    }
+
     default:
       console.warn(`Unknown condition type: ${condition.type}`);
       return false;
@@ -728,6 +764,28 @@ function evaluateBracketPositionCondition(
   const ctx = snapshot.tournamentContext;
   if (!ctx || ctx.bracketPosition === null) return false;
   return ctx.bracketPosition === condition.bracketPosition;
+}
+
+/**
+ * Evaluates agent mastery conditions (above/below threshold on preferred agent)
+ * True if any player's mastery on their top preferred agent meets the condition
+ */
+function evaluateAgentMasteryCondition(
+  condition: DramaCondition,
+  snapshot: DramaGameStateSnapshot,
+  comparison: 'above' | 'below'
+): boolean {
+  const threshold = condition.masteryThreshold ?? 50;
+  const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
+
+  return teamPlayers.some(p => {
+    const preferred = p.agentPreferences?.preferredAgents;
+    if (!preferred) return false;
+    const mainAgent = preferred[0];
+    if (!mainAgent) return false;
+    const mastery = (p.agentPreferences?.agentMastery ?? {})[mainAgent] ?? 0;
+    return comparison === 'above' ? mastery >= threshold : mastery < threshold;
+  });
 }
 
 /**

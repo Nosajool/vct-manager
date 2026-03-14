@@ -57,6 +57,10 @@ export class PlayerDevelopment {
       primary: ['support', 'igl'],
       secondary: ['mental'],
     },
+    // agent_mastery goal uses the 'agents' focus under the hood — mastery side effect is
+    // handled separately by TrainingService.trainPlayerAgentMastery()
+    // The focus mapping here is a no-op stat-wise (agents focus gives minimal gains)
+    // and the real value is the mastery progression.
     balanced: {
       primary: [],
       secondary: ['mechanics', 'igl', 'mental', 'clutch', 'vibes', 'lurking', 'entry', 'support', 'stamina'],

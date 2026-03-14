@@ -58,6 +58,9 @@ export type {
   KillEvent,
   PlantEvent,
   DefuseEvent,
+  // Mastery change types
+  PlayerMasteryChange,
+  MatchMasteryResult,
   // Morale change types
   MoraleChangeReason,
   PlayerMoraleChange,

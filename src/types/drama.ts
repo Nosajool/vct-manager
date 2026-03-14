@@ -149,7 +149,13 @@ export type DramaConditionType =
   | 'map_pool_attribute_below'    // A played map's specific attribute < threshold (default 40)
 
   // Financial stress checks
-  | 'consecutive_negative_months_above'; // consecutiveNegativeMonths >= threshold
+  | 'consecutive_negative_months_above'  // consecutiveNegativeMonths >= threshold
+
+  // Agent mastery checks
+  | 'player_agent_mastery_below'         // player's mastery on preferred agent < threshold
+  | 'player_agent_mastery_above'         // player's mastery on preferred agent >= threshold
+  | 'player_signature_agent_streak'      // player has N+ consecutive appearances on same agent
+  | 'team_avg_mastery_below';            // team avg mastery on current comp < threshold
 
 /**
  * Player selection method for condition evaluation
@@ -228,6 +234,10 @@ export interface DramaCondition {
   // For map pool checks
   mapPoolThreshold?: number;                        // Used with map_pool_overall_below and map_pool_attribute_below
   mapPoolAttribute?: keyof MapStrengthAttributes;  // Used with map_pool_attribute_below
+
+  // For agent mastery checks
+  masteryThreshold?: number;  // Used with player_agent_mastery_below/above, team_avg_mastery_below
+  streakThreshold?: number;   // Used with player_signature_agent_streak
 }
 
 // ============================================================================

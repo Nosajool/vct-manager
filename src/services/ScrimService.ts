@@ -464,7 +464,28 @@ export class ScrimService {
     // 4. Increment VOD leak risk
     state.incrementVodLeakRisk(playerTeamId, result.partnerTeamId);
 
-    // 5. Store scrim result in history
+    // 5. Apply agent mastery gains (silent — no UI notification)
+    const playerTeam = state.teams[playerTeamId];
+    if (playerTeam) {
+      const playerTeamPlayers = playerTeam.playerIds
+        .map((id) => state.players[id])
+        .filter(Boolean);
+
+      const prefsMap = state.playerAgentPreferences;
+      const masteryChanges = scrimEngine.calculateScrimMasteryGains(
+        playerTeamPlayers,
+        result.maps.length,
+        prefsMap
+      );
+
+      for (const change of masteryChanges) {
+        if (change.delta > 0) {
+          state.updateAgentMastery(change.playerId, change.agentName, change.delta);
+        }
+      }
+    }
+
+    // 6. Store scrim result in history
     state.addScrimResult(result);
   }
 

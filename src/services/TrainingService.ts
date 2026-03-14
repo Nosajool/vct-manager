@@ -3,7 +3,9 @@
 
 import { useGameStore } from '../store';
 import { playerDevelopment, PlayerDevelopment } from '../engine/player';
+import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
 import type { Player, TrainingFocus, TrainingGoal, TrainingIntensity, TrainingResult, TrainingPlan } from '../types';
+import type { PlayerMasteryChange } from '../types/match';
 
 /**
  * TrainingService - Handles player training operations
@@ -107,6 +109,11 @@ export class TrainingService {
       stats: updatedPlayer.stats,
       morale: updatedPlayer.morale,
     });
+
+    // agent_mastery goal also applies mastery side-effect
+    if (goal === 'agent_mastery') {
+      this.trainPlayerAgentMastery(playerId);
+    }
 
     return { success: true, result };
   }
@@ -318,6 +325,48 @@ export class TrainingService {
    */
   getAllGoals(): TrainingGoal[] {
     return PlayerDevelopment.getAllGoals();
+  }
+
+  /**
+   * Apply agent mastery training for a player.
+   * Randomly picks one of their top-3 preferred agents and applies a training gain.
+   * Returns the mastery change if any, or null if no prefs found.
+   */
+  trainPlayerAgentMastery(playerId: string): PlayerMasteryChange | null {
+    const state = useGameStore.getState();
+    const prefs = state.getPlayerAgentPreferences(playerId);
+    if (!prefs) return null;
+
+    const player = state.players[playerId];
+    if (!player) return null;
+
+    // Pick a random preferred agent from top-3
+    const candidates = prefs.preferredAgents.filter(Boolean);
+    if (candidates.length === 0) return null;
+
+    const agentName = candidates[Math.floor(Math.random() * candidates.length)];
+    const currentMastery = (prefs.agentMastery ?? {})[agentName] ?? 0;
+
+    // Base gain: +2 for training (25% of match rate of +4 preferred)
+    const gain = agentMasteryEngine.getMasteryGain(
+      true,
+      currentMastery,
+      prefs,
+      agentName,
+      'training'
+    );
+
+    if (gain > 0) {
+      state.updateAgentMastery(playerId, agentName, gain);
+    }
+
+    return {
+      playerId,
+      playerName: player.name,
+      agentName,
+      delta: Math.round(gain * 10) / 10,
+      newMastery: Math.round(Math.min(100, currentMastery + gain)),
+    };
   }
 
   /**

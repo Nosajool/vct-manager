@@ -31,6 +31,7 @@ import type { DramaEventInstance } from '../types/drama';
 import { detect as detectIconicMoments } from '../engine/drama/IconicMomentDetector';
 import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
+import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
 
 /**
  * Result of advancing time
@@ -455,6 +456,55 @@ export class CalendarService {
         reputationService.processWeeklyHypeDecay(playerTeam, state.playerTeamId);
       }
       rivalryService.processRivalryDecay(newDate);
+
+      // Weekly agent mastery decay for all players on the player's team
+      if (state.playerTeamId) {
+        const team = state.teams[state.playerTeamId];
+        if (team) {
+          // Collect agents played this week from match history
+          const weekAgo = timeProgression.addDays(newDate, -7);
+          const playedThisWeek: Record<string, Set<string>> = {}; // playerId -> Set<agentName>
+
+          for (const matchResult of Object.values(state.results)) {
+            const match = state.matches[matchResult.matchId];
+            if (!match || match.status !== 'completed') continue;
+            if (match.scheduledDate < weekAgo) continue;
+            if (match.teamAId !== state.playerTeamId && match.teamBId !== state.playerTeamId) continue;
+
+            const isTeamA = match.teamAId === state.playerTeamId;
+            for (const mapResult of matchResult.maps) {
+              const perfs = isTeamA ? mapResult.teamAPerformances : mapResult.teamBPerformances;
+              for (const perf of perfs) {
+                if (!playedThisWeek[perf.playerId]) playedThisWeek[perf.playerId] = new Set();
+                if (perf.agent) playedThisWeek[perf.playerId].add(perf.agent);
+              }
+            }
+          }
+
+          // Also include scrim agents
+          for (const scrim of state.scrimHistory) {
+            if (scrim.date < weekAgo) continue;
+            if (scrim.playerTeamId !== state.playerTeamId) continue;
+            for (const mapResult of scrim.maps) {
+              for (const perf of mapResult.teamAPerformances) {
+                if (!playedThisWeek[perf.playerId]) playedThisWeek[perf.playerId] = new Set();
+                if (perf.agent) playedThisWeek[perf.playerId].add(perf.agent);
+              }
+            }
+          }
+
+          // Apply decay to all team players
+          const allPlayerIds = [...team.playerIds, ...team.reservePlayerIds];
+          for (const playerId of allPlayerIds) {
+            const prefs = state.getPlayerAgentPreferences(playerId);
+            if (!prefs?.agentMastery) continue;
+
+            const playedSet = playedThisWeek[playerId] ?? new Set<string>();
+            const updatedPrefs = agentMasteryEngine.applyAgentMasteryDecay(prefs, playedSet);
+            state.setPlayerAgentPreferences(playerId, updatedPrefs);
+          }
+        }
+      }
     }
 
     // Evaluate drama events for today

@@ -2,7 +2,7 @@
 // Appears in post-match flow: SimulationResults → Interview → MoraleChangeModal → DayRecap
 
 import { useEffect } from 'react';
-import type { MatchMoraleResult } from '../../types/match';
+import type { MatchMoraleResult, MatchMasteryResult } from '../../types/match';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
@@ -14,9 +14,10 @@ interface MoraleChangeModalProps {
   result: MatchMoraleResult;
   teamName: string;
   matchId?: string;
+  masteryResult?: MatchMasteryResult;
 }
 
-export function MoraleChangeModal({ isOpen, onClose, result, matchId }: MoraleChangeModalProps) {
+export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryResult }: MoraleChangeModalProps) {
   const players = useGameStore((state) => state.players);
 
   useEffect(() => {
@@ -120,6 +121,39 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId }: MoraleCh
             })}
           </div>
         </div>
+
+        {/* Agent Progress section */}
+        {masteryResult && masteryResult.playerChanges.filter(c => c.delta > 0).length > 0 && (
+          <div className="p-4 border-t border-vct-gray/20">
+            <h3 className="text-sm font-medium text-vct-gray mb-2">Agent Progress</h3>
+            <div className="space-y-1">
+              {masteryResult.playerChanges
+                .filter(c => c.delta > 0)
+                .map((change) => (
+                  <div
+                    key={change.playerId}
+                    className="flex items-center justify-between p-2 bg-vct-dark rounded border border-vct-gray/10"
+                  >
+                    <div>
+                      <span className="text-sm text-vct-light font-medium">{change.playerName}</span>
+                      <span className="text-xs text-vct-gray ml-2">{change.agentName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 h-1.5 bg-vct-gray/20 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-400 rounded-full"
+                          style={{ width: `${change.newMastery}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-blue-400 font-medium w-12 text-right">
+                        +{change.delta}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
 
         <div className="p-4 border-t border-vct-gray/20 flex justify-end">
           <button

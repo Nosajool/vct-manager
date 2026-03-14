@@ -673,6 +673,7 @@ const GOAL_ICONS: Record<TrainingGoal, string> = {
   decision_making: '🧠',
   leadership_comms: '📢',
   all_round_growth: '🌟',
+  agent_mastery: '🎮',
 };
 
 interface GoalSelectorColumnProps {
@@ -1070,7 +1071,7 @@ const SIMPLE_FOCUS_OPTIONS: {
 }[] = [
   { goal: 'mechanical_ceiling', label: 'Mechanics', icon: '⚙️', description: 'Improve aim, gunplay, and raw mechanical skill' },
   { goal: 'leadership_comms', label: 'IGL', icon: '📢', description: 'Strengthen in-game leadership and communication' },
-  { goal: 'role_mastery_entry', label: 'Entry', icon: '🎯', description: 'Sharpen aggressive first-contact and entry fragging' },
+  { goal: 'agent_mastery', label: 'Agents', icon: '🎮', description: 'Drill agent-specific mechanics for top 3 agents' },
   { goal: 'role_mastery_support', label: 'Support', icon: '🛡️', description: 'Develop utility usage and team support play' },
 ];
 

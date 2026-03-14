@@ -18,6 +18,9 @@ import type {
 } from '../../types';
 import { MAPS, ALL_AGENTS } from '../../utils/constants';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
+import { agentMasteryEngine } from '../player/AgentMasteryEngine';
+import type { PlayerAgentPreferences } from '../../types/strategy';
+import type { PlayerMasteryChange } from '../../types/match';
 
 /**
  * ScrimEngine - Handles scrim simulation, map improvements, chemistry, and relationships
@@ -699,6 +702,63 @@ export class ScrimEngine {
   // ============================================
   // Match Bonus Calculation
   // ============================================
+
+  // ============================================
+  // Scrim Agent Mastery Gains
+  // ============================================
+
+  /**
+   * Calculate agent mastery gains for a player after scrim maps.
+   * Each map, the player randomly practices one of their preferred agents.
+   * Gains are at 20% of match rate: +0.8 preferred, +0.4 non-preferred per map.
+   *
+   * Returns PlayerMasteryChange[] (only entries with delta > 0).
+   */
+  calculateScrimMasteryGains(
+    players: Player[],
+    mapCount: number,
+    prefsMap: Record<string, PlayerAgentPreferences>
+  ): PlayerMasteryChange[] {
+    const changes: PlayerMasteryChange[] = [];
+
+    for (const player of players) {
+      const prefs = prefsMap[player.id];
+      if (!prefs) continue;
+
+      const preferred = prefs.preferredAgents.filter(Boolean);
+      if (preferred.length === 0) continue;
+
+      // Pick a random preferred agent to practice across the scrim
+      const agentName = preferred[Math.floor(Math.random() * preferred.length)];
+      const mastery = prefs.agentMastery ?? {};
+      let currentMastery = mastery[agentName] ?? 0;
+      let totalGain = 0;
+
+      for (let i = 0; i < mapCount; i++) {
+        const gain = agentMasteryEngine.getMasteryGain(
+          true, // always preferred in scrims
+          currentMastery,
+          prefs,
+          agentName,
+          'scrim'
+        );
+        totalGain += gain;
+        currentMastery = Math.min(100, currentMastery + gain);
+      }
+
+      if (totalGain > 0) {
+        changes.push({
+          playerId: player.id,
+          playerName: player.name,
+          agentName,
+          delta: Math.round(totalGain * 10) / 10,
+          newMastery: Math.round(Math.min(100, (mastery[agentName] ?? 0) + totalGain)),
+        });
+      }
+    }
+
+    return changes;
+  }
 
   /**
    * Calculate map strength bonus for actual matches

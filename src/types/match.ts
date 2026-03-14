@@ -374,6 +374,25 @@ export interface MatchResult {
 
   // Duration
   duration: number;  // minutes
+
+  // Post-match mastery changes (populated by MatchService)
+  masteryResult?: MatchMasteryResult;
+}
+
+// ============================================
+// MASTERY CHANGE TYPES
+// ============================================
+
+export interface PlayerMasteryChange {
+  playerId: string;
+  playerName: string;
+  agentName: string;
+  delta: number;
+  newMastery: number;
+}
+
+export interface MatchMasteryResult {
+  playerChanges: PlayerMasteryChange[];
 }
 
 // ============================================

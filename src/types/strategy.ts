@@ -60,6 +60,9 @@ export interface PlayerAgentPreferences {
 
   /** Per-agent mastery (0–100). Earned through play. Absent keys treated as 0. */
   agentMastery?: Record<string, number>;
+
+  /** Consecutive appearances on the same agent (for streak multiplier). Key = agentName. */
+  agentStreaks?: Record<string, number>;
 }
 
 /**
