@@ -112,6 +112,18 @@ export class ActivityResolutionService {
           efficiencyModifier
         );
 
+        // Attach agent mastery change if goal is agent_mastery
+        if (result.goal === 'agent_mastery') {
+          const masteryChange = trainingService.trainPlayerAgentMastery(player.id);
+          if (masteryChange) {
+            scaledResult.agentMasteryChange = {
+              agentName: masteryChange.agentName,
+              delta: masteryChange.delta,
+              newMastery: masteryChange.newMastery,
+            };
+          }
+        }
+
         // Apply the scaled improvements to the player
         const updatedStats = { ...player.stats };
         for (const [stat, improvement] of Object.entries(scaledResult.statImprovements)) {
@@ -156,6 +168,7 @@ export class ActivityResolutionService {
             trainResult.result.statImprovements,
             efficiencyModifier
           );
+          // agentMasteryChange already attached by trainPlayerWithGoal in the fallback path
           results.push(scaledResult);
         } else {
           console.warn(

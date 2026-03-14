@@ -54,8 +54,8 @@ export class PlayerDevelopment {
       secondary: ['igl', 'vibes'],
     },
     agents: {
-      primary: ['support', 'igl'],
-      secondary: ['mental'],
+      primary: [],
+      secondary: [],
     },
     // agent_mastery goal uses the 'agents' focus under the hood — mastery side effect is
     // handled separately by TrainingService.trainPlayerAgentMastery()

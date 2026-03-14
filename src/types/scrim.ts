@@ -2,7 +2,7 @@
 // Advanced training system for team practice matches
 
 import type { Region } from './player';
-import type { MapResult } from './match';
+import type { MapResult, PlayerMasteryChange } from './match';
 
 // ============================================
 // Team Tier System
@@ -167,6 +167,9 @@ export interface ScrimResult {
   chemistryBefore: number;
   relationshipBefore: number;
   mapStatsBefore: Record<string, MapStrengthAttributes>;  // mapName -> attributes snapshot
+
+  // Agent mastery gains from this scrim session
+  agentMasteryChanges?: PlayerMasteryChange[];
 }
 
 // ============================================

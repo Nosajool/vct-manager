@@ -112,7 +112,14 @@ export class TrainingService {
 
     // agent_mastery goal also applies mastery side-effect
     if (goal === 'agent_mastery') {
-      this.trainPlayerAgentMastery(playerId);
+      const masteryChange = this.trainPlayerAgentMastery(playerId);
+      if (masteryChange) {
+        result.agentMasteryChange = {
+          agentName: masteryChange.agentName,
+          delta: masteryChange.delta,
+          newMastery: masteryChange.newMastery,
+        };
+      }
     }
 
     return { success: true, result };

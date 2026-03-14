@@ -5,7 +5,7 @@
 
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
-import { getTeamLogoUrl, getMapImageUrl } from '../../utils/imageAssets';
+import { getTeamLogoUrl, getMapImageUrl, getAgentImageUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 import { useVisibleMapStats } from '../../hooks/useFeatureGate';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
 import type { MapStrengthAttributes } from '../../types/scrim';
@@ -151,7 +151,11 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
           </div>
 
           {/* Skills Developed — before/after attribute bars (hero section) */}
-          {Object.keys(scrimResult.mapImprovements).length > 0 && (
+          {Object.keys(scrimResult.mapImprovements).length > 0 && (() => {
+            const mapResultsByName = Object.fromEntries(
+              scrimResult.maps.map((m) => [m.map, m])
+            );
+            return (
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Skills Developed</h3>
               {Object.entries(scrimResult.mapImprovements).map(([mapName, improvements]) => {
@@ -160,13 +164,28 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
                   ([attr, d]) => (d ?? 0) > 0 && (visibleMapStats as string[]).includes(attr)
                 );
                 if (positiveAttrs.length === 0) return null;
+                const mr = mapResultsByName[mapName];
                 return (
                   <div key={mapName} className="bg-vct-dark/50 rounded-lg overflow-hidden space-y-2">
                     <div className="relative h-14">
                       <img src={getMapImageUrl(mapName)} alt={mapName} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/55" />
-                      <div className="absolute inset-0 flex items-center px-4">
-                        <span className="text-vct-light font-medium text-sm">{mapName}</span>
+                      <div className="absolute inset-0 bg-black/60" />
+                      <div className="absolute inset-0 flex items-center justify-between px-4">
+                        <div>
+                          <p className="text-sm font-medium text-vct-light">{mapName}</p>
+                          {mr?.overtime && <p className="text-xs text-yellow-400">OT</p>}
+                        </div>
+                        {mr && (
+                          <div className="flex items-center gap-1.5 text-sm font-mono font-bold">
+                            <span className={mr.winner === 'teamA' ? 'text-green-400' : 'text-vct-gray'}>
+                              {mr.teamAScore}
+                            </span>
+                            <span className="text-vct-gray">–</span>
+                            <span className={mr.winner === 'teamB' ? 'text-red-400' : 'text-vct-gray'}>
+                              {mr.teamBScore}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="px-4 pb-3 space-y-2">
@@ -186,7 +205,8 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
                 );
               })}
             </div>
-          )}
+            );
+          })()}
 
           {/* Session metadata row */}
           <div className="flex items-center gap-3 flex-wrap">
@@ -222,27 +242,35 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
             )}
           </div>
 
-          {/* Per-map result cards — score as subtle secondary info */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Maps</h3>
+          {/* Agent Mastery gains */}
+          {scrimResult.agentMasteryChanges && scrimResult.agentMasteryChanges.length > 0 && (
             <div className="space-y-2">
-              {scrimResult.maps.map((mapResult, idx) => {
-                const playerScore = mapResult.teamAScore;
-                const opponentScore = mapResult.teamBScore;
-                return (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between bg-vct-dark/50 rounded-lg px-4 py-3"
-                  >
-                    <span className="text-vct-light font-medium">{mapResult.map}</span>
-                    <span className="font-mono text-xs text-vct-gray">
-                      {playerScore} – {opponentScore}
-                    </span>
+              <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide">Agent Mastery</h3>
+              <div className="space-y-2">
+                {scrimResult.agentMasteryChanges.map((change) => (
+                  <div key={change.playerId} className="flex items-center gap-3 bg-vct-dark/50 rounded-lg px-4 py-2.5">
+                    <GameImage
+                      src={getPlayerImageUrl(change.playerName)}
+                      alt={change.playerName}
+                      className="w-7 h-7 rounded-full object-cover"
+                      fallbackClassName="w-7 h-7 rounded-full"
+                    />
+                    <GameImage
+                      src={getAgentImageUrl(change.agentName)}
+                      alt={change.agentName}
+                      className="w-8 h-8 rounded object-cover"
+                      fallbackClassName="w-8 h-8 rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-vct-light truncate">{change.playerName}</p>
+                      <p className="text-xs text-vct-gray">{change.agentName}</p>
+                    </div>
+                    <span className="text-sm font-mono font-bold text-blue-400">+{change.delta.toFixed(1)}</span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer */}

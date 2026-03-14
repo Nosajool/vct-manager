@@ -6,7 +6,7 @@
 import { useGameStore } from '../../store';
 import { useVisibleStats } from '../../hooks/useFeatureGate';
 import { GameImage } from '../shared/GameImage';
-import { getPlayerImageUrl } from '../../utils/imageAssets';
+import { getPlayerImageUrl, getAgentImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
 import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
@@ -78,14 +78,20 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
 
   const topPerformerResult = trainingResults.length > 0
     ? trainingResults.reduce((best, r) => {
-        const total = Object.values(r.statImprovements).reduce((s, v) => s + Math.max(0, v), 0);
-        const bestTotal = Object.values(best.statImprovements).reduce((s, v) => s + Math.max(0, v), 0);
+        const total = r.goal === 'agent_mastery'
+          ? (r.agentMasteryChange?.delta ?? 0)
+          : Object.values(r.statImprovements).reduce((s, v) => s + Math.max(0, v), 0);
+        const bestTotal = best.goal === 'agent_mastery'
+          ? (best.agentMasteryChange?.delta ?? 0)
+          : Object.values(best.statImprovements).reduce((s, v) => s + Math.max(0, v), 0);
         return total > bestTotal ? r : best;
       }, trainingResults[0])
     : null;
 
   const topPerformerTotal = topPerformerResult
-    ? Object.values(topPerformerResult.statImprovements).reduce((s, v) => s + Math.max(0, v), 0)
+    ? topPerformerResult.goal === 'agent_mastery'
+      ? (topPerformerResult.agentMasteryChange?.delta ?? 0)
+      : Object.values(topPerformerResult.statImprovements).reduce((s, v) => s + Math.max(0, v), 0)
     : 0;
 
   const topPerformerPlayer = topPerformerResult ? getPlayer(topPerformerResult.playerId) : null;
@@ -177,8 +183,26 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
                           </div>
                         </div>
 
-                        {/* Stat bars */}
-                        {statChanges.length > 0 ? (
+                        {/* Stat bars / agent mastery */}
+                        {result.goal === 'agent_mastery' && result.agentMasteryChange ? (
+                          <div className="space-y-2">
+                            <div className="text-xs text-vct-gray mb-1">Agent Mastery</div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <GameImage
+                                src={getAgentImageUrl(result.agentMasteryChange.agentName)}
+                                alt={result.agentMasteryChange.agentName}
+                                className="w-8 h-8 rounded object-cover"
+                                fallbackClassName="w-8 h-8 rounded"
+                              />
+                              <span className="text-xs text-vct-light">{result.agentMasteryChange.agentName}</span>
+                            </div>
+                            <StatBar
+                              label="Mastery"
+                              before={result.agentMasteryChange.newMastery - result.agentMasteryChange.delta}
+                              after={result.agentMasteryChange.newMastery}
+                            />
+                          </div>
+                        ) : statChanges.length > 0 ? (
                           <div className="space-y-1.5">
                             {statChanges.map(([stat, value]) => {
                               const currentVal = (player.stats as unknown as Record<string, number>)[stat] ?? 0;

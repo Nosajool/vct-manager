@@ -178,6 +178,13 @@ export interface TrainingResult {
   // Added by TrainingService after engine returns result
   statsBefore?: Record<string, number>;  // Full PlayerStats snapshot
   moraleBefore?: number;
+
+  // Populated when goal === 'agent_mastery'
+  agentMasteryChange?: {
+    agentName: string;
+    delta: number;
+    newMastery: number;
+  };
 }
 
 // Players can only train a limited amount before fatigue impacts performance
