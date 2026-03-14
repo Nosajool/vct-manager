@@ -182,6 +182,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | Coaching overhaul arc | `coaching_overhaul.ts` |
 | IGL crisis arc | `igl_crisis.ts` |
 | Scrim sharing scandal arc | `scrim_sharing.ts` |
+| Coaching beef arc | `coaching_beef.ts` |
 
 **Drama events** live in `src/data/drama/`:
 
@@ -203,6 +204,8 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 | `org_culture` | `org_culture.ts` |
 | `map_pool` | `map_pool.ts` |
 | `financial_stress` | `financial_stress.ts` |
+| `iconic_moments` | `iconic_moments.ts` |
+| `coaching_beef` | `coaching_beef.ts` |
 
 ### Option structure
 
@@ -281,7 +284,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `cove_incident` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama` | `map_pool` | `financial_stress` | `iconic_moments`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `cove_incident` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama` | `map_pool` | `financial_stress` | `iconic_moments` | `coaching_beef`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 

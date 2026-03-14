@@ -116,6 +116,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-violet-500',
     icon: '⚡',
   },
+  coaching_beef: {
+    label: 'Coaching Beef',
+    color: 'text-orange-400',
+    dotColor: 'bg-orange-500',
+    icon: '🔥',
+  },
 };
 
 /**

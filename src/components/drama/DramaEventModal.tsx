@@ -114,6 +114,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-violet-500/20 to-violet-600/20',
     badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
   },
+  coaching_beef: {
+    label: 'Coaching Beef',
+    color: 'from-orange-500/20 to-orange-600/20',
+    badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  },
 };
 
 /**

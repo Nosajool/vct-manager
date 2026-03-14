@@ -37,7 +37,8 @@ export type DramaCategory =
   | 'tournament_drama'   // bracket-specific tournament interviews
   | 'map_pool'           // map pool narrative events
   | 'financial_stress'   // org financial pressure arc
-  | 'iconic_moments';    // in-game moments that mirror famous VCT plays
+  | 'iconic_moments'    // in-game moments that mirror famous VCT plays
+  | 'coaching_beef';    // coach-to-coach feud arc
 
 /**
  * Severity level of drama events
@@ -573,6 +574,7 @@ export const DRAMA_CONSTANTS = {
     map_pool: 3,             // Map pool events, match-gated
     financial_stress: 14,    // Financial stress arc events — longer cooldown
     iconic_moments: 3,       // Iconic moment events — short: flag-gated by post-match detection
+    coaching_beef: 3,        // Coach-to-coach feud arc — short: flag-gated
   },
 
   // Effect magnitude defaults

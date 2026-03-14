@@ -38,11 +38,12 @@ const CATEGORY_CONFIG: Record<
   map_pool:          { label: 'Map Pool',          color: 'text-teal-400',    badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30'        },
   financial_stress:  { label: 'Financial Stress',  color: 'text-amber-400',   badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30'      },
   iconic_moments:    { label: 'Iconic Moment',     color: 'text-violet-400',  badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30'    },
+  coaching_beef:     { label: 'Coaching Beef',     color: 'text-orange-400',  badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30'    },
 };
 
 const NARRATIVE_CATEGORIES: DramaCategory[] = [
   // Arc categories (narrative arcs)
-  'scrim_sharing', 'visa_arc', 'igl_crisis', 'coaching_overhaul', 'org_culture',
+  'scrim_sharing', 'visa_arc', 'igl_crisis', 'coaching_overhaul', 'org_culture', 'coaching_beef',
   // General drama categories
   'player_ego', 'team_synergy', 'external_pressure', 'practice_burnout', 'breakthrough', 'meta_rumors',
   'cove_incident', 'tournament_drama', 'map_pool', 'financial_stress', 'iconic_moments',

@@ -16,6 +16,7 @@ import { GENERAL_TEMPLATES } from './general';
 import { SCRIM_SHARING_TEMPLATES } from './scrim_sharing';
 import { ORG_CULTURE_INTERVIEWS } from './org_culture';
 import { MAP_POOL_INTERVIEW_TEMPLATES } from './map_pool';
+import { COACHING_BEEF_TEMPLATES } from './coaching_beef';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -34,4 +35,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...SCRIM_SHARING_TEMPLATES,
   ...ORG_CULTURE_INTERVIEWS,
   ...MAP_POOL_INTERVIEW_TEMPLATES,
+  ...COACHING_BEEF_TEMPLATES,
 ];

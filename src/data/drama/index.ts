@@ -16,6 +16,7 @@ import { ORG_CULTURE_EVENTS } from './org_culture';
 import { MAP_POOL_EVENTS } from './map_pool';
 import { FINANCIAL_STRESS_EVENTS } from './financial_stress';
 import { ICONIC_MOMENT_EVENTS } from './iconic_moments';
+import { COACHING_BEEF_EVENTS } from './coaching_beef';
 
 export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...PLAYER_EGO_EVENTS,
@@ -34,4 +35,5 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...MAP_POOL_EVENTS,
   ...FINANCIAL_STRESS_EVENTS,
   ...ICONIC_MOMENT_EVENTS,
+  ...COACHING_BEEF_EVENTS,
 ];
