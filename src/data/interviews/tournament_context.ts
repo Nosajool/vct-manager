@@ -423,6 +423,54 @@ const POST_LOSS_OPTIONS_ELIMINATED_B: InterviewOption[] = [
   },
 ];
 
+const PRE_OPTIONS_OPENING: InterviewOption[] = [
+  {
+    tone: 'HUMBLE',
+    label: 'A lifelong dream',
+    quote: 'This has been my dream for a very long time. It means a lot to be here now where I watched my heroes grow up.',
+    effects: { morale: 2, hype: 1, fanbase: 2 },
+  },
+  {
+    tone: 'CONFIDENT',
+    label: 'Ready to make a statement',
+    quote: "It's the first game of the season and you want to start off hot so... I think it is a pretty big deal if we beat them.",
+    effects: { morale: 2, hype: 2 },
+  },
+  {
+    tone: 'DEFLECTIVE',
+    label: 'Just enjoy the moment',
+    quote: "It's always going to be fun seeing people across the stage screaming and yelling at them, who knows?",
+    effects: { dramaChance: 4 },
+  },
+];
+
+const PRE_OPTIONS_OPENING_B: InterviewOption[] = [
+  {
+    tone: 'CONFIDENT',
+    label: 'Dream come true, here to prove it',
+    quote: "I can't wait for the tournament to start because it's a dream come true to be here with the best teams in the region. Everything about this is exciting to me, I just want to face every single team in the league and prove what I can do.",
+    effects: { morale: 3, hype: 2, fanbase: 2 },
+  },
+  {
+    tone: 'HUMBLE',
+    label: 'Excited for the competition',
+    quote: "I'm the most excited to play against the best teams in {regionName} which has been one of the strongest regions for Valorant. I believe it's going to be a fantastic tournament and I can't wait for it to start.",
+    effects: { morale: 2, sponsorTrust: 2 },
+  },
+  {
+    tone: 'DEFLECTIVE',
+    label: 'Just deliver',
+    quote: 'Hopefully we deliver a banger match.',
+    effects: { dramaChance: 3 },
+  },
+  {
+    tone: 'TRASH_TALK',
+    label: 'Hope we destroy them',
+    quote: "Obviously, I want to win. {teamName} has a good structure. Both teams have a lot of fire power. But I hope we just destroy them.",
+    effects: { morale: 3, hype: 3, rivalryDelta: 10 },
+  },
+];
+
 // ============================================================================
 // Pre-match generator
 // ============================================================================
@@ -441,6 +489,8 @@ export function generateTournamentContextPreMatchInterview(
     losses,
     roundNumber: round,
     qualifiesFor: context.qualifiesFor ?? '',
+    teamName: context.opponent?.teamName ?? 'them',
+    regionName: context.regionName ?? 'the region',
   };
 
   // Grand final
@@ -460,7 +510,9 @@ export function generateTournamentContextPreMatchInterview(
       interpolate('Today kicks off your {tournamentName} campaign. How does the team feel heading into this opening match?', vars),
       interpolate('You\'re about to play the first match of {tournamentName}. What\'s the preparation been like this week?', vars),
     ]);
-    return makePending('tc_pre_opening', prompt, pick([PRE_OPTIONS_READY, PRE_OPTIONS_READY_B]), context.opponent?.teamId);
+    const rawOptions = pick([PRE_OPTIONS_OPENING, PRE_OPTIONS_OPENING_B]);
+    const options = rawOptions.map((opt) => ({ ...opt, quote: interpolate(opt.quote, vars) }));
+    return makePending('tc_pre_opening', prompt, options, context.opponent?.teamId);
   }
 
   // Bracket final — qualifying stakes

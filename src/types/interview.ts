@@ -79,6 +79,7 @@ export interface TournamentMatchContext {
   isBracketFinal?: boolean;                              // true when winner qualifies (winnerDestination.type === 'champion' or 'placement')
   opponent?: {
     teamId: string;
+    teamName?: string;          // display name of the opponent team
     droppedFromUpper: boolean;  // opponent just came from upper bracket
     recentWinStreak: number;    // consecutive wins coming in
     rivalryLevel: number;       // 0-100 from RivalrySlice
@@ -90,6 +91,7 @@ export interface TournamentMatchContext {
   tournamentDisplayName?: string; // tournament.name e.g. "Masters Santiago"
   isOpeningMatch?: boolean;       // true if this is/was the team's first match in the tournament
   qualifiesFor?: string;          // what this tournament feeds into, e.g. "Masters Santiago"
+  regionName?: string;            // tournament region, e.g. 'Americas', 'Pacific', 'International'
 }
 
 // Snapshot of game state used for interview condition evaluation

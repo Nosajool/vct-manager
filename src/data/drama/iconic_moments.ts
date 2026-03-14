@@ -9,9 +9,9 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     id: 'iconic_knife_finish',
     category: 'iconic_moments',
     severity: 'minor',
-    title: '{player} ends it with the knife',
+    title: '{playerName} ends it with the knife',
     description:
-      'In a moment that\'ll live in the highlights, {player} puts away the knife to close it out. The chat goes wild.',
+      'In a moment that\'ll live in the highlights, {playerName} puts away the knife to close it out. The chat goes wild.',
     conditions: [
       {
         type: 'flag_active',
@@ -20,8 +20,9 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 30,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
+    oncePerSeason: true,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 5 },
       { target: 'team_hype', delta: 3 },
@@ -34,7 +35,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Chronicle ace type beat',
     description:
-      '{player} clears the site solo — five kills, no help needed. The round is theirs.',
+      '{playerName} clears the site solo — five kills, no help needed. The round is theirs.',
     conditions: [
       {
         type: 'flag_active',
@@ -43,7 +44,8 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 21,
+    cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'player_form', effectPlayerSelector: 'triggering', delta: 5 },
@@ -58,7 +60,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Alfa Yellow levels of clutch',
     description:
-      '{player} is alone against three. Then two. Then one. Then none. The comms explode.',
+      '{playerName} is alone against three. Then two. Then one. Then none. The comms explode.',
     conditions: [
       {
         type: 'flag_active',
@@ -67,7 +69,8 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 80,
-    cooldownDays: 21,
+    cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 10 },
@@ -80,9 +83,9 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     id: 'iconic_ability_moment',
     category: 'iconic_moments',
     severity: 'minor',
-    title: 'The rope ace. Except it\'s {player}.',
+    title: 'The rope ace. Except it\'s {playerName}.',
     description:
-      'Three players in the wrong place at the wrong time. {player} doesn\'t even think about it — they just pull the trigger.',
+      'Three players in the wrong place at the wrong time. {playerName} doesn\'t even think about it — they just pull the trigger.',
     conditions: [
       {
         type: 'flag_active',
@@ -91,7 +94,8 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       },
     ],
     probability: 75,
-    cooldownDays: 30,
+    cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'player_form', effectPlayerSelector: 'triggering', delta: 6 },
@@ -110,7 +114,8 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'iconic_force_buy_comeback' },
     ],
     probability: 70,
-    cooldownDays: 21,
+    cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_chemistry', delta: 4 },
@@ -130,7 +135,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'team_playstyle', playstyle: 'aggressive' },
     ],
     probability: 70,
-    cooldownDays: 30,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_hype', delta: 5 },
@@ -148,7 +153,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'The knife clip is everywhere',
     description:
-      'Twelve hours after {player} ended the match with a knife, the clip has 200k views. Reporters want a quote.',
+      'Twelve hours after {playerName} ended the match with a knife, the clip has 200k views. Reporters want a quote.',
     conditions: [
       {
         type: 'flag_active',
@@ -158,21 +163,21 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'team_chemistry_above', threshold: 70 },
     ],
     probability: 50,
-    cooldownDays: 60,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
       {
         id: 'lean_into_it',
         text: 'Lean into it',
-        description: 'Embrace the moment. Let {player} have their spotlight.',
+        description: 'Embrace the moment. Let {playerName} have their spotlight.',
         effects: [
           { target: 'team_hype', delta: 8 },
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 5 },
           { target: 'set_flag', flag: 'knife_meme_leaned_in', flagDuration: 30 },
         ],
         outcomeText:
-          '{player} leans into the meme hard. The clip hits 500k. The community loves it. Whether that becomes an ego thing later is a different problem.',
+          '{playerName} leans into the meme hard. The clip hits 500k. The community loves it. Whether that becomes an ego thing later is a different problem.',
       },
       {
         id: 'team_credit',
@@ -210,7 +215,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'iconic_spike_chaos' },
     ],
     probability: 65,
-    cooldownDays: 90,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
@@ -263,7 +268,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'team_win_streak', streakLength: 3 },
     ],
     probability: 60,
-    cooldownDays: 90,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
@@ -314,7 +319,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 65,
-    cooldownDays: 45,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     choices: [
       {

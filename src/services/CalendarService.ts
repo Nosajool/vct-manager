@@ -1081,6 +1081,7 @@ export class CalendarService {
           tournamentType: tournament.type,
           tournamentDisplayName: tournament.name,
           qualifiesFor,
+          regionName: tournament.region,
         };
       }
       return undefined;
@@ -1108,6 +1109,7 @@ export class CalendarService {
       tournamentType: tournament.type,
       tournamentDisplayName: tournament.name,
       qualifiesFor,
+      regionName: tournament.region,
     };
   }
 
@@ -1140,7 +1142,9 @@ export class CalendarService {
     const rivalry = state.rivalries?.[opponentTeamId];
     const rivalryLevel = rivalry?.intensity ?? 0;
 
-    return { teamId: opponentTeamId, droppedFromUpper, recentWinStreak, rivalryLevel };
+    const teamName = state.teams[opponentTeamId]?.name;
+
+    return { teamId: opponentTeamId, teamName, droppedFromUpper, recentWinStreak, rivalryLevel };
   }
 
   /**

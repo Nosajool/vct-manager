@@ -19,6 +19,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 18,
     cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'set_flag', flag: 'scrim_leak_arc_active', flagDuration: 35 },
@@ -37,6 +38,8 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'scrim_leak_arc_active' },
     ],
     probability: 88,
+    cooldownDays: 3,
+    oncePerSeason: true,
     choices: [
       {
         id: 'go_public',
@@ -86,6 +89,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 95,
     cooldownDays: 3,
+    oncePerSeason: true,
     effects: [
       { target: 'set_flag', flag: 'media_narrative_scrim_controversy', flagDuration: 21 },
     ],
@@ -105,6 +109,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 80,
     escalateDays: 7,
+    oncePerSeason: true,
     choices: [
       {
         id: 'report_to_league',
@@ -159,6 +164,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 14,
     cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
       {
@@ -209,6 +215,8 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'scrim_reported_to_league' },
     ],
     probability: 85,
+    cooldownDays: 3,
+    oncePerSeason: true,
     choices: [
       {
         id: 'push_for_sanctions',
@@ -264,6 +272,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 12,
     cooldownDays: 3,
+    oncePerSeason: true,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_hype', delta: -8 },
@@ -284,6 +293,8 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'scrim_accused_active' },
     ],
     probability: 88,
+    cooldownDays: 3,
+    oncePerSeason: true,
     choices: [
       {
         id: 'deny_forceful',

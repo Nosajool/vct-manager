@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import type { Player, Team } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { playerGenerator } from '../../engine/player';
 import {
   contractService,
@@ -130,6 +132,11 @@ export function ContractNegotiationModal({
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
           <div className="flex items-center gap-4">
+            <GameImage
+              src={getPlayerImageUrl(player.name)}
+              alt={player.name}
+              className="w-14 h-14 rounded-full object-cover"
+            />
             <div
               className={`
                 w-16 h-16 rounded-lg flex items-center justify-center
