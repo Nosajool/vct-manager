@@ -110,6 +110,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-amber-500',
     icon: '💸',
   },
+  iconic_moments: {
+    label: 'Iconic Moment',
+    color: 'text-violet-400',
+    dotColor: 'bg-violet-500',
+    icon: '⚡',
+  },
 };
 
 /**

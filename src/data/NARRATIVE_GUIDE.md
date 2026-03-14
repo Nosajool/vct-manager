@@ -281,7 +281,7 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
 
 ### `DramaCategory` values
 
-`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `cove_incident` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama` | `map_pool`
+`player_ego` | `team_synergy` | `external_pressure` | `practice_burnout` | `breakthrough` | `meta_rumors` | `cove_incident` | `visa_arc` | `coaching_overhaul` | `igl_crisis` | `scrim_sharing` | `org_culture` | `tournament_drama` | `map_pool` | `financial_stress` | `iconic_moments`
 
 **Arc-specific categories**: When a narrative arc spans 5+ events and has its own flag ecosystem, give it a dedicated category. This prevents cooldown interference with unrelated events that happen to share the same emotional space (e.g. visa issues and fan backlash are both "external pressure" but should not share a cooldown window). Add the category to `DramaCategory` in `src/types/drama.ts` and add a `cooldownDefaults` entry.
 
@@ -1505,3 +1505,59 @@ When `austerity_mode` flag is active, `EconomyService.processMonthlyFinances()` 
 - Team type: `src/types/team.ts` (`consecutiveNegativeMonths` on `TeamFinances`)
 - Condition evaluator: `src/engine/drama/DramaConditionEvaluator.ts` (`case 'consecutive_negative_months_above'`)
 - Economy tracking: `src/services/EconomyService.ts` (updates `consecutiveNegativeMonths` monthly; checks `austerity_mode` flag)
+
+---
+
+## Iconic Moments Category (`iconic_moments`)
+
+### Purpose
+
+Bridges in-game match simulation and the narrative system. After every player team match, `IconicMomentDetector` scans round timelines and economy data for highlight-reel situations that mirror famous VCT plays. Detected moments set short-lived drama flags (7-day expiry), which DramaEngine.evaluate() picks up the next day to fire flavor toasts or major choice events.
+
+### How flags are set
+
+In `CalendarService.advanceDay()`, after a player team match is simulated, `detectIconicMoments()` is called with the `MatchResult`, `playerTeamId`, `teamAId`, and `TeamStrategy`. Returned flags are written to the store via `state.setDramaFlag(flag, { setDate, expiresDate })`.
+
+### Detection conditions
+
+| Flag pattern | Detection logic |
+|---|---|
+| `iconic_knife_kill_{playerId}` | `SimKillEvent.weapon === 'knife'` by a player's team member |
+| `iconic_ace_round_{playerId}` | One player on the team accounts for 5 kills in a single round timeline |
+| `iconic_clutch_1v3plus_{playerId}` | `clutchAttempt.won === true` and `situation` is `'1v3'`, `'1v4'`, or `'1v5'` |
+| `iconic_ability_massacre_{playerId}` | 3+ kills within a 2-second window all carry the same `ability` ID |
+| `iconic_spike_chaos` | A round has 2+ `SpikeDropEvent` entries |
+| `iconic_force_buy_comeback` | Player's team had `buyType === 'force_buy'` and won the round |
+| `iconic_aggressive_identity` | `teamStrategy.playstyle === 'aggressive'` + map win 13-7 or better |
+| `iconic_force_buy_crisis` | 3+ consecutive rounds where player's team had `buyType === 'force_buy'` and lost |
+
+Player-specific flags embed the player ID in the flag name (e.g. `iconic_knife_kill_player123`). Use `{ type: 'flag_active', flag: 'iconic_knife_kill_{playerId}', playerSelector: 'condition_match' }` in conditions to auto-select the matching player.
+
+### Event list
+
+| Template ID | Severity | Trigger condition | Once per season? |
+|---|---|---|---|
+| `iconic_knife_finish` | minor | `iconic_knife_kill_{playerId}` active | no |
+| `iconic_ace_moment` | minor | `iconic_ace_round_{playerId}` active | no |
+| `iconic_clutch_moment` | minor | `iconic_clutch_1v3plus_{playerId}` active | no |
+| `iconic_ability_moment` | minor | `iconic_ability_massacre_{playerId}` active | no |
+| `iconic_force_buy_comeback` | minor | `iconic_force_buy_comeback` active | no |
+| `iconic_aggressive_identity` | minor | `iconic_aggressive_identity` + aggressive playstyle | no |
+| `viral_knife_moment` | major | `iconic_knife_kill_{playerId}` + `team_chemistry_above 70` | yes |
+| `the_spike_incident` | major | `iconic_spike_chaos` active | yes |
+| `prx_train_identity` | major | `aggressive_identity_established` + win streak 3 | yes |
+| `force_buy_crisis_arc` | major | `iconic_force_buy_crisis` + loss streak 2 | no |
+
+### Design guidance
+
+- Use `{player}` (not `{playerName}`) in title/description — DramaService substitutes the `affectedPlayerIds[0]` name for this placeholder.
+- Keep descriptions punchy and meme-aware. Reference VCT moment *styles* without naming real players.
+- Minor events have a cooldown of 21–30 days. Major events are 45–90 days, most `oncePerSeason`.
+- New secondary flags set by choices (e.g. `knife_meme_leaned_in`, `aggressive_identity_established`) can gate further events in this or other categories.
+
+### Source files
+
+- Detector: `src/engine/drama/IconicMomentDetector.ts`
+- Drama events: `src/data/drama/iconic_moments.ts`
+- Integration: `CalendarService.advanceDay()` — after morale processing for player team matches
+- Type additions: `src/types/drama.ts` (`iconic_moments` in `DramaCategory`, `cooldownDefaults`)

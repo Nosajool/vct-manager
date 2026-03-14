@@ -28,6 +28,7 @@ import type { MultiStageTournament } from '../types/competition';
 import type { TournamentMatchContext } from '../types/interview';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
+import { detect as detectIconicMoments } from '../engine/drama/IconicMomentDetector';
 import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
 import { isLeagueToPlayoffTournament } from '../types';
 
@@ -317,6 +318,25 @@ export class CalendarService {
                 );
                 if (queue.length > 0) {
                   interviewQueue = queue;
+                }
+              }
+
+              // Detect iconic moments and set drama flags (7-day expiry)
+              const match = state.matches[result.matchId];
+              if (match) {
+                const teamStrategy = state.getTeamStrategy(state.playerTeamId);
+                const iconicFlags = detectIconicMoments(
+                  result,
+                  state.playerTeamId,
+                  match.teamAId,
+                  teamStrategy,
+                );
+                if (iconicFlags.length > 0) {
+                  const setDate = state.calendar.currentDate;
+                  const expiresDate = timeProgression.addDays(setDate, 7);
+                  for (const { flag } of iconicFlags) {
+                    state.setDramaFlag(flag, { setDate, expiresDate });
+                  }
                 }
               }
             }

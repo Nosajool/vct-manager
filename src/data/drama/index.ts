@@ -15,6 +15,7 @@ import { SCRIM_SHARING_EVENTS } from './scrim_sharing';
 import { ORG_CULTURE_EVENTS } from './org_culture';
 import { MAP_POOL_EVENTS } from './map_pool';
 import { FINANCIAL_STRESS_EVENTS } from './financial_stress';
+import { ICONIC_MOMENT_EVENTS } from './iconic_moments';
 
 export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...PLAYER_EGO_EVENTS,
@@ -32,4 +33,5 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...ORG_CULTURE_EVENTS,
   ...MAP_POOL_EVENTS,
   ...FINANCIAL_STRESS_EVENTS,
+  ...ICONIC_MOMENT_EVENTS,
 ];

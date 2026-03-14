@@ -106,6 +106,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-amber-500/20 to-amber-600/20 border-amber-500/30',
     icon: '💸',
   },
+  iconic_moments: {
+    label: 'Iconic Moment',
+    color: 'from-violet-500/20 to-violet-600/20 border-violet-500/30',
+    icon: '⚡',
+  },
 };
 
 /**
