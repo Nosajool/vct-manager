@@ -129,7 +129,15 @@ export class ContractService {
     if (!player || !team) return null;
 
     const interestScore = freeAgentInterestService.initializeInterest(playerId, teamId);
-    return contractNegotiator.evaluateOffer(player, offer, team, interestScore);
+    const outreachSpend = freeAgentInterestService.getOutreachSpend(playerId, teamId);
+    const outreachActions = freeAgentInterestService.getOutreachActions(playerId, teamId);
+    const coachPitchDone = outreachActions.includes('coach_vision_pitch');
+
+    return contractNegotiator.evaluateOffer(
+      player, offer, team, interestScore,
+      { totalSpend: outreachSpend, actionsCompleted: outreachActions },
+      coachPitchDone
+    );
   }
 
   /**
@@ -170,7 +178,14 @@ export class ContractService {
 
     // Evaluate the offer
     const interestScore = freeAgentInterestService.initializeInterest(playerId, teamId);
-    const negotiationResult = contractNegotiator.evaluateOffer(player, offer, team, interestScore);
+    const outreachSpend = freeAgentInterestService.getOutreachSpend(playerId, teamId);
+    const outreachActions = freeAgentInterestService.getOutreachActions(playerId, teamId);
+    const coachPitchDone = outreachActions.includes('coach_vision_pitch');
+    const negotiationResult = contractNegotiator.evaluateOffer(
+      player, offer, team, interestScore,
+      { totalSpend: outreachSpend, actionsCompleted: outreachActions },
+      coachPitchDone
+    );
 
     if (!negotiationResult.accepted) {
       freeAgentInterestService.setRejectionCooldown(

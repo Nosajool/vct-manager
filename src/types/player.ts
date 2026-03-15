@@ -94,6 +94,8 @@ export interface Player {
   // Free agent interest tracking
   teamInterests?: Record<string, number>;    // teamId → interest 0-100
   offerCooldowns?: Record<string, string>;   // teamId → ISO date cooldown expires
+  outreachSpend?: Record<string, number>;    // teamId → total dollars spent on outreach
+  outreachActions?: Record<string, string[]>; // teamId → list of completed action names
 }
 
 export type CoachType = 'Head Coach' | 'Assistant Coach' | 'Performance Coach';

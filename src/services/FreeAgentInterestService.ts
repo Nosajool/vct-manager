@@ -77,22 +77,37 @@ export class FreeAgentInterestService {
 
   /**
    * Apply outreach to boost a free agent's interest score.
-   * Optionally deducts from the team's budget.
+   * Records the action and updates outreach spend.
+   * If the action was already done, returns current state without re-applying.
    */
   applyOutreach(
     playerId: string,
     teamId: string,
+    actionName: string,
     delta: number,
     budgetCost: number
-  ): { success: boolean; newScore: number; flavorText: string } {
+  ): { success: boolean; newScore: number; flavorText: string; alreadyDone: boolean } {
+    const state = useGameStore.getState();
+    const player = state.players[playerId];
+    if (!player) return { success: false, newScore: 0, flavorText: '', alreadyDone: false };
+
+    // Idempotency guard — each action can only be done once
+    const existingActions = player.outreachActions?.[teamId] ?? [];
+    if (existingActions.includes(actionName)) {
+      const current = this.getInterest(playerId, teamId);
+      return { success: false, newScore: current, flavorText: 'Already done.', alreadyDone: true };
+    }
+
     const current = this.getInterest(playerId, teamId);
     const newScore = Math.max(0, Math.min(100, current + delta));
 
-    const state = useGameStore.getState();
     state.setFreeAgentInterest(playerId, teamId, newScore);
+    state.addOutreachAction(playerId, teamId, actionName);
 
     if (budgetCost > 0) {
       state.updateTeamBalance(teamId, -budgetCost);
+      const currentSpend = player.outreachSpend?.[teamId] ?? 0;
+      state.setOutreachSpend(playerId, teamId, currentSpend + budgetCost);
     }
 
     let flavorText: string;
@@ -104,7 +119,58 @@ export class FreeAgentInterestService {
       flavorText = 'The player appreciated the contact.';
     }
 
-    return { success: true, newScore, flavorText };
+    return { success: true, newScore, flavorText, alreadyDone: false };
+  }
+
+  /**
+   * Get total outreach spend for a player/team pair.
+   */
+  getOutreachSpend(playerId: string, teamId: string): number {
+    const player = useGameStore.getState().players[playerId];
+    return player?.outreachSpend?.[teamId] ?? 0;
+  }
+
+  /**
+   * Get list of completed outreach actions for a player/team pair.
+   */
+  getOutreachActions(playerId: string, teamId: string): string[] {
+    const player = useGameStore.getState().players[playerId];
+    return player?.outreachActions?.[teamId] ?? [];
+  }
+
+  /**
+   * Check if the team has any roster player with a connection to the FA.
+   * Connection = FA lists a roster player in preferredTeammates, or vice versa.
+   */
+  hasPlayerConnection(
+    playerId: string,
+    teamId: string
+  ): { connected: boolean; connectionCount: number; hasFavoriteConnection: boolean } {
+    const state = useGameStore.getState();
+    const fa = state.players[playerId];
+    const team = state.teams[teamId];
+
+    if (!fa || !team) return { connected: false, connectionCount: 0, hasFavoriteConnection: false };
+
+    const rosterIds = [...team.playerIds, ...team.reservePlayerIds];
+    const faPreferred = new Set(fa.preferences.preferredTeammates);
+
+    let connectionCount = 0;
+    let hasFavoriteConnection = false;
+
+    for (const rosterId of rosterIds) {
+      if (faPreferred.has(rosterId)) {
+        connectionCount++;
+        hasFavoriteConnection = true;
+      } else {
+        const rosterPlayer = state.players[rosterId];
+        if (rosterPlayer?.preferences.preferredTeammates.includes(playerId)) {
+          connectionCount++;
+        }
+      }
+    }
+
+    return { connected: connectionCount > 0, connectionCount, hasFavoriteConnection };
   }
 
   /**

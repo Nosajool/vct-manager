@@ -74,15 +74,14 @@ export class FreeAgentInterestEngine {
   }
 
   /**
-   * Binary search for minimum acceptable offer using a scorer callback.
-   * The scoreOffer callback returns the finalScore for a given offer.
+   * Salary range returned by getMinimumAcceptableOffer
    */
   getMinimumAcceptableOffer(
     player: Player,
     _team: Team,
     interest: number,
     scoreOffer: (offer: ContractOffer) => number
-  ): ContractOffer {
+  ): { minSalary: number; maxSalary: number } | null {
     const threshold = this.getAcceptanceThreshold(interest);
 
     // Determine salary search range from player expectations
@@ -102,17 +101,20 @@ export class FreeAgentInterestEngine {
     const ageModifier = player.age < 21 ? 0.8 : player.age > 26 ? 1.2 : 1.0;
     const potentialModifier =
       player.potential > 85 ? 1.3 : player.potential > 75 ? 1.1 : 1.0;
-    const adjustedBase = baseSalary * ageModifier * potentialModifier;
+    const salaryImp = player.preferences.salaryImportance;
+    const salaryImportanceMultiplier = salaryImp > 70 ? 1.2 : salaryImp < 40 ? 0.85 : 1.0;
+    const adjustedBase = baseSalary * ageModifier * potentialModifier * salaryImportanceMultiplier;
 
-    const minSalary = Math.round(adjustedBase * 0.6);
-    const maxSalary = Math.round(adjustedBase * 2);
+    // Extended range to account for cold offer penalty
+    const searchMin = Math.round(adjustedBase * 0.5);
+    const searchMax = Math.round(adjustedBase * 3);
 
-    // Binary search
-    let low = minSalary;
-    let high = maxSalary;
-    let found: ContractOffer | null = null;
+    // Binary search for minimum salary that passes threshold
+    let low = searchMin;
+    let high = searchMax;
+    let foundSalary: number | null = null;
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 22; i++) {
       const mid = Math.round((low + high) / 2);
       const offer: ContractOffer = {
         salary: mid,
@@ -121,22 +123,21 @@ export class FreeAgentInterestEngine {
       };
       const score = scoreOffer(offer);
       if (score >= threshold) {
-        found = offer;
+        foundSalary = mid;
         high = mid - 1;
       } else {
         low = mid + 1;
       }
     }
 
-    if (found) return found;
+    if (foundSalary === null) return null; // No salary in range works at current interest
 
-    // No salary in range worked — return high offer
     return {
-      salary: Math.round(adjustedBase * 1.5),
-      signingBonus: 0,
-      yearsRemaining: 1,
+      minSalary: foundSalary,
+      maxSalary: Math.round(foundSalary * 1.12),
     };
   }
+
 
   /**
    * Get a human-readable rejection flavor text

@@ -16,12 +16,23 @@ export interface ContractOffer {
 }
 
 /**
+ * Outreach context passed from service layer to evaluator
+ */
+export interface OutreachContext {
+  totalSpend: number;
+  actionsCompleted: string[];
+}
+
+/**
  * Result of evaluating a contract offer
  */
 export interface NegotiationResult {
   accepted: boolean;
   acceptanceProbability: number;
   reason: string;
+  rejectionHint?: string;      // Directional hint shown after rejection
+  acceptanceIndicator: string; // Qualitative acceptance tier
+  scoreGap: number;            // threshold - finalScore (positive = failing)
   counterOffer?: ContractOffer;
   factors: NegotiationFactors;
   interestThreshold: number;
@@ -77,7 +88,11 @@ export class ContractNegotiator {
     // Potential modifier - high potential players want more
     const potentialModifier = player.potential > 85 ? 1.3 : player.potential > 75 ? 1.1 : 1.0;
 
-    const adjustedBase = baseSalary * ageModifier * potentialModifier;
+    // Salary importance multiplier: HIGH priority players demand more, LOW demand less
+    const salaryImp = player.preferences.salaryImportance;
+    const salaryImportanceMultiplier = salaryImp > 70 ? 1.2 : salaryImp < 40 ? 0.85 : 1.0;
+
+    const adjustedBase = baseSalary * ageModifier * potentialModifier * salaryImportanceMultiplier;
 
     return {
       minimum: Math.round(adjustedBase * 0.6),
@@ -109,11 +124,17 @@ export class ContractNegotiator {
     player: Player,
     offer: ContractOffer,
     team: Team,
-    interestScore?: number
+    interestScore?: number,
+    outreachContext?: OutreachContext,
+    coachPitchDone?: boolean
   ): NegotiationResult {
     const { preferences } = player;
     const salaryExpectation = this.getSalaryExpectation(player);
-    const teamQuality = this.calculateTeamQuality(team);
+    const baseTeamQuality = this.calculateTeamQuality(team);
+    // Coach Vision Pitch softens team quality deficit by 5 pts
+    const teamQuality = coachPitchDone
+      ? Math.min(100, baseTeamQuality + 5)
+      : baseTeamQuality;
 
     // Calculate salary factor (-1 to 1)
     let salaryFactor: number;
@@ -169,25 +190,31 @@ export class ContractNegotiator {
       ? (offer.yearsRemaining - 2) * 5
       : 0;
 
-    const finalScore = Math.max(0, Math.min(100, overallScore - contractLengthPenalty));
+    // Cold offer penalty — no/low outreach makes offers much harder to accept
+    const coldPenalty = this.getColdOfferPenalty(outreachContext);
 
-    // Calculate acceptance probability
-    // Score 70+ = high chance, 50-70 = medium, below 50 = low
+    const finalScore = Math.max(0, Math.min(100, overallScore - contractLengthPenalty - coldPenalty));
+
+    // Calculate acceptance probability (kept for internal reference)
     let acceptanceProbability: number;
     if (finalScore >= 75) {
-      acceptanceProbability = 0.8 + (finalScore - 75) / 25 * 0.2; // 80-100%
+      acceptanceProbability = 0.8 + (finalScore - 75) / 25 * 0.2;
     } else if (finalScore >= 60) {
-      acceptanceProbability = 0.5 + (finalScore - 60) / 15 * 0.3; // 50-80%
+      acceptanceProbability = 0.5 + (finalScore - 60) / 15 * 0.3;
     } else if (finalScore >= 45) {
-      acceptanceProbability = 0.2 + (finalScore - 45) / 15 * 0.3; // 20-50%
+      acceptanceProbability = 0.2 + (finalScore - 45) / 15 * 0.3;
     } else {
-      acceptanceProbability = Math.max(0.05, finalScore / 45 * 0.2); // 5-20%
+      acceptanceProbability = Math.max(0.05, finalScore / 45 * 0.2);
     }
 
     // Determine acceptance deterministically based on interest score
     const interest = interestScore ?? 50;
     const threshold = freeAgentInterestEngine.getAcceptanceThreshold(interest);
     const accepted = finalScore >= threshold;
+    const scoreGap = threshold - finalScore; // positive = failing
+
+    // Qualitative acceptance indicator
+    const acceptanceIndicator = this.getAcceptanceIndicator(scoreGap);
 
     // Generate reason
     const reason = this.generateReason(
@@ -199,6 +226,18 @@ export class ContractNegotiator {
       salaryExpectation
     );
 
+    // Generate directional rejection hint
+    const rejectionHint = !accepted ? this.generateRejectionHint(
+      normalizedSalary,
+      normalizedTeamQuality,
+      normalizedRegion,
+      salaryWeight,
+      teamQualityWeight,
+      regionWeight,
+      interest,
+      coldPenalty
+    ) : undefined;
+
     // Generate counter-offer if rejected but close
     let counterOffer: ContractOffer | undefined;
     if (!accepted && finalScore >= threshold - 30) {
@@ -209,6 +248,9 @@ export class ContractNegotiator {
       accepted,
       acceptanceProbability,
       reason,
+      rejectionHint,
+      acceptanceIndicator,
+      scoreGap,
       counterOffer,
       factors: {
         salaryFactor,
@@ -219,6 +261,81 @@ export class ContractNegotiator {
       interestThreshold: threshold,
       interestScore: interest,
     };
+  }
+
+  /**
+   * Compute the cold offer penalty based on outreach done
+   */
+  private getColdOfferPenalty(ctx: OutreachContext | undefined): number {
+    if (!ctx) return 20;
+    const { totalSpend, actionsCompleted } = ctx;
+    const hasDms = actionsCompleted.includes('player_dms');
+    if (totalSpend >= 25000) return 0;
+    if (totalSpend >= 10000) return 5;
+    if (totalSpend >= 1 || hasDms) return 10;
+    return 20;
+  }
+
+  /**
+   * Get qualitative acceptance indicator from score gap
+   */
+  private getAcceptanceIndicator(scoreGap: number): string {
+    if (scoreGap <= 0) return 'Strong chance of acceptance';
+    if (scoreGap <= 8) return 'Could go either way';
+    if (scoreGap <= 20) return 'Unlikely to accept';
+    return 'Very unlikely to accept';
+  }
+
+  /**
+   * Generate a directional hint for rejection — identifies the weakest factor
+   */
+  private generateRejectionHint(
+    normalizedSalary: number,
+    normalizedTeamQuality: number,
+    normalizedRegion: number,
+    salaryWeight: number,
+    teamQualityWeight: number,
+    regionWeight: number,
+    interest: number,
+    coldPenalty: number
+  ): string {
+    // If heavy cold penalty dominated the rejection, hint about interest/readiness
+    if (coldPenalty >= 15 && interest < 50) {
+      return "I'm not ready to make this kind of decision yet.";
+    }
+
+    // If very low interest, also hint about readiness
+    if (interest < 35) {
+      return "I'm not ready to make this kind of decision yet.";
+    }
+
+    // Find weakest contributing factor (weighted deficit from midpoint)
+    const salaryDeficit = Math.max(0, 50 - normalizedSalary) * salaryWeight;
+    const teamDeficit = Math.max(0, 50 - normalizedTeamQuality) * teamQualityWeight;
+    const regionDeficit = Math.max(0, 50 - normalizedRegion) * regionWeight;
+    const maxDeficit = Math.max(salaryDeficit, teamDeficit, regionDeficit);
+
+    if (maxDeficit === salaryDeficit && salaryDeficit > 0) {
+      const rawDeficit = 50 - normalizedSalary;
+      const magnitude = rawDeficit > 20 ? 'well below' : rawDeficit > 8 ? 'a bit below' : 'close to';
+      return `The compensation was ${magnitude} what I'm looking for.`;
+    }
+    if (maxDeficit === teamDeficit && teamDeficit > 0) {
+      const rawDeficit = 50 - normalizedTeamQuality;
+      const phrase = rawDeficit > 10 ? 'not convinced' : 'almost convinced';
+      return `I'm ${phrase} this team is at the right level for me.`;
+    }
+    if (maxDeficit === regionDeficit && regionDeficit > 0) {
+      const rawDeficit = 50 - normalizedRegion;
+      const farWord = rawDeficit > 15 ? 'so far' : 'away';
+      const seriousWord = rawDeficit > 15 ? 'serious ' : '';
+      return `Moving ${farWord} from home gives me ${seriousWord}pause.`;
+    }
+
+    // Fallback — moderate interest but no single factor dominates
+    return interest < 55
+      ? "I'm not ready to make this kind of decision yet."
+      : "The overall package doesn't quite meet my expectations.";
   }
 
   /**

@@ -640,7 +640,7 @@ export class DramaService {
           if (!playerTeamId) continue;
           for (const fa of freeAgentsInState) {
             if (fa.teamInterests?.[playerTeamId] !== undefined) {
-              freeAgentInterestService.applyOutreach(fa.id, playerTeamId, effect.interestDelta!, 0);
+              freeAgentInterestService.applyOutreach(fa.id, playerTeamId, 'drama_event', effect.interestDelta!, 0);
             }
           }
           break;

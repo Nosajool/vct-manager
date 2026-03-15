@@ -18,6 +18,8 @@ export interface PlayerSlice {
   setFreeAgentInterest: (playerId: string, teamId: string, score: number) => void;
   setOfferCooldown: (playerId: string, teamId: string, expiresDate: string) => void;
   clearFreeAgentData: (playerId: string, teamId: string) => void;
+  setOutreachSpend: (playerId: string, teamId: string, amount: number) => void;
+  addOutreachAction: (playerId: string, teamId: string, action: string) => void;
 
   // Selectors (return functions to be used with getState())
   getPlayer: (playerId: string) => Player | undefined;
@@ -113,6 +115,10 @@ export const createPlayerSlice: StateCreator<
       delete teamInterests[teamId];
       const offerCooldowns = { ...existing.offerCooldowns };
       delete offerCooldowns[teamId];
+      const outreachSpend = { ...existing.outreachSpend };
+      delete outreachSpend[teamId];
+      const outreachActions = { ...existing.outreachActions };
+      delete outreachActions[teamId];
       return {
         players: {
           ...state.players,
@@ -120,6 +126,46 @@ export const createPlayerSlice: StateCreator<
             ...existing,
             teamInterests,
             offerCooldowns,
+            outreachSpend,
+            outreachActions,
+          },
+        },
+      };
+    }),
+
+  setOutreachSpend: (playerId, teamId, amount) =>
+    set((state) => {
+      const existing = state.players[playerId];
+      if (!existing) return state;
+      return {
+        players: {
+          ...state.players,
+          [playerId]: {
+            ...existing,
+            outreachSpend: {
+              ...existing.outreachSpend,
+              [teamId]: amount,
+            },
+          },
+        },
+      };
+    }),
+
+  addOutreachAction: (playerId, teamId, action) =>
+    set((state) => {
+      const existing = state.players[playerId];
+      if (!existing) return state;
+      const currentActions = existing.outreachActions?.[teamId] ?? [];
+      if (currentActions.includes(action)) return state; // idempotent
+      return {
+        players: {
+          ...state.players,
+          [playerId]: {
+            ...existing,
+            outreachActions: {
+              ...existing.outreachActions,
+              [teamId]: [...currentActions, action],
+            },
           },
         },
       };
