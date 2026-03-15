@@ -3,6 +3,7 @@
 
 import type { Player, Team, PlayerContract } from '../../types';
 import { playerGenerator } from './PlayerGenerator';
+import { freeAgentInterestEngine } from './FreeAgentInterestEngine';
 
 /**
  * Contract offer from a team
@@ -23,6 +24,8 @@ export interface NegotiationResult {
   reason: string;
   counterOffer?: ContractOffer;
   factors: NegotiationFactors;
+  interestThreshold: number;
+  interestScore: number;
 }
 
 /**
@@ -105,7 +108,8 @@ export class ContractNegotiator {
   evaluateOffer(
     player: Player,
     offer: ContractOffer,
-    team: Team
+    team: Team,
+    interestScore?: number
   ): NegotiationResult {
     const { preferences } = player;
     const salaryExpectation = this.getSalaryExpectation(player);
@@ -180,9 +184,10 @@ export class ContractNegotiator {
       acceptanceProbability = Math.max(0.05, finalScore / 45 * 0.2); // 5-20%
     }
 
-    // Determine acceptance (with some randomness)
-    const roll = Math.random();
-    const accepted = roll < acceptanceProbability;
+    // Determine acceptance deterministically based on interest score
+    const interest = interestScore ?? 50;
+    const threshold = freeAgentInterestEngine.getAcceptanceThreshold(interest);
+    const accepted = finalScore >= threshold;
 
     // Generate reason
     const reason = this.generateReason(
@@ -194,9 +199,9 @@ export class ContractNegotiator {
       salaryExpectation
     );
 
-    // Generate counter-offer if rejected
+    // Generate counter-offer if rejected but close
     let counterOffer: ContractOffer | undefined;
-    if (!accepted && acceptanceProbability > 0.15) {
+    if (!accepted && finalScore >= threshold - 30) {
       counterOffer = this.generateCounterOffer(player, offer, salaryExpectation);
     }
 
@@ -211,6 +216,8 @@ export class ContractNegotiator {
         regionFactor,
         overallScore: finalScore,
       },
+      interestThreshold: threshold,
+      interestScore: interest,
     };
   }
 

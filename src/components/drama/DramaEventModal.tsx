@@ -119,6 +119,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-orange-500/20 to-orange-600/20',
     badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
   },
+  free_agent_pursuit: {
+    label: 'FA Pursuit',
+    color: 'from-cyan-500/20 to-cyan-600/20',
+    badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+  },
 };
 
 /**

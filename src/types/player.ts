@@ -90,6 +90,10 @@ export interface Player {
 
   // IGL status
   isFormerIGL?: boolean;
+
+  // Free agent interest tracking
+  teamInterests?: Record<string, number>;    // teamId → interest 0-100
+  offerCooldowns?: Record<string, string>;   // teamId → ISO date cooldown expires
 }
 
 export type CoachType = 'Head Coach' | 'Assistant Coach' | 'Performance Coach';

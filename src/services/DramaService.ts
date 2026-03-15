@@ -3,6 +3,7 @@
 
 import { useGameStore } from '../store';
 import * as dramaEngine from '../engine/drama';
+import { freeAgentInterestService } from './FreeAgentInterestService';
 import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
 import { resolveEffects, type ResolvedEffect } from '../engine/drama/DramaEffectResolver';
 import type {
@@ -335,6 +336,15 @@ export class DramaService {
     // Compute tournament context — find the active tournament the player team is in
     const tournamentContext = this.computeTournamentContext(playerTeamId, state.tournaments);
 
+    // Build free agent interests map for tracked free agents
+    const freeAgentInterests: Record<string, number> = {};
+    const freeAgents = Object.values(allPlayers).filter(p => p.teamId === null);
+    for (const fa of freeAgents) {
+      if (fa.teamInterests?.[playerTeamId] !== undefined) {
+        freeAgentInterests[fa.id] = fa.teamInterests[playerTeamId];
+      }
+    }
+
     return {
       currentDate: calendar.currentDate,
       currentSeason: calendar.currentSeason,
@@ -354,6 +364,7 @@ export class DramaService {
       teamFinances: {
         consecutiveNegativeMonths: playerTeam.finances.consecutiveNegativeMonths ?? 0,
       },
+      freeAgentInterests,
     };
   }
 
@@ -619,6 +630,19 @@ export class DramaService {
         case 'clear_flag': {
           if (!effect.flag) continue;
           state.clearDramaFlag(effect.flag);
+          break;
+        }
+
+        case 'update_free_agent_interest': {
+          if (effect.interestDelta === undefined) continue;
+          const freeAgentsInState = Object.values(state.players).filter(p => p.teamId === null);
+          const playerTeamId = state.playerTeamId;
+          if (!playerTeamId) continue;
+          for (const fa of freeAgentsInState) {
+            if (fa.teamInterests?.[playerTeamId] !== undefined) {
+              freeAgentInterestService.applyOutreach(fa.id, playerTeamId, effect.interestDelta!, 0);
+            }
+          }
           break;
         }
       }

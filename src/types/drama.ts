@@ -38,7 +38,8 @@ export type DramaCategory =
   | 'map_pool'           // map pool narrative events
   | 'financial_stress'   // org financial pressure arc
   | 'iconic_moments'    // in-game moments that mirror famous VCT plays
-  | 'coaching_beef';    // coach-to-coach feud arc
+  | 'coaching_beef'    // coach-to-coach feud arc
+  | 'free_agent_pursuit'; // free agent interest and recruitment arc
 
 /**
  * Severity level of drama events
@@ -123,6 +124,11 @@ export type DramaConditionType =
   // Player origin checks
   | 'player_is_import'           // Any player's home region differs from the team's league region
   | 'player_on_active_roster'    // Player is on the active (non-reserve) roster
+
+  // Free agent checks
+  | 'player_is_free_agent'           // Any player with teamId === null exists
+  | 'free_agent_interest_above'      // Any tracked free agent interest > threshold
+  | 'free_agent_interest_below'      // Any tracked free agent interest < threshold
 
   // Random chance
   | 'random_chance'
@@ -270,7 +276,10 @@ export type DramaEffectTarget =
 
   // Event chain
   | 'trigger_event'
-  | 'escalate_event';
+  | 'escalate_event'
+
+  // Free agent interest
+  | 'free_agent_interest';
 
 /**
  * Player selector for effects (extended for effect resolution needs)
@@ -307,6 +316,9 @@ export interface DramaEffect {
   // For event chaining
   eventTemplateId?: string;
   escalationTemplateId?: string;
+
+  // For free agent interest
+  interestDelta?: number;
 }
 
 // ============================================================================
@@ -501,6 +513,9 @@ export interface DramaGameStateSnapshot {
   // Optional fields populated in interview context (InterviewSnapshot extends this)
   isPlayoffMatch?: boolean;
   hasRivalry?: boolean;
+
+  // Free agent interest scores for tracked free agents
+  freeAgentInterests?: Record<string, number>;
 }
 
 /**
@@ -585,6 +600,7 @@ export const DRAMA_CONSTANTS = {
     financial_stress: 14,    // Financial stress arc events — longer cooldown
     iconic_moments: 3,       // Iconic moment events — short: flag-gated by post-match detection
     coaching_beef: 3,        // Coach-to-coach feud arc — short: flag-gated
+    free_agent_pursuit: 3,   // Free agent interest and recruitment arc
   },
 
   // Effect magnitude defaults

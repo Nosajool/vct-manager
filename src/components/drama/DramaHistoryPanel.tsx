@@ -122,6 +122,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-orange-500',
     icon: '🔥',
   },
+  free_agent_pursuit: {
+    label: 'FA Pursuit',
+    color: 'text-cyan-400',
+    dotColor: 'bg-cyan-500',
+    icon: '🎯',
+  },
 };
 
 /**

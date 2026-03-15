@@ -9,6 +9,7 @@ import {
   type SalaryExpectation,
 } from '../engine/player';
 import type { Player, Transaction } from '../types';
+import { freeAgentInterestService } from './FreeAgentInterestService';
 
 /**
  * Result of a signing attempt
@@ -127,7 +128,8 @@ export class ContractService {
 
     if (!player || !team) return null;
 
-    return contractNegotiator.evaluateOffer(player, offer, team);
+    const interestScore = freeAgentInterestService.initializeInterest(playerId, teamId);
+    return contractNegotiator.evaluateOffer(player, offer, team, interestScore);
   }
 
   /**
@@ -167,9 +169,15 @@ export class ContractService {
     }
 
     // Evaluate the offer
-    const negotiationResult = contractNegotiator.evaluateOffer(player, offer, team);
+    const interestScore = freeAgentInterestService.initializeInterest(playerId, teamId);
+    const negotiationResult = contractNegotiator.evaluateOffer(player, offer, team, interestScore);
 
     if (!negotiationResult.accepted) {
+      freeAgentInterestService.setRejectionCooldown(
+        playerId,
+        teamId,
+        useGameStore.getState().calendar.currentDate
+      );
       return {
         success: false,
         error: 'Player rejected the offer',
@@ -188,6 +196,9 @@ export class ContractService {
       contract: contract,
       morale: Math.min(100, player.morale + 10), // Happy to be signed!
     });
+
+    // Clear free agent interest tracking for the signed player
+    freeAgentInterestService.clearInterest(playerId, teamId);
 
     // 3. Add player to team roster
     if (position === 'active') {

@@ -48,7 +48,8 @@ const DRAMA_CATEGORY_META: Record<
   map_pool:         { label: 'Map Pool',       color: 'text-teal-400',   dotColor: 'bg-teal-500',    icon: '🗺️' },
   financial_stress: { label: 'Financial Stress', color: 'text-amber-400', dotColor: 'bg-amber-500',   icon: '💸' },
   iconic_moments:   { label: 'Iconic Moment',    color: 'text-violet-400', dotColor: 'bg-violet-500',  icon: '⚡' },
-  coaching_beef:    { label: 'Coaching Beef',    color: 'text-orange-400', dotColor: 'bg-orange-500',  icon: '🔥' },
+  coaching_beef:       { label: 'Coaching Beef', color: 'text-orange-400', dotColor: 'bg-orange-500', icon: '🔥' },
+  free_agent_pursuit:  { label: 'FA Pursuit',    color: 'text-cyan-400',   dotColor: 'bg-cyan-500',   icon: '🎯' },
 };
 
 const INTERVIEW_CONTEXT_META: Record<

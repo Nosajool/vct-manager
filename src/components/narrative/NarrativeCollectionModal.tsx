@@ -38,7 +38,8 @@ const CATEGORY_CONFIG: Record<
   map_pool:          { label: 'Map Pool',          color: 'text-teal-400',    badgeColor: 'bg-teal-500/20 text-teal-400 border-teal-500/30'        },
   financial_stress:  { label: 'Financial Stress',  color: 'text-amber-400',   badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30'      },
   iconic_moments:    { label: 'Iconic Moment',     color: 'text-violet-400',  badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30'    },
-  coaching_beef:     { label: 'Coaching Beef',     color: 'text-orange-400',  badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30'    },
+  coaching_beef:        { label: 'Coaching Beef',     color: 'text-orange-400',  badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30'    },
+  free_agent_pursuit:   { label: 'FA Pursuit',        color: 'text-cyan-400',    badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'           },
 };
 
 const NARRATIVE_CATEGORIES: DramaCategory[] = [

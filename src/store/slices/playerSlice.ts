@@ -14,6 +14,11 @@ export interface PlayerSlice {
   updatePlayer: (playerId: string, updates: Partial<Player>) => void;
   removePlayer: (playerId: string) => void;
 
+  // Free agent interest actions
+  setFreeAgentInterest: (playerId: string, teamId: string, score: number) => void;
+  setOfferCooldown: (playerId: string, teamId: string, expiresDate: string) => void;
+  clearFreeAgentData: (playerId: string, teamId: string) => void;
+
   // Selectors (return functions to be used with getState())
   getPlayer: (playerId: string) => Player | undefined;
   getFreeAgents: () => Player[];
@@ -62,6 +67,62 @@ export const createPlayerSlice: StateCreator<
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [playerId]: removed, ...remaining } = state.players;
       return { players: remaining };
+    }),
+
+  setFreeAgentInterest: (playerId, teamId, score) =>
+    set((state) => {
+      const existing = state.players[playerId];
+      if (!existing) return state;
+      return {
+        players: {
+          ...state.players,
+          [playerId]: {
+            ...existing,
+            teamInterests: {
+              ...existing.teamInterests,
+              [teamId]: score,
+            },
+          },
+        },
+      };
+    }),
+
+  setOfferCooldown: (playerId, teamId, expiresDate) =>
+    set((state) => {
+      const existing = state.players[playerId];
+      if (!existing) return state;
+      return {
+        players: {
+          ...state.players,
+          [playerId]: {
+            ...existing,
+            offerCooldowns: {
+              ...existing.offerCooldowns,
+              [teamId]: expiresDate,
+            },
+          },
+        },
+      };
+    }),
+
+  clearFreeAgentData: (playerId, teamId) =>
+    set((state) => {
+      const existing = state.players[playerId];
+      if (!existing) return state;
+      const teamInterests = { ...existing.teamInterests };
+      delete teamInterests[teamId];
+      const offerCooldowns = { ...existing.offerCooldowns };
+      delete offerCooldowns[teamId];
+      return {
+        players: {
+          ...state.players,
+          [playerId]: {
+            ...existing,
+            teamInterests,
+            offerCooldowns,
+          },
+        },
+      };
     }),
 
   // Selectors

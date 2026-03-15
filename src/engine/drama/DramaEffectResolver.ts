@@ -11,7 +11,7 @@ import type { DramaEffect, DramaGameStateSnapshot, EffectPlayerSelector } from '
  * Concrete mutation to apply to game state
  */
 export interface ResolvedEffect {
-  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active';
+  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'update_free_agent_interest';
 
   // Player updates
   playerId?: string;
@@ -22,6 +22,9 @@ export interface ResolvedEffect {
   // Flag operations
   flag?: string;
   flagDuration?: number;
+
+  // Free agent interest
+  interestDelta?: number;
 }
 
 // ============================================================================
@@ -134,6 +137,14 @@ function resolveEffect(
   // Handle player modifications
   if (target === 'player_morale' || target === 'player_form' || target === 'player_stat') {
     return resolvePlayerEffect(effect, snapshot, involvedPlayerIds);
+  }
+
+  // Handle free agent interest
+  if (target === 'free_agent_interest') {
+    return [{
+      type: 'update_free_agent_interest',
+      interestDelta: effect.interestDelta ?? 0,
+    }];
   }
 
   // Handle special targets mentioned in spec

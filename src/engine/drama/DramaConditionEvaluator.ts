@@ -278,6 +278,17 @@ export function evaluateCondition(
       return (ctx.playedMapAttributes[condition.mapPoolAttribute] ?? 100) < (condition.mapPoolThreshold ?? 40);
     }
 
+    case 'player_is_free_agent':
+      return snapshot.players.some(p => p.teamId === null);
+
+    case 'free_agent_interest_above':
+      if (condition.threshold === undefined || !snapshot.freeAgentInterests) return false;
+      return Object.values(snapshot.freeAgentInterests).some(score => score > condition.threshold!);
+
+    case 'free_agent_interest_below':
+      if (condition.threshold === undefined || !snapshot.freeAgentInterests) return false;
+      return Object.values(snapshot.freeAgentInterests).some(score => score < condition.threshold!);
+
     case 'consecutive_negative_months_above':
       return (snapshot.teamFinances?.consecutiveNegativeMonths ?? 0) >= (condition.threshold ?? 3);
 

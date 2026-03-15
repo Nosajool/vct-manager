@@ -10,6 +10,7 @@ import { teamSlotResolver } from './TeamSlotResolver';
 import { featureGateService } from './FeatureGateService';
 import { progressTrackingService } from './ProgressTrackingService';
 import { dramaService } from './DramaService';
+import { freeAgentInterestService } from './FreeAgentInterestService';
 import { reputationService, type ReputationDelta } from './ReputationService';
 import { rivalryService, type RivalryDelta } from './RivalryService';
 import { interviewService } from './InterviewService';
@@ -504,6 +505,15 @@ export class CalendarService {
             state.setPlayerAgentPreferences(playerId, updatedPrefs);
           }
         }
+      }
+    }
+
+    // Daily free agent interest drift
+    {
+      const freshState = useGameStore.getState();
+      const playerTeamForDrift = freshState.teams[freshState.playerTeamId || ''];
+      if (playerTeamForDrift) {
+        freeAgentInterestService.processDailyDrift(newDate, playerTeamForDrift);
       }
     }
 

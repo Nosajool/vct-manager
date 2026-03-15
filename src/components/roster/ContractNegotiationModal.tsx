@@ -14,6 +14,9 @@ import type {
   NegotiationResult,
   SalaryExpectation,
 } from '../../engine/player';
+import { freeAgentInterestService } from '../../services/FreeAgentInterestService';
+import { freeAgentInterestEngine } from '../../engine/player/FreeAgentInterestEngine';
+import { useGameStore } from '../../store';
 
 interface ContractNegotiationModalProps {
   player: Player;
@@ -44,6 +47,42 @@ export function ContractNegotiationModal({
   const [isNegotiating, setIsNegotiating] = useState(false);
   const [result, setResult] = useState<SigningResult | null>(null);
   const [previewResult, setPreviewResult] = useState<NegotiationResult | null>(null);
+
+  // Free agent interest state
+  const currentDate = useGameStore(state => state.calendar.currentDate);
+  const isFreeAgent = player.teamId === null;
+  const isOnCooldown = isFreeAgent
+    ? freeAgentInterestService.isOnCooldown(player.id, team.id, currentDate)
+    : false;
+
+  const cooldownDaysRemaining = useMemo(() => {
+    if (!isFreeAgent || !isOnCooldown) return 0;
+    const cooldownExpiry = player.offerCooldowns?.[team.id];
+    if (!cooldownExpiry) return 0;
+    const diff = new Date(cooldownExpiry).getTime() - new Date(currentDate).getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }, [isFreeAgent, isOnCooldown, player.offerCooldowns, team.id, currentDate]);
+
+  const [outreachMessage, setOutreachMessage] = useState<string | null>(null);
+
+  const handleOutreach = (type: string, cost: number, delta: number) => {
+    void type;
+    const outreachResult = freeAgentInterestService.applyOutreach(player.id, team.id, delta, cost);
+    setOutreachMessage(outreachResult.flavorText);
+    setTimeout(() => setOutreachMessage(null), 3000);
+  };
+
+  // Minimum acceptable offer for free agents
+  const minimumOffer = useMemo(() => {
+    if (!isFreeAgent) return null;
+    const interest = freeAgentInterestService.getInterest(player.id, team.id);
+    return freeAgentInterestEngine.getMinimumAcceptableOffer(
+      player,
+      team,
+      interest,
+      (offer) => contractService.evaluateOffer(player.id, team.id, offer)?.factors.overallScore ?? 0
+    );
+  }, [isFreeAgent, player, team]);
 
   const formatSalary = (amount: number): string => {
     if (amount >= 1000000) {
@@ -99,17 +138,6 @@ export function ContractNegotiationModal({
         onClose();
       }, 1500);
     }
-  };
-
-  // Accept counter-offer
-  const handleAcceptCounter = () => {
-    if (!previewResult?.counterOffer) return;
-
-    const counter = previewResult.counterOffer;
-    setSalary(counter.salary);
-    setSigningBonus(counter.signingBonus);
-    setYears(counter.yearsRemaining);
-    setPreviewResult(null);
   };
 
   const getSalaryRating = (amount: number, expectation: SalaryExpectation): string => {
@@ -247,6 +275,38 @@ export function ContractNegotiationModal({
                     </span>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Outreach Actions - only for free agents not on cooldown */}
+            {isFreeAgent && !isOnCooldown && (
+              <div className="bg-vct-dark rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-vct-gray uppercase tracking-wide mb-3">
+                  Outreach Actions
+                </h3>
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    onClick={() => handleOutreach('call', 5000, 8)}
+                    className="px-3 py-2 bg-vct-darker border border-vct-gray/30 text-vct-light text-sm rounded hover:bg-vct-gray/20 transition-colors"
+                  >
+                    Phone Call ($5K) +8
+                  </button>
+                  <button
+                    onClick={() => handleOutreach('trial', 10000, 15)}
+                    className="px-3 py-2 bg-vct-darker border border-vct-gray/30 text-vct-light text-sm rounded hover:bg-vct-gray/20 transition-colors"
+                  >
+                    Trial Session ($10K) +15
+                  </button>
+                  <button
+                    onClick={() => handleOutreach('facility_tour', 25000, 25)}
+                    className="px-3 py-2 bg-vct-darker border border-vct-gray/30 text-vct-light text-sm rounded hover:bg-vct-gray/20 transition-colors"
+                  >
+                    Facility Tour ($25K) +25
+                  </button>
+                </div>
+                {outreachMessage && (
+                  <p className="mt-2 text-sm text-blue-400">{outreachMessage}</p>
+                )}
               </div>
             )}
 
@@ -401,41 +461,36 @@ export function ContractNegotiationModal({
             {previewResult && (
               <div
                 className={`p-4 rounded-lg ${
-                  previewResult.acceptanceProbability > 0.6
+                  previewResult.accepted
                     ? 'bg-green-900/20 border border-green-500/30'
-                    : previewResult.acceptanceProbability > 0.3
-                    ? 'bg-yellow-900/20 border border-yellow-500/30'
                     : 'bg-red-900/20 border border-red-500/30'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-vct-gray text-sm">Acceptance Chance:</span>
-                  <span
-                    className={`font-bold ${
-                      previewResult.acceptanceProbability > 0.6
-                        ? 'text-green-400'
-                        : previewResult.acceptanceProbability > 0.3
-                        ? 'text-yellow-400'
-                        : 'text-red-400'
-                    }`}
-                  >
-                    {Math.round(previewResult.acceptanceProbability * 100)}%
+                  <span className="text-vct-gray text-sm">Offer Prediction:</span>
+                  <span className={`font-bold ${previewResult.accepted ? 'text-green-400' : 'text-red-400'}`}>
+                    {previewResult.accepted ? 'Will Accept' : 'Will Reject'}
                   </span>
                 </div>
+                <p className="text-vct-gray text-sm">{previewResult.reason}</p>
 
-                {/* Counter offer */}
-                {previewResult.counterOffer && (
+                {/* Minimum acceptable offer when rejected */}
+                {!previewResult.accepted && isFreeAgent && minimumOffer && (
                   <div className="mt-3 pt-3 border-t border-vct-gray/20">
-                    <p className="text-vct-gray text-sm mb-2">Counter-offer:</p>
+                    <p className="text-vct-gray text-sm mb-2">Minimum acceptable offer:</p>
                     <div className="flex items-center justify-between">
                       <span className="text-vct-light text-sm">
-                        {formatSalary(previewResult.counterOffer.salary)}/year +{' '}
-                        {formatSalary(previewResult.counterOffer.signingBonus)} bonus,{' '}
-                        {previewResult.counterOffer.yearsRemaining} year
-                        {previewResult.counterOffer.yearsRemaining > 1 ? 's' : ''}
+                        {formatSalary(minimumOffer.salary)}/year +{' '}
+                        {formatSalary(minimumOffer.signingBonus)} bonus,{' '}
+                        {minimumOffer.yearsRemaining} year{minimumOffer.yearsRemaining > 1 ? 's' : ''}
                       </span>
                       <button
-                        onClick={handleAcceptCounter}
+                        onClick={() => {
+                          setSalary(minimumOffer.salary);
+                          setSigningBonus(minimumOffer.signingBonus);
+                          setYears(minimumOffer.yearsRemaining);
+                          setPreviewResult(null);
+                        }}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
                       >
                         Use This
@@ -457,6 +512,11 @@ export function ContractNegotiationModal({
                 No roster space available in selected position.
               </p>
             )}
+            {isFreeAgent && isOnCooldown && (
+              <p className="text-yellow-400 text-sm">
+                Not accepting offers right now. Check back in {cooldownDaysRemaining} day{cooldownDaysRemaining !== 1 ? 's' : ''}.
+              </p>
+            )}
           </div>
         )}
 
@@ -473,7 +533,7 @@ export function ContractNegotiationModal({
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!canAfford || !hasRosterSpace || isNegotiating}
+                disabled={!canAfford || !hasRosterSpace || isNegotiating || (isFreeAgent && isOnCooldown)}
                 className="px-6 py-2 bg-green-600 text-white font-medium rounded
                            hover:bg-green-500 transition-colors
                            disabled:opacity-50 disabled:cursor-not-allowed"
