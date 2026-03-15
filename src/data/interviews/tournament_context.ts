@@ -184,6 +184,27 @@ const PRE_OPTIONS_SURVIVAL_B: InterviewOption[] = [
   },
 ];
 
+const PRE_OPTIONS_SURVIVAL_C: InterviewOption[] = [
+  {
+    tone: 'CONFIDENT',
+    label: 'Track by track',
+    quote: "We're not trying to win the whole thing right now. We're just laying the next track. One round, one map, one match — and the train keeps moving.",
+    effects: { morale: 3, hype: 3 },
+  },
+  {
+    tone: 'HUMBLE',
+    label: 'We earned our spot',
+    quote: "The lower bracket is tough, but we're still here. We didn't get handed anything. Every win means something.",
+    effects: { morale: 2, sponsorTrust: 1 },
+  },
+  {
+    tone: 'DEFLECTIVE',
+    label: 'Not thinking about the bracket',
+    quote: "Honestly, I tune all that out. Bracket position, standings — I let the coaches handle that. I just show up and play.",
+    effects: { dramaChance: 3 },
+  },
+];
+
 const PRE_OPTIONS_GRAND_FINAL: InterviewOption[] = [
   {
     tone: 'CONFIDENT',
@@ -542,7 +563,7 @@ export function generateTournamentContextPreMatchInterview(
       interpolate('Lower bracket of {tournamentName}, round {roundNumber}. You\'ve survived so far — what keeps the team focused?', vars),
       interpolate('Another lower bracket match in {tournamentName}. You\'re still alive at {wins}-{losses}. What does this match mean to the team?', vars),
     ]);
-    return makePending('tc_pre_lower_survival', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B]), context.opponent?.teamId);
+    return makePending('tc_pre_lower_survival', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B, PRE_OPTIONS_SURVIVAL_C]), context.opponent?.teamId);
   }
 
   // Middle bracket
@@ -552,7 +573,7 @@ export function generateTournamentContextPreMatchInterview(
       interpolate('Middle bracket of {tournamentName}, round {roundNumber}. You\'ve still got a path forward — what\'s the mindset?', vars),
       interpolate('You dropped to the middle bracket in {tournamentName}. What does the team need to do to keep the run alive?', vars),
     ]);
-    return makePending('tc_pre_middle_bracket', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B]), context.opponent?.teamId);
+    return makePending('tc_pre_middle_bracket', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B, PRE_OPTIONS_SURVIVAL_C]), context.opponent?.teamId);
   }
 
   // Upper bracket — not grand final, not opening

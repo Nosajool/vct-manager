@@ -217,6 +217,13 @@ export function evaluateCondition(
       return agentsPlayed.includes(condition.agentName);
     }
 
+    case 'map_played': {
+      const s = snapshot as { mapPoolContext?: { playedMaps: string[] } };
+      const playedMaps = s.mapPoolContext?.playedMaps;
+      if (!playedMaps || !condition.mapName) return false;
+      return playedMaps.includes(condition.mapName);
+    }
+
     case 'team_playstyle': {
       const interviewSnap = snapshot as { teamStrategy?: { playstyle: string } };
       if (!interviewSnap.teamStrategy || !condition.playstyle) return false;

@@ -141,6 +141,7 @@ export type DramaConditionType =
   | 'composition_type'            // Checks role distribution in last match
   | 'player_off_preferred_agent'  // At least one player played outside their top-3
   | 'agent_played'                // A specific agent was played in the last match
+  | 'map_played'                  // A specific map was played in the last match
   | 'team_playstyle'              // Checks team strategy playstyle
   | 'team_economy_discipline'     // Checks team economy discipline
 
@@ -230,6 +231,9 @@ export interface DramaCondition {
 
   // For agent_played check (interview-only)
   agentName?: string;  // e.g. 'Harbor'
+
+  // For map_played check (interview-only)
+  mapName?: string;    // e.g. 'Sunset'
 
   // For team_playstyle check
   playstyle?: 'aggressive' | 'balanced' | 'passive';
