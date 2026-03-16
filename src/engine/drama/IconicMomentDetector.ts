@@ -106,9 +106,10 @@ export function detect(
         }
       }
 
-      // ── iconic_clutch_1v3plus: clutch won 1v3 or better by player's team ──
+      // ── iconic_clutch_1v3plus: clutch won 1v3 or better by player's team (Icebox only) ──
       if (
         !foundFlags.has('iconic_clutch_1v3plus') &&
+        map.map === 'Icebox' &&
         round.clutchAttempt?.won === true &&
         playerTeamPlayerIds.has(round.clutchAttempt.playerId)
       ) {

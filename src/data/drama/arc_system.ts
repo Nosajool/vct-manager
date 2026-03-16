@@ -656,6 +656,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'contract_extended_{playerId}',
             flagDuration: 60,
           },
+          {
+            target: 'player_contract_extension',
+            effectPlayerSelector: 'triggering',
+            contractYearsToAdd: 2,
+            contractSalaryMultiplier: 1.5,
+          },
         ],
         outcomeText: '{playerName} signs a premium extension. They are locked in and energised. It cost you, but the roster is stable.',
       },
@@ -719,6 +725,10 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
         type: 'player_form_below',
         threshold: 50,
         playerSelector: 'any',
+      },
+      {
+        type: 'min_season_day',
+        threshold: 21,
       },
     ],
     probability: 65,

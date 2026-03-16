@@ -128,7 +128,7 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
                   </div>
 
                   {/* Morale delta */}
-                  <div className={`text-sm font-bold w-12 text-right flex-shrink-0 ${
+                  <div className={`text-sm font-bold w-12 text-right flex-shrink-0 whitespace-nowrap ${
                     player.delta >= 0 ? 'text-green-400' : 'text-red-400'
                   }`}>
                     {player.delta >= 0 ? '+' : ''}{player.delta} {player.delta >= 0 ? '▲' : '▼'}

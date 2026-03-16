@@ -140,6 +140,13 @@ function formatEffectSummary(effects: DramaChoice['effects']): string {
       const displayStat = stat.charAt(0).toUpperCase() + stat.slice(1);
       summaries.push(`${sign}${effect.delta} ${displayStat}`);
     }
+    if (effect.target === 'player_contract_extension') {
+      const years = effect.contractYearsToAdd ?? 2;
+      const pct = effect.contractSalaryMultiplier
+        ? Math.round((effect.contractSalaryMultiplier - 1) * 100)
+        : 50;
+      summaries.push(`Contract Extended (+${years} yrs, +${pct}% salary)`);
+    }
   }
 
   return summaries.join(', ') || 'No immediate effects';

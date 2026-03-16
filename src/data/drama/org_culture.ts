@@ -13,6 +13,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     description:
       "{playerName} has approached the coaching staff — they haven't seen family in months and are asking if they can fly home for a few days. It's a personal request, and how the org responds will say a lot.",
     conditions: [
+      { type: 'min_season_day', threshold: 14 },
       { type: 'player_on_active_roster', playerSelector: 'condition_match' },
       { type: 'flag_not_active', flag: 'home_visit_paid_{playerId}' },
       { type: 'flag_not_active', flag: 'home_visit_approved_{playerId}' },
@@ -282,6 +283,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     description:
       "The org had a great year financially and decided to commit to a proper team house upgrade. New furniture, better internet, the whole package. It's small in the grand scheme of things, but players remember when an org actually invests in them.",
     conditions: [
+      { type: 'min_season_day', threshold: 3 },
       { type: 'team_budget_above', threshold: 100000 },
       { type: 'flag_not_active', flag: 'housing_covered' },
     ],

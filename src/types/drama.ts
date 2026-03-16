@@ -283,7 +283,10 @@ export type DramaEffectTarget =
   | 'escalate_event'
 
   // Free agent interest
-  | 'free_agent_interest';
+  | 'free_agent_interest'
+
+  // Contract extension
+  | 'player_contract_extension'; // Extends player contract with years + salary raise
 
 /**
  * Player selector for effects (extended for effect resolution needs)
@@ -323,6 +326,10 @@ export interface DramaEffect {
 
   // For free agent interest
   interestDelta?: number;
+
+  // For player_contract_extension
+  contractYearsToAdd?: number;      // Years to add to remaining contract (e.g. 2)
+  contractSalaryMultiplier?: number; // Salary multiplier applied (e.g. 1.5 = +50%)
 }
 
 // ============================================================================

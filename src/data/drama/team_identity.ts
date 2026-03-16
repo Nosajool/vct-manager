@@ -704,7 +704,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     description: 'After declaring championship-or-bust ambitions at the start of the season, {teamName}\'s stumble has the media demanding answers.',
     conditions: [
       { type: 'flag_active', flag: 'org_high_expectations' },
-      { type: 'team_loss_streak', streakLength: 1 },
+      { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 50,
     cooldownDays: 3,

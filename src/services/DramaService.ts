@@ -645,6 +645,31 @@ export class DramaService {
           }
           break;
         }
+
+        case 'extend_player_contract': {
+          if (!effect.playerId) continue;
+          const player = state.players[effect.playerId];
+          if (!player?.contract) continue;
+
+          const yearsToAdd = effect.yearsToAdd ?? 2;
+          const salaryMultiplier = effect.salaryMultiplier ?? 1.5;
+
+          const newYearsRemaining = (player.contract.yearsRemaining ?? 0) + yearsToAdd;
+          const newSalary = Math.round(player.contract.salary * salaryMultiplier);
+
+          const endDateObj = new Date(player.contract.endDate || state.calendar.currentDate);
+          endDateObj.setFullYear(endDateObj.getFullYear() + yearsToAdd);
+
+          state.updatePlayer(effect.playerId, {
+            contract: {
+              ...player.contract,
+              yearsRemaining: newYearsRemaining,
+              salary: newSalary,
+              endDate: endDateObj.toISOString(),
+            }
+          });
+          break;
+        }
       }
     }
   }

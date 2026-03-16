@@ -11,7 +11,7 @@ import type { DramaEffect, DramaGameStateSnapshot, EffectPlayerSelector } from '
  * Concrete mutation to apply to game state
  */
 export interface ResolvedEffect {
-  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'update_free_agent_interest';
+  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'update_free_agent_interest' | 'extend_player_contract';
 
   // Player updates
   playerId?: string;
@@ -25,6 +25,10 @@ export interface ResolvedEffect {
 
   // Free agent interest
   interestDelta?: number;
+
+  // Contract extension
+  yearsToAdd?: number;
+  salaryMultiplier?: number;
 }
 
 // ============================================================================
@@ -145,6 +149,17 @@ function resolveEffect(
       type: 'update_free_agent_interest',
       interestDelta: effect.interestDelta ?? 0,
     }];
+  }
+
+  // Handle contract extension
+  if (target === 'player_contract_extension') {
+    const playerIds = resolvePlayerSelector(effect.effectPlayerSelector, effect.playerId, snapshot, involvedPlayerIds);
+    return playerIds.map(playerId => ({
+      type: 'extend_player_contract' as const,
+      playerId,
+      yearsToAdd: effect.contractYearsToAdd ?? 2,
+      salaryMultiplier: effect.contractSalaryMultiplier ?? 1.5,
+    }));
   }
 
   // Handle special targets mentioned in spec

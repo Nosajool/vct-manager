@@ -387,14 +387,21 @@ Templates with no `conditions` field fire whenever their `context` (and `matchOu
   flagDuration?: number,    // days, for set_flag
   eventTemplateId?: string, // for trigger_event
   escalationTemplateId?: string, // for escalate_event
+  contractYearsToAdd?: number,      // for player_contract_extension: years to add
+  contractSalaryMultiplier?: number, // for player_contract_extension: salary multiplier (e.g. 1.5)
 }
 ```
+
+- `player_contract_extension`: Extends the targeted player's contract in-place. Requires `effectPlayerSelector` to identify the player.
+  Use `contractYearsToAdd` (default 2) to extend duration and `contractSalaryMultiplier` (default 1.5) to scale the salary.
+  The new `endDate` is computed from the player's existing `endDate` + years. Displays as "Contract Extended (+N yrs, +X% salary)" in the Decision Made screen.
 
 ### `DramaEffectTarget` values
 
 ```
 player_morale | player_form | player_stat
 team_chemistry | team_budget
+player_contract_extension   ← extends yearsRemaining + raises salary; use contractYearsToAdd + contractSalaryMultiplier
 set_flag | clear_flag | add_cooldown
 trigger_event | escalate_event
 ```
