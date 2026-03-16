@@ -9,6 +9,7 @@ import { featureGateService } from './FeatureGateService';
 import { lineupOptimizer } from '../engine/team/LineupOptimizer';
 import type { DayPlan, DayPlanItem, ActivityState } from '../types/dayPlan';
 import type { CalendarEvent, SchedulableActivityType } from '../types/calendar';
+import type { BootcampDayEventData } from './BootcampService';
 
 /**
  * Priority levels for day plan items
@@ -50,7 +51,14 @@ export class DayPlanService {
     // 1. Convert matches to items
     items.push(...this.getMatchItems(daySchedule.fixedEvents));
 
-    // 2. Convert scheduled activities to items
+    // 1b. Bootcamp progress item (replaces generic team_activity display for bootcamp days)
+    const bootcampItem = this.getBootcampItem(date);
+    if (bootcampItem) items.push(bootcampItem);
+
+    // 1c. Downtime activity items (watch_party, streamer_collab, etc.)
+    items.push(...this.getDowntimeActivityItems(date, daySchedule.scheduledActivities));
+
+    // 2. Convert scheduled activities to items (bootcamp team_activity events are skipped here)
     items.push(...this.getScheduledActivityItems(daySchedule.scheduledActivities));
 
     // 3. Add available-but-not-scheduled activities
@@ -417,8 +425,9 @@ export class DayPlanService {
       });
     }
 
-    // Lineup optimization check - only if team has reserves
-    if (team.reservePlayerIds && team.reservePlayerIds.length > 0) {
+    // Lineup optimization check - only if team has reserves and feature is unlocked
+    if (team.reservePlayerIds && team.reservePlayerIds.length > 0
+        && featureGateService.isFeatureUnlocked('roster_optimization')) {
       // Get all players (active + reserves)
       const allPlayerIds = [...team.playerIds, ...team.reservePlayerIds];
       const allPlayers = allPlayerIds
@@ -491,7 +500,8 @@ export class DayPlanService {
   }
 
   /**
-   * Get activity type (training/scrim/strategy) from calendar event
+   * Get activity type (training/scrim/strategy) from calendar event.
+   * Returns null for team_activity events — they are handled by getBootcampItem or future resolvers.
    */
   private getActivityTypeFromEvent(event: CalendarEvent): 'training' | 'scrim' | 'strategy' | null {
     switch (event.type) {
@@ -500,11 +510,96 @@ export class DayPlanService {
       case 'scheduled_scrim':
         return 'scrim';
       case 'team_activity':
-        // team_activity events don't map to our display categories for now
+        // Bootcamp days and other downtime activities are rendered via dedicated item methods
         return null;
       default:
         return null;
     }
+  }
+
+  /**
+   * Generate a bootcamp progress item for days where an active bootcamp is running.
+   * Shows "Day X/7: Bootcamp in [Region] — Focus: [stat focus]"
+   */
+  private getBootcampItem(date: string): DayPlanItem | null {
+    const state = useGameStore.getState();
+    const { activeBootcamp } = state;
+    if (!activeBootcamp || activeBootcamp.status !== 'active') return null;
+
+    // Find the bootcamp day event for this date
+    const event = state.calendar.scheduledEvents.find(e => {
+      if (e.type !== 'team_activity') return false;
+      const d = e.data as Partial<BootcampDayEventData>;
+      return (
+        d.activityType === 'bootcamp_day' &&
+        d.bootcampId === activeBootcamp.id &&
+        new Date(e.date).toDateString() === new Date(date).toDateString()
+      );
+    });
+    if (!event) return null;
+
+    const data = event.data as BootcampDayEventData;
+    const regionLabels: Record<string, string> = {
+      APAC: 'Korea (APAC)',
+      EU: 'Europe',
+      Americas: 'Americas',
+    };
+    const focusLabels: Record<string, string> = {
+      APAC: 'Mechanics & Clutch',
+      EU: 'IGL & Mental',
+      Americas: 'Entry & Lurking',
+    };
+
+    return {
+      id: `bootcamp-day-${event.id}`,
+      category: 'activity',
+      label: `Day ${data.bootcampDay}/7: Bootcamp in ${regionLabels[data.region] ?? data.region}`,
+      description: `Focus: ${focusLabels[data.region] ?? data.region} — auto-resolves at end of day`,
+      priority: PRIORITY.MEDIUM,
+      completed: event.processed,
+      activityType: 'training', // closest visual category
+      activityState: 'locked',
+      calendarEventId: event.id,
+    };
+  }
+
+  /**
+   * Generate DayPlanItems for the 5 single-day downtime activities scheduled on a given date.
+   */
+  private getDowntimeActivityItems(_date: string, scheduledActivities: CalendarEvent[]): DayPlanItem[] {
+    const items: DayPlanItem[] = [];
+
+    const downtimeTypeLabels: Record<string, string> = {
+      watch_party: 'Watch Party',
+      streamer_collab: 'Streamer Collab',
+      youtube_documentary: 'YouTube Documentary',
+      fan_meetup: 'Fan Meetup',
+      sponsored_content: 'Sponsored Content',
+    };
+
+    for (const event of scheduledActivities) {
+      if (event.type !== 'team_activity') continue;
+
+      const data = event.data as { activityType?: string } | undefined;
+      const activityType = data?.activityType;
+      if (!activityType || !(activityType in downtimeTypeLabels)) continue;
+
+      const label = downtimeTypeLabels[activityType];
+
+      items.push({
+        id: `downtime-${activityType}-${event.id}`,
+        category: 'activity',
+        label,
+        description: `${label} — auto-resolves at end of day`,
+        priority: PRIORITY.MEDIUM,
+        completed: event.processed,
+        activityType: 'training', // closest visual category
+        activityState: 'locked',
+        calendarEventId: event.id,
+      });
+    }
+
+    return items;
   }
 
   /**

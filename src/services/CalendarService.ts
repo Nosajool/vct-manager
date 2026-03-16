@@ -18,6 +18,7 @@ import { matchMoraleCalculator } from '../engine/match';
 import type { MatchMoraleResult } from '../types';
 import type { PendingInterview } from '../types/interview';
 import { activityResolutionService } from './ActivityResolutionService';
+import { downtimeResolutionService } from './DowntimeResolutionService';
 import { trainingService } from './TrainingService';
 import { scrimService } from './ScrimService';
 import { eventLifecycleManager } from '../engine/scheduling/EventLifecycleManager';
@@ -31,6 +32,7 @@ import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
 import { detect as detectIconicMoments } from '../engine/drama/IconicMomentDetector';
 import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
+import { bootcampService, type BootcampDayEventData } from './BootcampService';
 import { isLeagueToPlayoffTournament } from '../types';
 import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
 
@@ -344,6 +346,22 @@ export class CalendarService {
             }
           }
         }
+      } else if (event.type === 'team_activity') {
+        // Route downtime activities by activityType
+        const data = event.data as { activityType?: string } & Partial<BootcampDayEventData>;
+        if (data?.activityType === 'bootcamp_day') {
+          bootcampService.processBootcampDay(event);
+        } else if (
+          data?.activityType === 'watch_party' ||
+          data?.activityType === 'streamer_collab' ||
+          data?.activityType === 'youtube_documentary' ||
+          data?.activityType === 'fan_meetup' ||
+          data?.activityType === 'sponsored_content'
+        ) {
+          downtimeResolutionService.resolveDowntimeActivity(event);
+        }
+        state.markEventProcessed(event.id);
+        processedEvents.push(event);
       } else if (timeProgression.isRequiredEventType(event.type)) {
         // Auto-mark as processed (informational)
         state.markEventProcessed(event.id);
