@@ -124,6 +124,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-cyan-500/20 to-cyan-600/20',
     badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
   },
+  player_conflict: {
+    label: 'Team Conflict',
+    color: 'from-purple-500/20 to-violet-600/20',
+    badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  },
 };
 
 /**

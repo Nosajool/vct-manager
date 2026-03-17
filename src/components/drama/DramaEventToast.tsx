@@ -121,6 +121,11 @@ const CATEGORY_METADATA: Record<
     color: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30',
     icon: '🎯',
   },
+  player_conflict: {
+    label: 'Team Conflict',
+    color: 'from-purple-500/20 to-violet-600/20 border-purple-500/30',
+    icon: '⚡',
+  },
 };
 
 /**

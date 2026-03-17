@@ -40,6 +40,7 @@ const CATEGORY_CONFIG: Record<
   iconic_moments:    { label: 'Iconic Moment',     color: 'text-violet-400',  badgeColor: 'bg-violet-500/20 text-violet-400 border-violet-500/30'    },
   coaching_beef:        { label: 'Coaching Beef',     color: 'text-orange-400',  badgeColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30'    },
   free_agent_pursuit:   { label: 'FA Pursuit',        color: 'text-cyan-400',    badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'           },
+  player_conflict:      { label: 'Team Conflict',     color: 'text-purple-400',  badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30'     },
 };
 
 const NARRATIVE_CATEGORIES: DramaCategory[] = [

@@ -159,6 +159,10 @@ export function evaluateCondition(
     case 'team_budget_above':
       return condition.threshold !== undefined ? (snapshot.teamBudget ?? 0) > condition.threshold : false;
 
+    // Downtime checks
+    case 'team_in_downtime':
+      return snapshot.isInDowntime === true;
+
     // Random chance
     case 'random_chance':
       return condition.chance !== undefined

@@ -50,6 +50,7 @@ const DRAMA_CATEGORY_META: Record<
   iconic_moments:   { label: 'Iconic Moment',    color: 'text-violet-400', dotColor: 'bg-violet-500',  icon: '⚡' },
   coaching_beef:       { label: 'Coaching Beef', color: 'text-orange-400', dotColor: 'bg-orange-500', icon: '🔥' },
   free_agent_pursuit:  { label: 'FA Pursuit',    color: 'text-cyan-400',   dotColor: 'bg-cyan-500',   icon: '🎯' },
+  player_conflict:     { label: 'Conflict',       color: 'text-purple-400', dotColor: 'bg-purple-500', icon: '⚡' },
 };
 
 const INTERVIEW_CONTEXT_META: Record<
@@ -61,6 +62,7 @@ const INTERVIEW_CONTEXT_META: Record<
   CRISIS:     { label: 'Crisis',        color: 'text-red-400',    dotColor: 'bg-red-500'    },
   KICKOFF:    { label: 'Kickoff',       color: 'text-yellow-400', dotColor: 'bg-yellow-500' },
   GENERAL:    { label: 'Media Day',     color: 'text-purple-400', dotColor: 'bg-purple-500' },
+  WATCH_PARTY: { label: 'Watch Party',  color: 'text-cyan-400',   dotColor: 'bg-cyan-500'   },
 };
 
 // ============================================================================

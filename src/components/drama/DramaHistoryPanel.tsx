@@ -128,6 +128,12 @@ const CATEGORY_METADATA: Record<
     dotColor: 'bg-cyan-500',
     icon: '🎯',
   },
+  player_conflict: {
+    label: 'Conflict',
+    color: 'text-purple-400',
+    dotColor: 'bg-purple-500',
+    icon: '⚡',
+  },
 };
 
 /**

@@ -11,7 +11,7 @@ import type { DramaEffect, DramaGameStateSnapshot, EffectPlayerSelector } from '
  * Concrete mutation to apply to game state
  */
 export interface ResolvedEffect {
-  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'update_free_agent_interest' | 'extend_player_contract';
+  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'release_player' | 'update_free_agent_interest' | 'extend_player_contract';
 
   // Player updates
   playerId?: string;
@@ -129,6 +129,20 @@ function resolveEffect(
     );
     return playerIds.map(playerId => ({
       type: target as 'move_to_reserve' | 'move_to_active',
+      playerId,
+    }));
+  }
+
+  // Handle player release (remove from team, make free agent)
+  if (target === 'release_player') {
+    const playerIds = resolvePlayerSelector(
+      effect.effectPlayerSelector,
+      effect.playerId,
+      snapshot,
+      involvedPlayerIds
+    );
+    return playerIds.map(playerId => ({
+      type: 'release_player' as const,
       playerId,
     }));
   }

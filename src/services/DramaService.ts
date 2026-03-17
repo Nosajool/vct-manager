@@ -4,6 +4,7 @@
 import { useGameStore } from '../store';
 import * as dramaEngine from '../engine/drama';
 import { freeAgentInterestService } from './FreeAgentInterestService';
+import { downtimeService } from './DowntimeService';
 import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
 import { resolveEffects, type ResolvedEffect } from '../engine/drama/DramaEffectResolver';
 import type {
@@ -365,6 +366,7 @@ export class DramaService {
         consecutiveNegativeMonths: playerTeam.finances.consecutiveNegativeMonths ?? 0,
       },
       freeAgentInterests,
+      isInDowntime: downtimeService.isTeamInDowntime(playerTeamId),
     };
   }
 
@@ -603,6 +605,22 @@ export class DramaService {
             }
           }
           state.movePlayerToActive(playerTeamId, effect.playerId);
+          break;
+        }
+
+        case 'release_player': {
+          if (!effect.playerId) continue;
+          const playerTeamId = state.playerTeamId;
+          if (!playerTeamId) continue;
+          // Remove from team roster
+          state.removePlayerFromTeam(playerTeamId, effect.playerId);
+          // Make them a free agent
+          state.updatePlayer(effect.playerId, { teamId: null });
+          // Initialize FA interest for all other teams at elevated level (~65)
+          const allTeams = Object.keys(state.teams).filter(id => id !== playerTeamId);
+          for (const teamId of allTeams) {
+            state.setFreeAgentInterest(effect.playerId, teamId, 60 + Math.floor(Math.random() * 15));
+          }
           break;
         }
 

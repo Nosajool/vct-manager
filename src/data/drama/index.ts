@@ -18,6 +18,7 @@ import { FINANCIAL_STRESS_EVENTS } from './financial_stress';
 import { ICONIC_MOMENT_EVENTS } from './iconic_moments';
 import { COACHING_BEEF_EVENTS } from './coaching_beef';
 import { FREE_AGENT_PURSUIT_EVENTS } from './free_agent_pursuit';
+import { PLAYER_CONFLICT_EVENTS } from './player_conflict';
 
 export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...PLAYER_EGO_EVENTS,
@@ -38,4 +39,5 @@ export const DRAMA_EVENT_TEMPLATES: DramaEventTemplate[] = [
   ...ICONIC_MOMENT_EVENTS,
   ...COACHING_BEEF_EVENTS,
   ...FREE_AGENT_PURSUIT_EVENTS,
+  ...PLAYER_CONFLICT_EVENTS,
 ];

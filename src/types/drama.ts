@@ -39,7 +39,8 @@ export type DramaCategory =
   | 'financial_stress'   // org financial pressure arc
   | 'iconic_moments'    // in-game moments that mirror famous VCT plays
   | 'coaching_beef'    // coach-to-coach feud arc
-  | 'free_agent_pursuit'; // free agent interest and recruitment arc
+  | 'free_agent_pursuit' // free agent interest and recruitment arc
+  | 'player_conflict'; // team chemistry breakdown and player conflict arc
 
 /**
  * Severity level of drama events
@@ -162,7 +163,10 @@ export type DramaConditionType =
   | 'player_agent_mastery_below'         // player's mastery on preferred agent < threshold
   | 'player_agent_mastery_above'         // player's mastery on preferred agent >= threshold
   | 'player_signature_agent_streak'      // player has N+ consecutive appearances on same agent
-  | 'team_avg_mastery_below';            // team avg mastery on current comp < threshold
+  | 'team_avg_mastery_below'             // team avg mastery on current comp < threshold
+
+  // Downtime checks
+  | 'team_in_downtime';                  // Team is not in any active tournament
 
 /**
  * Player selection method for condition evaluation
@@ -272,6 +276,7 @@ export type DramaEffectTarget =
   // Roster position changes
   | 'move_to_reserve'  // Bench a player: removes from active, adds to reserve
   | 'move_to_active'   // Return a player: removes from reserve, adds to active
+  | 'release_player'   // Release a player: remove from team and make free agent
 
   // State modifications
   | 'set_flag'
@@ -352,6 +357,7 @@ export interface DramaChoice {
 
   // Optional follow-up event
   triggersEventId?: string;
+  triggerDelay?: number;  // Days to wait before triggering the follow-up event
 }
 
 /**
@@ -527,6 +533,9 @@ export interface DramaGameStateSnapshot {
 
   // Free agent interest scores for tracked free agents
   freeAgentInterests?: Record<string, number>;
+
+  // Downtime state
+  isInDowntime?: boolean;   // true when team is not in any active tournament
 }
 
 /**
