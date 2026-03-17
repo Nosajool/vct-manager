@@ -52,6 +52,10 @@ const CONTEXT_META: Record<InterviewContext, { label: string; badgeColor: string
     label: 'GENERAL',
     badgeColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
   },
+  WATCH_PARTY: {
+    label: 'WATCH PARTY',
+    badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+  },
 };
 
 const TONE_BADGE: Record<InterviewTone, string> = {

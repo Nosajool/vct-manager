@@ -39,6 +39,11 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     color: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
     title: 'Strategy Unlocked',
   },
+  roster_optimization: {
+    icon: '📊',
+    color: 'from-emerald-500/20 to-emerald-600/20 border-emerald-500/30',
+    title: 'Lineup Optimizer Unlocked',
+  },
   auto_assign: {
     icon: '🤖',
     color: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
@@ -53,6 +58,21 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     icon: '🗺️',
     color: 'from-purple-500/20 to-violet-600/20 border-violet-500/30',
     title: 'Advanced Scrims Unlocked',
+  },
+  downtime_activities: {
+    icon: '👁️',
+    color: 'from-slate-500/20 to-slate-600/20 border-slate-500/30',
+    title: 'Downtime Activities Unlocked',
+  },
+  bootcamp: {
+    icon: '✈️',
+    color: 'from-sky-500/20 to-sky-600/20 border-sky-500/30',
+    title: 'Regional Bootcamps Unlocked',
+  },
+  content_events: {
+    icon: '📱',
+    color: 'from-pink-500/20 to-rose-600/20 border-rose-500/30',
+    title: 'Content & Brand Events Unlocked',
   },
 };
 

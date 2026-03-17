@@ -422,6 +422,24 @@ export class InterviewService {
     return this.toPendingInterview(template, undefined);
   }
 
+  /**
+   * Check whether a watch-party interview should trigger.
+   * Fires only when the `downtime_interview_pending` drama flag is active.
+   * The flag is consumed by the `clearsFlags` effect on the chosen option.
+   */
+  checkDowntimeWatchPartyInterview(_currentDate: string): PendingInterview | null {
+    const state = useGameStore.getState();
+
+    if (!('downtime_interview_pending' in state.activeFlags)) return null;
+
+    const candidates = INTERVIEW_TEMPLATES.filter(t => t.context === 'WATCH_PARTY');
+
+    const template = this.pickTemplate(candidates);
+    if (!template) return null;
+
+    return this.toPendingInterview(template, undefined);
+  }
+
   // ============================================================================
   // Resolve interview — apply effects to game state
   // ============================================================================

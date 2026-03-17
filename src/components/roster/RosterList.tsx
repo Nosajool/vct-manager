@@ -78,7 +78,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
   const [optimizationResult, setOptimizationResult] = useState<LineupResult | null>(null);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const activeFlags = useGameStore((state) => state.activeFlags);
-  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
+  const rosterOptimizationUnlocked = useFeatureUnlocked('roster_optimization');
   const isPlayerTeam = team.id === playerTeamId;
 
   const getPlayerRestrictionForCard = (playerId: string) =>
@@ -231,7 +231,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
               `}>
                 {activePlayers.length}/5
               </span>
-              {isPlayerTeam && optimizationResult && autoAssignUnlocked && (
+              {isPlayerTeam && optimizationResult && rosterOptimizationUnlocked && (
                 <button
                   onClick={handleSetOptimalLineup}
                   className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors flex items-center gap-1.5"

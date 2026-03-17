@@ -41,10 +41,26 @@ export interface ScrimActivityConfig {
   autoConfigured: boolean;
 }
 
+export type BootcampRegion = 'APAC' | 'EU' | 'Americas';
+
+/**
+ * Configuration for a single day of a regional bootcamp (auto-configured, no user input needed)
+ */
+export interface BootcampDayActivityConfig {
+  type: 'bootcamp_day';
+  id: string;
+  date: string;
+  eventId: string;
+  status: ActivityLifecycleState;
+  bootcampId: string;   // Links to BootcampConfig in bootcampSlice
+  bootcampDay: number;  // 1-7
+  autoConfigured: true;
+}
+
 /**
  * Union type for all activity configurations
  */
-export type ActivityConfig = TrainingActivityConfig | ScrimActivityConfig;
+export type ActivityConfig = TrainingActivityConfig | ScrimActivityConfig | BootcampDayActivityConfig;
 
 /**
  * Result of resolving all configured activities during day advancement

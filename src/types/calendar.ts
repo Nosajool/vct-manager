@@ -42,7 +42,14 @@ export type SchedulableActivityType =
   | 'rest'
   | 'social_media'
   | 'team_offsite'
-  | 'bootcamp';
+  | 'bootcamp'
+  // Downtime activities (available when not in an active tournament)
+  | 'regional_bootcamp'
+  | 'watch_party'
+  | 'streamer_collab'
+  | 'youtube_documentary'
+  | 'fan_meetup'
+  | 'sponsored_content';
 
 export interface CalendarEvent {
   id: string;

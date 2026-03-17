@@ -54,8 +54,9 @@ export interface TimeAdvanceResult {
   reputationDelta?: ReputationDelta;   // Reputation change from player team matches today
   rivalryDelta?: RivalryDelta;         // Rivalry change from player team matches today
   interviewQueue?: PendingInterview[]; // Interviews to show after SimulationResultsModal
-  crisisInterview?: PendingInterview;  // Crisis interview to show (after post-match interview)
-  generalInterview?: PendingInterview; // General media-day interview for non-match days
+  crisisInterview?: PendingInterview;     // Crisis interview to show (after post-match interview)
+  watchPartyInterview?: PendingInterview; // Watch-party interview (flag-triggered, non-match days)
+  generalInterview?: PendingInterview;    // General media-day interview for non-match days
   moraleChanges?: MatchMoraleResult;   // Morale changes from player team match
 }
 
@@ -554,10 +555,16 @@ export class CalendarService {
       }
     }
 
-    // Check for general interview (non-match days only)
+    // Check for watch party interview (flag-triggered, non-match days)
     const isMatchDay = simulatedMatches.length > 0;
-    let generalInterview: PendingInterview | undefined;
+    let watchPartyInterview: PendingInterview | undefined;
     if (!isMatchDay && state.playerTeamId) {
+      watchPartyInterview = interviewService.checkDowntimeWatchPartyInterview(currentDate) ?? undefined;
+    }
+
+    // Check for general interview (non-match days only, suppressed if watch party fires)
+    let generalInterview: PendingInterview | undefined;
+    if (!isMatchDay && state.playerTeamId && !watchPartyInterview) {
       generalInterview = interviewService.checkGeneralInterview(currentDate) ?? undefined;
     }
 
@@ -587,6 +594,7 @@ export class CalendarService {
       rivalryDelta,
       interviewQueue,
       crisisInterview: crisisInterview ?? undefined,
+      watchPartyInterview: watchPartyInterview ?? undefined,
       generalInterview: generalInterview ?? undefined,
       moraleChanges,
     };

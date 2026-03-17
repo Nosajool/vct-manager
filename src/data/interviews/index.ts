@@ -18,6 +18,7 @@ import { ORG_CULTURE_INTERVIEWS } from './org_culture';
 import { MAP_POOL_INTERVIEW_TEMPLATES } from './map_pool';
 import { COACHING_BEEF_TEMPLATES } from './coaching_beef';
 import { ICONIC_MOMENTS_INTERVIEW_TEMPLATES } from './iconic_moments';
+import { WATCH_PARTY_TEMPLATES } from './watch_party';
 
 export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...KICKOFF_TEMPLATES,
@@ -38,4 +39,5 @@ export const INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   ...MAP_POOL_INTERVIEW_TEMPLATES,
   ...COACHING_BEEF_TEMPLATES,
   ...ICONIC_MOMENTS_INTERVIEW_TEMPLATES,
+  ...WATCH_PARTY_TEMPLATES,
 ];

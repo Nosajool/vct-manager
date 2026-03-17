@@ -17,3 +17,4 @@ export {
 } from './competitionSlice';
 export { createSeasonStatsSlice, type SeasonStatsSlice } from './seasonStatsSlice';
 export { createActivityPlanSlice, type ActivityPlanSlice } from './activityPlanSlice';
+export { createBootcampSlice, type BootcampSlice, type BootcampConfig, type BootcampStatus } from './bootcampSlice';

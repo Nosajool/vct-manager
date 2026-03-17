@@ -40,7 +40,14 @@ export class AvailabilityRulesEngine {
       'rest',
       'social_media',
       'team_offsite',
-      'bootcamp'
+      'bootcamp',
+      // Downtime activities
+      'regional_bootcamp',
+      'watch_party',
+      'streamer_collab',
+      'youtube_documentary',
+      'fan_meetup',
+      'sponsored_content',
     ];
 
     const blockers: DayBlocker[] = [];

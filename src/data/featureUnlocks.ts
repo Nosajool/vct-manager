@@ -9,7 +9,19 @@ import type { SeasonPhase } from '../types/calendar';
 // ============================================
 
 /** Available game features that can be unlocked */
-export type FeatureType = 'training' | 'scrims' | 'transfers' | 'strategy' | 'auto_assign' | 'advancedTraining' | 'advancedScrims';
+export type FeatureType =
+  | 'training'
+  | 'scrims'
+  | 'transfers'
+  | 'strategy'
+  | 'roster_optimization'
+  | 'auto_assign'
+  | 'advancedTraining'
+  | 'advancedScrims'
+  // Downtime features
+  | 'downtime_activities'   // watch party + fan meetup
+  | 'bootcamp'              // regional bootcamp (7-day commit)
+  | 'content_events';       // streamer collab, youtube doc, sponsored content
 
 /** Unlock condition - either day-based or phase-based */
 export type UnlockCondition =
@@ -61,9 +73,14 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     description: 'Strategy unlocks in Stage 1 - advanced tactics for competitive play',
   },
   {
+    feature: 'roster_optimization',
+    condition: { type: 'day', day: 8 },
+    description: 'Lineup Optimizer unlocks on day 8 - analyze your roster to find the optimal 5-player starting lineup',
+  },
+  {
     feature: 'auto_assign',
     condition: { type: 'day', day: 22 },
-    description: 'Smart coaching tools unlocked - auto-optimize lineup, training, and scrims',
+    description: 'Smart coaching tools unlocked - auto-optimize training and scrims',
   },
   {
     feature: 'advancedTraining',
@@ -74,5 +91,20 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     feature: 'advancedScrims',
     condition: { type: 'phase', phase: 'stage2' },
     description: 'Advanced scrim options unlock in Stage 2 - map selection and intensity control',
+  },
+  {
+    feature: 'downtime_activities',
+    condition: { type: 'day', day: 15 },
+    description: 'Downtime activities unlock on day 15 - watch party and fan meetup available when not in a tournament',
+  },
+  {
+    feature: 'bootcamp',
+    condition: { type: 'phase', phase: 'stage1' },
+    description: 'Regional bootcamps unlock in Stage 1 - commit your team to a 7-day trip for region-specific skill focus',
+  },
+  {
+    feature: 'content_events',
+    condition: { type: 'day', day: 30 },
+    description: 'Content & brand events unlock on day 30 - streamer collabs, youtube documentaries, and sponsored content',
   },
 ];

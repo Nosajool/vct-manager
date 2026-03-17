@@ -9,7 +9,7 @@ import type { MapStrengthAttributes } from './scrim';
 
 export type { CompositionPattern };
 
-export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF' | 'GENERAL';
+export type InterviewContext = 'PRE_MATCH' | 'POST_MATCH' | 'CRISIS' | 'KICKOFF' | 'GENERAL' | 'WATCH_PARTY';
 
 export type InterviewTone =
   | 'CONFIDENT'

@@ -24,6 +24,10 @@ interface DramaEventToastProps {
   onDismiss: () => void;
   /** Auto-dismiss after this many milliseconds (default: 5000) */
   autoCloseMs?: number;
+  /** Queue position indicator, shown when multiple toasts are queued */
+  queuePosition?: { current: number; total: number };
+  /** Called to clear all remaining toasts in the queue */
+  onSkipAll?: () => void;
 }
 
 /** Category display metadata */
@@ -161,6 +165,8 @@ export function DramaEventToast({
   event,
   onDismiss,
   autoCloseMs = 5000,
+  queuePosition,
+  onSkipAll,
 }: DramaEventToastProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -262,6 +268,17 @@ export function DramaEventToast({
               <div className={`text-xs font-medium ${effectColor}`}>
                 {effectSummary}
               </div>
+              {/* Queue indicator */}
+              {queuePosition && (
+                <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                  <span>{queuePosition.current} of {queuePosition.total}</span>
+                  {onSkipAll && (
+                    <button onClick={onSkipAll} className="hover:text-gray-200">
+                      Skip all
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

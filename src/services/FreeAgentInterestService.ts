@@ -104,6 +104,12 @@ export class FreeAgentInterestService {
     state.setFreeAgentInterest(playerId, teamId, newScore);
     state.addOutreachAction(playerId, teamId, actionName);
 
+    if (actionName === 'facility_tour') {
+      state.setDramaFlag('facility_tour_completed', {
+        setDate: new Date().toISOString(),
+      });
+    }
+
     if (budgetCost > 0) {
       state.updateTeamBalance(teamId, -budgetCost);
       const currentSpend = player.outreachSpend?.[teamId] ?? 0;

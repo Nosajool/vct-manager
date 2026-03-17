@@ -52,6 +52,8 @@ export interface FastForwardResult {
   totalDramaEventsResolved: number;
   totalTrainingSessions: number;
   totalScrims: number;
+  totalDowntimeActivities: number;
+  totalBootcampDays: number;
   phaseChanges: Array<{ fromPhase: string; toPhase: string; date: string }>;
 }
 
@@ -148,6 +150,8 @@ class FastForwardService {
     let totalDramaEventsResolved = 0;
     let totalTrainingSessions = 0;
     let totalScrims = 0;
+    let totalDowntimeActivities = 0;
+    let totalBootcampDays = 0;
     const phaseChanges: Array<{ fromPhase: string; toPhase: string; date: string }> = [];
 
     for (let day = 0; day < config.days; day++) {
@@ -219,6 +223,14 @@ class FastForwardService {
 
       // Auto-schedule training and scrim if not already scheduled for this day
       const eventsOnDay = state.calendar.scheduledEvents.filter(e => e.date === currentDate);
+
+      // Count downtime and bootcamp team_activity events being resolved today
+      const teamActivitiesToday = eventsOnDay.filter(e => e.type === 'team_activity');
+      for (const e of teamActivitiesToday) {
+        const data = e.data as { activityType?: string };
+        if (data?.activityType === 'bootcamp_day') totalBootcampDays++;
+        else totalDowntimeActivities++;
+      }
       const hasTraining = eventsOnDay.some(e => e.type === 'scheduled_training');
       const hasScrim = eventsOnDay.some(e => e.type === 'scheduled_scrim');
       if (!hasTraining) {
@@ -363,6 +375,8 @@ class FastForwardService {
       totalDramaEventsResolved,
       totalTrainingSessions,
       totalScrims,
+      totalDowntimeActivities,
+      totalBootcampDays,
       phaseChanges,
     };
   }

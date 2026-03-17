@@ -39,6 +39,7 @@ import type { CalendarEvent, SchedulableActivityType } from '../../types/calenda
 import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
 import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
+import { AutoSaveIndicator } from './AutoSaveIndicator';
 
 type PostSimulationModalType = 'training' | 'scrim' | 'morale' | 'interview';
 
@@ -146,9 +147,6 @@ export function TimeBar() {
   const modalData = useGameStore((state) => state.modalData);
   const closeModal = useGameStore((state) => state.closeModal);
 
-  // Auto-save status indicator
-  const autoSaveStatus = useGameStore((state) => state.autoSaveStatus);
-
   // Use centralized match day detection
   const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
 
@@ -237,7 +235,7 @@ export function TimeBar() {
       queue.push('interview');
     } else {
       // No press conference — check for standalone crisis or general interview (non-match days)
-      const standalone = result?.crisisInterview ?? result?.generalInterview;
+      const standalone = result?.crisisInterview ?? result?.watchPartyInterview ?? result?.generalInterview;
       if (standalone) {
         useGameStore.getState().setPendingInterview(standalone);
         setPressConferenceTotal(1);
@@ -642,24 +640,6 @@ export function TimeBar() {
                 <span className="hidden md:inline text-vct-gray text-sm">Phase:</span>
                 <span className="text-vct-light font-medium">{phaseDisplay}</span>
               </div>
-              {autoSaveStatus !== 'idle' && (
-                <>
-                  <div className="hidden md:block h-4 w-px bg-vct-gray/30" />
-                  <div className="hidden md:flex items-center gap-1 text-xs text-vct-gray">
-                    {autoSaveStatus === 'saving' ? (
-                      <>
-                        <span className="inline-block w-3 h-3 border border-vct-gray/60 border-t-vct-gray rounded-full animate-spin" />
-                        <span>Auto-saving...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-green-500">✓</span>
-                        <span>Saved</span>
-                      </>
-                    )}
-                  </div>
-                </>
-              )}
               {hasMatchToday && (
                 <>
                   <div className="hidden md:block h-4 w-px bg-vct-gray/30" />
@@ -807,14 +787,20 @@ export function TimeBar() {
         />
       ))}
 
-      {/* Drama Event Toasts - show minor events */}
-      {validDramaToasts.map((enrichedEvent, index) => (
+      {/* Drama Event Toasts - show minor events one at a time */}
+      {validDramaToasts.length > 0 && (
         <DramaEventToast
-          key={enrichedEvent.id}
-          event={enrichedEvent}
-          onDismiss={() => handleDismissDramaToast(index)}
+          key={validDramaToasts[0].id}
+          event={validDramaToasts[0]}
+          onDismiss={() => handleDismissDramaToast(0)}
+          onSkipAll={() => setDramaToasts([])}
+          queuePosition={
+            validDramaToasts.length > 1
+              ? { current: 1, total: validDramaToasts.length }
+              : undefined
+          }
         />
-      ))}
+      )}
 
       {/* Morale Change Modal */}
       {activePostModal === 'morale' && simulationResult?.moraleChanges && (
@@ -852,6 +838,9 @@ export function TimeBar() {
           isOpen={true}
         />
       )}
+
+      {/* Auto-save indicator - fixed bottom-right, above all modals */}
+      <AutoSaveIndicator />
     </>
   );
 }

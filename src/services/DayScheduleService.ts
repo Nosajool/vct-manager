@@ -3,6 +3,8 @@ import { AvailabilityRulesEngine } from '../engine/scheduling/AvailabilityRulesE
 import { MatchDayBlocker } from '../engine/scheduling/rules/MatchDayBlocker';
 import { FeatureGateRule } from '../engine/scheduling/rules/FeatureGateRule';
 import { SeasonPhaseFilter } from '../engine/scheduling/rules/SeasonPhaseFilter';
+import { DowntimeBlocker } from '../engine/scheduling/rules/DowntimeBlocker';
+import { BootcampWindowRule } from '../engine/scheduling/rules/BootcampWindowRule';
 import { FeatureGateService } from './FeatureGateService';
 import type { DaySchedule, DayContext } from '../types/scheduling';
 import type { CalendarEvent, CalendarEventType, SchedulableActivityType } from '../types/calendar';
@@ -30,6 +32,8 @@ export class DayScheduleService {
     this.rulesEngine.registerRule(new MatchDayBlocker());
     this.rulesEngine.registerRule(new FeatureGateRule(this.featureGateService));
     this.rulesEngine.registerRule(new SeasonPhaseFilter());
+    this.rulesEngine.registerRule(new DowntimeBlocker());
+    this.rulesEngine.registerRule(new BootcampWindowRule());
   }
 
   /**
@@ -51,6 +55,8 @@ export class DayScheduleService {
       seasonPhase: calendar.currentPhase,
       eventsOnDate,
       playerTeamId: playerTeamId || '',
+      getEventsBetweenDates: state.getEventsBetweenDates,
+      tournaments: state.tournaments,
     };
 
     // Evaluate rules
@@ -198,6 +204,12 @@ export class DayScheduleService {
       case 'social_media':
       case 'team_offsite':
       case 'bootcamp':
+      case 'regional_bootcamp':
+      case 'watch_party':
+      case 'streamer_collab':
+      case 'youtube_documentary':
+      case 'fan_meetup':
+      case 'sponsored_content':
         return 'team_activity';
       default:
         throw new Error(`Unknown activity type: ${activityType}`);

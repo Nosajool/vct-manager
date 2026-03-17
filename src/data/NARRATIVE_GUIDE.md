@@ -1644,3 +1644,161 @@ All gains are multiplied by **diminishing returns** and **career tendency multip
 - UI: `src/components/match/MoraleChangeModal.tsx` (Agent Progress section with `masteryResult` prop)
 - Conditions: `src/engine/drama/DramaConditionEvaluator.ts` (4 new cases)
 - Interviews: `src/data/interviews/agent_strategy.ts` (4 new templates)
+
+---
+
+## Downtime Activities System
+
+When the player team is **not in an active tournament** (between stages or post-elimination), the standard training/scrim schedule is replaced by downtime activities. These are gated by the `DowntimeBlocker` scheduling rule which prevents downtime activities during active tournaments.
+
+### Feature Unlock Schedule
+
+| Feature | Unlock |
+|---------|--------|
+| `downtime_activities` | Day 15 — watch party + fan meetup |
+| `bootcamp` | Stage 1 phase — 7-day regional bootcamp |
+| `content_events` | Day 30 — streamer collab, youtube doc, sponsored content |
+
+### Activity Types
+
+| Activity | Type Key | Category |
+|----------|----------|----------|
+| Watch Party / VOD | `watch_party` | Free (no cost) |
+| Fan Meetup | `fan_meetup` | -$2k |
+| Regional Bootcamp | `regional_bootcamp` | -$15k, 7-day lock |
+| Streamer Collab | `streamer_collab` | -$5k |
+| YouTube Documentary | `youtube_documentary` | -$10k |
+| Sponsored Content | `sponsored_content` | +$8k–$15k income |
+
+---
+
+## Watch Party Interview Context
+
+When a `watch_party` activity resolves, it:
+1. Sets the `tournament_watching` flag (7 days)
+2. Sets a `watched_{teamAId}_{teamBId}` flag (7 days)
+3. Has an 80% chance to queue a `WATCH_PARTY` context interview
+
+### Template File
+`src/data/interviews/watch_party.ts` — contains ~8 templates with `context: 'WATCH_PARTY'`
+
+These templates are registered in `src/data/interviews/index.ts` and spread into `INTERVIEW_TEMPLATES`.
+
+### WATCH_PARTY Placeholders
+
+| Placeholder | Value |
+|-------------|-------|
+| `{watchedTeamA}` | Team A name from the watched match |
+| `{watchedTeamB}` | Team B name from the watched match |
+| `{winnerTeam}` | Winner of the watched match |
+| `{loserTeam}` | Loser of the watched match |
+| `{mapName}` | First map from the watched match |
+
+### Which file to add WATCH_PARTY templates to
+`src/data/interviews/watch_party.ts` — use `context: 'WATCH_PARTY'` and gate with `flag_active: 'tournament_watching'`.
+
+---
+
+## Regional Bootcamp Mechanic
+
+Bootcamp is a 7-day committed activity that locks the calendar. Created by `BootcampService`, managed by `bootcampSlice`.
+
+### Regions and Daily Effects
+
+| Region | Daily Stat Gains | Daily Cost |
+|--------|-----------------|------------|
+| APAC | `mechanics +0.3`, `clutch +0.3` | `stamina -0.2` |
+| EU | `igl +0.3`, `mental +0.3` | `stamina -0.2` |
+| Americas | `entry +0.3`, `lurking +0.2` | `stamina -0.2` |
+| All | `chemistry +1`, `morale +1–3` | — |
+
+### End-of-Bootcamp Bonus (Day 7)
+- Region primary stats `+2`
+- `chemistry +5`, `morale +5`
+- Sets flag `bootcamp_completed_{region}` (14 days)
+
+### Cancellation
+- Partial stats kept (pro-rated)
+- `morale -5`
+- No travel cost refund ($15k spent)
+- Sets flag `bootcamp_cancelled` (7 days)
+
+### Calendar Display
+Day plan shows: `"Day 3/7: Bootcamp in Korea — Focus: Mechanics & Clutch"` as a locked info item.
+
+### Bootcamp Conflict Detection
+`BootcampWindowRule` (scheduling rule, priority 90) blocks bootcamp scheduling if any match falls in the 7-day window — checks both existing calendar events and unscheduled bracket matches.
+
+---
+
+## Content & Brand Events
+
+All single-day events, blocked when team is in an active tournament.
+
+| Variety | Cost/Income | Primary Effects | Cooldown Flag |
+|---------|-------------|-----------------|---------------|
+| `streamer_collab` | -$5k | fanbase +3, hype +5, morale +2 (featured player) | `streamer_collab_done` (7d) |
+| `youtube_documentary` | -$10k | sponsorTrust +5, fanbase +4; morale +5 featured / -1 others; 60% drama trigger | `youtube_doc_{playerId}` (14d) |
+| `fan_meetup` | -$2k | hype +4, morale +3 all, fanbase +2 | `fan_meetup_done` (7d) |
+| `sponsored_content` | +$8k–$15k | sponsorTrust +3, morale -1 all | `sponsored_content_done` (7d) |
+
+`sponsored_content` requires at least one active sponsorship.
+
+---
+
+## Player Conflict Drama Arc (`player_conflict` category)
+
+A 3-template reactive arc that fires when team chemistry is low during downtime.
+
+### Trigger Conditions
+All must pass:
+- `team_in_downtime`
+- `team_chemistry_below: 55`
+- `min_season_day: 30`
+- `flag_not_active: 'conflict_resolved'`
+- `random_chance: 25%`
+
+Cooldown: 14 days.
+
+### Template Chain
+
+1. **`conflict_tension_rising`** (minor, auto-fires): Sets `conflict_active` flag, `morale -5` to triggering player
+2. **`conflict_boiling_over`** (major, fires after 5 days of `conflict_active`):
+   - **Mediate**: Chemistry `-5` short-term → triggers `conflict_mediation_outcome` after 7 days
+   - **Side with player A**: Bench rival, `free_agent_interest +15` for benched player
+   - **Release both**: `free_agent_interest +20` both, `morale -10` all, `hype +10`, sets `mass_release` flag
+3. **`conflict_mediation_outcome`** (triggered by mediation): `chemistry +8`, `morale +3`, sets `conflict_resolved` (60 days)
+
+### `release_player` Effect
+Sets `player.teamId = null` and triggers `FreeAgentInterestService` to initialize interest at `60 + random(20)` from other teams.
+
+### Collection System
+`player_conflict` category appears in the Narrative Collection under "Team Dynamics". Add to `CATEGORY_CONFIG` in `NarrativeCollectionModal.tsx`.
+
+### Drama template file
+`src/data/drama/free_agent_pursuit.ts` — contains the conflict arc templates.
+
+---
+
+## Downtime Flags Reference
+
+| Flag | Duration | Set By | Purpose |
+|------|----------|--------|---------|
+| `tournament_watching` | 7d | watch_party resolve | Gates WATCH_PARTY interview context |
+| `watched_{teamAId}_{teamBId}` | 7d | watch_party resolve | Specific match reviewed; used in interview placeholders |
+| `watched_upset` | 7d | watch_party resolve | Set if watched match was an upset |
+| `bootcamp_completed_{region}` | 14d | bootcamp day 7 | Team just returned from region bootcamp |
+| `bootcamp_cancelled` | 7d | bootcamp cancellation | Bootcamp abandoned mid-way |
+| `conflict_active` | 14d | conflict_tension_rising | Unresolved interpersonal conflict on team |
+| `conflict_resolved` | 60d | conflict_mediation_outcome | Conflict resolved; prevents re-triggering |
+| `mass_release` | 30d | release_both choice | Nuclear option fired; 2 players released |
+| `streamer_collab_done` | 7d | streamer_collab resolve | Brand activity cooldown |
+| `fan_meetup_done` | 7d | fan_meetup resolve | Brand activity cooldown |
+| `youtube_doc_{playerId}` | 14d | youtube_documentary resolve | Per-player doc cooldown |
+| `sponsored_content_done` | 7d | sponsored_content resolve | Brand activity cooldown |
+
+### Rule: Downtime drama conditions
+All drama templates that should only fire during downtime must include `{ type: 'team_in_downtime' }` in their conditions array. This condition type is evaluated by `DramaConditionEvaluator`.
+
+### Rule: WATCH_PARTY interview templates
+Must include `{ type: 'flag_active', flag: 'tournament_watching' }` as a condition so they only fire when a watch party has recently been completed.

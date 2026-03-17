@@ -2,6 +2,7 @@
 // Types for dynamic availability computation and day scheduling
 
 import type { CalendarEvent, SeasonPhase, SchedulableActivityType } from './calendar';
+import type { Tournament } from './competition';
 
 /**
  * Represents the computed schedule state for a specific day
@@ -34,6 +35,9 @@ export interface DayContext {
   seasonPhase: SeasonPhase;
   eventsOnDate: CalendarEvent[];
   playerTeamId: string;
+  // Extended context for multi-day conflict detection (used by BootcampWindowRule)
+  getEventsBetweenDates: (startDate: string, endDate: string) => CalendarEvent[];
+  tournaments: Record<string, Tournament>;
 }
 
 /**

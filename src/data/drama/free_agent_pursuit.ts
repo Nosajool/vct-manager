@@ -77,7 +77,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     title: 'Facility Tour Goes Viral',
     description: 'Clips from a recent facility visit are spreading. Free agents in your region are taking notice.',
     conditions: [
-      { type: 'team_budget_above', threshold: 60 },
+      { type: 'flag_active', flag: 'facility_tour_completed' },
       { type: 'random_chance', chance: 30 },
     ],
     probability: 45,
