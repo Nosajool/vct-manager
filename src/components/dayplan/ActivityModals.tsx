@@ -1,17 +1,18 @@
-// ActivityModals - Centralized modal rendering for training/scrim activities
+// ActivityModals - Centralized modal rendering for training/scrim/downtime activities
 //
 // Replaces duplicated modal rendering logic from ObjectivesPanel and WeekPlannerPanel.
-// Renders TrainingModal and ScrimModal based on the state from useActivityModals hook.
+// Renders TrainingModal, ScrimModal, and WatchPartyModal based on the state from useActivityModals hook.
 
 import { useGameStore } from '../../store';
 import { TrainingModal } from '../calendar';
 import { ScrimModal } from '../scrim';
+import { WatchPartyModal } from '../today/WatchPartyModal';
 import type { ActivityModalsState } from '../../hooks/useActivityModals';
 
 export interface ActivityModalsProps extends ActivityModalsState {}
 
 /**
- * Component that renders training and scrim modals
+ * Component that renders training, scrim, and downtime modals
  *
  * @param props - Modal state from useActivityModals hook
  *
@@ -30,8 +31,10 @@ export interface ActivityModalsProps extends ActivityModalsState {}
 export function ActivityModals({
   selectedTrainingEventId,
   selectedScrimEventId,
+  selectedWatchPartyEventId,
   closeTrainingModal,
   closeScrimModal,
+  closeWatchPartyModal,
 }: ActivityModalsProps) {
   const getActivityConfig = useGameStore((state) => state.getActivityConfig);
 
@@ -62,6 +65,15 @@ export function ActivityModals({
           />
         );
       })()}
+
+      {/* Watch Party Modal */}
+      {selectedWatchPartyEventId && (
+        <WatchPartyModal
+          isOpen={true}
+          eventId={selectedWatchPartyEventId}
+          onClose={closeWatchPartyModal}
+        />
+      )}
     </>
   );
 }

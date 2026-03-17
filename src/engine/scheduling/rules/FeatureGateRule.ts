@@ -27,6 +27,12 @@ export class FeatureGateRule implements SchedulingRule {
       training: 'training',
       scrim: 'scrims',
       // rest, social_media, team_offsite, bootcamp don't require feature unlocks
+      watch_party: 'downtime_activities',
+      fan_meetup: 'downtime_activities',
+      streamer_collab: 'content_events',
+      youtube_documentary: 'content_events',
+      sponsored_content: 'content_events',
+      regional_bootcamp: 'bootcamp',
     };
 
     const blockedTypes: SchedulableActivityType[] = [];

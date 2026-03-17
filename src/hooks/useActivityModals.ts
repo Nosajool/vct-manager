@@ -8,14 +8,17 @@ import { useState } from 'react';
 export interface ActivityModalsState {
   selectedTrainingEventId: string | null;
   selectedScrimEventId: string | null;
+  selectedWatchPartyEventId: string | null;
   openTrainingModal: (eventId: string) => void;
   openScrimModal: (eventId: string) => void;
+  openWatchPartyModal: (eventId: string) => void;
   closeTrainingModal: () => void;
   closeScrimModal: () => void;
+  closeWatchPartyModal: () => void;
 }
 
 /**
- * Hook to manage training/scrim modal state
+ * Hook to manage training/scrim/watch-party modal state
  *
  * @returns State and methods for opening/closing activity modals
  *
@@ -35,6 +38,7 @@ export interface ActivityModalsState {
 export function useActivityModals(): ActivityModalsState {
   const [selectedTrainingEventId, setSelectedTrainingEventId] = useState<string | null>(null);
   const [selectedScrimEventId, setSelectedScrimEventId] = useState<string | null>(null);
+  const [selectedWatchPartyEventId, setSelectedWatchPartyEventId] = useState<string | null>(null);
 
   const openTrainingModal = (eventId: string) => {
     setSelectedTrainingEventId(eventId);
@@ -42,6 +46,10 @@ export function useActivityModals(): ActivityModalsState {
 
   const openScrimModal = (eventId: string) => {
     setSelectedScrimEventId(eventId);
+  };
+
+  const openWatchPartyModal = (eventId: string) => {
+    setSelectedWatchPartyEventId(eventId);
   };
 
   const closeTrainingModal = () => {
@@ -52,12 +60,19 @@ export function useActivityModals(): ActivityModalsState {
     setSelectedScrimEventId(null);
   };
 
+  const closeWatchPartyModal = () => {
+    setSelectedWatchPartyEventId(null);
+  };
+
   return {
     selectedTrainingEventId,
     selectedScrimEventId,
+    selectedWatchPartyEventId,
     openTrainingModal,
     openScrimModal,
+    openWatchPartyModal,
     closeTrainingModal,
     closeScrimModal,
+    closeWatchPartyModal,
   };
 }

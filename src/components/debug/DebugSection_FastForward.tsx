@@ -231,6 +231,15 @@ export function DebugSection_FastForward() {
               Scrims:{' '}
               <span className="text-white">{result.totalScrims}</span>
             </div>
+            {(result.totalBootcampDays > 0 || result.totalDowntimeActivities > 0) && (
+              <div className="text-vct-gray">
+                Bootcamp days:{' '}
+                <span className="text-white">{result.totalBootcampDays}</span>
+                {' | '}
+                Downtime activities:{' '}
+                <span className="text-white">{result.totalDowntimeActivities}</span>
+              </div>
+            )}
             <div className="text-vct-gray">
               Phase changes:{' '}
               {result.phaseChanges.length === 0 ? (

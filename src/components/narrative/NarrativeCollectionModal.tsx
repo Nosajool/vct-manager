@@ -48,7 +48,7 @@ const NARRATIVE_CATEGORIES: DramaCategory[] = [
   'scrim_sharing', 'visa_arc', 'igl_crisis', 'coaching_overhaul', 'org_culture', 'coaching_beef',
   // General drama categories
   'player_ego', 'team_synergy', 'external_pressure', 'practice_burnout', 'breakthrough', 'meta_rumors',
-  'cove_incident', 'tournament_drama', 'map_pool', 'financial_stress', 'iconic_moments',
+  'cove_incident', 'tournament_drama', 'map_pool', 'financial_stress', 'iconic_moments', 'free_agent_pursuit', 'player_conflict',
 ];
 
 // ============================================================================

@@ -259,6 +259,22 @@ export class DayPlanService {
         .filter(Boolean) as SchedulableActivityType[]
     );
 
+    // Downtime activity types that need a modal
+    const downtimeModalTypes = new Set<SchedulableActivityType>(['watch_party']);
+    // Downtime activity types that are one-click (no modal)
+    const downtimeOneClickTypes = new Set<SchedulableActivityType>([
+      'fan_meetup', 'streamer_collab', 'youtube_documentary', 'sponsored_content',
+    ]);
+
+    const downtimeLabels: Partial<Record<SchedulableActivityType, string>> = {
+      watch_party: 'Watch Party',
+      fan_meetup: 'Fan Meetup',
+      streamer_collab: 'Streamer Collab',
+      youtube_documentary: 'YouTube Documentary',
+      sponsored_content: 'Sponsored Content',
+      regional_bootcamp: 'Regional Bootcamp',
+    };
+
     // Add items for available but not scheduled types
     for (const activityType of availableTypes) {
       if (scheduledTypes.has(activityType)) continue;
@@ -266,25 +282,66 @@ export class DayPlanService {
       const activityCategory = this.getActivityCategory(activityType);
       if (!activityCategory) continue;
 
-      items.push({
-        id: `available-${activityType}-${date}`,
-        category: 'activity',
-        label: `${this.getActivityLabel(activityCategory)} Available`,
-        description: `Schedule ${activityType} for this day`,
-        priority: PRIORITY.LOW,
-        completed: false,
-        activityType: activityCategory,
-        activityState: 'available',
-        schedulableType: activityType,
-        action: {
-          view: 'team',
-          openModal: activityCategory,
-          scheduleData: {
-            date: date,
-            activityType: activityType,
-          }
+      const downtimeLabel = downtimeLabels[activityType];
+      const isDowntime = downtimeLabel !== undefined;
+
+      if (isDowntime) {
+        // Downtime activity
+        if (downtimeModalTypes.has(activityType)) {
+          // Needs a modal after scheduling
+          items.push({
+            id: `available-${activityType}-${date}`,
+            category: 'activity',
+            label: `${downtimeLabel} Available`,
+            description: `Schedule a ${downtimeLabel} for your team`,
+            priority: PRIORITY.LOW,
+            completed: false,
+            activityType: activityCategory,
+            activityState: 'available',
+            schedulableType: activityType,
+            action: {
+              openModal: activityType as 'watch_party',
+              scheduleData: { date, activityType },
+            },
+          });
+        } else if (downtimeOneClickTypes.has(activityType)) {
+          // One-click: schedule immediately, no modal
+          items.push({
+            id: `available-${activityType}-${date}`,
+            category: 'activity',
+            label: `${downtimeLabel} Available`,
+            description: `Schedule a ${downtimeLabel} for your team`,
+            priority: PRIORITY.LOW,
+            completed: false,
+            activityType: activityCategory,
+            activityState: 'available',
+            schedulableType: activityType,
+            action: {
+              scheduleData: { date, activityType },
+            },
+          });
         }
-      });
+      } else {
+        items.push({
+          id: `available-${activityType}-${date}`,
+          category: 'activity',
+          label: `${this.getActivityLabel(activityCategory)} Available`,
+          description: `Schedule ${activityType} for this day`,
+          priority: PRIORITY.LOW,
+          completed: false,
+          activityType: activityCategory,
+          activityState: 'available',
+          schedulableType: activityType,
+          action: {
+            view: 'team',
+            openModal: activityCategory,
+            scheduleData: {
+              date: date,
+              activityType: activityType,
+            }
+          }
+        });
+      }
     }
 
     return items;
@@ -550,16 +607,28 @@ export class DayPlanService {
       Americas: 'Entry & Lurking',
     };
 
+    // Build cumulative gains string
+    const cumulative = activeBootcamp.cumulativeStatGains;
+    const gainEntries = Object.entries(cumulative)
+      .filter(([, v]) => v !== 0)
+      .map(([k, v]) => `${v > 0 ? '+' : ''}${v.toFixed(1)} ${k.charAt(0).toUpperCase() + k.slice(1)}`);
+    const gainsStr = gainEntries.length > 0
+      ? `Gains so far: ${gainEntries.join(', ')}`
+      : `Focus: ${focusLabels[data.region] ?? data.region}`;
+
     return {
       id: `bootcamp-day-${event.id}`,
       category: 'activity',
       label: `Day ${data.bootcampDay}/7: Bootcamp in ${regionLabels[data.region] ?? data.region}`,
-      description: `Focus: ${focusLabels[data.region] ?? data.region} — auto-resolves at end of day`,
+      description: `${gainsStr} — auto-resolves at end of day`,
       priority: PRIORITY.MEDIUM,
       completed: event.processed,
       activityType: 'training', // closest visual category
       activityState: 'locked',
       calendarEventId: event.id,
+      action: {
+        cancelBootcamp: true,
+      },
     };
   }
 
@@ -616,6 +685,14 @@ export class DayPlanService {
       case 'team_offsite':
       case 'bootcamp':
         return null; // These don't map to our activity categories
+      // Downtime activities use 'training' as visual category
+      case 'watch_party':
+      case 'fan_meetup':
+      case 'streamer_collab':
+      case 'youtube_documentary':
+      case 'sponsored_content':
+      case 'regional_bootcamp':
+        return 'training';
       default:
         return null;
     }

@@ -27,7 +27,9 @@ export interface DayPlanItemAction {
     tab?: string;
   };
   /** Modal to open instead of navigating */
-  openModal?: 'training' | 'scrim' | 'strategy';
+  openModal?: 'training' | 'scrim' | 'strategy' | 'watch_party';
+  /** Trigger bootcamp cancellation flow */
+  cancelBootcamp?: boolean;
   /** Event ID for modal context (e.g., calendar event ID) */
   eventId?: string;
   /** Schedule data for available activities that need scheduling */
