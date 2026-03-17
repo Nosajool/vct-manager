@@ -29,9 +29,18 @@ export class DowntimeBlocker implements SchedulingRule {
   evaluate(context: DayContext): RuleResult {
     const { playerTeamId, tournaments } = context;
 
-    const isInActiveTournament = Object.values(tournaments).some(
-      t => t.status === 'in_progress' && t.teamIds.includes(playerTeamId)
-    );
+    const isInActiveTournament = Object.values(tournaments).some(t => {
+      if (!t.teamIds.includes(playerTeamId)) return false;
+      if (t.status === 'completed') return false;
+      if (t.status === 'in_progress') return true;
+      // Block on start day even before tournament_start event is processed
+      if (t.status === 'upcoming') {
+        const startDay = t.startDate.slice(0, 10);
+        const endDay = t.endDate.slice(0, 10);
+        return context.date >= startDay && context.date <= endDay;
+      }
+      return false;
+    });
 
     if (isInActiveTournament) {
       return {

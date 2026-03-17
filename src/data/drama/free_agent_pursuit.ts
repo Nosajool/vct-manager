@@ -9,7 +9,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     description: 'Word is getting around that {playerName} is open to a comeback — and they\'ve been watching your results.',
     conditions: [
       { type: 'team_win_streak', streakLength: 2 },
-      { type: 'random_chance', chance: 35 },
+      { type: 'random_chance', chance: 35, playerSelector: 'any' },
     ],
     probability: 40,
     requiresPlayerTeam: true,
@@ -60,7 +60,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     title: 'A Familiar Face',
     description: '{playerName} has been chatting with {teammateName}. He seems interested in the team dynamic.',
     conditions: [
-      { type: 'player_is_free_agent' },
+      { type: 'player_is_free_agent', playerSelector: 'any' },
       { type: 'random_chance', chance: 40 },
     ],
     probability: 50,

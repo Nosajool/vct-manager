@@ -752,7 +752,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'manager_development_focused' },
       { type: 'scrim_count_min', threshold: 5 },
       { type: 'no_recent_match' },
-      { type: 'player_on_active_roster', playerSelector: 'random' },
+      { type: 'player_on_active_roster', playerSelector: 'any' },
     ],
     probability: 40,
     cooldownDays: 3,

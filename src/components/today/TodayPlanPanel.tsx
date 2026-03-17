@@ -55,8 +55,15 @@ export function TodayPlanPanel() {
           modals.openWatchPartyModal(event.id);
         } else if (item.action.openModal === 'regional_bootcamp') {
           modals.openRegionalBootcampModal(event.id);
+        } else if (
+          item.action.openModal === 'fan_meetup' ||
+          item.action.openModal === 'streamer_collab' ||
+          item.action.openModal === 'youtube_documentary' ||
+          item.action.openModal === 'sponsored_content'
+        ) {
+          modals.openDowntimeActivityModal(event.id, item.action.openModal);
         } else {
-          // One-click downtime activity: auto-configure
+          // Fallback: auto-configure
           updateEventLifecycleState(event.id, 'configured');
         }
       } catch (err) {

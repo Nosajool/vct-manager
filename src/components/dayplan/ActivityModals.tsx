@@ -8,6 +8,7 @@ import { TrainingModal } from '../calendar';
 import { ScrimModal } from '../scrim';
 import { WatchPartyModal } from '../today/WatchPartyModal';
 import { RegionalBootcampModal } from '../today/RegionalBootcampModal';
+import { DowntimeActivityModal } from '../today/DowntimeActivityModal';
 import type { ActivityModalsState } from '../../hooks/useActivityModals';
 
 export interface ActivityModalsProps extends ActivityModalsState {}
@@ -34,10 +35,13 @@ export function ActivityModals({
   selectedScrimEventId,
   selectedWatchPartyEventId,
   selectedRegionalBootcampEventId,
+  selectedDowntimeEventId,
+  selectedDowntimeActivityType,
   closeTrainingModal,
   closeScrimModal,
   closeWatchPartyModal,
   closeRegionalBootcampModal,
+  closeDowntimeActivityModal,
 }: ActivityModalsProps) {
   const getActivityConfig = useGameStore((state) => state.getActivityConfig);
 
@@ -84,6 +88,16 @@ export function ActivityModals({
           isOpen={true}
           eventId={selectedRegionalBootcampEventId}
           onClose={closeRegionalBootcampModal}
+        />
+      )}
+
+      {/* Downtime Activity Modal */}
+      {selectedDowntimeEventId && selectedDowntimeActivityType && (
+        <DowntimeActivityModal
+          isOpen={true}
+          eventId={selectedDowntimeEventId}
+          activityType={selectedDowntimeActivityType}
+          onClose={closeDowntimeActivityModal}
         />
       )}
     </>

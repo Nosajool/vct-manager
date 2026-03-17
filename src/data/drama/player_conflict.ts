@@ -16,7 +16,7 @@ export const PLAYER_CONFLICT_EVENTS: DramaEventTemplate[] = [
       { type: 'team_chemistry_below', threshold: 55 },
       { type: 'min_season_day', threshold: 30 },
       { type: 'flag_not_active', flag: 'conflict_resolved' },
-      { type: 'random_chance', chance: 25 },
+      { type: 'random_chance', chance: 25, playerSelector: 'any' },
     ],
     probability: 100,
     cooldownDays: 7,
@@ -43,7 +43,7 @@ export const PLAYER_CONFLICT_EVENTS: DramaEventTemplate[] = [
     title: 'Conflict Boiling Over',
     description: 'Things have escalated. {playerName} and a teammate have gotten into a heated argument that disrupted the whole practice session. The team is waiting to see how you handle this.',
     conditions: [
-      { type: 'flag_active', flag: 'conflict_active' },
+      { type: 'flag_active', flag: 'conflict_active', playerSelector: 'any' },
     ],
     probability: 90,
     cooldownDays: 7,

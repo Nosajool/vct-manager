@@ -27,7 +27,8 @@ export interface DayPlanItemAction {
     tab?: string;
   };
   /** Modal to open instead of navigating */
-  openModal?: 'training' | 'scrim' | 'strategy' | 'watch_party' | 'regional_bootcamp';
+  openModal?: 'training' | 'scrim' | 'strategy' | 'watch_party' | 'regional_bootcamp'
+    | 'fan_meetup' | 'streamer_collab' | 'youtube_documentary' | 'sponsored_content';
   /** Trigger bootcamp cancellation flow */
   cancelBootcamp?: boolean;
   /** Event ID for modal context (e.g., calendar event ID) */

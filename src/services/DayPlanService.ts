@@ -305,7 +305,7 @@ export class DayPlanService {
             },
           });
         } else if (downtimeOneClickTypes.has(activityType)) {
-          // One-click: schedule immediately, no modal
+          // Opens a preview modal before scheduling
           items.push({
             id: `available-${activityType}-${date}`,
             category: 'activity',
@@ -317,6 +317,7 @@ export class DayPlanService {
             activityState: 'available',
             schedulableType: activityType,
             action: {
+              openModal: activityType as 'fan_meetup' | 'streamer_collab' | 'youtube_documentary' | 'sponsored_content',
               scheduleData: { date, activityType },
             },
           });

@@ -1830,6 +1830,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'player_personality',
         personality: 'STABLE',
+        playerSelector: 'any',
       },
       {
         type: 'flag_active',
@@ -2654,7 +2655,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'player_morale_below',
         threshold: 55,
-        playerSelector: 'any',
+        playerSelector: 'igl_player',
       },
     ],
     probability: 75,
@@ -3225,6 +3226,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'veteran_championship_pact',
+        playerSelector: 'star_player',
       },
       {
         type: 'elimination_risk',
@@ -3756,6 +3758,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         type: 'flag_active',
         flag: 'arc_contender_{playerId}',
+        playerSelector: 'any',
       },
       {
         type: 'team_win_streak',

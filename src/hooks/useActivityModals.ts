@@ -5,19 +5,25 @@
 
 import { useState } from 'react';
 
+export type DowntimeActivityType = 'fan_meetup' | 'streamer_collab' | 'youtube_documentary' | 'sponsored_content';
+
 export interface ActivityModalsState {
   selectedTrainingEventId: string | null;
   selectedScrimEventId: string | null;
   selectedWatchPartyEventId: string | null;
   selectedRegionalBootcampEventId: string | null;
+  selectedDowntimeEventId: string | null;
+  selectedDowntimeActivityType: DowntimeActivityType | null;
   openTrainingModal: (eventId: string) => void;
   openScrimModal: (eventId: string) => void;
   openWatchPartyModal: (eventId: string) => void;
   openRegionalBootcampModal: (eventId: string) => void;
+  openDowntimeActivityModal: (eventId: string, activityType: DowntimeActivityType) => void;
   closeTrainingModal: () => void;
   closeScrimModal: () => void;
   closeWatchPartyModal: () => void;
   closeRegionalBootcampModal: () => void;
+  closeDowntimeActivityModal: () => void;
 }
 
 /**
@@ -43,6 +49,8 @@ export function useActivityModals(): ActivityModalsState {
   const [selectedScrimEventId, setSelectedScrimEventId] = useState<string | null>(null);
   const [selectedWatchPartyEventId, setSelectedWatchPartyEventId] = useState<string | null>(null);
   const [selectedRegionalBootcampEventId, setSelectedRegionalBootcampEventId] = useState<string | null>(null);
+  const [selectedDowntimeEventId, setSelectedDowntimeEventId] = useState<string | null>(null);
+  const [selectedDowntimeActivityType, setSelectedDowntimeActivityType] = useState<DowntimeActivityType | null>(null);
 
   const openTrainingModal = (eventId: string) => {
     setSelectedTrainingEventId(eventId);
@@ -58,6 +66,11 @@ export function useActivityModals(): ActivityModalsState {
 
   const openRegionalBootcampModal = (eventId: string) => {
     setSelectedRegionalBootcampEventId(eventId);
+  };
+
+  const openDowntimeActivityModal = (eventId: string, activityType: DowntimeActivityType) => {
+    setSelectedDowntimeEventId(eventId);
+    setSelectedDowntimeActivityType(activityType);
   };
 
   const closeTrainingModal = () => {
@@ -76,18 +89,27 @@ export function useActivityModals(): ActivityModalsState {
     setSelectedRegionalBootcampEventId(null);
   };
 
+  const closeDowntimeActivityModal = () => {
+    setSelectedDowntimeEventId(null);
+    setSelectedDowntimeActivityType(null);
+  };
+
   return {
     selectedTrainingEventId,
     selectedScrimEventId,
     selectedWatchPartyEventId,
     selectedRegionalBootcampEventId,
+    selectedDowntimeEventId,
+    selectedDowntimeActivityType,
     openTrainingModal,
     openScrimModal,
     openWatchPartyModal,
     openRegionalBootcampModal,
+    openDowntimeActivityModal,
     closeTrainingModal,
     closeScrimModal,
     closeWatchPartyModal,
     closeRegionalBootcampModal,
+    closeDowntimeActivityModal,
   };
 }

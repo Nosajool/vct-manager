@@ -108,7 +108,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
     conditions: [
       { type: 'consecutive_negative_months_above', threshold: 3 },
       { type: 'flag_active', flag: 'board_watching' },
-      { type: 'player_contract_expiring', contractYearsThreshold: 1 },
+      { type: 'player_contract_expiring', contractYearsThreshold: 1, playerSelector: 'star_player' },
     ],
     probability: 65,
     cooldownDays: 14,
