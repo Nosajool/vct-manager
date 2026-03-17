@@ -35,6 +35,18 @@ export function PreAdvanceValidationModal({
         return 'Training Session';
       case 'scheduled_scrim':
         return 'Scrim';
+      case 'team_activity': {
+        const activityType = (event.data as any)?.activityType as string | undefined;
+        const labels: Record<string, string> = {
+          watch_party: 'Watch Party',
+          fan_meetup: 'Fan Meetup',
+          streamer_collab: 'Streamer Collaboration',
+          youtube_documentary: 'YouTube Documentary',
+          sponsored_content: 'Sponsored Content',
+          regional_bootcamp: 'Regional Bootcamp',
+        };
+        return labels[activityType ?? ''] ?? 'Downtime Activity';
+      }
       default:
         return event.type;
     }

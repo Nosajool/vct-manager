@@ -18,6 +18,15 @@ const ACTIVITY_TO_EVENT_TYPE: Record<string, string> = {
 
 const CONFIGURABLE_ACTIVITY_TYPES: SchedulableActivityType[] = ['training', 'scrim'];
 
+const DOWNTIME_ACTIVITY_TYPES: SchedulableActivityType[] = [
+  'watch_party',
+  'fan_meetup',
+  'streamer_collab',
+  'youtube_documentary',
+  'sponsored_content',
+  'regional_bootcamp',
+];
+
 /**
  * Map event types to their corresponding feature gates
  */
@@ -121,37 +130,59 @@ export const createActivityPlanSlice: StateCreator<
     const today = fullState.calendar?.currentDate;
     if (!today) return false;
 
-    const todaysEvents = fullState.calendar?.scheduledEvents?.filter(
-      (event: any) =>
-        isSameDay(event.date, today) &&
-        !event.processed &&
-        (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
+    const allTodaysEvents: any[] = fullState.calendar?.scheduledEvents?.filter(
+      (event: any) => isSameDay(event.date, today) && !event.processed
     ) || [];
+
+    const todaysRegularEvents = allTodaysEvents.filter(
+      (e: any) => e.type === 'scheduled_training' || e.type === 'scheduled_scrim'
+    );
+
+    const todaysDowntimeEvents = allTodaysEvents.filter(
+      (e: any) =>
+        e.type === 'team_activity' &&
+        DOWNTIME_ACTIVITY_TYPES.includes((e.data as any)?.activityType)
+    );
 
     const configs = get().activityConfigs;
 
-    // Check 1: Scheduled events without config
-    const hasUnconfiguredScheduled = todaysEvents.some((event: any) => {
+    // Check 1a: Training/scrim events without config
+    const hasUnconfiguredRegular = todaysRegularEvents.some((event: any) => {
       const feature = getFeatureForEventType(event.type);
-      if (feature && !featureGateService.isFeatureUnlocked(feature)) {
-        return false;
-      }
-
+      if (feature && !featureGateService.isFeatureUnlocked(feature)) return false;
       const config = Object.values(configs).find((c) => c.eventId === event.id);
       return !config || config.status === 'needs_setup';
     });
 
-    if (hasUnconfiguredScheduled) return true;
+    if (hasUnconfiguredRegular) return true;
+
+    // Check 1b: Downtime events scheduled but still in needs_setup state
+    const hasUnconfiguredDowntime = todaysDowntimeEvents.some(
+      (event: any) => event.lifecycleState === 'needs_setup'
+    );
+
+    if (hasUnconfiguredDowntime) return true;
 
     // Check 2: Available activity types that haven't been scheduled at all
     const dayScheduleService = new DayScheduleService();
     const daySchedule = dayScheduleService.getDaySchedule(today);
-    const scheduledEventTypes = new Set(todaysEvents.map((e: any) => e.type));
 
-    return CONFIGURABLE_ACTIVITY_TYPES.some((activityType) => {
+    const scheduledRegularEventTypes = new Set(todaysRegularEvents.map((e: any) => e.type));
+    const hasUnscheduledRegular = CONFIGURABLE_ACTIVITY_TYPES.some((activityType) => {
       if (!daySchedule.availableActivityTypes.includes(activityType)) return false;
       const eventType = ACTIVITY_TO_EVENT_TYPE[activityType];
-      return !scheduledEventTypes.has(eventType);
+      return !scheduledRegularEventTypes.has(eventType);
+    });
+
+    if (hasUnscheduledRegular) return true;
+
+    const scheduledDowntimeTypes = new Set(
+      todaysDowntimeEvents.map((e: any) => (e.data as any)?.activityType)
+    );
+
+    return DOWNTIME_ACTIVITY_TYPES.some((activityType) => {
+      if (!daySchedule.availableActivityTypes.includes(activityType)) return false;
+      return !scheduledDowntimeTypes.has(activityType);
     });
   },
 
@@ -160,38 +191,58 @@ export const createActivityPlanSlice: StateCreator<
     const today = fullState.calendar?.currentDate;
     if (!today) return [];
 
-    const todaysEvents = fullState.calendar?.scheduledEvents?.filter(
-      (event: any) =>
-        isSameDay(event.date, today) &&
-        !event.processed &&
-        (event.type === 'scheduled_training' || event.type === 'scheduled_scrim')
+    const allTodaysEvents: any[] = fullState.calendar?.scheduledEvents?.filter(
+      (event: any) => isSameDay(event.date, today) && !event.processed
     ) || [];
+
+    const todaysRegularEvents = allTodaysEvents.filter(
+      (e: any) => e.type === 'scheduled_training' || e.type === 'scheduled_scrim'
+    );
+
+    const todaysDowntimeEvents = allTodaysEvents.filter(
+      (e: any) =>
+        e.type === 'team_activity' &&
+        DOWNTIME_ACTIVITY_TYPES.includes((e.data as any)?.activityType)
+    );
 
     const configs = get().activityConfigs;
 
-    // Existing scheduled events without config
-    const unconfiguredEventIds = todaysEvents
+    // Training/scrim events without config
+    const unconfiguredEventIds: string[] = todaysRegularEvents
       .filter((event: any) => {
         const feature = getFeatureForEventType(event.type);
-        if (feature && !featureGateService.isFeatureUnlocked(feature)) {
-          return false;
-        }
-
+        if (feature && !featureGateService.isFeatureUnlocked(feature)) return false;
         const config = Object.values(configs).find((c) => c.eventId === event.id);
         return !config || config.status === 'needs_setup';
       })
       .map((event: any) => event.id);
 
-    // Also include available-but-unscheduled activity types as sentinel values
-    // These use the format "unscheduled:training" / "unscheduled:scrim"
+    // Downtime events scheduled but still in needs_setup state
+    for (const event of todaysDowntimeEvents) {
+      if (event.lifecycleState === 'needs_setup') {
+        unconfiguredEventIds.push(event.id);
+      }
+    }
+
+    // Available-but-unscheduled sentinel values
     const dayScheduleService = new DayScheduleService();
     const daySchedule = dayScheduleService.getDaySchedule(today);
-    const scheduledEventTypes = new Set(todaysEvents.map((e: any) => e.type));
 
+    const scheduledRegularEventTypes = new Set(todaysRegularEvents.map((e: any) => e.type));
     for (const activityType of CONFIGURABLE_ACTIVITY_TYPES) {
       if (!daySchedule.availableActivityTypes.includes(activityType)) continue;
       const eventType = ACTIVITY_TO_EVENT_TYPE[activityType];
-      if (!scheduledEventTypes.has(eventType)) {
+      if (!scheduledRegularEventTypes.has(eventType)) {
+        unconfiguredEventIds.push(`unscheduled:${activityType}`);
+      }
+    }
+
+    const scheduledDowntimeTypes = new Set(
+      todaysDowntimeEvents.map((e: any) => (e.data as any)?.activityType)
+    );
+    for (const activityType of DOWNTIME_ACTIVITY_TYPES) {
+      if (!daySchedule.availableActivityTypes.includes(activityType)) continue;
+      if (!scheduledDowntimeTypes.has(activityType)) {
         unconfiguredEventIds.push(`unscheduled:${activityType}`);
       }
     }
