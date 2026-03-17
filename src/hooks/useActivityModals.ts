@@ -9,12 +9,15 @@ export interface ActivityModalsState {
   selectedTrainingEventId: string | null;
   selectedScrimEventId: string | null;
   selectedWatchPartyEventId: string | null;
+  selectedRegionalBootcampEventId: string | null;
   openTrainingModal: (eventId: string) => void;
   openScrimModal: (eventId: string) => void;
   openWatchPartyModal: (eventId: string) => void;
+  openRegionalBootcampModal: (eventId: string) => void;
   closeTrainingModal: () => void;
   closeScrimModal: () => void;
   closeWatchPartyModal: () => void;
+  closeRegionalBootcampModal: () => void;
 }
 
 /**
@@ -39,6 +42,7 @@ export function useActivityModals(): ActivityModalsState {
   const [selectedTrainingEventId, setSelectedTrainingEventId] = useState<string | null>(null);
   const [selectedScrimEventId, setSelectedScrimEventId] = useState<string | null>(null);
   const [selectedWatchPartyEventId, setSelectedWatchPartyEventId] = useState<string | null>(null);
+  const [selectedRegionalBootcampEventId, setSelectedRegionalBootcampEventId] = useState<string | null>(null);
 
   const openTrainingModal = (eventId: string) => {
     setSelectedTrainingEventId(eventId);
@@ -50,6 +54,10 @@ export function useActivityModals(): ActivityModalsState {
 
   const openWatchPartyModal = (eventId: string) => {
     setSelectedWatchPartyEventId(eventId);
+  };
+
+  const openRegionalBootcampModal = (eventId: string) => {
+    setSelectedRegionalBootcampEventId(eventId);
   };
 
   const closeTrainingModal = () => {
@@ -64,15 +72,22 @@ export function useActivityModals(): ActivityModalsState {
     setSelectedWatchPartyEventId(null);
   };
 
+  const closeRegionalBootcampModal = () => {
+    setSelectedRegionalBootcampEventId(null);
+  };
+
   return {
     selectedTrainingEventId,
     selectedScrimEventId,
     selectedWatchPartyEventId,
+    selectedRegionalBootcampEventId,
     openTrainingModal,
     openScrimModal,
     openWatchPartyModal,
+    openRegionalBootcampModal,
     closeTrainingModal,
     closeScrimModal,
     closeWatchPartyModal,
+    closeRegionalBootcampModal,
   };
 }

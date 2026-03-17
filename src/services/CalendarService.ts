@@ -31,7 +31,7 @@ import type { TournamentMatchContext } from '../types/interview';
 import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
 import { detect as detectIconicMoments } from '../engine/drama/IconicMomentDetector';
-import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig } from '../types/activityPlan';
+import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig, DowntimeActivityResult, BootcampRegion } from '../types/activityPlan';
 import { bootcampService, type BootcampDayEventData } from './BootcampService';
 import { isLeagueToPlayoffTournament } from '../types';
 import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
@@ -58,6 +58,7 @@ export interface TimeAdvanceResult {
   watchPartyInterview?: PendingInterview; // Watch-party interview (flag-triggered, non-match days)
   generalInterview?: PendingInterview;    // General media-day interview for non-match days
   moraleChanges?: MatchMoraleResult;   // Morale changes from player team match
+  downtimeResults?: DowntimeActivityResult[]; // Results from resolved downtime activities
 }
 
 /**
@@ -106,6 +107,7 @@ export class CalendarService {
     let rivalryDelta: RivalryDelta | undefined;
     let interviewQueue: PendingInterview[] | undefined;
     let moraleChanges: MatchMoraleResult | undefined;
+    const downtimeResults: DowntimeActivityResult[] = [];
 
     // Setup progress tracking if requested
     if (withProgress && unprocessedEvents.length > 0) {
@@ -352,6 +354,11 @@ export class CalendarService {
         const data = event.data as { activityType?: string } & Partial<BootcampDayEventData>;
         if (data?.activityType === 'bootcamp_day') {
           bootcampService.processBootcampDay(event);
+        } else if (data?.activityType === 'regional_bootcamp') {
+          const region = (data as { activityType: string; region?: string }).region;
+          if (region) {
+            bootcampService.startBootcamp(region as BootcampRegion, event.date);
+          }
         } else if (
           data?.activityType === 'watch_party' ||
           data?.activityType === 'streamer_collab' ||
@@ -359,7 +366,8 @@ export class CalendarService {
           data?.activityType === 'fan_meetup' ||
           data?.activityType === 'sponsored_content'
         ) {
-          downtimeResolutionService.resolveDowntimeActivity(event);
+          const downtimeResult = downtimeResolutionService.resolveDowntimeActivity(event);
+          if (downtimeResult) downtimeResults.push(downtimeResult);
         }
         state.markEventProcessed(event.id);
         processedEvents.push(event);
@@ -597,6 +605,7 @@ export class CalendarService {
       watchPartyInterview: watchPartyInterview ?? undefined,
       generalInterview: generalInterview ?? undefined,
       moraleChanges,
+      downtimeResults: downtimeResults.length > 0 ? downtimeResults : undefined,
     };
   }
 

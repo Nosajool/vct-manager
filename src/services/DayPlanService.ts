@@ -260,7 +260,7 @@ export class DayPlanService {
     );
 
     // Downtime activity types that need a modal
-    const downtimeModalTypes = new Set<SchedulableActivityType>(['watch_party']);
+    const downtimeModalTypes = new Set<SchedulableActivityType>(['watch_party', 'regional_bootcamp']);
     // Downtime activity types that are one-click (no modal)
     const downtimeOneClickTypes = new Set<SchedulableActivityType>([
       'fan_meetup', 'streamer_collab', 'youtube_documentary', 'sponsored_content',
@@ -300,7 +300,7 @@ export class DayPlanService {
             activityState: 'available',
             schedulableType: activityType,
             action: {
-              openModal: activityType as 'watch_party',
+              openModal: activityType as 'watch_party' | 'regional_bootcamp',
               scheduleData: { date, activityType },
             },
           });
@@ -644,6 +644,7 @@ export class DayPlanService {
       youtube_documentary: 'YouTube Documentary',
       fan_meetup: 'Fan Meetup',
       sponsored_content: 'Sponsored Content',
+      regional_bootcamp: 'Regional Bootcamp',
     };
 
     for (const event of scheduledActivities) {
@@ -655,16 +656,24 @@ export class DayPlanService {
 
       const label = downtimeTypeLabels[activityType];
 
+      const isConfigured = event.lifecycleState === 'configured';
+      const derivedActivityState = isConfigured ? 'configured' : 'needs_setup';
+      const needsModal = (activityType === 'watch_party' || activityType === 'regional_bootcamp') && !event.processed;
+      const action = needsModal
+        ? { openModal: activityType as 'watch_party' | 'regional_bootcamp', eventId: event.id }
+        : undefined;
+
       items.push({
         id: `downtime-${activityType}-${event.id}`,
         category: 'activity',
         label,
         description: `${label} — auto-resolves at end of day`,
         priority: PRIORITY.MEDIUM,
-        completed: event.processed,
+        completed: event.processed || isConfigured,
         activityType: 'training', // closest visual category
-        activityState: 'locked',
+        activityState: derivedActivityState,
         calendarEventId: event.id,
+        action,
       });
     }
 

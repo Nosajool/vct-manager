@@ -234,7 +234,7 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
               </span>
               <span className="text-sm text-vct-gray">relationship with {opponentName}</span>
               <span className="text-xs text-vct-gray/60 ml-auto">
-                {scrimResult.relationshipBefore} → {Math.round(scrimResult.relationshipBefore + relChange)}
+                {scrimResult.relationshipBefore.toFixed(1)} → {Math.round(scrimResult.relationshipBefore + relChange)}
               </span>
             </div>
             {relEvent && (

@@ -63,6 +63,19 @@ export interface BootcampDayActivityConfig {
 export type ActivityConfig = TrainingActivityConfig | ScrimActivityConfig | BootcampDayActivityConfig;
 
 /**
+ * Result of resolving a single downtime activity during day advancement
+ */
+export interface DowntimeActivityResult {
+  activityType: 'watch_party' | 'fan_meetup' | 'streamer_collab' | 'youtube_documentary' | 'sponsored_content';
+  financialDelta: number;
+  moraleChanges: { playerId: string; playerName: string; delta: number }[];
+  reputationDeltas: { fanbase?: number; hype?: number; sponsorTrust?: number };
+  featuredPlayerName?: string;
+  dramaTriggered?: boolean;
+  interviewPending?: boolean;
+}
+
+/**
  * Result of resolving all configured activities during day advancement
  */
 export interface ActivityResolutionResult {

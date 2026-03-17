@@ -7,6 +7,7 @@ import { useGameStore } from '../../store';
 import { TrainingModal } from '../calendar';
 import { ScrimModal } from '../scrim';
 import { WatchPartyModal } from '../today/WatchPartyModal';
+import { RegionalBootcampModal } from '../today/RegionalBootcampModal';
 import type { ActivityModalsState } from '../../hooks/useActivityModals';
 
 export interface ActivityModalsProps extends ActivityModalsState {}
@@ -32,9 +33,11 @@ export function ActivityModals({
   selectedTrainingEventId,
   selectedScrimEventId,
   selectedWatchPartyEventId,
+  selectedRegionalBootcampEventId,
   closeTrainingModal,
   closeScrimModal,
   closeWatchPartyModal,
+  closeRegionalBootcampModal,
 }: ActivityModalsProps) {
   const getActivityConfig = useGameStore((state) => state.getActivityConfig);
 
@@ -72,6 +75,15 @@ export function ActivityModals({
           isOpen={true}
           eventId={selectedWatchPartyEventId}
           onClose={closeWatchPartyModal}
+        />
+      )}
+
+      {/* Regional Bootcamp Modal */}
+      {selectedRegionalBootcampEventId && (
+        <RegionalBootcampModal
+          isOpen={true}
+          eventId={selectedRegionalBootcampEventId}
+          onClose={closeRegionalBootcampModal}
         />
       )}
     </>

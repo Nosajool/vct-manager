@@ -3,6 +3,7 @@ import { downtimeService } from './DowntimeService';
 import { timeProgression } from '../engine/calendar';
 import type { CalendarEvent } from '../types/calendar';
 import type { Team } from '../types/team';
+import type { DowntimeActivityResult } from '../types/activityPlan';
 
 /**
  * DowntimeResolutionService - Resolves single-day downtime activities when
@@ -13,29 +14,26 @@ import type { Team } from '../types/team';
 export class DowntimeResolutionService {
   /**
    * Main entry point. Dispatches to the appropriate private resolver.
+   * Returns a DowntimeActivityResult describing what happened, or null for unknown types.
    */
-  resolveDowntimeActivity(event: CalendarEvent): void {
+  resolveDowntimeActivity(event: CalendarEvent): DowntimeActivityResult | null {
     const data = event.data as { activityType?: string; scheduledAt?: string };
     const activityType = data?.activityType;
 
     switch (activityType) {
       case 'watch_party':
-        this.resolveWatchParty();
-        break;
+        return this.resolveWatchParty();
       case 'streamer_collab':
-        this.resolveStreamerCollab();
-        break;
+        return this.resolveStreamerCollab();
       case 'youtube_documentary':
-        this.resolveYoutubeDocumentary();
-        break;
+        return this.resolveYoutubeDocumentary();
       case 'fan_meetup':
-        this.resolveFanMeetup();
-        break;
+        return this.resolveFanMeetup();
       case 'sponsored_content':
-        this.resolveSponsoredContent();
-        break;
+        return this.resolveSponsoredContent();
       default:
         console.warn(`[DowntimeResolutionService] Unknown activityType: ${activityType}`);
+        return null;
     }
   }
 
@@ -43,147 +41,172 @@ export class DowntimeResolutionService {
   // Activity Resolvers
   // ============================================================================
 
-  private resolveWatchParty(): void {
+  private resolveWatchParty(): DowntimeActivityResult {
     const state = useGameStore.getState();
     const teamId = state.playerTeamId;
-    if (!teamId) return;
+    let interviewPending = false;
 
-    // Try to find a recent match from another team
-    const matchIds = downtimeService.getRecentOtherTeamMatchIds(teamId, 7);
-    const matchId = matchIds[0];
+    if (teamId) {
+      const matchIds = downtimeService.getRecentOtherTeamMatchIds(teamId, 7);
+      const matchId = matchIds[0];
 
-    if (matchId) {
-      const match = state.matches[matchId];
-      if (match) {
-        this.setFlag('tournament_watching', 7);
-        this.setFlag(`watched_${match.teamAId}_${match.teamBId}`, 7);
-        // 80% chance: set downtime_interview_pending (consumed by Phase 4)
-        if (Math.random() < 0.8) {
-          this.setFlag('downtime_interview_pending', 1);
+      if (matchId) {
+        const match = state.matches[matchId];
+        if (match) {
+          this.setFlag('tournament_watching', 7);
+          this.setFlag(`watched_${match.teamAId}_${match.teamBId}`, 7);
+          if (Math.random() < 0.8) {
+            this.setFlag('downtime_interview_pending', 1);
+            interviewPending = true;
+          }
+        } else {
+          this.setFlag('tournament_watching', 7);
         }
       } else {
         this.setFlag('tournament_watching', 7);
       }
-    } else {
-      this.setFlag('tournament_watching', 7);
     }
 
     console.log('[DowntimeResolutionService] Watch Party resolved');
+    return {
+      activityType: 'watch_party',
+      financialDelta: 0,
+      moraleChanges: [],
+      reputationDeltas: {},
+      interviewPending,
+    };
   }
 
-  private resolveStreamerCollab(): void {
+  private resolveStreamerCollab(): DowntimeActivityResult {
     const state = useGameStore.getState();
     const teamId = state.playerTeamId;
-    if (!teamId) return;
+    if (!teamId) return { activityType: 'streamer_collab', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
     const team = state.teams[teamId];
-    if (!team) return;
+    if (!team) return { activityType: 'streamer_collab', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
-    // Cost
-    state.updateTeamBalance(teamId, -5000);
+    const financialDelta = -5000;
+    state.updateTeamBalance(teamId, financialDelta);
 
-    // Featured player
     const featuredPlayerId = this.selectHighestMoralePlayer(team.playerIds);
+    const reputationDeltas = { fanbase: 3, hype: 5 };
+    this.updateReputation(team, teamId, reputationDeltas);
 
-    // Reputation effects
-    this.updateReputation(team, teamId, { fanbase: 3, hype: 5 });
-
-    // Morale for featured player
+    const moraleChanges: DowntimeActivityResult['moraleChanges'] = [];
     if (featuredPlayerId) {
       this.applyMoraleToPlayer(featuredPlayerId, 2);
+      const player = state.players[featuredPlayerId];
+      if (player) moraleChanges.push({ playerId: featuredPlayerId, playerName: player.name, delta: 2 });
     }
 
+    const featuredPlayerName = featuredPlayerId ? (state.players[featuredPlayerId]?.name) : undefined;
     this.setFlag('streamer_collab_done', 7);
     console.log('[DowntimeResolutionService] Streamer Collab resolved');
+    return { activityType: 'streamer_collab', financialDelta, moraleChanges, reputationDeltas, featuredPlayerName };
   }
 
-  private resolveYoutubeDocumentary(): void {
+  private resolveYoutubeDocumentary(): DowntimeActivityResult {
     const state = useGameStore.getState();
     const teamId = state.playerTeamId;
-    if (!teamId) return;
+    if (!teamId) return { activityType: 'youtube_documentary', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
     const team = state.teams[teamId];
-    if (!team) return;
+    if (!team) return { activityType: 'youtube_documentary', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
-    // Cost
-    state.updateTeamBalance(teamId, -10000);
+    const financialDelta = -10000;
+    state.updateTeamBalance(teamId, financialDelta);
 
-    // Featured player
     const featuredPlayerId = this.selectHighestMoralePlayer(team.playerIds);
+    const reputationDeltas = { sponsorTrust: 5, fanbase: 4 };
+    this.updateReputation(team, teamId, reputationDeltas);
 
-    // Reputation effects
-    this.updateReputation(team, teamId, { sponsorTrust: 5, fanbase: 4 });
-
-    // Morale effects
+    const moraleChanges: DowntimeActivityResult['moraleChanges'] = [];
     if (featuredPlayerId) {
       this.applyMoraleToPlayer(featuredPlayerId, 5);
-      // All others get -1
+      const fp = state.players[featuredPlayerId];
+      if (fp) moraleChanges.push({ playerId: featuredPlayerId, playerName: fp.name, delta: 5 });
       const others = team.playerIds.filter(id => id !== featuredPlayerId);
       this.applyMoraleToAll(others, -1);
+      for (const id of others) {
+        const p = state.players[id];
+        if (p) moraleChanges.push({ playerId: id, playerName: p.name, delta: -1 });
+      }
     } else {
-      // No featured player, apply -1 to everyone
       this.applyMoraleToAll(team.playerIds, -1);
+      for (const id of team.playerIds) {
+        const p = state.players[id];
+        if (p) moraleChanges.push({ playerId: id, playerName: p.name, delta: -1 });
+      }
     }
 
-    // 60% chance: set youtube_drama_trigger (Phase 5 drama hook)
+    let dramaTriggered = false;
     if (Math.random() < 0.6) {
       this.setFlag('youtube_drama_trigger', 1);
+      dramaTriggered = true;
     }
 
     if (featuredPlayerId) {
       this.setFlag(`youtube_doc_${featuredPlayerId}`, 14);
     }
 
+    const featuredPlayerName = featuredPlayerId ? (state.players[featuredPlayerId]?.name) : undefined;
     console.log('[DowntimeResolutionService] YouTube Documentary resolved');
+    return { activityType: 'youtube_documentary', financialDelta, moraleChanges, reputationDeltas, featuredPlayerName, dramaTriggered };
   }
 
-  private resolveFanMeetup(): void {
+  private resolveFanMeetup(): DowntimeActivityResult {
     const state = useGameStore.getState();
     const teamId = state.playerTeamId;
-    if (!teamId) return;
+    if (!teamId) return { activityType: 'fan_meetup', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
     const team = state.teams[teamId];
-    if (!team) return;
+    if (!team) return { activityType: 'fan_meetup', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
-    // Cost
-    state.updateTeamBalance(teamId, -2000);
+    const financialDelta = -2000;
+    state.updateTeamBalance(teamId, financialDelta);
 
-    // Reputation effects
-    this.updateReputation(team, teamId, { hype: 4, fanbase: 2 });
+    const reputationDeltas = { hype: 4, fanbase: 2 };
+    this.updateReputation(team, teamId, reputationDeltas);
 
-    // Morale +3 to ALL roster players
     this.applyMoraleToAll(team.playerIds, 3);
+    const moraleChanges: DowntimeActivityResult['moraleChanges'] = team.playerIds.map(id => {
+      const p = state.players[id];
+      return p ? { playerId: id, playerName: p.name, delta: 3 } : null;
+    }).filter((x): x is NonNullable<typeof x> => x !== null);
 
     this.setFlag('fan_meetup_done', 7);
     console.log('[DowntimeResolutionService] Fan Meetup resolved');
+    return { activityType: 'fan_meetup', financialDelta, moraleChanges, reputationDeltas };
   }
 
-  private resolveSponsoredContent(): void {
+  private resolveSponsoredContent(): DowntimeActivityResult {
     const state = useGameStore.getState();
     const teamId = state.playerTeamId;
-    if (!teamId) return;
+    if (!teamId) return { activityType: 'sponsored_content', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
     const team = state.teams[teamId];
-    if (!team) return;
+    if (!team) return { activityType: 'sponsored_content', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
 
-    // Guard: must have active sponsorships
     if (!team.finances.activeSponsorships || team.finances.activeSponsorships.length === 0) {
       console.warn('[DowntimeResolutionService] Sponsored Content: no active sponsorships, skipping effects');
-      return;
+      return { activityType: 'sponsored_content', financialDelta: 0, moraleChanges: [], reputationDeltas: {} };
     }
 
-    // Income: random $8,000–$15,000
     const income = Math.floor(Math.random() * 7001) + 8000;
     state.updateTeamBalance(teamId, income);
 
-    // Reputation effects
-    this.updateReputation(team, teamId, { sponsorTrust: 3 });
+    const reputationDeltas = { sponsorTrust: 3 };
+    this.updateReputation(team, teamId, reputationDeltas);
 
-    // Morale -1 to ALL roster players
     this.applyMoraleToAll(team.playerIds, -1);
+    const moraleChanges: DowntimeActivityResult['moraleChanges'] = team.playerIds.map(id => {
+      const p = state.players[id];
+      return p ? { playerId: id, playerName: p.name, delta: -1 } : null;
+    }).filter((x): x is NonNullable<typeof x> => x !== null);
 
     this.setFlag('sponsored_content_done', 7);
     console.log(`[DowntimeResolutionService] Sponsored Content resolved: +$${income}`);
+    return { activityType: 'sponsored_content', financialDelta: income, moraleChanges, reputationDeltas };
   }
 
   // ============================================================================

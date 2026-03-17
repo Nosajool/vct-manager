@@ -9,3 +9,4 @@ export { SimulationResultsModal } from './SimulationResultsModal';
 export { SimulationProgressModal } from './SimulationProgressModal';
 export { TrainingRecapModal } from './TrainingRecapModal';
 export { ScrimRecapModal } from './ScrimRecapModal';
+export { DowntimeRecapModal } from './DowntimeRecapModal';

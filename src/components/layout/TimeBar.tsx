@@ -17,7 +17,7 @@ import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
-import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal } from '../calendar';
+import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal, DowntimeRecapModal } from '../calendar';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -36,12 +36,12 @@ import { scrimService } from '../../services/ScrimService';
 import { DayScheduleService } from '../../services/DayScheduleService';
 import { getPlayerRestriction } from '../../services/ContractService';
 import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
-import type { TrainingActivityConfig, ScrimActivityConfig } from '../../types/activityPlan';
+import type { TrainingActivityConfig, ScrimActivityConfig, DowntimeActivityResult } from '../../types/activityPlan';
 import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 
-type PostSimulationModalType = 'training' | 'scrim' | 'morale' | 'interview';
+type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'interview';
 
 /**
  * Helper to enrich drama event with template data and substitute narrative placeholders
@@ -108,6 +108,7 @@ export function TimeBar() {
   const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
   const [pendingPatchPreview, setPendingPatchPreview] = useState<MetaPatch | null>(null);
   const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
+  const [downtimeResults, setDowntimeResults] = useState<DowntimeActivityResult[]>([]);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
 
@@ -218,6 +219,12 @@ export function TimeBar() {
     }
 
     const queue: PostSimulationModalType[] = [];
+
+    if (result?.downtimeResults && result.downtimeResults.length > 0) {
+      setDowntimeResults(result.downtimeResults);
+      queue.push('downtime');
+    }
+
     const activities = result?.activityResults;
 
     if (activities && (activities.trainingResults.length > 0 || activities.skippedTraining)) {
@@ -705,6 +712,14 @@ export function TimeBar() {
       />
 
       {/* Post-simulation modal queue */}
+      {activePostModal === 'downtime' && downtimeResults.length > 0 && (
+        <DowntimeRecapModal
+          isOpen={true}
+          onClose={handlePostModalClose}
+          results={downtimeResults}
+          date={simulationResult?.newDate ?? ''}
+        />
+      )}
       {activePostModal === 'training' && simulationResult?.activityResults && (
         <TrainingRecapModal
           isOpen={true}

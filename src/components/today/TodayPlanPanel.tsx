@@ -53,6 +53,8 @@ export function TodayPlanPanel() {
           modals.openScrimModal(event.id);
         } else if (item.action.openModal === 'watch_party') {
           modals.openWatchPartyModal(event.id);
+        } else if (item.action.openModal === 'regional_bootcamp') {
+          modals.openRegionalBootcampModal(event.id);
         } else {
           // One-click downtime activity: auto-configure
           updateEventLifecycleState(event.id, 'configured');
@@ -75,6 +77,10 @@ export function TodayPlanPanel() {
       }
       if (item.action.openModal === 'watch_party') {
         modals.openWatchPartyModal(item.action.eventId);
+        return;
+      }
+      if (item.action.openModal === 'regional_bootcamp') {
+        modals.openRegionalBootcampModal(item.action.eventId);
         return;
       }
     }

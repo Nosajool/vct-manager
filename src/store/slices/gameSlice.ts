@@ -45,6 +45,7 @@ export interface GameSlice {
   removeCalendarEvent: (eventId: string) => void;
   clearProcessedEvents: () => void;
   updateEventLifecycleState: (eventId: string, state: import('../../types').ActivityLifecycleState) => void;
+  updateCalendarEventData: (eventId: string, data: Record<string, unknown>) => void;
 
   // Selectors
   getCurrentDate: () => string;
@@ -219,6 +220,16 @@ export const createGameSlice: StateCreator<
         ...state.calendar,
         scheduledEvents: state.calendar.scheduledEvents.map((event) =>
           event.id === eventId ? { ...event, lifecycleState } : event
+        ),
+      },
+    })),
+
+  updateCalendarEventData: (eventId, data) =>
+    set((state) => ({
+      calendar: {
+        ...state.calendar,
+        scheduledEvents: state.calendar.scheduledEvents.map((event) =>
+          event.id === eventId ? { ...event, data: { ...(event.data as object), ...data } } : event
         ),
       },
     })),
