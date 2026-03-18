@@ -48,6 +48,12 @@ export interface MatchSimInput {
   mapPoolA?: MapPoolStrength;
   /** Map pool for team B — used to apply map-specific scrim attribute bonuses. */
   mapPoolB?: MapPoolStrength;
+  /** Pre-selected maps from the veto phase (skips random map selection when provided). */
+  selectedMaps?: string[];
+  /** Per-map agent overrides for team A: mapName -> playerId -> agentName */
+  perMapAgentOverridesA?: Record<string, Record<string, string>>;
+  /** Per-map agent overrides for team B: mapName -> playerId -> agentName */
+  perMapAgentOverridesB?: Record<string, Record<string, string>>;
 }
 
 /** Input for training a single player */

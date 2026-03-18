@@ -12,6 +12,8 @@ import type {
   TeamStrategy,
   PlayerAgentPreferences,
   MapPoolStrength,
+  AgentRole,
+  AgentSelection,
 } from '../../types';
 import { MAPS } from '../../utils/constants';
 
@@ -61,7 +63,10 @@ export class MatchSimulator {
     isPlayoffMatch?: boolean,
     allPlayerAgentPreferences?: Record<string, PlayerAgentPreferences>,
     mapPoolA?: MapPoolStrength,
-    mapPoolB?: MapPoolStrength
+    mapPoolB?: MapPoolStrength,
+    selectedMaps?: string[],
+    perMapAgentOverridesA?: Record<string, Record<string, string>>,
+    perMapAgentOverridesB?: Record<string, Record<string, string>>
   ): MatchResult {
     const matchId = `match-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -101,15 +106,15 @@ export class MatchSimulator {
       strengthB *= noiseB;
     }
 
-    // Select maps for the match (pick 3 unique maps)
-    const selectedMaps = this.selectMaps(3);
+    // Select maps for the match (use pre-selected maps or pick 3 unique random maps)
+    const mapsToPlay = selectedMaps ?? this.selectMaps(3);
 
     // Simulate maps until one team wins 2
     const maps: MapResult[] = [];
     let mapsWonA = 0;
     let mapsWonB = 0;
 
-    for (const map of selectedMaps) {
+    for (const map of mapsToPlay) {
       if (mapsWonA >= 2 || mapsWonB >= 2) break;
 
       const mapResult = this.simulateMap(
@@ -126,7 +131,9 @@ export class MatchSimulator {
         playoff,
         allPlayerAgentPreferences,
         mapPoolA,
-        mapPoolB
+        mapPoolB,
+        perMapAgentOverridesA?.[map],
+        perMapAgentOverridesB?.[map]
       );
       maps.push(mapResult);
 
@@ -296,6 +303,56 @@ export class MatchSimulator {
   }
 
   /**
+   * Build an AgentSelection from pre-chosen agent overrides (from the prep modal).
+   * Falls back to auto-selection for any player not covered by the overrides.
+   */
+  private buildSelectionFromOverrides(
+    players: Player[],
+    overrides: Record<string, string>,
+    strategy: TeamStrategy,
+    mapName: string
+  ): AgentSelection {
+    const assignments: Record<string, string> = {};
+    const usedAgents = new Set<string>();
+
+    // Apply overrides first
+    for (const player of players) {
+      if (overrides[player.id]) {
+        assignments[player.id] = overrides[player.id];
+        usedAgents.add(overrides[player.id]);
+      }
+    }
+
+    // Auto-fill any uncovered players
+    const uncovered = players.filter((p) => !assignments[p.id]);
+    if (uncovered.length > 0) {
+      const autoSelection = this.compositionEngine.selectAgents(uncovered, strategy, mapName);
+      for (const player of uncovered) {
+        const autoAgent = autoSelection.assignments[player.id];
+        const agent = usedAgents.has(autoAgent) ? autoAgent : autoAgent;
+        assignments[player.id] = agent;
+        usedAgents.add(agent);
+      }
+    }
+
+    // Compute composition bonus from the resolved assignments
+    const roleCounts: Record<AgentRole, number> = {
+      Duelist: 0, Initiator: 0, Controller: 0, Sentinel: 0,
+    };
+    for (const agentName of Object.values(assignments)) {
+      const role = this.compositionEngine.getAgentRole(agentName);
+      if (role) roleCounts[role]++;
+    }
+
+    const bonus = this.compositionEngine.calculateCompositionBonus(roleCounts);
+    return {
+      assignments,
+      bonus,
+      isValidComposition: this.compositionEngine.isValidComposition(roleCounts),
+    };
+  }
+
+  /**
    * Select random unique maps
    */
   private selectMaps(count: number): string[] {
@@ -322,15 +379,21 @@ export class MatchSimulator {
     isPlayoffMatch: boolean = false,
     allPreferences?: Record<string, PlayerAgentPreferences>,
     mapPoolA?: MapPoolStrength,
-    mapPoolB?: MapPoolStrength
+    mapPoolB?: MapPoolStrength,
+    agentOverridesA?: Record<string, string>,
+    agentOverridesB?: Record<string, string>
   ): MapResult {
     // Look up map-specific scrim attributes for this map
     const mapAttributesA = mapPoolA?.maps[mapName]?.attributes;
     const mapAttributesB = mapPoolB?.maps[mapName]?.attributes;
 
-    // Select agents for each team
-    const agentSelectionA = this.compositionEngine.selectAgents(playersA, strategyA, mapName);
-    const agentSelectionB = this.compositionEngine.selectAgents(playersB, strategyB, mapName);
+    // Select agents for each team — use overrides when provided
+    const agentSelectionA = agentOverridesA
+      ? this.buildSelectionFromOverrides(playersA, agentOverridesA, strategyA, mapName)
+      : this.compositionEngine.selectAgents(playersA, strategyA, mapName);
+    const agentSelectionB = agentOverridesB
+      ? this.buildSelectionFromOverrides(playersB, agentOverridesB, strategyB, mapName)
+      : this.compositionEngine.selectAgents(playersB, strategyB, mapName);
 
     // Apply mastery modifier if preferences are available
     const prefs = allPreferences ?? {};

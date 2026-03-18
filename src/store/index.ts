@@ -19,6 +19,7 @@ import { createRivalrySlice, type RivalrySlice } from './slices/rivalrySlice';
 import { createInterviewSlice, type InterviewSlice } from './slices/interviewSlice';
 import { createNarrativeCollectionSlice, type NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';
 import { createBootcampSlice, type BootcampSlice } from './slices/bootcampSlice';
+import { createMatchPreparationSlice, type MatchPreparationSlice } from './slices/matchPreparationSlice';
 import {
   saveManager,
   applyLoadedState,
@@ -28,7 +29,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice & BootcampSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice & BootcampSlice & MatchPreparationSlice;
 
 export const useGameStore = create<GameState>()(
   autoSave(
@@ -50,6 +51,7 @@ export const useGameStore = create<GameState>()(
       ...createInterviewSlice(...args),
       ...createNarrativeCollectionSlice(...args),
       ...createBootcampSlice(...args),
+      ...createMatchPreparationSlice(...args),
     })
   )
 );
@@ -72,6 +74,7 @@ export type { RivalrySlice } from './slices/rivalrySlice';
 export type { InterviewSlice } from './slices/interviewSlice';
 export type { NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';
 export type { BootcampSlice, BootcampConfig, BootcampStatus } from './slices/bootcampSlice';
+export type { MatchPreparationSlice } from './slices/matchPreparationSlice';
 
 // ============================================
 // Save/Load API

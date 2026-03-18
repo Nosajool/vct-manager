@@ -76,6 +76,10 @@ export class MatchService {
       ? ((calendarEvent.data as MatchEventData).isPlayoffMatch ?? false)
       : false;
 
+    // Look up pre-match config (from the prep modal, if the player configured it)
+    const preMatchConfig = state.getPreMatchConfig(matchId);
+    const isPlayerTeamA = state.playerTeamId === match.teamAId;
+
     // Run simulation in worker with strategies
     const result = await simulationWorkerService.simulateMatch({
       teamA,
@@ -91,6 +95,9 @@ export class MatchService {
       allPlayerAgentPreferences: state.playerAgentPreferences,
       mapPoolA: teamA.mapPool,
       mapPoolB: teamB.mapPool,
+      selectedMaps: preMatchConfig?.selectedMaps,
+      perMapAgentOverridesA: preMatchConfig && isPlayerTeamA ? preMatchConfig.agentAssignments : undefined,
+      perMapAgentOverridesB: preMatchConfig && !isPlayerTeamA ? preMatchConfig.agentAssignments : undefined,
     });
 
     // Update result's matchId to the actual match
@@ -108,8 +115,9 @@ export class MatchService {
       tournamentService.advanceTournament(match.tournamentId, matchId, result);
     }
 
-    // Clean up match strategy snapshots after completion
+    // Clean up match strategy snapshots and prep config after completion
     state.deleteMatchStrategy(matchId);
+    state.deletePreMatchConfig(matchId);
 
     return result;
   }

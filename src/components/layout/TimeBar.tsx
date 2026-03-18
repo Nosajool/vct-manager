@@ -12,12 +12,15 @@
 // 6. User is now at beginning of Day X+1
 
 import { useState, useMemo } from 'react';
+import type { Team } from '../../types';
+import type { PreMatchConfig } from '../../types/prematch';
 import { calendarService, interviewService, progressTrackingService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
 import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal, DowntimeRecapModal } from '../calendar';
+import { PreMatchPrepModal } from '../match/PreMatchPrepModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
@@ -42,6 +45,45 @@ import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 
 type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'interview';
+
+/**
+ * Thin wrapper to pull PreMatchPrepModal data from the store so TimeBar JSX stays clean.
+ */
+function PreMatchPrepModalWrapper({
+  isOpen,
+  playerTeamId,
+  opponentTeam,
+  onConfirm,
+  onCancel,
+}: {
+  isOpen: boolean;
+  playerTeamId: string | null;
+  opponentTeam: Team | null;
+  onConfirm: (config: PreMatchConfig) => void;
+  onCancel: () => void;
+}) {
+  const state = useGameStore.getState();
+  if (!isOpen || !playerTeamId || !opponentTeam) return null;
+
+  const playerTeam = state.teams[playerTeamId];
+  if (!playerTeam) return null;
+
+  const activePlayers = playerTeam.playerIds
+    .map((id) => state.players[id])
+    .filter((p): p is NonNullable<typeof p> => !!p);
+
+  return (
+    <PreMatchPrepModal
+      isOpen={true}
+      playerTeam={playerTeam}
+      playerTeamPlayers={activePlayers}
+      opponentTeam={opponentTeam}
+      playerAgentPrefs={state.playerAgentPreferences}
+      onConfirm={onConfirm}
+      onCancel={onCancel}
+    />
+  );
+}
 
 /**
  * Helper to enrich drama event with template data and substitute narrative placeholders
@@ -109,6 +151,7 @@ export function TimeBar() {
   const [pendingPatchPreview, setPendingPatchPreview] = useState<MetaPatch | null>(null);
   const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
   const [downtimeResults, setDowntimeResults] = useState<DowntimeActivityResult[]>([]);
+  const [showPreMatchPrep, setShowPreMatchPrep] = useState(false);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
 
@@ -149,7 +192,7 @@ export function TimeBar() {
   const closeModal = useGameStore((state) => state.closeModal);
 
   // Use centralized match day detection
-  const { isMatchDay: hasMatchToday, opponentName } = useMatchDay();
+  const { isMatchDay: hasMatchToday, opponentName, todaysMatch, opponent: opponentTeam } = useMatchDay();
 
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
 
@@ -398,11 +441,27 @@ export function TimeBar() {
       setHasInsufficientRoster(rosterShort);
       setShowValidationModal(true);
     } else {
-      // All configured - check for pre-match interview
-      if (!checkAndShowPreMatchInterview()) {
+      // All configured — show pre-match prep modal on match days, then interview, then advance
+      if (hasMatchToday && todaysMatch) {
+        setShowPreMatchPrep(true);
+      } else if (!checkAndShowPreMatchInterview()) {
         handleTimeAdvance(() => calendarService.advanceDay(true));
       }
     }
+  };
+
+  const handlePreMatchPrepConfirm = (config: PreMatchConfig) => {
+    setShowPreMatchPrep(false);
+    if (todaysMatch) {
+      useGameStore.getState().setPreMatchConfig(todaysMatch.id, config);
+    }
+    if (!checkAndShowPreMatchInterview()) {
+      handleTimeAdvance(() => calendarService.advanceDay(true));
+    }
+  };
+
+  const handlePreMatchPrepCancel = () => {
+    setShowPreMatchPrep(false);
   };
 
   const handleSimulationResultsModalClose = () => {
@@ -853,6 +912,15 @@ export function TimeBar() {
           isOpen={true}
         />
       )}
+
+      {/* Pre-Match Preparation Modal */}
+      <PreMatchPrepModalWrapper
+        isOpen={showPreMatchPrep}
+        playerTeamId={playerTeamId}
+        opponentTeam={opponentTeam}
+        onConfirm={handlePreMatchPrepConfirm}
+        onCancel={handlePreMatchPrepCancel}
+      />
 
       {/* Auto-save indicator - fixed bottom-right, above all modals */}
       <AutoSaveIndicator />
