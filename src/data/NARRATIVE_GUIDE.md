@@ -1802,3 +1802,68 @@ All drama templates that should only fire during downtime must include `{ type: 
 
 ### Rule: WATCH_PARTY interview templates
 Must include `{ type: 'flag_active', flag: 'tournament_watching' }` as a condition so they only fire when a watch party has recently been completed.
+
+---
+
+## Real Game Actions: New Effect Targets and Choice Follow-ups
+
+### Effect Target: `assign_igl`
+
+Reassigns the IGL role to the active roster player with the highest `stats.igl` who is not the current IGL.
+
+**Handled by:** `DramaEffectResolver` → `ResolvedEffect { type: 'assign_igl' }` → `DramaService.applyResolvedEffects` → `contractService.reassignIGL()`
+
+**What it does:**
+- Marks the old IGL as `isFormerIGL: true`
+- Sets the `igl_manually_reassigned` flag (expires in 21 days)
+- Clears `igl_replacement_considered` and `igl_on_notice` flags
+- Updates `team.iglPlayerId` to the new IGL
+
+**Usage:**
+```typescript
+{ target: 'assign_igl' }
+```
+
+No additional fields needed. Selection is automatic (highest `stats.igl` among active non-IGL players).
+
+---
+
+### Effect Target: `trigger_event` (in DramaEffect)
+
+Schedules a drama event to fire on the next `evaluateDay()` call.
+
+**Handled by:** `DramaEffectResolver` → `ResolvedEffect { type: 'trigger_event', templateId }` → `DramaService.applyResolvedEffects` → `state.addPendingEventTrigger()`
+
+**Usage:**
+```typescript
+{ target: 'trigger_event', eventTemplateId: 'some_template_id' }
+```
+
+The event fires as soon as `evaluateDay()` is next called (fireDate = current date). If the template is `minor`, it auto-resolves immediately. If `major`, it is added as a pending player decision.
+
+---
+
+### DramaChoice: `triggersEventId` / `triggerDelay`
+
+When a player makes a choice that has `triggersEventId`, a follow-up event is scheduled to fire after `triggerDelay` days (default: 0).
+
+**Handled by:** `DramaService.resolveEvent()` after resolving the chosen effects
+
+**Persistence:** Pending triggers are stored in `state.pendingEventTriggers` and survive save/load.
+
+**Usage:**
+```typescript
+{
+  id: 'mediate',
+  text: 'Mediate the conflict.',
+  effects: [...],
+  outcomeText: '...',
+  triggersEventId: 'conflict_mediation_outcome',
+  triggerDelay: 7,  // fires 7 days later
+}
+```
+
+**Notes:**
+- `triggerDelay: 0` (or omitted) fires on the next `evaluateDay()` call
+- The involved player IDs from the original event are passed to the follow-up
+- Multiple pending triggers for the same template can coexist (they are matched by both `templateId` and `fireDate`)

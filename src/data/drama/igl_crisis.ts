@@ -152,6 +152,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
           { target: 'clear_flag', flag: 'igl_on_notice' },
           { target: 'clear_flag', flag: 'igl_replacement_considered' },
           { target: 'set_flag', flag: 'igl_removed', flagDuration: 30 },
+          { target: 'assign_igl' },
         ],
         outcomeText:
           "The switch is made. The new IGL has potential but needs time, and the former IGL is clearly hurt by the demotion.",
@@ -166,6 +167,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
           { target: 'team_chemistry', delta: 3 },
           { target: 'clear_flag', flag: 'igl_on_notice' },
           { target: 'clear_flag', flag: 'igl_replacement_considered' },
+          { target: 'assign_igl' },
         ],
         outcomeText:
           "{playerName} accepts a strategic coaching role. It's a graceful exit that keeps their knowledge in the org.",

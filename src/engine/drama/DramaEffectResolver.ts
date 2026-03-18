@@ -11,7 +11,7 @@ import type { DramaEffect, DramaGameStateSnapshot, EffectPlayerSelector } from '
  * Concrete mutation to apply to game state
  */
 export interface ResolvedEffect {
-  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'release_player' | 'update_free_agent_interest' | 'extend_player_contract';
+  type: 'update_player' | 'update_team' | 'set_flag' | 'clear_flag' | 'move_to_reserve' | 'move_to_active' | 'release_player' | 'update_free_agent_interest' | 'extend_player_contract' | 'assign_igl' | 'trigger_event';
 
   // Player updates
   playerId?: string;
@@ -29,6 +29,9 @@ export interface ResolvedEffect {
   // Contract extension
   yearsToAdd?: number;
   salaryMultiplier?: number;
+
+  // Event chaining
+  templateId?: string;
 }
 
 // ============================================================================
@@ -176,8 +179,23 @@ function resolveEffect(
     }));
   }
 
-  // Handle special targets mentioned in spec
-  if (target === 'trigger_event' || target === 'escalate_event' || target === 'add_cooldown') {
+  // Handle IGL reassignment
+  if (target === 'assign_igl') {
+    const currentIglId = snapshot.iglPlayerId;
+    const candidates = snapshot.players.filter(p => p.id !== currentIglId && p.isActive);
+    if (candidates.length === 0) return [];
+    const newIgl = candidates.reduce((best, p) => p.stats.igl > best.stats.igl ? p : best, candidates[0]);
+    return [{ type: 'assign_igl', playerId: newIgl.id }];
+  }
+
+  // Handle trigger_event — schedule a follow-up event
+  if (target === 'trigger_event') {
+    if (!effect.eventTemplateId) return [];
+    return [{ type: 'trigger_event', templateId: effect.eventTemplateId }];
+  }
+
+  // Handle special targets handled elsewhere
+  if (target === 'escalate_event' || target === 'add_cooldown') {
     // These are handled by the drama engine, not the effect resolver
     return [];
   }

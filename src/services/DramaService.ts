@@ -5,6 +5,7 @@ import { useGameStore } from '../store';
 import * as dramaEngine from '../engine/drama';
 import { freeAgentInterestService } from './FreeAgentInterestService';
 import { downtimeService } from './DowntimeService';
+import { contractService } from './ContractService';
 import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
 import { resolveEffects, type ResolvedEffect } from '../engine/drama/DramaEffectResolver';
 import type {
@@ -31,10 +32,41 @@ export class DramaService {
     // Build snapshot from current game state
     const snapshot = this.buildSnapshot();
 
+    const newEvents: DramaEventInstance[] = [];
+
+    // Fire any pending event triggers that have reached their fire date
+    const pendingTriggers = state.pendingEventTriggers ?? [];
+    const currentDateObj = new Date(snapshot.currentDate);
+
+    for (const trigger of pendingTriggers) {
+      if (new Date(trigger.fireDate) <= currentDateObj) {
+        const template = DRAMA_EVENT_TEMPLATES.find(t => t.id === trigger.templateId);
+        if (template) {
+          const triggerPlayer = trigger.involvedPlayerIds[0]
+            ? snapshot.players.find(p => p.id === trigger.involvedPlayerIds[0]) ?? null
+            : null;
+          const eventInstance = dramaEngine.createEventInstance(template, snapshot, triggerPlayer);
+
+          if (template.severity === 'minor') {
+            if (template.effects) {
+              this.applyEffects(template.effects, trigger.involvedPlayerIds);
+              eventInstance.appliedEffects = template.effects;
+            }
+            const context = this.buildContext(state, eventInstance);
+            eventInstance.outcomeText = dramaEngine.substituteNarrative(template.description, context);
+            state.addDramaEvent(eventInstance);
+            state.resolveDramaEvent(eventInstance.id, undefined, eventInstance.outcomeText, eventInstance.appliedEffects);
+          } else {
+            state.addDramaEvent(eventInstance);
+          }
+          newEvents.push(eventInstance);
+        }
+        state.removePendingEventTrigger(trigger.templateId, trigger.fireDate);
+      }
+    }
+
     // Call drama engine to evaluate triggers
     const result = dramaEngine.evaluate(snapshot, DRAMA_EVENT_TEMPLATES);
-
-    const newEvents: DramaEventInstance[] = [];
 
     // Process triggered events
     for (const triggered of result.triggeredEvents) {
@@ -69,35 +101,7 @@ export class DramaService {
         }
 
         // Build context for narrative substitution
-        const context: Record<string, string> = {};
-
-        // Add player name if event has affected players
-        if (eventInstance.affectedPlayerIds && eventInstance.affectedPlayerIds.length > 0) {
-          const playerId = eventInstance.affectedPlayerIds[0];
-          const player = state.players[playerId];
-          if (player) {
-            context.playerName = player.name;
-          }
-        }
-
-        // Add team name
-        if (eventInstance.teamId) {
-          const team = state.teams[eventInstance.teamId];
-          if (team) {
-            context.teamName = team.name;
-          }
-        }
-
-        // Add sponsor name for sponsor-related events
-        if (eventInstance.teamId) {
-          const teamForSponsor = state.teams[eventInstance.teamId];
-          const activeSponsorships = teamForSponsor?.finances?.activeSponsorships;
-          if (activeSponsorships && activeSponsorships.length > 0) {
-            context.sponsorName = activeSponsorships[0].sponsorName;
-          } else {
-            context.sponsorName = 'Your primary sponsor';
-          }
-        }
+        const context = this.buildContext(state, eventInstance);
 
         // Substitute placeholders in description for minor events
         eventInstance.outcomeText = dramaEngine.substituteNarrative(template.description, context);
@@ -207,35 +211,7 @@ export class DramaService {
     this.applyResolvedEffects(resolvedEffects);
 
     // Build context for narrative substitution
-    const context: Record<string, string> = {};
-
-    // Add player name if event has affected players
-    if (event.affectedPlayerIds && event.affectedPlayerIds.length > 0) {
-      const playerId = event.affectedPlayerIds[0];
-      const player = state.players[playerId];
-      if (player) {
-        context.playerName = player.name;
-      }
-    }
-
-    // Add team name
-    if (event.teamId) {
-      const team = state.teams[event.teamId];
-      if (team) {
-        context.teamName = team.name;
-      }
-    }
-
-    // Add sponsor name for sponsor-related events
-    if (event.teamId) {
-      const teamForSponsor = state.teams[event.teamId];
-      const activeSponsorships = teamForSponsor?.finances?.activeSponsorships;
-      if (activeSponsorships && activeSponsorships.length > 0) {
-        context.sponsorName = activeSponsorships[0].sponsorName;
-      } else {
-        context.sponsorName = 'Your primary sponsor';
-      }
-    }
+    const context = this.buildContext(state, event);
 
     // Substitute placeholders in outcome text
     const substitutedOutcomeText = dramaEngine.substituteNarrative(choice.outcomeText, context);
@@ -248,10 +224,17 @@ export class DramaService {
       choice.effects
     );
 
-    // Handle escalation control from choice
-    // Note: Choice-based escalation prevention/triggering would be implemented here
-    // if the DramaChoice interface had preventsEscalation/triggersEscalation flags
-    // For now, this is handled by the event expiry/escalation system
+    // Schedule follow-up event if choice has a triggersEventId
+    if (choice.triggersEventId) {
+      const delayDays = choice.triggerDelay ?? 0;
+      const fireDate = new Date(state.calendar.currentDate);
+      fireDate.setDate(fireDate.getDate() + delayDays);
+      state.addPendingEventTrigger({
+        templateId: choice.triggersEventId,
+        fireDate: fireDate.toISOString(),
+        involvedPlayerIds: event.affectedPlayerIds || [],
+      });
+    }
   }
 
   /**
@@ -429,6 +412,34 @@ export class DramaService {
       isGrandFinal: false,
       tournamentType: activeTournament.type,
     };
+  }
+
+  /**
+   * Build narrative substitution context from event metadata
+   */
+  private buildContext(
+    state: ReturnType<typeof useGameStore.getState>,
+    event: Pick<DramaEventInstance, 'affectedPlayerIds' | 'teamId'>
+  ): Record<string, string> {
+    const context: Record<string, string> = {};
+
+    if (event.affectedPlayerIds && event.affectedPlayerIds.length > 0) {
+      const player = state.players[event.affectedPlayerIds[0]];
+      if (player) context.playerName = player.name;
+    }
+
+    if (event.teamId) {
+      const team = state.teams[event.teamId];
+      if (team) context.teamName = team.name;
+      const activeSponsorships = state.teams[event.teamId]?.finances?.activeSponsorships;
+      if (activeSponsorships && activeSponsorships.length > 0) {
+        context.sponsorName = activeSponsorships[0].sponsorName;
+      } else {
+        context.sponsorName = 'Your primary sponsor';
+      }
+    }
+
+    return context;
   }
 
   /**
@@ -685,6 +696,24 @@ export class DramaService {
               salary: newSalary,
               endDate: endDateObj.toISOString(),
             }
+          });
+          break;
+        }
+
+        case 'assign_igl': {
+          if (!effect.playerId) continue;
+          const playerTeamId = state.playerTeamId;
+          if (!playerTeamId) continue;
+          contractService.reassignIGL(effect.playerId, playerTeamId);
+          break;
+        }
+
+        case 'trigger_event': {
+          if (!effect.templateId) continue;
+          state.addPendingEventTrigger({
+            templateId: effect.templateId,
+            fireDate: state.calendar.currentDate,
+            involvedPlayerIds: [],
           });
           break;
         }

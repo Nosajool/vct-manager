@@ -291,7 +291,10 @@ export type DramaEffectTarget =
   | 'free_agent_interest'
 
   // Contract extension
-  | 'player_contract_extension'; // Extends player contract with years + salary raise
+  | 'player_contract_extension' // Extends player contract with years + salary raise
+
+  // IGL roster change
+  | 'assign_igl';    // Reassign IGL to active player with highest stats.igl (non-current IGL)
 
 /**
  * Player selector for effects (extended for effect resolution needs)
@@ -358,6 +361,15 @@ export interface DramaChoice {
   // Optional follow-up event
   triggersEventId?: string;
   triggerDelay?: number;  // Days to wait before triggering the follow-up event
+}
+
+/**
+ * Scheduled follow-up event trigger, persisted across save/load
+ */
+export interface PendingEventTrigger {
+  templateId: string;
+  fireDate: string;           // ISO date string — fire when currentDate >= fireDate
+  involvedPlayerIds: string[];
 }
 
 /**

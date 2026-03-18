@@ -104,6 +104,11 @@ export interface SerializedGameState {
     lastEventByCategory: Record<string, string>;
     totalEventsTriggered: number;
     totalMajorDecisions: number;
+    pendingEventTriggers?: Array<{
+      templateId: string;
+      fireDate: string;
+      involvedPlayerIds: string[];
+    }>;
   };
 
   // Activity Plan slice (optional for backwards compatibility)

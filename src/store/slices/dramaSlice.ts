@@ -2,7 +2,7 @@
 // Handles narrative events, conditions, effects, and player decisions
 
 import type { StateCreator } from 'zustand';
-import type { DramaEventInstance, DramaEffect, DramaCategory } from '../../types/drama';
+import type { DramaEventInstance, DramaEffect, DramaCategory, PendingEventTrigger } from '../../types/drama';
 
 export interface DramaSlice {
   // State
@@ -13,6 +13,7 @@ export interface DramaSlice {
   lastEventByCategory: Record<DramaCategory, string>; // category -> ISO date
   totalEventsTriggered: number;
   totalMajorDecisions: number;
+  pendingEventTriggers: PendingEventTrigger[];
 
   // Actions
   addDramaEvent: (event: DramaEventInstance) => void;
@@ -29,6 +30,8 @@ export interface DramaSlice {
   clearDramaFlag: (flag: string) => void;
   setCooldown: (templateId: string, date: string) => void;
   updateLastEventByCategory: (category: DramaCategory, date: string) => void;
+  addPendingEventTrigger: (trigger: PendingEventTrigger) => void;
+  removePendingEventTrigger: (templateId: string, fireDate: string) => void;
 
   // Selectors
   getActiveEvents: () => DramaEventInstance[];
@@ -51,6 +54,7 @@ export const createDramaSlice: StateCreator<DramaSlice, [], [], DramaSlice> = (
   lastEventByCategory: {} as Record<DramaCategory, string>,
   totalEventsTriggered: 0,
   totalMajorDecisions: 0,
+  pendingEventTriggers: [],
 
   // Actions
   addDramaEvent: (event) =>
@@ -167,6 +171,18 @@ export const createDramaSlice: StateCreator<DramaSlice, [], [], DramaSlice> = (
   updateLastEventByCategory: (category, date) =>
     set((state) => ({
       lastEventByCategory: { ...state.lastEventByCategory, [category]: date },
+    })),
+
+  addPendingEventTrigger: (trigger) =>
+    set((state) => ({
+      pendingEventTriggers: [...state.pendingEventTriggers, trigger],
+    })),
+
+  removePendingEventTrigger: (templateId, fireDate) =>
+    set((state) => ({
+      pendingEventTriggers: state.pendingEventTriggers.filter(
+        t => !(t.templateId === templateId && t.fireDate === fireDate)
+      ),
     })),
 
   // Selectors

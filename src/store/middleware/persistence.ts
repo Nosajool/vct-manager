@@ -50,9 +50,19 @@ interface MinimalGameState {
     lastEventByCategory: Record<string, string>;
     totalEventsTriggered: number;
     totalMajorDecisions: number;
+    pendingEventTriggers?: Array<{
+      templateId: string;
+      fireDate: string;
+      involvedPlayerIds: string[];
+    }>;
   };
   activityConfigs?: Record<string, unknown>;
   rivalries?: Record<string, unknown>;
+  pendingEventTriggers?: Array<{
+    templateId: string;
+    fireDate: string;
+    involvedPlayerIds: string[];
+  }>;
   pendingInterview?: unknown;
   interviewQueue?: unknown[];
   pendingDramaBoost?: number;
@@ -505,6 +515,7 @@ export function applyLoadedState<T extends MinimalGameState>(
     roundDataSeasonId,
     historicalSeasonStats,
     drama: dramaState,
+    pendingEventTriggers: dramaState.pendingEventTriggers ?? [],
     activityConfigs: prunedActivityConfigs,
     rivalries,
     pendingInterview,
