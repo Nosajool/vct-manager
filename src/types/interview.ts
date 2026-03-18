@@ -135,6 +135,7 @@ export interface InterviewSnapshot extends Omit<DramaGameStateSnapshot, 'tournam
     recentScrimMaps: string[];                      // Maps with scrim practice in last 4 weeks
     playedMapAttributes?: MapStrengthAttributes;    // Attributes of first played map (if available)
     weakestAttribute?: keyof MapStrengthAttributes; // Which attribute is lowest on the played map
+    antiStratLostMap?: string;                      // Name of a lost map with antiStrat < 40
   };
 }
 

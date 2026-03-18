@@ -16,7 +16,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'consecutive_negative_months_above', threshold: 1 },
     ],
     probability: 60,
-    cooldownDays: 14,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_sponsor_trust', delta: -10 },
@@ -35,7 +35,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'consecutive_negative_months_above', threshold: 2 },
     ],
     probability: 70,
-    cooldownDays: 14,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'team_hype', delta: -5 },
@@ -58,7 +58,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'consecutive_negative_months_above', threshold: 3 },
     ],
     probability: 80,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
     choices: [
@@ -111,7 +111,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'player_contract_expiring', contractYearsThreshold: 1, playerSelector: 'star_player' },
     ],
     probability: 65,
-    cooldownDays: 14,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     choices: [
       {
@@ -165,7 +165,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'consecutive_negative_months_above', threshold: 5 },
     ],
     probability: 75,
-    cooldownDays: 14,
+    cooldownDays: 3,
     oncePerSeason: false,
     requiresPlayerTeam: true,
     choices: [
@@ -222,7 +222,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'board_watching' },
     ],
     probability: 90,
-    cooldownDays: 14,
+    cooldownDays: 3,
     requiresPlayerTeam: true,
     effects: [
       { target: 'clear_flag', flag: 'board_watching' },

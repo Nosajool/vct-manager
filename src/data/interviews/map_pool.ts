@@ -463,8 +463,8 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'map_pool',
-    matchOutcome: 'any',
-    prompt: "It seemed like the opponent had reads on everything you ran today. How much of your prep is about breaking their system versus running your own?",
+    matchOutcome: 'loss',
+    prompt: "It seemed like the opponent had reads on everything you ran on {mapName}. How much of your prep is about breaking their system versus running your own?",
     conditions: [{ type: 'map_pool_attribute_below', mapPoolAttribute: 'antiStrat', mapPoolThreshold: 40 }],
     options: [
       {

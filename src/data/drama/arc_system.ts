@@ -209,6 +209,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             target: 'clear_flag',
             flag: 'poaching_attempt_{playerId}',
           },
+          {
+            target: 'player_contract_extension',
+            effectPlayerSelector: 'triggering',
+            contractYearsToAdd: 2,
+            contractSalaryMultiplier: 1.4,
+          },
         ],
         outcomeText: '{playerName} is thrilled with the new contract and commits long-term. It\'s expensive, but you\'ve secured a key player.',
       },
@@ -2176,10 +2182,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     description: "{playerName} has been delivering in the moments that matter most. Their ability to perform under pressure is becoming a defining trait.",
     conditions: [
       {
+        type: 'player_on_active_roster',
+        playerSelector: 'condition_match',
+      },
+      {
         type: 'player_stat_above',
         stat: 'clutch',
         threshold: 70,
-        playerSelector: 'any',
       },
       {
         type: 'team_win_streak',

@@ -122,7 +122,7 @@ export const PLAYER_CONFLICT_EVENTS: DramaEventTemplate[] = [
       { type: 'flag_active', flag: 'conflict_active' },
     ],
     probability: 100,
-    cooldownDays: 30,
+    cooldownDays: 3,
     effects: [
       {
         target: 'team_chemistry',

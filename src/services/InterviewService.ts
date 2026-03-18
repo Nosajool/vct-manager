@@ -105,6 +105,20 @@ export class InterviewService {
         'that map';
       finalTemplate = { ...template, prompt: template.prompt.replace('{mapName}', comebackMapName) };
     }
+    if (!won && template.id === 'post_attr_antiStrat') {
+      const isTeamA = match.teamAId === playerTeamId;
+      const playerSide = isTeamA ? 'teamA' : 'teamB';
+      const state = useGameStore.getState();
+      const mapPool = state.teams[playerTeamId]?.mapPool;
+      const antiStratMap = matchResult.maps
+        .filter(m => m.winner !== playerSide)
+        .filter(m => (mapPool?.maps[m.map]?.attributes.antiStrat ?? 100) < 40)
+        .sort((a, b) =>
+          (mapPool?.maps[a.map]?.attributes.antiStrat ?? 100) -
+          (mapPool?.maps[b.map]?.attributes.antiStrat ?? 100)
+        )[0]?.map ?? matchResult.maps[0]?.map ?? 'that map';
+      finalTemplate = { ...template, prompt: template.prompt.replace('{mapName}', antiStratMap) };
+    }
 
     return this.toPendingInterview(finalTemplate, matchResult.matchId);
   }
@@ -716,6 +730,20 @@ export class InterviewService {
           .reduce((a, b) => b[1] < a[1] ? b : a)[0];
       }
 
+      let antiStratLostMap: string | undefined;
+      if (options.matchResult) {
+        const matchObj = state.matches[options.matchResult.matchId];
+        const isTeamA = matchObj?.teamAId === playerTeamId;
+        const playerSide = isTeamA ? 'teamA' : 'teamB';
+        antiStratLostMap = options.matchResult.maps
+          .filter(m => m.winner !== playerSide)
+          .filter(m => (mapPool.maps[m.map]?.attributes.antiStrat ?? 100) < 40)
+          .sort((a, b) =>
+            (mapPool.maps[a.map]?.attributes.antiStrat ?? 100) -
+            (mapPool.maps[b.map]?.attributes.antiStrat ?? 100)
+          )[0]?.map;
+      }
+
       mapPoolContext = {
         playedMaps,
         weakMaps: mapPool.banPriority,
@@ -724,6 +752,7 @@ export class InterviewService {
         recentScrimMaps,
         playedMapAttributes,
         weakestAttribute,
+        antiStratLostMap,
       };
     }
 

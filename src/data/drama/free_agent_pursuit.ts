@@ -16,7 +16,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'free_agent_interest', interestDelta: 20 },
     ],
-    cooldownDays: 14,
+    cooldownDays: 3,
   },
   {
     id: 'fap_rival_circling',
@@ -51,7 +51,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
         outcomeText: 'You hold back, but the rival continues to apply pressure.',
       },
     ],
-    cooldownDays: 10,
+    cooldownDays: 3,
   },
   {
     id: 'fap_friends_on_team',
@@ -68,7 +68,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'free_agent_interest', interestDelta: 10 },
     ],
-    cooldownDays: 14,
+    cooldownDays: 3,
   },
   {
     id: 'fap_facility_tour_viral',
@@ -85,7 +85,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'free_agent_interest', interestDelta: 5 },
     ],
-    cooldownDays: 21,
+    cooldownDays: 3,
   },
   {
     id: 'fap_cold_shoulder',
@@ -102,6 +102,6 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     effects: [
       { target: 'set_flag', flag: 'fa_market_cooling', flagDuration: 10 },
     ],
-    cooldownDays: 21,
+    cooldownDays: 3,
   },
 ];

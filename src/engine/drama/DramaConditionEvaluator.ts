@@ -283,9 +283,15 @@ export function evaluateCondition(
     }
 
     case 'map_pool_attribute_below': {
-      const s = snapshot as { mapPoolContext?: { playedMapAttributes?: Record<string, number> } };
+      const s = snapshot as { mapPoolContext?: { playedMapAttributes?: Record<string, number>; antiStratLostMap?: string } };
       const ctx = s.mapPoolContext;
-      if (!ctx?.playedMapAttributes || !condition.mapPoolAttribute) return false;
+      if (!ctx || !condition.mapPoolAttribute) return false;
+      // For antiStrat: check if there's a lost map with low antiStrat (pre-filtered in snapshot)
+      if (condition.mapPoolAttribute === 'antiStrat') {
+        return !!ctx.antiStratLostMap;
+      }
+      // For all other attributes: keep existing behavior (first played map)
+      if (!ctx.playedMapAttributes) return false;
       return (ctx.playedMapAttributes[condition.mapPoolAttribute] ?? 100) < (condition.mapPoolThreshold ?? 40);
     }
 
