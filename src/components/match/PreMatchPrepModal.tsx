@@ -3,12 +3,14 @@
 // Phase 2: Agent selection per map
 // Phase 3: Confirmation summary
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { Team, Player, PlayerAgentPreferences, MapPoolStrength } from '../../types';
 import type { AgentRole } from '../../types/strategy';
 import type { PreMatchConfig, VetoAction } from '../../types/prematch';
 import { MAPS, AGENTS } from '../../utils/constants';
 import { COMPOSITION_CONSTANTS } from '../../engine/match/constants';
+import { GameImage } from '../shared/GameImage';
+import { getAgentImageUrl, getMapImageUrl, getTeamLogoUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 
 // ============================================================
 // Types
@@ -196,7 +198,9 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
   const [pickedMaps, setPickedMaps] = useState<{ mapName: string; byTeam: 'player' | 'opponent' | 'auto' }[]>([]);
   const [vetoPhase, setVetoPhase] = useState(0);
   const [vetoLog, setVetoLog] = useState<VetoAction[]>([]);
+  const vetoLogRef = useRef<VetoAction[]>([]);
   const [isAiThinking, setIsAiThinking] = useState(false);
+  const isAiThinkingRef = useRef(false);
 
   const currentEntry = vetoPhase < 7 ? VETO_SEQUENCE[vetoPhase] : null;
   const isPlayerTurn = currentEntry?.team === 'player';
@@ -211,7 +215,8 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
     const teamId = entry.team === 'player' ? playerTeam.id : entry.team === 'opponent' ? opponentTeam.id : 'auto';
     const action = entry.action;
 
-    const newLog = [...vetoLog, { phase, action, teamId, mapName }];
+    const newLog = [...vetoLogRef.current, { phase, action, teamId, mapName }];
+    vetoLogRef.current = newLog;
     setVetoLog(newLog);
 
     if (action === 'ban') {
@@ -236,7 +241,7 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
       }
       onVetoComplete(picked, newLog);
     }
-  }, [vetoLog, pickedMaps, playerTeam.id, opponentTeam.id, onVetoComplete]);
+  }, [playerTeam.id, opponentTeam.id, onVetoComplete]);
 
   // Handle decider auto-resolve after phase 5 (AI ban) completes
   useEffect(() => {
@@ -255,9 +260,11 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
   useEffect(() => {
     if (!currentEntry || isComplete) return;
     if (currentEntry.team !== 'opponent') return;
-    if (isAiThinking) return;
+    if (isAiThinkingRef.current) return;
 
+    isAiThinkingRef.current = true;
     setIsAiThinking(true);
+
     const timer = setTimeout(() => {
       const opponentPool = opponentTeam.mapPool;
       let chosen: string;
@@ -270,12 +277,16 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
         chosen = strongest.find((m) => availableMaps.includes(m)) ?? availableMaps[Math.floor(Math.random() * availableMaps.length)];
       }
 
+      isAiThinkingRef.current = false;
       setIsAiThinking(false);
       resolvePhase(chosen, vetoPhase);
     }, 500);
 
-    return () => clearTimeout(timer);
-  }, [vetoPhase, currentEntry, isAiThinking, availableMaps, opponentTeam, resolvePhase]);
+    return () => {
+      clearTimeout(timer);
+      isAiThinkingRef.current = false;
+    };
+  }, [vetoPhase, currentEntry, availableMaps, opponentTeam, resolvePhase]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -330,6 +341,18 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
         })}
       </div>
 
+      {/* Action banner */}
+      {!isComplete && isPlayerTurn && !isAiThinking && currentEntry && (
+        <div className={`flex items-center gap-2 px-3 py-2 rounded border text-sm font-bold ${
+          currentEntry.action === 'ban'
+            ? 'bg-red-900/30 border-red-500/40 text-red-400'
+            : 'bg-green-900/30 border-green-500/40 text-green-400'
+        }`}>
+          <span>{currentEntry.action === 'ban' ? '✕' : '✓'}</span>
+          <span>{currentEntry.action === 'ban' ? 'BAN A MAP' : 'PICK A MAP'}</span>
+        </div>
+      )}
+
       {/* Map grid */}
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {MAPS.map((mapName) => {
@@ -351,23 +374,34 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
                 ${isPicked ? 'bg-green-900/20 border-green-400/30 cursor-default' : ''}
                 ${isAvailable && !isBanned && !isPicked
                   ? canClick
-                    ? 'bg-vct-gray/10 border-vct-gray/30 hover:bg-vct-red/10 hover:border-vct-red/50 cursor-pointer'
+                    ? `bg-vct-gray/10 border-vct-gray/30 cursor-pointer ${
+                        currentEntry?.action === 'ban'
+                          ? 'hover:bg-vct-red/10 hover:border-vct-red/50'
+                          : 'hover:bg-green-900/20 hover:border-green-400/50'
+                      }`
                     : 'bg-vct-gray/10 border-vct-gray/20 cursor-default opacity-60'
                   : ''}
               `}
             >
+              <div className="relative mb-1">
+                <GameImage
+                  src={getMapImageUrl(mapName)}
+                  alt={mapName}
+                  className="w-full h-14 object-cover rounded"
+                />
+                {isBanned && (
+                  <span className="absolute top-1 right-1 text-red-500 text-xs font-bold bg-black/60 rounded px-1">✕</span>
+                )}
+                {isPicked && (
+                  <span className="absolute top-1 right-1 text-green-400 text-xs font-bold bg-black/60 rounded px-1">
+                    {pickEntry.byTeam === 'player' ? 'P1' : pickEntry.byTeam === 'opponent' ? 'P2' : 'D'}
+                  </span>
+                )}
+              </div>
               <p className="text-xs font-semibold text-vct-light leading-tight">{mapName}</p>
               <div className="mt-0.5">
                 <StarRating stars={stars} />
               </div>
-              {isBanned && (
-                <span className="absolute top-1 right-1 text-red-500 text-xs font-bold">✕</span>
-              )}
-              {isPicked && (
-                <span className="absolute top-1 right-1 text-green-400 text-xs font-bold">
-                  {pickEntry.byTeam === 'player' ? 'P1' : pickEntry.byTeam === 'opponent' ? 'P2' : 'D'}
-                </span>
-              )}
             </button>
           );
         })}
@@ -402,6 +436,36 @@ interface AgentSelectionPhaseProps {
 function AgentSelectionPhase({
   mapName, mapIndex, totalMaps, players, playerAgentPrefs, assignments, onChange, onNext, onAutoPrep,
 }: AgentSelectionPhaseProps) {
+  const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
+
+  const handleAgentPick = (playerId: string, agentName: string) => {
+    const currentAgent = assignments[playerId];
+    if (currentAgent === agentName) return;
+
+    // Find if another player has this agent
+    const displacedId = Object.entries(assignments).find(
+      ([pid, a]) => pid !== playerId && a === agentName
+    )?.[0];
+
+    if (displacedId) {
+      const displacedPrefs =
+        (playerAgentPrefs[displacedId] ?? players.find((p) => p.id === displacedId)?.agentPreferences)
+          ?.preferredAgents ?? [];
+      const takenByOthers = new Set(
+        Object.entries(assignments)
+          .filter(([pid]) => pid !== displacedId && pid !== playerId)
+          .map(([, a]) => a)
+      );
+      takenByOthers.add(agentName);
+      const fallback =
+        displacedPrefs.find((a) => !takenByOthers.has(a)) ??
+        (Object.values(AGENTS) as unknown as string[]).flat().find((a) => !takenByOthers.has(a)) ??
+        'Jett';
+      onChange(displacedId, fallback);
+    }
+    onChange(playerId, agentName);
+  };
+
   // Role counts from current assignments
   const roleCounts = useMemo(() => {
     const counts: Record<AgentRole, number> = { Duelist: 0, Initiator: 0, Controller: 0, Sentinel: 0 };
@@ -444,6 +508,18 @@ function AgentSelectionPhase({
         </button>
       </div>
 
+      {/* Map banner */}
+      <div className="relative rounded overflow-hidden">
+        <GameImage
+          src={getMapImageUrl(mapName)}
+          alt={mapName}
+          className="w-full h-20 object-cover rounded"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-3">
+          <span className="text-white font-bold text-lg drop-shadow">{mapName}</span>
+        </div>
+      </div>
+
       {/* Player rows */}
       <div className="flex flex-col gap-2">
         {players.map((player) => {
@@ -453,37 +529,99 @@ function AgentSelectionPhase({
           const hint = getStatusHint(player.id, currentAgent);
 
           return (
-            <div key={player.id} className="flex items-center gap-3 bg-vct-gray/5 rounded px-3 py-2">
-              {/* Player name */}
-              <span className="text-sm font-medium text-vct-light w-24 shrink-0 truncate">
-                {player.name}
-              </span>
+            <div key={player.id} className="flex flex-col">
+              <div className="flex items-center gap-2 bg-vct-gray/5 rounded px-3 py-2">
+                {/* Player photo */}
+                <GameImage
+                  src={getPlayerImageUrl(player.name)}
+                  alt={player.name}
+                  className="w-8 h-8 rounded-full object-cover shrink-0"
+                />
 
-              {/* Agent dropdown */}
-              <select
-                value={currentAgent}
-                onChange={(e) => onChange(player.id, e.target.value)}
-                className="flex-1 bg-vct-dark border border-vct-gray/30 text-vct-light text-sm rounded px-2 py-1"
-              >
-                {(Object.entries(AGENTS) as [AgentRole, string[]][]).map(([roleName, agents]) => (
-                  <optgroup key={roleName} label={roleName}>
-                    {agents.map((agent) => (
-                      <option key={agent} value={agent}>{agent}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-
-              {/* Role badge */}
-              {role && (
-                <span className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${ROLE_COLORS[role]}`}>
-                  {role}
+                {/* Player name */}
+                <span className="text-sm font-medium text-vct-light w-20 shrink-0 truncate">
+                  {player.name}
                 </span>
-              )}
 
-              {/* Status hint */}
-              {hint && (
-                <span className={`text-xs shrink-0 ${hint.cls}`}>{hint.text}</span>
+                {/* Preferred agent icons */}
+                {(prefs?.preferredAgents ?? ['Jett', 'Reyna', 'Sova']).map((agent) => {
+                  const isCurrent = currentAgent === agent;
+                  const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
+                  const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
+                  return (
+                    <button
+                      key={agent}
+                      title={isTaken ? `Taken by ${takenBy}` : agent}
+                      onClick={() => handleAgentPick(player.id, agent)}
+                      className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
+                        isCurrent ? 'border-vct-red opacity-100' :
+                        isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
+                                    'border-transparent opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                    </button>
+                  );
+                })}
+
+                {/* +more toggle */}
+                <button
+                  onClick={() => setExpandedPlayer(expandedPlayer === player.id ? null : player.id)}
+                  className="text-xs text-vct-gray hover:text-vct-light shrink-0"
+                >
+                  {expandedPlayer === player.id ? '▴' : '+more ▾'}
+                </button>
+
+                <div className="flex-1" />
+
+                {/* Selected agent icon */}
+                <GameImage
+                  src={getAgentImageUrl(currentAgent)}
+                  alt={currentAgent}
+                  className="w-8 h-8 object-contain shrink-0"
+                />
+
+                {/* Role badge */}
+                {role && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${ROLE_COLORS[role]}`}>
+                    {role}
+                  </span>
+                )}
+
+                {/* Status hint */}
+                {hint && (
+                  <span className={`text-xs shrink-0 ${hint.cls}`}>{hint.text}</span>
+                )}
+              </div>
+
+              {/* Expanded agent grid */}
+              {expandedPlayer === player.id && (
+                <div className="ml-11 flex flex-col gap-1 bg-vct-gray/5 rounded p-2 mt-1">
+                  {(Object.entries(AGENTS) as [AgentRole, string[]][]).map(([roleName, agents]) => (
+                    <div key={roleName} className="flex items-center gap-1 flex-wrap">
+                      <span className="text-xs text-vct-gray w-16 shrink-0">{roleName}</span>
+                      {agents.map((agent) => {
+                        const isCurrent = currentAgent === agent;
+                        const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
+                        const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
+                        return (
+                          <button
+                            key={agent}
+                            title={isTaken ? `Taken by ${takenBy}` : agent}
+                            onClick={() => { handleAgentPick(player.id, agent); setExpandedPlayer(null); }}
+                            className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
+                              isCurrent ? 'border-vct-red opacity-100' :
+                              isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
+                                          'border-transparent opacity-70 hover:opacity-100'
+                            }`}
+                          >
+                            <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           );
@@ -559,18 +697,37 @@ function ConfirmPhase({ selectedMaps, agentAssignments, players, onConfirm, onBa
 
           return (
             <div key={mapName} className="bg-vct-gray/5 rounded p-3">
-              <p className="text-xs text-vct-gray font-medium mb-2">{mapLabel}</p>
-              <p className="text-sm font-bold text-vct-light mb-2">{mapName}</p>
+              <div className="relative mb-2">
+                <GameImage
+                  src={getMapImageUrl(mapName)}
+                  alt={mapName}
+                  className="w-full h-16 object-cover rounded"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex flex-col justify-center px-3 rounded">
+                  <p className="text-xs text-vct-gray font-medium">{mapLabel}</p>
+                  <p className="text-sm font-bold text-white">{mapName}</p>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-1">
                 {players.map((player) => {
                   const agentName = assignments[player.id] ?? '—';
                   const role = getAgentRole(agentName);
                   return (
-                    <div key={player.id} className="flex items-center gap-2">
-                      <span className="text-xs text-vct-gray truncate w-20">{player.name}</span>
-                      <span className="text-xs text-vct-light font-medium">{agentName}</span>
+                    <div key={player.id} className="flex items-center gap-1.5">
+                      <GameImage
+                        src={getPlayerImageUrl(player.name)}
+                        alt={player.name}
+                        className="w-5 h-5 rounded-full object-cover shrink-0"
+                      />
+                      <span className="text-xs text-vct-gray truncate w-16">{player.name}</span>
+                      <GameImage
+                        src={getAgentImageUrl(agentName)}
+                        alt={agentName}
+                        className="w-5 h-5 object-contain shrink-0"
+                      />
+                      <span className="text-xs text-vct-light font-medium truncate">{agentName}</span>
                       {role && (
-                        <span className={`text-xs px-1 rounded ${ROLE_COLORS[role]}`}>{role[0]}</span>
+                        <span className={`text-xs px-1 rounded shrink-0 ${ROLE_COLORS[role]}`}>{role[0]}</span>
                       )}
                     </div>
                   );
@@ -713,10 +870,17 @@ export function PreMatchPrepModal({
         <div className="flex items-center justify-between px-5 py-4 border-b border-vct-gray/20">
           <div className="flex items-center gap-3">
             <span className="text-vct-red font-bold text-sm uppercase tracking-wide">Pre-Match</span>
+            <div className="flex items-center gap-2">
+              <GameImage src={getTeamLogoUrl(playerTeam.name)} alt={playerTeam.name} className="w-6 h-6 object-contain" />
+              <span className="text-vct-light text-sm font-medium">{playerTeam.name}</span>
+              <span className="text-vct-gray text-sm">vs</span>
+              <span className="text-vct-light text-sm font-medium">{opponentTeam.name}</span>
+              <GameImage src={getTeamLogoUrl(opponentTeam.name)} alt={opponentTeam.name} className="w-6 h-6 object-contain" />
+            </div>
             <span className="text-vct-gray text-sm">
-              {phase === 'veto' && 'Step 1: Map Veto'}
-              {phase === 'agents' && `Step 2: Agent Selection`}
-              {phase === 'confirm' && 'Step 3: Confirm'}
+              {phase === 'veto' && '· Step 1: Map Veto'}
+              {phase === 'agents' && '· Step 2: Agent Selection'}
+              {phase === 'confirm' && '· Step 3: Confirm'}
             </span>
           </div>
           <button
