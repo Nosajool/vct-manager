@@ -66,7 +66,8 @@ export function ContractNegotiationModal({
   const [salary, setSalary] = useState(salaryExpectation?.expected || 100000);
   const [signingBonus, setSigningBonus] = useState(0);
   const [years, setYears] = useState(2);
-  const [position, setPosition] = useState<'active' | 'reserve'>('active');
+  const isRosterFull = team.playerIds.length >= 5;
+  const [position, setPosition] = useState<'active' | 'reserve'>(isRosterFull ? 'reserve' : 'active');
 
   // Negotiation state
   const [isNegotiating, setIsNegotiating] = useState(false);
@@ -523,29 +524,30 @@ export function ContractNegotiationModal({
                 </div>
               </div>
 
-              {/* Position */}
-              <div>
-                <label className="text-sm text-vct-gray block mb-1">Roster Position</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPosition('active')}
-                    disabled={team.playerIds.length >= 5}
-                    className={`px-4 py-2 rounded font-medium transition-colors ${
-                      position === 'active' ? 'bg-vct-red text-white' : 'bg-vct-dark text-vct-gray hover:text-vct-light'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    Active ({team.playerIds.length}/5)
-                  </button>
-                  <button
-                    onClick={() => setPosition('reserve')}
-                    className={`px-4 py-2 rounded font-medium transition-colors ${
-                      position === 'reserve' ? 'bg-vct-red text-white' : 'bg-vct-dark text-vct-gray hover:text-vct-light'
-                    }`}
-                  >
-                    Reserve ({team.reservePlayerIds.length})
-                  </button>
+              {/* Position — only shown when active roster has room */}
+              {!isRosterFull && (
+                <div>
+                  <label className="text-sm text-vct-gray block mb-1">Roster Position</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setPosition('active')}
+                      className={`px-4 py-2 rounded font-medium transition-colors ${
+                        position === 'active' ? 'bg-vct-red text-white' : 'bg-vct-dark text-vct-gray hover:text-vct-light'
+                      }`}
+                    >
+                      Active ({team.playerIds.length}/5)
+                    </button>
+                    <button
+                      onClick={() => setPosition('reserve')}
+                      className={`px-4 py-2 rounded font-medium transition-colors ${
+                        position === 'reserve' ? 'bg-vct-red text-white' : 'bg-vct-dark text-vct-gray hover:text-vct-light'
+                      }`}
+                    >
+                      Reserve ({team.reservePlayerIds.length})
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Offer summary */}
