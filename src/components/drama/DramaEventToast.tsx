@@ -132,23 +132,44 @@ const CATEGORY_METADATA: Record<
   },
 };
 
+const DRAMA_EFFECT_DISPLAY: Record<string, { icon: string; label: string }> = {
+  // By stat name (player_stat effects)
+  morale:    { icon: '💙', label: 'Morale' },
+  chemistry: { icon: '🤝', label: 'Chemistry' },
+  form:      { icon: '🎯', label: 'Form' },
+  budget:    { icon: '💰', label: 'Budget' },
+  // By target name (all other effects)
+  player_morale:      { icon: '💙', label: 'Morale' },
+  player_form:        { icon: '🎯', label: 'Form' },
+  team_chemistry:     { icon: '🤝', label: 'Chemistry' },
+  team_budget:        { icon: '💰', label: 'Budget' },
+  team_hype:          { icon: '🔥', label: 'Hype' },
+  team_sponsor_trust: { icon: '💰', label: 'Sponsor' },
+};
+
+const SKIP_TARGETS = new Set([
+  'set_flag', 'clear_flag', 'add_cooldown',
+  'trigger_event', 'escalate_event',
+  'move_to_reserve', 'move_to_active', 'release_player',
+  'assign_igl', 'free_agent_interest',
+]);
+
 /**
- * Format effect summary from applied effects
- * Returns a formatted string like "-3 Morale, +2 Chemistry"
+ * Format effect summary from applied effects with icons
+ * Returns a formatted string like "💙 +3 Morale  ·  🤝 -1 Chemistry"
  */
 function formatEffectSummary(effects: DramaEventInstance['appliedEffects']): string {
-  const summaries: string[] = [];
+  const parts: string[] = [];
 
   for (const effect of effects) {
-    if (effect.delta) {
-      const sign = effect.delta > 0 ? '+' : '';
-      const stat = effect.stat || effect.target.replace('_', ' ');
-      const displayStat = stat.charAt(0).toUpperCase() + stat.slice(1);
-      summaries.push(`${sign}${effect.delta} ${displayStat}`);
-    }
+    if (!effect.delta || SKIP_TARGETS.has(effect.target)) continue;
+    const key = effect.stat ?? effect.target;
+    const meta = DRAMA_EFFECT_DISPLAY[key] ?? { icon: '📊', label: key.replace(/_/g, ' ') };
+    const sign = effect.delta > 0 ? '+' : '';
+    parts.push(`${meta.icon} ${sign}${effect.delta} ${meta.label}`);
   }
 
-  return summaries.join(', ') || 'No immediate effects';
+  return parts.join('  ·  ') || 'No immediate effects';
 }
 
 /**

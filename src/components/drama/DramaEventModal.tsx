@@ -133,30 +133,53 @@ const CATEGORY_METADATA: Record<
   },
 };
 
-/**
- * Format effect summary from choice effects
- * Returns a formatted string like "+5 Morale, -3 Chemistry"
- */
-function formatEffectSummary(effects: DramaChoice['effects']): string {
-  const summaries: string[] = [];
+function getArrow(value: number): string {
+  if (value >= 8) return '↑↑';
+  if (value >= 3) return '↑';
+  if (value <= -8) return '↓↓';
+  if (value <= -3) return '↓';
+  return '→';
+}
 
-  for (const effect of effects) {
-    if (effect.delta) {
-      const sign = effect.delta > 0 ? '+' : '';
-      const stat = effect.stat || effect.target.replace('_', ' ');
-      const displayStat = stat.charAt(0).toUpperCase() + stat.slice(1);
-      summaries.push(`${sign}${effect.delta} ${displayStat}`);
-    }
-    if (effect.target === 'player_contract_extension') {
-      const years = effect.contractYearsToAdd ?? 2;
-      const pct = effect.contractSalaryMultiplier
-        ? Math.round((effect.contractSalaryMultiplier - 1) * 100)
+const DRAMA_EFFECT_DISPLAY: Record<string, { icon: string; label: string }> = {
+  // By stat name (player_stat effects)
+  morale:    { icon: '💙', label: 'Morale' },
+  chemistry: { icon: '🤝', label: 'Chemistry' },
+  form:      { icon: '🎯', label: 'Form' },
+  budget:    { icon: '💰', label: 'Budget' },
+  // By target name (all other effects)
+  player_morale:      { icon: '💙', label: 'Morale' },
+  player_form:        { icon: '🎯', label: 'Form' },
+  team_chemistry:     { icon: '🤝', label: 'Chemistry' },
+  team_budget:        { icon: '💰', label: 'Budget' },
+  team_hype:          { icon: '🔥', label: 'Hype' },
+  team_sponsor_trust: { icon: '💰', label: 'Sponsor' },
+};
+
+const SKIP_TARGETS = new Set([
+  'set_flag', 'clear_flag', 'add_cooldown',
+  'trigger_event', 'escalate_event',
+  'move_to_reserve', 'move_to_active', 'release_player',
+  'assign_igl', 'free_agent_interest',
+]);
+
+function getDramaEffectHints(effects: DramaChoice['effects']) {
+  const hints: { icon: string; label: string; arrow: string; positive: boolean }[] = [];
+  for (const e of effects) {
+    if (e.target === 'player_contract_extension') {
+      const years = e.contractYearsToAdd ?? 2;
+      const pct = e.contractSalaryMultiplier
+        ? Math.round((e.contractSalaryMultiplier - 1) * 100)
         : 50;
-      summaries.push(`Contract Extended (+${years} yrs, +${pct}% salary)`);
+      hints.push({ icon: '📄', label: `Contract +${years}yr +${pct}%`, arrow: '', positive: true });
+      continue;
     }
+    if (!e.delta || SKIP_TARGETS.has(e.target)) continue;
+    const key = e.stat ?? e.target;
+    const meta = DRAMA_EFFECT_DISPLAY[key] ?? { icon: '📊', label: key.replace(/_/g, ' ') };
+    hints.push({ ...meta, arrow: getArrow(e.delta), positive: e.delta > 0 });
   }
-
-  return summaries.join(', ') || 'No immediate effects';
+  return hints;
 }
 
 // ============================================================================
@@ -246,7 +269,7 @@ export function DramaEventModal({
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [showOutcome, setShowOutcome] = useState(false);
   const [outcomeText, setOutcomeText] = useState('');
-  const [outcomeEffects, setOutcomeEffects] = useState('');
+  const [outcomeChoiceEffects, setOutcomeChoiceEffects] = useState<DramaChoice['effects']>([]);
   const [showCollection, setShowCollection] = useState(false);
 
   const players = useGameStore((state) => state.players);
@@ -264,7 +287,7 @@ export function DramaEventModal({
   const handleChoose = (choice: DramaChoice) => {
     // Show the outcome first
     setOutcomeText(choice.outcomeText);
-    setOutcomeEffects(formatEffectSummary(choice.effects));
+    setOutcomeChoiceEffects(choice.effects);
     setShowOutcome(true);
 
     // Call the parent handler to apply effects
@@ -276,7 +299,7 @@ export function DramaEventModal({
     setSelectedChoice(null);
     setShowOutcome(false);
     setOutcomeText('');
-    setOutcomeEffects('');
+    setOutcomeChoiceEffects([]);
 
     // Close the modal
     onClose();
@@ -332,9 +355,19 @@ export function DramaEventModal({
                 {/* Effect Summary */}
                 <div className="pt-4 border-t border-vct-gray/20">
                   <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
-                  <p className="text-sm text-vct-light font-medium">
-                    {outcomeEffects}
-                  </p>
+                  {(() => {
+                    const hints = getDramaEffectHints(outcomeChoiceEffects);
+                    if (hints.length === 0) return <p className="text-sm text-vct-gray">No immediate effects</p>;
+                    return (
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {hints.map((hint, i) => (
+                          <span key={i} className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
+                            {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

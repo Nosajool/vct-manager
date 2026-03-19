@@ -122,20 +122,6 @@ function getEffectHints(effects: InterviewEffects): EffectHint[] {
 }
 
 // ============================================================================
-// Effect summary helper (outcome view)
-// ============================================================================
-
-function formatEffects(effects: PendingInterview['options'][number]['effects']): string {
-  const parts: string[] = [];
-  if (effects.morale)       parts.push(`${effects.morale > 0 ? '+' : ''}${effects.morale} Morale`);
-  if (effects.fanbase)      parts.push(`${effects.fanbase > 0 ? '+' : ''}${effects.fanbase} Fans`);
-  if (effects.hype)         parts.push(`${effects.hype > 0 ? '+' : ''}${effects.hype} Hype`);
-  if (effects.sponsorTrust) parts.push(`${effects.sponsorTrust > 0 ? '+' : ''}${effects.sponsorTrust} Sponsor Trust`);
-  if (effects.rivalryDelta) parts.push(`${effects.rivalryDelta > 0 ? '+' : ''}${effects.rivalryDelta} Rivalry`);
-  return parts.length > 0 ? parts.join(', ') : 'No immediate effects';
-}
-
-// ============================================================================
 // Matchup header — renders PostMatchHeader or PreMatchHeader depending on match status
 // ============================================================================
 
@@ -156,7 +142,6 @@ function MatchupHeader({ interview }: { interview: PendingInterview }) {
 export function InterviewModal({ interview, onChoose, onClose, questionNumber, totalQuestions }: InterviewModalProps) {
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
   const [showOutcome, setShowOutcome] = useState(false);
-  const [effectsSummary, setEffectsSummary] = useState('');
   const [showCollection, setShowCollection] = useState(false);
 
   const players = useGameStore((state) => state.players);
@@ -193,11 +178,8 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
 
   // Handle choice - show outcome first, then apply effects via parent
   const handleChoose = (index: number) => {
-    const option = interview.options[index];
-
     setChosenIndex(index);
     setShowOutcome(true);
-    setEffectsSummary(formatEffects(option.effects));
 
     onChoose(index);
   };
@@ -205,7 +187,6 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   const handleContinue = () => {
     setChosenIndex(null);
     setShowOutcome(false);
-    setEffectsSummary('');
     onClose();
   };
 
@@ -276,7 +257,19 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
 
                 <div className="pt-4 border-t border-vct-gray/20">
                   <h3 className="text-sm font-medium text-vct-gray mb-2">Effects:</h3>
-                  <p className="text-sm text-vct-light font-medium">{effectsSummary}</p>
+                  {(() => {
+                    const hints = chosenOption ? getEffectHints(chosenOption.effects) : [];
+                    if (hints.length === 0) return <p className="text-sm text-vct-gray">No immediate effects</p>;
+                    return (
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {hints.map((hint, i) => (
+                          <span key={i} className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
+                            {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
