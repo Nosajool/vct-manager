@@ -93,7 +93,7 @@ function PreMatchPrepModalWrapper({
  */
 function enrichEventWithNarrative(
   event: DramaEventInstance,
-  template: { title: string; description: string }
+  template: { title: string; description: string; socialFormat?: import('../../types/drama').DramaEventTemplate['socialFormat'] }
 ) {
   const state = useGameStore.getState();
 
@@ -135,6 +135,7 @@ function enrichEventWithNarrative(
     ...event,
     title: template.title,
     narrative,
+    socialFormat: template.socialFormat,
   };
 }
 

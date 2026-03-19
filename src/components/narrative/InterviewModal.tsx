@@ -1,13 +1,14 @@
 // InterviewModal - Forced-engagement modal for interview decisions
 //
 // No skip option — player must choose a response.
-// Shows context badge, subject badge, narrative prompt, and 3 option buttons.
-// After a choice, shows an effects summary before continuing.
-// Follows the same pattern as DramaEventModal.
+// Quote is the primary text on each option card. Tone badge + effect hints below.
+// Color-coded by tone for instant scanning.
+// Shows manager archetype badge in header when archetype is established.
 
 import { useState } from 'react';
 import { useGameStore } from '../../store';
-import type { PendingInterview, InterviewContext, InterviewTone } from '../../types/interview';
+import type { PendingInterview, InterviewContext, InterviewTone, InterviewEffects } from '../../types/interview';
+import { selectManagerProfile, type ManagerArchetype } from '../../store/slices/interviewSlice';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { PostMatchHeader } from '../match/PostMatchHeader';
@@ -58,19 +59,70 @@ const CONTEXT_META: Record<InterviewContext, { label: string; badgeColor: string
   },
 };
 
-const TONE_BADGE: Record<InterviewTone, string> = {
-  CONFIDENT:   'bg-blue-500/20 text-blue-400',
-  AGGRESSIVE:  'bg-red-500/20 text-red-400',
-  TRASH_TALK:  'bg-orange-500/20 text-orange-400',
-  HUMBLE:      'bg-teal-500/20 text-teal-400',
-  RESPECTFUL:  'bg-slate-500/20 text-slate-400',
-  DEFLECTIVE:  'bg-slate-500/20 text-slate-400',
-  BLAME_SELF:  'bg-purple-500/20 text-purple-400',
-  BLAME_TEAM:  'bg-yellow-500/20 text-yellow-400',
+// Tone card: border color + badge color
+const TONE_CARD_STYLE: Record<InterviewTone, { border: string; badge: string; hoverBorder: string }> = {
+  CONFIDENT:   { border: 'border-amber-500/40',  hoverBorder: 'hover:border-amber-500/70',  badge: 'bg-amber-500/20 text-amber-400' },
+  AGGRESSIVE:  { border: 'border-amber-600/40',  hoverBorder: 'hover:border-amber-600/70',  badge: 'bg-amber-600/20 text-amber-300' },
+  TRASH_TALK:  { border: 'border-red-500/40',    hoverBorder: 'hover:border-red-500/70',    badge: 'bg-red-500/20 text-red-400' },
+  HUMBLE:      { border: 'border-slate-400/30',  hoverBorder: 'hover:border-slate-400/60',  badge: 'bg-slate-500/20 text-slate-400' },
+  DEFLECTIVE:  { border: 'border-slate-400/30',  hoverBorder: 'hover:border-slate-400/60',  badge: 'bg-slate-500/20 text-slate-400' },
+  RESPECTFUL:  { border: 'border-green-500/40',  hoverBorder: 'hover:border-green-500/70',  badge: 'bg-green-500/20 text-green-400' },
+  BLAME_SELF:  { border: 'border-green-500/40',  hoverBorder: 'hover:border-green-500/70',  badge: 'bg-green-500/20 text-green-400' },
+  BLAME_TEAM:  { border: 'border-orange-500/40', hoverBorder: 'hover:border-orange-500/70', badge: 'bg-orange-500/20 text-orange-400' },
+};
+
+// Manager archetype display metadata
+const ARCHETYPE_META: Record<NonNullable<ManagerArchetype>, { icon: string; label: string; color: string }> = {
+  HYPE_MACHINE:   { icon: '🔥', label: 'Hype Machine',   color: 'text-orange-400' },
+  TEAM_BUILDER:   { icon: '🤝', label: 'Team Builder',   color: 'text-green-400' },
+  MAVERICK:       { icon: '⚡', label: 'Maverick',       color: 'text-yellow-400' },
+  HUMBLE_GRINDER: { icon: '💪', label: 'Humble Grinder', color: 'text-blue-400' },
+  ANALYST:        { icon: '📊', label: 'Analyst',        color: 'text-purple-400' },
+};
+
+// On-brand tones per archetype (for visual indicator)
+const ARCHETYPE_ON_BRAND: Record<NonNullable<ManagerArchetype>, InterviewTone[]> = {
+  HYPE_MACHINE:   ['CONFIDENT', 'TRASH_TALK', 'AGGRESSIVE'],
+  TEAM_BUILDER:   ['RESPECTFUL', 'BLAME_SELF'],
+  MAVERICK:       ['TRASH_TALK', 'AGGRESSIVE', 'BLAME_TEAM'],
+  HUMBLE_GRINDER: ['HUMBLE'],
+  ANALYST:        ['DEFLECTIVE'],
 };
 
 // ============================================================================
-// Effect summary helper
+// Effect hint helpers
+// ============================================================================
+
+function getArrow(value: number): string {
+  if (value >= 8) return '↑↑';
+  if (value >= 3) return '↑';
+  if (value <= -8) return '↓↓';
+  if (value <= -3) return '↓';
+  return '→';
+}
+
+interface EffectHint {
+  icon: string;
+  label: string;
+  arrow: string;
+  positive: boolean;
+}
+
+function getEffectHints(effects: InterviewEffects): EffectHint[] {
+  const hints: EffectHint[] = [];
+  if (effects.fanbase)      hints.push({ icon: '👥', label: 'Fans',    arrow: getArrow(effects.fanbase),      positive: effects.fanbase > 0 });
+  if (effects.morale)       hints.push({ icon: '💙', label: 'Morale',  arrow: getArrow(effects.morale),       positive: effects.morale > 0 });
+  if (effects.hype)         hints.push({ icon: '🔥', label: 'Hype',    arrow: getArrow(effects.hype),         positive: effects.hype > 0 });
+  if (effects.sponsorTrust) hints.push({ icon: '💰', label: 'Sponsor', arrow: getArrow(effects.sponsorTrust), positive: effects.sponsorTrust > 0 });
+  if (effects.rivalryDelta) hints.push({ icon: '⚔️', label: 'Rival',   arrow: getArrow(effects.rivalryDelta), positive: effects.rivalryDelta > 0 });
+  if (effects.dramaChance && effects.dramaChance > 0) {
+    hints.push({ icon: '🎲', label: '+Drama', arrow: '', positive: false });
+  }
+  return hints;
+}
+
+// ============================================================================
+// Effect summary helper (outcome view)
 // ============================================================================
 
 function formatEffects(effects: PendingInterview['options'][number]['effects']): string {
@@ -110,8 +162,10 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   const players = useGameStore((state) => state.players);
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const interviewHistory = useGameStore((state) => state.interviewHistory);
 
   const contextMeta = CONTEXT_META[interview.context];
+  const managerProfile = selectManagerProfile(interviewHistory);
 
   // Resolve subject display label
   const subjectLabel = (() => {
@@ -141,16 +195,13 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   const handleChoose = (index: number) => {
     const option = interview.options[index];
 
-    // Show outcome view first (local state)
     setChosenIndex(index);
     setShowOutcome(true);
     setEffectsSummary(formatEffects(option.effects));
 
-    // Then call parent to apply effects
     onChoose(index);
   };
 
-  // Handle continue - reset state and close modal
   const handleContinue = () => {
     setChosenIndex(null);
     setShowOutcome(false);
@@ -247,15 +298,24 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
             {/* Header */}
             <div className="p-4 border-b border-vct-gray/20">
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
                     {contextMeta.label}
                   </span>
                   {interview.isNew && <NewBadge />}
+                  {/* Manager archetype badge */}
+                  {managerProfile.archetype && (() => {
+                    const meta = ARCHETYPE_META[managerProfile.archetype];
+                    return (
+                      <span className={`text-xs font-medium ${meta.color}`}>
+                        {meta.icon} {meta.label} ({managerProfile.archetypeStrength}%)
+                      </span>
+                    );
+                  })()}
                 </div>
                 <button
                   onClick={() => setShowCollection(true)}
-                  className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors"
+                  className="flex items-center gap-1.5 text-sm text-vct-gray/70 hover:text-vct-light transition-colors flex-shrink-0"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -291,7 +351,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
               )}
             </div>
 
-            {/* Matchup context header (pre-match: VS, post-match: score) + scrollable body */}
+            {/* Matchup context header + scrollable body */}
             <div className="overflow-y-auto flex-1">
               <MatchupHeader interview={interview} />
 
@@ -304,25 +364,57 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
 
               <div className="h-px bg-vct-gray/20" />
 
-              {/* Options */}
+              {/* Options — quote-first layout */}
               <div className="p-6 space-y-3">
                 <h3 className="text-sm font-medium text-vct-gray mb-3">How do you respond?</h3>
-                {interview.options.map((option, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => handleChoose(index)}
-                    className="w-full text-left p-4 rounded-lg border border-vct-gray/20 hover:border-vct-gray/40 transition-all"
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${TONE_BADGE[option.tone]}`}>
-                        {option.tone.replace('_', ' ')}
-                      </span>
-                      <span className="font-semibold text-vct-light">{option.label}</span>
-                    </div>
-                    <p className="text-sm text-vct-gray italic">"{option.quote}"</p>
-                  </button>
-                ))}
+                {interview.options.map((option, index) => {
+                  const toneStyle = TONE_CARD_STYLE[option.tone];
+                  const hints = getEffectHints(option.effects);
+                  const isOnBrand = managerProfile.archetype
+                    ? ARCHETYPE_ON_BRAND[managerProfile.archetype].includes(option.tone)
+                    : false;
+
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleChoose(index)}
+                      className={`w-full text-left p-4 rounded-lg border transition-all ${toneStyle.border} ${toneStyle.hoverBorder}`}
+                    >
+                      {/* Quote — primary text */}
+                      <p className="text-sm text-vct-light leading-relaxed mb-3">
+                        "{option.quote}"
+                      </p>
+
+                      {/* Footer: tone badge + label + effect hints */}
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-2 py-0.5 rounded font-medium ${toneStyle.badge}`}>
+                            {option.tone.replace('_', ' ')}
+                          </span>
+                          <span className="text-xs text-vct-gray/70">{option.label}</span>
+                          {isOnBrand && (
+                            <span className="text-xs text-vct-gray/50" title="On-brand for your archetype">✓</span>
+                          )}
+                        </div>
+
+                        {/* Effect hints */}
+                        {hints.length > 0 && (
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {hints.map((hint, i) => (
+                              <span
+                                key={i}
+                                className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}
+                              >
+                                {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </>

@@ -1,7 +1,7 @@
 // Interview Effect Resolver
 // Translates InterviewEffects descriptors into concrete ResolvedInterviewEffect mutations
 
-import type { InterviewEffects, InterviewSnapshot } from '../../types/interview';
+import type { InterviewEffects, InterviewSnapshot, InterviewTone, ManagerProfile } from '../../types/interview';
 
 // ============================================================================
 // Types
@@ -41,26 +41,52 @@ export interface ResolvedInterviewEffect {
  * @param effects - The effects descriptor from the chosen interview option
  * @param snapshot - Snapshot providing the players list for morale fallback
  * @param opponentTeamId - Required for rivalry_delta effects
+ * @param managerProfile - Optional: when present, applies archetype magnitude modifiers
+ * @param chosenTone - Required with managerProfile to apply correct modifiers
  * @returns Array of concrete mutations to apply to game state
  */
 export function resolveInterviewEffects(
   effects: InterviewEffects,
   snapshot: InterviewSnapshot,
   opponentTeamId?: string,
+  managerProfile?: ManagerProfile,
+  chosenTone?: InterviewTone,
 ): ResolvedInterviewEffect[] {
   const resolved: ResolvedInterviewEffect[] = [];
 
+  // Compute archetype magnitude multipliers
+  let moraleMult = 1;
+  let fanbaseMult = 1;
+  let rivalryMult = 1;
+  let addOrgPressureFlag = false;
+
+  if (managerProfile?.archetype && chosenTone) {
+    const { archetype, archetypeStrength } = managerProfile;
+    if (archetype === 'HYPE_MACHINE' && chosenTone === 'CONFIDENT') {
+      fanbaseMult = 1.25;
+      if (archetypeStrength > 60) addOrgPressureFlag = true;
+    } else if (archetype === 'HUMBLE_GRINDER' && chosenTone === 'HUMBLE') {
+      moraleMult = 1.2;
+    } else if (archetype === 'TEAM_BUILDER' && chosenTone === 'RESPECTFUL') {
+      moraleMult = 1.2;
+    } else if (archetype === 'MAVERICK' && chosenTone === 'TRASH_TALK') {
+      rivalryMult = 1.5;
+    }
+  }
+
   // morale — one effect per targeted player (or all snapshot players as fallback)
   if (effects.morale !== undefined && effects.morale !== 0) {
+    const delta = moraleMult !== 1 ? Math.round(effects.morale * moraleMult) : effects.morale;
     const targets = effects.targetPlayerIds ?? snapshot.players.map((p) => p.id);
     for (const playerId of targets) {
-      resolved.push({ type: 'update_player', playerId, field: 'morale', delta: effects.morale });
+      resolved.push({ type: 'update_player', playerId, field: 'morale', delta });
     }
   }
 
   // fanbase
   if (effects.fanbase !== undefined) {
-    resolved.push({ type: 'update_team', field: 'fanbase', delta: effects.fanbase });
+    const delta = fanbaseMult !== 1 ? Math.round(effects.fanbase * fanbaseMult) : effects.fanbase;
+    resolved.push({ type: 'update_team', field: 'fanbase', delta });
   }
 
   // hype → hypeLevel field name
@@ -75,7 +101,13 @@ export function resolveInterviewEffects(
 
   // rivalryDelta — only emitted when opponentTeamId is known
   if (effects.rivalryDelta !== undefined && effects.rivalryDelta !== 0 && opponentTeamId) {
-    resolved.push({ type: 'rivalry_delta', opponentTeamId, delta: effects.rivalryDelta });
+    const delta = rivalryMult !== 1 ? Math.round(effects.rivalryDelta * rivalryMult) : effects.rivalryDelta;
+    resolved.push({ type: 'rivalry_delta', opponentTeamId, delta });
+  }
+
+  // org_pressure flag — triggered when HYPE_MACHINE strength > 60 and choosing CONFIDENT
+  if (addOrgPressureFlag) {
+    resolved.push({ type: 'set_flag', flag: 'org_pressure', flagDuration: 14 });
   }
 
   // dramaChance — only emitted when positive

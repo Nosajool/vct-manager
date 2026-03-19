@@ -147,3 +147,25 @@ export interface InterviewHistoryEntry {
   chosenTone: InterviewTone;
   effects: InterviewEffects;
 }
+
+// ============================================================================
+// Manager Identity System
+// ============================================================================
+
+/**
+ * Derived manager archetype based on interview tone history.
+ * Requires ≥ 5 interviews to be non-null.
+ */
+export type ManagerArchetype =
+  | 'HYPE_MACHINE'     // Dominant: CONFIDENT + TRASH_TALK + AGGRESSIVE (≥ 50%)
+  | 'TEAM_BUILDER'     // Dominant: RESPECTFUL + BLAME_SELF (≥ 40%)
+  | 'MAVERICK'         // Dominant: TRASH_TALK + AGGRESSIVE + BLAME_TEAM (≥ 40%)
+  | 'HUMBLE_GRINDER'   // Dominant: HUMBLE (≥ 35%)
+  | 'ANALYST'          // Dominant: DEFLECTIVE (≥ 30%)
+  | null;              // < 5 interviews or no dominant pattern
+
+export interface ManagerProfile {
+  archetype: ManagerArchetype;
+  archetypeStrength: number;  // 0–100: dominant group's raw percentage
+  toneBreakdown: Partial<Record<InterviewTone, number>>;  // tone → % of history
+}

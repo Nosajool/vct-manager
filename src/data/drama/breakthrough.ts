@@ -87,6 +87,11 @@ export const BREAKTHROUGH_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 12,
     cooldownDays: 3,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 1800 },
+    },
     effects: [
       {
         target: 'player_morale',

@@ -5,7 +5,7 @@
 // Blocks game progression until a choice is made (no dismiss/escape)
 
 import { useState } from 'react';
-import type { DramaCategory, DramaChoice, DramaEventInstance } from '../../types/drama';
+import type { DramaCategory, DramaChoice, DramaEventInstance, DramaEventTemplate } from '../../types/drama';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
@@ -18,6 +18,8 @@ interface DramaEventModalProps {
   /** The drama event to display (enriched with narrative from template) */
   event: DramaEventInstance & {
     narrative: string;
+    /** When present, renders narrative as a social post instead of a blockquote */
+    socialFormat?: DramaEventTemplate['socialFormat'];
   };
   /** Available choices for the player to select */
   choices: DramaChoice[];
@@ -155,6 +157,83 @@ function formatEffectSummary(effects: DramaChoice['effects']): string {
   }
 
   return summaries.join(', ') || 'No immediate effects';
+}
+
+// ============================================================================
+// Social Post Card — renders drama narratives as Twitter/Reddit posts
+// ============================================================================
+
+function formatNumber(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
+}
+
+interface SocialPostCardProps {
+  narrative: string;
+  socialFormat: NonNullable<DramaEventTemplate['socialFormat']>;
+}
+
+function SocialPostCard({ narrative, socialFormat }: SocialPostCardProps) {
+  if (socialFormat.platform === 'twitter') {
+    return (
+      <div className="rounded-lg border border-vct-gray/30 bg-vct-darker overflow-hidden">
+        {/* Twitter header */}
+        <div className="px-4 pt-3 pb-2 flex items-center gap-2 border-b border-vct-gray/20">
+          <div className="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-sky-400 text-xs font-bold">𝕏</span>
+          </div>
+          <span className="text-sm font-semibold text-vct-light">
+            {socialFormat.handle ?? '@vct_community'}
+          </span>
+        </div>
+        {/* Tweet text */}
+        <div className="px-4 py-3">
+          <p className="text-sm text-vct-light leading-relaxed">{narrative}</p>
+        </div>
+        {/* Engagement */}
+        {socialFormat.flavorReactions && (
+          <div className="px-4 pb-3 flex items-center gap-4 text-xs text-vct-gray/60">
+            {socialFormat.flavorReactions.likes !== undefined && (
+              <span>{formatNumber(socialFormat.flavorReactions.likes)} ❤️</span>
+            )}
+            {socialFormat.flavorReactions.retweets !== undefined && (
+              <span>{formatNumber(socialFormat.flavorReactions.retweets)} 🔁</span>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Reddit format
+  return (
+    <div className="rounded-lg border border-vct-gray/30 bg-vct-darker overflow-hidden">
+      {/* Reddit header */}
+      <div className="px-4 pt-3 pb-2 border-b border-vct-gray/20">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-5 h-5 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-orange-400 text-[10px] font-bold">r</span>
+          </div>
+          <span className="text-xs font-semibold text-vct-light">
+            {socialFormat.handle ?? 'r/ValorantCompetitive'}
+          </span>
+        </div>
+        <p className="text-xs text-vct-gray/50">Posted by u/vct_insider</p>
+      </div>
+      {/* Post text */}
+      <div className="px-4 py-3">
+        <p className="text-sm text-vct-light leading-relaxed">{narrative}</p>
+      </div>
+      {/* Engagement */}
+      {socialFormat.flavorReactions && (
+        <div className="px-4 pb-3 flex items-center gap-4 text-xs text-vct-gray/60">
+          {socialFormat.flavorReactions.upvotes !== undefined && (
+            <span>▲ {formatNumber(socialFormat.flavorReactions.upvotes)}</span>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function DramaEventModal({
@@ -321,11 +400,18 @@ export function DramaEventModal({
 
             {/* Scrollable body: narrative + choices */}
             <div className="overflow-y-auto flex-1">
-              {/* Event Narrative */}
+              {/* Event Narrative — social post or blockquote */}
               <div className="p-6 bg-vct-darker/50">
-                <blockquote className="border-l-4 border-vct-gray/30 pl-4 italic text-vct-light leading-relaxed">
-                  {event.narrative}
-                </blockquote>
+                {event.socialFormat ? (
+                  <SocialPostCard
+                    narrative={event.narrative}
+                    socialFormat={event.socialFormat}
+                  />
+                ) : (
+                  <blockquote className="border-l-4 border-vct-gray/30 pl-4 italic text-vct-light leading-relaxed">
+                    {event.narrative}
+                  </blockquote>
+                )}
               </div>
 
               {/* Divider */}

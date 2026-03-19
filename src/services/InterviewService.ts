@@ -15,6 +15,7 @@ import type {
   TournamentMatchContext,
 } from '../types/interview';
 import { evaluateTemplateFlagGate, resolveInterviewEffects } from '../engine/interview';
+import { selectManagerProfile } from '../store/slices/interviewSlice';
 import { INTERVIEW_TEMPLATES } from '../data/interviews';
 import {
   generateTournamentContextPreMatchInterview,
@@ -489,8 +490,11 @@ export class InterviewService {
     // Build snapshot (provides players list for team-wide morale fallback)
     const snapshot = this.buildInterviewSnapshot({});
 
+    // Compute manager archetype for magnitude modifiers
+    const managerProfile = selectManagerProfile(state.interviewHistory);
+
     // Translate effects → concrete mutations
-    const resolved = resolveInterviewEffects(effects, snapshot, opponentTeamId);
+    const resolved = resolveInterviewEffects(effects, snapshot, opponentTeamId, managerProfile, option.tone);
 
     // Apply mutations to store
     const newMorale: Record<string, number> = {};

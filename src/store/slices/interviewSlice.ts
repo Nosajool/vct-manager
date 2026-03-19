@@ -5,6 +5,9 @@ import type { StateCreator } from 'zustand';
 import type {
   PendingInterview,
   InterviewHistoryEntry,
+  InterviewTone,
+  ManagerArchetype,
+  ManagerProfile,
 } from '../../types/interview';
 
 export interface InterviewSlice {
@@ -69,3 +72,60 @@ export const createInterviewSlice: StateCreator<
       return { interviewHistory: updated.slice(-100) };
     }),
 });
+
+// ============================================================================
+// Manager Identity Selector
+// Derives archetype from interview history — no new store state required
+// ============================================================================
+
+export function selectManagerProfile(history: InterviewHistoryEntry[]): ManagerProfile {
+  const toneBreakdown: Partial<Record<InterviewTone, number>> = {};
+
+  if (history.length < 5) {
+    return { archetype: null, archetypeStrength: 0, toneBreakdown };
+  }
+
+  const counts: Partial<Record<InterviewTone, number>> = {};
+  for (const entry of history) {
+    counts[entry.chosenTone] = (counts[entry.chosenTone] ?? 0) + 1;
+  }
+
+  const total = history.length;
+  for (const [tone, count] of Object.entries(counts) as [InterviewTone, number][]) {
+    toneBreakdown[tone] = Math.round((count / total) * 100);
+  }
+
+  const pct = (tones: InterviewTone[]): number =>
+    tones.reduce((sum, t) => sum + (toneBreakdown[t] ?? 0), 0);
+
+  const hypePct = pct(['CONFIDENT', 'TRASH_TALK', 'AGGRESSIVE']);
+  const teamPct = pct(['RESPECTFUL', 'BLAME_SELF']);
+  const mavPct = pct(['TRASH_TALK', 'AGGRESSIVE', 'BLAME_TEAM']);
+  const humblePct = pct(['HUMBLE']);
+  const analystPct = pct(['DEFLECTIVE']);
+
+  let archetype: ManagerArchetype = null;
+  let dominantPct = 0;
+
+  if (hypePct >= 50) {
+    archetype = 'HYPE_MACHINE';
+    dominantPct = hypePct;
+  } else if (teamPct >= 40) {
+    archetype = 'TEAM_BUILDER';
+    dominantPct = teamPct;
+  } else if (mavPct >= 40) {
+    archetype = 'MAVERICK';
+    dominantPct = mavPct;
+  } else if (humblePct >= 35) {
+    archetype = 'HUMBLE_GRINDER';
+    dominantPct = humblePct;
+  } else if (analystPct >= 30) {
+    archetype = 'ANALYST';
+    dominantPct = analystPct;
+  }
+
+  return { archetype, archetypeStrength: dominantPct, toneBreakdown };
+}
+
+// Re-export types for convenience
+export type { ManagerProfile, ManagerArchetype };

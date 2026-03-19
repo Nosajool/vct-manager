@@ -178,6 +178,11 @@ export const PLAYER_EGO_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 60,
     cooldownDays: 3,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 6800 },
+    },
     choices: [
       {
         id: 'negotiate',

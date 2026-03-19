@@ -413,6 +413,19 @@ export interface DramaEventTemplate {
   cooldownDays?: number;    // Cooldown before this template can trigger again
   oncePerSeason?: boolean;  // Can only trigger once per season
   requiresPlayerTeam?: boolean; // Only triggers for player's team
+
+  // Social media format — when present, description renders as a styled social post card
+  // Use for public/player-visible events (player tweets, community Reddit posts, coaching beef incidents)
+  // Do NOT use for internal/logistical events (visa_arc, financial_stress, practice_burnout)
+  socialFormat?: {
+    platform: 'twitter' | 'reddit';
+    handle?: string;           // "@handle" for twitter, "r/subreddit" for reddit
+    flavorReactions?: {        // Fake engagement numbers (flavor only, not gameplay)
+      likes?: number;
+      retweets?: number;
+      upvotes?: number;
+    };
+  };
 }
 
 /**

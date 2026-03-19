@@ -48,6 +48,116 @@ The key insight: **interview choices are seeds, drama events are harvests**. Not
 
 ---
 
+## UX Conventions
+
+### Interview Option Presentation
+
+Each option card uses a **quote-first layout**:
+- `quote` is the primary large text displayed at the top of the card
+- `label` is the secondary label shown below the quote (smaller, dimmer)
+- `tone` badge sits in the footer row alongside the label
+- Cards are color-coded by tone (see Tone Color Map below)
+- Pre-choice effect hints are shown on every card before the player selects
+
+### Effect Hint Mapping (pre-choice)
+
+Numeric `InterviewEffects` fields are converted to directional arrows using these thresholds:
+
+```
+>= 8:  ↑↑   |  3–7: ↑   |  -2–2: →  |  -3–7: ↓  |  <= -8: ↓↓
+```
+
+Only non-zero stats are shown. Field → icon mapping:
+
+| Field         | Icon | Label   |
+|---------------|------|---------|
+| `fanbase`     | 👥   | Fans    |
+| `morale`      | 💙   | Morale  |
+| `hype`        | 🔥   | Hype    |
+| `sponsorTrust`| 💰   | Sponsor |
+| `rivalryDelta`| ⚔️   | Rival   |
+| `dramaChance > 0` | 🎲 | +Drama (always shown when non-zero, no arrow) |
+
+Effect hints are color-coded: green for positive, red for negative, purple for drama.
+
+### Tone Color Map
+
+Option card borders and badges are color-coded by tone:
+
+| Tone(s)                   | Border / Badge Color |
+|---------------------------|----------------------|
+| `CONFIDENT`, `AGGRESSIVE` | Amber                |
+| `TRASH_TALK`              | Red                  |
+| `HUMBLE`, `DEFLECTIVE`    | Slate / cool gray    |
+| `RESPECTFUL`, `BLAME_SELF`| Green                |
+| `BLAME_TEAM`              | Orange               |
+
+### Drama Event `socialFormat` Field
+
+`DramaEventTemplate` has an optional `socialFormat` field:
+
+```typescript
+socialFormat?: {
+  platform: 'twitter' | 'reddit';
+  handle?: string;          // "@handle" for twitter, "r/subreddit" for reddit
+  flavorReactions?: {
+    likes?: number;
+    retweets?: number;
+    upvotes?: number;
+  };
+}
+```
+
+- **When present**: The event description renders as a styled social post card (tweet or Reddit post) in `DramaEventModal`, not as a blockquote
+- **When absent**: Renders as the current blockquote (no regression)
+- **Use for**: Events that are public/player-visible — player ego public trade demands, community Reddit threads, coaching beef Twitter storms, viral clip posts, external pressure fan backlash
+- **Do NOT use for**: Internal/logistical events — `visa_arc`, `financial_stress`, `practice_burnout`, `coaching_overhaul` internal discussions
+
+The `flavorReactions` numbers are purely cosmetic — they do not affect gameplay.
+
+### Manager Identity / Archetype System
+
+The manager's `ManagerProfile` is **derived from `interviewHistory`** via `selectManagerProfile()` in `interviewSlice.ts`. No new store state is required.
+
+```typescript
+type ManagerArchetype =
+  | 'HYPE_MACHINE'    // CONFIDENT + TRASH_TALK + AGGRESSIVE ≥ 50%
+  | 'TEAM_BUILDER'    // RESPECTFUL + BLAME_SELF ≥ 40%
+  | 'MAVERICK'        // TRASH_TALK + AGGRESSIVE + BLAME_TEAM ≥ 40%
+  | 'HUMBLE_GRINDER'  // HUMBLE ≥ 35%
+  | 'ANALYST'         // DEFLECTIVE ≥ 30%
+  | null;             // < 5 interviews or no dominant pattern
+
+interface ManagerProfile {
+  archetype: ManagerArchetype;
+  archetypeStrength: number;  // dominant group's raw percentage (used in badge display)
+  toneBreakdown: Partial<Record<InterviewTone, number>>;
+}
+```
+
+**Archetype rules** (checked in priority order, requires ≥ 5 interviews):
+
+| Archetype      | Condition                                         |
+|----------------|---------------------------------------------------|
+| HYPE_MACHINE   | (CONFIDENT + TRASH_TALK + AGGRESSIVE) ≥ 50%       |
+| TEAM_BUILDER   | (RESPECTFUL + BLAME_SELF) ≥ 40%                   |
+| MAVERICK       | (TRASH_TALK + AGGRESSIVE + BLAME_TEAM) ≥ 40%      |
+| HUMBLE_GRINDER | HUMBLE ≥ 35%                                      |
+| ANALYST        | DEFLECTIVE ≥ 30%                                  |
+
+**Gameplay effects** (applied in `InterviewEffectResolver.ts`):
+
+| Archetype + Tone              | Effect Modifier                                            |
+|-------------------------------|-------------------------------------------------------------|
+| HYPE_MACHINE + CONFIDENT      | fanbase effect × 1.25; adds `org_pressure` flag if strength > 60 |
+| HUMBLE_GRINDER + HUMBLE       | morale effect × 1.2                                         |
+| TEAM_BUILDER + RESPECTFUL     | morale effect × 1.2                                         |
+| MAVERICK + TRASH_TALK         | rivalryDelta × 1.5                                          |
+
+**UI**: The archetype badge appears in `InterviewModal` header as `🔥 Hype Machine (74%)`. On-brand option cards show a subtle `✓` indicator. Cards are never hidden — the archetype creates gravity without hard-locking choices.
+
+---
+
 ## Narrative Collection System
 
 The collection system gives players a Pokédex-style reason to replay and discover all story branches. It persists globally across playthroughs via `localStorage` (key: `vct-narrative-collection`), independent of save files.

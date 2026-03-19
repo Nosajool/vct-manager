@@ -19,6 +19,11 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 60,
     cooldownDays: 3,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 4200 },
+    },
     choices: [
       {
         id: 'public_confidence',

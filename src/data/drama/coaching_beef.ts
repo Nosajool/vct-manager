@@ -45,6 +45,11 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     probability: 75,
     cooldownDays: 3,
     requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'twitter',
+      handle: '@vct_analyst',
+      flavorReactions: { likes: 3400, retweets: 847 },
+    },
     choices: [
       {
         id: 'accuse_publicly',
@@ -198,6 +203,11 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     probability: 75,
     cooldownDays: 3,
     requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'twitter',
+      handle: '@rival_coach',
+      flavorReactions: { likes: 8700, retweets: 2100 },
+    },
     choices: [
       {
         id: 'blast_them_public',

@@ -44,6 +44,11 @@ export const TEAM_SYNERGY_EVENTS: DramaEventTemplate[] = [
     ],
     probability: 50,
     cooldownDays: 3,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 3100 },
+    },
     choices: [
       {
         id: 'mediate',

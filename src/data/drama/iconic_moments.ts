@@ -166,6 +166,11 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     cooldownDays: 3,
     oncePerSeason: true,
     requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'twitter',
+      handle: '@VCTHighlights',
+      flavorReactions: { likes: 21400, retweets: 5300 },
+    },
     choices: [
       {
         id: 'lean_into_it',
