@@ -38,7 +38,7 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
       </div>
 
       {/* Team List */}
-      <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+      <div className="space-y-2 max-h-[45vh] overflow-y-auto pr-2">
         {teams.map((team) => {
           const stars = getPrestigeStars(team.orgValue);
           return (
@@ -74,13 +74,10 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
                   <span className="text-vct-gray">
                     {formatOrgValue(team.orgValue)}
                   </span>
-                  <span title="Pressure">
-                    {'🔥'.repeat(team.pressure)}
-                  </span>
                 </div>
               </div>
 
-              {/* Fanbase */}
+              {/* Fanbase + Pressure */}
               <div className="text-right flex-shrink-0">
                 <p className="text-xs text-vct-gray">Fanbase</p>
                 <p className={`font-bold ${
@@ -89,6 +86,9 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
                   'text-vct-gray'
                 }`}>
                   {team.fanbase}
+                </p>
+                <p className="text-sm leading-none mt-1 whitespace-nowrap" title={`Pressure: ${team.pressure}/5`}>
+                  {'🔥'.repeat(team.pressure)}
                 </p>
               </div>
             </button>
