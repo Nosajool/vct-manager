@@ -556,70 +556,83 @@ function AgentSelectionPhase({
           const role = getAgentRole(currentAgent);
           const hint = getStatusHint(player.id, currentAgent);
 
+          const agentPicker = (
+            <>
+              {(prefs?.preferredAgents ?? ['Jett', 'Reyna', 'Sova']).map((agent) => {
+                const isCurrent = currentAgent === agent;
+                const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
+                const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
+                return (
+                  <button
+                    key={agent}
+                    title={isTaken ? `Taken by ${takenBy}` : agent}
+                    onClick={() => handleAgentPick(player.id, agent)}
+                    className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
+                      isCurrent ? 'border-vct-red opacity-100' :
+                      isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
+                                  'border-transparent opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setExpandedPlayer(expandedPlayer === player.id ? null : player.id)}
+                className="text-xs text-vct-gray hover:text-vct-light shrink-0"
+              >
+                {expandedPlayer === player.id ? '▴' : '+more ▾'}
+              </button>
+            </>
+          );
+
           return (
             <div key={player.id} className="flex flex-col">
-              <div className="flex items-center gap-2 bg-vct-gray/5 rounded px-3 py-2">
-                {/* Player photo */}
-                <GameImage
-                  src={getPlayerImageUrl(player.name)}
-                  alt={player.name}
-                  className="w-8 h-8 rounded-full object-cover shrink-0"
-                />
+              <div className="bg-vct-gray/5 rounded px-3 py-2">
+                {/* Row 1: identity + selected agent/role (always visible) */}
+                <div className="flex items-center gap-2">
+                  {/* Player photo */}
+                  <GameImage
+                    src={getPlayerImageUrl(player.name)}
+                    alt={player.name}
+                    className="w-8 h-8 rounded-full object-cover shrink-0"
+                  />
 
-                {/* Player name */}
-                <span className="text-sm font-medium text-vct-light w-20 shrink-0 truncate">
-                  {player.name}
-                </span>
-
-                {/* Preferred agent icons */}
-                {(prefs?.preferredAgents ?? ['Jett', 'Reyna', 'Sova']).map((agent) => {
-                  const isCurrent = currentAgent === agent;
-                  const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
-                  const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
-                  return (
-                    <button
-                      key={agent}
-                      title={isTaken ? `Taken by ${takenBy}` : agent}
-                      onClick={() => handleAgentPick(player.id, agent)}
-                      className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
-                        isCurrent ? 'border-vct-red opacity-100' :
-                        isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
-                                    'border-transparent opacity-70 hover:opacity-100'
-                      }`}
-                    >
-                      <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
-                    </button>
-                  );
-                })}
-
-                {/* +more toggle */}
-                <button
-                  onClick={() => setExpandedPlayer(expandedPlayer === player.id ? null : player.id)}
-                  className="text-xs text-vct-gray hover:text-vct-light shrink-0"
-                >
-                  {expandedPlayer === player.id ? '▴' : '+more ▾'}
-                </button>
-
-                <div className="flex-1" />
-
-                {/* Selected agent icon */}
-                <GameImage
-                  src={getAgentImageUrl(currentAgent)}
-                  alt={currentAgent}
-                  className="w-8 h-8 object-contain shrink-0"
-                />
-
-                {/* Role badge */}
-                {role && (
-                  <span className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${ROLE_COLORS[role]}`}>
-                    {role}
+                  {/* Player name — fills remaining space on mobile, fixed width on sm+ */}
+                  <span className="text-sm font-medium text-vct-light flex-1 min-w-0 sm:flex-none sm:w-20 sm:shrink-0 truncate">
+                    {player.name}
                   </span>
-                )}
 
-                {/* Status hint */}
-                {hint && (
-                  <span className={`text-xs shrink-0 ${hint.cls}`}>{hint.text}</span>
-                )}
+                  {/* Desktop only: agent pickers inline */}
+                  <div className="hidden sm:flex items-center gap-1">{agentPicker}</div>
+
+                  {/* Desktop spacer */}
+                  <div className="hidden sm:block flex-1" />
+
+                  {/* Selected agent icon */}
+                  <GameImage
+                    src={getAgentImageUrl(currentAgent)}
+                    alt={currentAgent}
+                    className="w-8 h-8 object-contain shrink-0"
+                  />
+
+                  {/* Role badge */}
+                  {role && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${ROLE_COLORS[role]}`}>
+                      {role}
+                    </span>
+                  )}
+
+                  {/* Status hint */}
+                  {hint && (
+                    <span className={`text-xs shrink-0 ${hint.cls}`}>{hint.text}</span>
+                  )}
+                </div>
+
+                {/* Row 2: mobile only — agent pickers on second line */}
+                <div className="flex sm:hidden items-center gap-1 mt-1.5 flex-wrap">
+                  {agentPicker}
+                </div>
               </div>
 
               {/* Expanded agent grid */}
