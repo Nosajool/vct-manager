@@ -335,7 +335,7 @@ export class DayPlanService {
           schedulableType: activityType,
           action: {
             view: 'team',
-            openModal: activityCategory,
+            openModal: activityCategory as 'training' | 'scrim' | 'strategy',
             scheduleData: {
               date: date,
               activityType: activityType,
@@ -624,7 +624,7 @@ export class DayPlanService {
       description: `${gainsStr} — auto-resolves at end of day`,
       priority: PRIORITY.MEDIUM,
       completed: event.processed,
-      activityType: 'training', // closest visual category
+      activityType: 'downtime',
       activityState: 'locked',
       calendarEventId: event.id,
       action: {
@@ -671,7 +671,7 @@ export class DayPlanService {
         description: `${label} — auto-resolves at end of day`,
         priority: PRIORITY.MEDIUM,
         completed: event.processed || isConfigured,
-        activityType: 'training', // closest visual category
+        activityType: 'downtime',
         activityState: derivedActivityState,
         calendarEventId: event.id,
         action,
@@ -684,7 +684,7 @@ export class DayPlanService {
   /**
    * Get activity category from schedulable activity type
    */
-  private getActivityCategory(schedulableType: SchedulableActivityType): 'training' | 'scrim' | 'strategy' | null {
+  private getActivityCategory(schedulableType: SchedulableActivityType): 'training' | 'scrim' | 'strategy' | 'downtime' | null {
     switch (schedulableType) {
       case 'training':
         return 'training';
@@ -695,14 +695,13 @@ export class DayPlanService {
       case 'team_offsite':
       case 'bootcamp':
         return null; // These don't map to our activity categories
-      // Downtime activities use 'training' as visual category
       case 'watch_party':
       case 'fan_meetup':
       case 'streamer_collab':
       case 'youtube_documentary':
       case 'sponsored_content':
       case 'regional_bootcamp':
-        return 'training';
+        return 'downtime';
       default:
         return null;
     }
@@ -711,7 +710,7 @@ export class DayPlanService {
   /**
    * Get display label for activity type
    */
-  private getActivityLabel(activityType: 'training' | 'scrim' | 'strategy'): string {
+  private getActivityLabel(activityType: 'training' | 'scrim' | 'strategy' | 'downtime'): string {
     switch (activityType) {
       case 'training':
         return 'Training';
@@ -719,6 +718,8 @@ export class DayPlanService {
         return 'Scrim';
       case 'strategy':
         return 'Strategy';
+      case 'downtime':
+        return 'Downtime';
     }
   }
 

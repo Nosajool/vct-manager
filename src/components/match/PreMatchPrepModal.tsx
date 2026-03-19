@@ -154,13 +154,38 @@ function runAutoAgentSelection(
   players: Player[],
   prefs: Record<string, PlayerAgentPreferences>
 ): Record<string, Record<string, string>> {
+  const allAgents = Object.values(COMPOSITION_CONSTANTS.AGENTS_BY_ROLE).flat();
   const result: Record<string, Record<string, string>> = {};
+
   for (const mapName of maps) {
     const assignment: Record<string, string> = {};
-    for (const player of players) {
+    const taken = new Set<string>();
+
+    // Sort: players with fewer preferred agents go first (less flexible = higher priority)
+    const sorted = [...players].sort((a, b) => {
+      const aPrefs = (prefs[a.id] ?? a.agentPreferences)?.preferredAgents ?? [];
+      const bPrefs = (prefs[b.id] ?? b.agentPreferences)?.preferredAgents ?? [];
+      return aPrefs.length - bPrefs.length;
+    });
+
+    for (const player of sorted) {
       const playerPrefs = prefs[player.id] ?? player.agentPreferences;
-      assignment[player.id] = playerPrefs?.preferredAgents?.[0] ?? 'Jett';
+      const preferred = playerPrefs?.preferredAgents ?? [];
+
+      // Try preferred agents in order
+      const pick = preferred.find((a) => !taken.has(a))
+        // Fallback: any agent in their primary role
+        ?? (playerPrefs?.primaryRole
+            ? COMPOSITION_CONSTANTS.AGENTS_BY_ROLE[playerPrefs.primaryRole]?.find((a) => !taken.has(a))
+            : undefined)
+        // Last resort: any unused agent
+        ?? allAgents.find((a) => !taken.has(a))
+        ?? 'Jett';
+
+      assignment[player.id] = pick;
+      taken.add(pick);
     }
+
     result[mapName] = assignment;
   }
   return result;
@@ -430,11 +455,12 @@ interface AgentSelectionPhaseProps {
   assignments: Record<string, string>;
   onChange: (playerId: string, agentName: string) => void;
   onNext: () => void;
+  onBack?: () => void;
   onAutoPrep: () => void;
 }
 
 function AgentSelectionPhase({
-  mapName, mapIndex, totalMaps, players, playerAgentPrefs, assignments, onChange, onNext, onAutoPrep,
+  mapName, mapIndex, totalMaps, players, playerAgentPrefs, assignments, onChange, onNext, onBack, onAutoPrep,
 }: AgentSelectionPhaseProps) {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
 
@@ -649,8 +675,18 @@ function AgentSelectionPhase({
         )}
       </div>
 
-      {/* Next button */}
-      <div className="flex justify-end">
+      {/* Navigation */}
+      <div className="flex justify-between items-center">
+        {mapIndex > 0 ? (
+          <button
+            onClick={onBack}
+            className="px-4 py-1.5 text-sm font-medium bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded"
+          >
+            Back
+          </button>
+        ) : (
+          <div />
+        )}
         <button
           onClick={onNext}
           className="px-4 py-1.5 text-sm font-medium bg-vct-red hover:bg-vct-red/80 text-white rounded"
@@ -831,6 +867,12 @@ export function PreMatchPrepModal({
     }
   };
 
+  const handleAgentBack = () => {
+    if (agentMapIndex > 0) {
+      setAgentMapIndex((i) => i - 1);
+    }
+  };
+
   const handleConfirmBack = () => {
     // Go back to last map's agent selection
     setAgentMapIndex(selectedMaps.length - 1);
@@ -914,6 +956,7 @@ export function PreMatchPrepModal({
               assignments={agentAssignments[currentMap] ?? {}}
               onChange={(playerId, agentName) => handleAgentChange(currentMap, playerId, agentName)}
               onNext={handleAgentNext}
+              onBack={handleAgentBack}
               onAutoPrep={handleAutoPrep}
             />
           )}

@@ -272,11 +272,16 @@ export function DramaEventToast({
               {queuePosition && (
                 <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
                   <span>{queuePosition.current} of {queuePosition.total}</span>
-                  {onSkipAll && (
-                    <button onClick={onSkipAll} className="hover:text-gray-200">
-                      Skip all
+                  <div className="flex items-center gap-2">
+                    <button onClick={handleManualDismiss} className="hover:text-gray-200">
+                      Next →
                     </button>
-                  )}
+                    {onSkipAll && (
+                      <button onClick={onSkipAll} className="hover:text-gray-200">
+                        Dismiss all
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

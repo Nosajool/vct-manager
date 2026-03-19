@@ -120,7 +120,7 @@ export const GAMING_NAMES = [
   'Luna', 'Lynx', 'Mist', 'Neko', 'Night', 'Nova', 'Onyx', 'Phaze',
   'Pulse', 'Pyro', 'Razed', 'Reaper', 'Rex', 'Riot', 'Rush', 'Saga',
   'Shad0w', 'Shire', 'Skull', 'Sky', 'Smoke', 'Snake', 'Spark', 'Spect',
-  'Spirit', 'Steel', 'Storm', 'Swift', 'Tac', 'Tank', 'Toxic', 'Trace',
+  'Spirit', 'Steal', 'Storm', 'Swift', 'Tac', 'Tank', 'Toxic', 'Trace',
   'Trick', 'Turbo', 'Venom', 'Vipen', 'Volt', 'Wolf', 'Wrath', 'Zero',
   'Zesk', 'Zoom', 'Alpha', 'Beta', 'Omega', 'Delta', 'Sigma', 'Theta',
 ];

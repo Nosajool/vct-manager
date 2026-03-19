@@ -79,7 +79,7 @@ export interface DayPlanItem {
   /** Action to perform when item is clicked */
   action?: DayPlanItemAction;
   /** Type of activity (for 'activity' category) */
-  activityType?: 'training' | 'scrim' | 'strategy';
+  activityType?: 'training' | 'scrim' | 'strategy' | 'downtime';
   /** Current state of the activity (for 'activity' category) */
   activityState?: ActivityState;
   /** Calendar event ID if this item is linked to a calendar event */

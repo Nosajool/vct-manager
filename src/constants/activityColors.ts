@@ -3,7 +3,7 @@
 // Centralizes color tokens for training, scrims, and strategy activities.
 // Used across ObjectivesPanel, DayPlanPanel, and other activity-related components.
 
-export type ActivityType = 'training' | 'scrim' | 'strategy';
+export type ActivityType = 'training' | 'scrim' | 'strategy' | 'downtime';
 
 interface ActivityColors {
   bg: string;
@@ -38,5 +38,13 @@ export const ACTIVITY_COLORS: Record<ActivityType, ActivityColors> = {
     borderLeft: 'border-l-amber-500',
     text: 'text-amber-400',
     checkboxBorder: 'border-amber-500',
+  },
+  downtime: {
+    bg: 'bg-emerald-500/10',
+    bgHover: 'bg-emerald-500/20',
+    border: 'border-emerald-500/30',
+    borderLeft: 'border-l-emerald-500',
+    text: 'text-emerald-400',
+    checkboxBorder: 'border-emerald-500',
   },
 };

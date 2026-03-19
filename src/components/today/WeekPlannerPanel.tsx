@@ -92,9 +92,11 @@ function DayPlanCard({ dayPlan, dayIndex, onActivityClick }: DayPlanCardProps) {
     return `Day ${dayIndex + 2}`;
   };
 
-  // Filter to only match and activity items
+  // Filter to only match and non-downtime activity items
   const matchItems = dayPlan.items.filter((item) => item.category === 'match');
-  const activityItems = dayPlan.items.filter((item) => item.category === 'activity');
+  const activityItems = dayPlan.items.filter(
+    (item) => item.category === 'activity' && item.activityType !== 'downtime'
+  );
 
   return (
     <div className="bg-vct-darker rounded-lg border border-vct-gray/20 p-3">

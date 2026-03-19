@@ -59,25 +59,40 @@ function FullVariant({
       className={`${baseClasses} ${bgClass} ${bgHoverClass} ${borderClass} ${borderLeftClass}`}
     >
       <div className="flex items-start gap-3">
-        {/* Checkbox */}
+        {/* Checkbox or lock icon */}
         <div className="mt-0.5">
-          <div
-            className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-              item.completed ? 'bg-green-500 border-green-500' : checkboxBorderClass
-            }`}
-          >
-            {item.completed && (
+          {item.activityState === 'locked' ? (
+            <div className="w-4 h-4 flex items-center justify-center">
               <svg
-                className="w-3 h-3 text-white"
+                className="w-3.5 h-3.5 text-vct-gray/60"
                 fill="none"
                 strokeWidth="2"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div
+              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                item.completed ? 'bg-green-500 border-green-500' : checkboxBorderClass
+              }`}
+            >
+              {item.completed && (
+                <svg
+                  className="w-3 h-3 text-white"
+                  fill="none"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -154,6 +169,16 @@ function CompactVariant({ item, onClick }: { item: DayPlanItem; onClick?: () => 
           dashedBorder: 'border-dashed border-amber-500/30',
           dashedText: 'text-amber-400',
           dashedHover: 'hover:bg-amber-500/10',
+        };
+      case 'downtime':
+        return {
+          bg: 'bg-emerald-500/20',
+          bgHover: 'bg-emerald-500/30',
+          border: 'border-emerald-500/30',
+          text: 'text-emerald-400',
+          dashedBorder: 'border-dashed border-emerald-500/30',
+          dashedText: 'text-emerald-400',
+          dashedHover: 'hover:bg-emerald-500/10',
         };
     }
   };
