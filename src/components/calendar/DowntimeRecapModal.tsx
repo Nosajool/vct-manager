@@ -33,7 +33,7 @@ function formatMoney(amount: number): string {
   return amount >= 0 ? `+${formatted}` : `-${formatted}`;
 }
 
-function DeltaBadge({ value, label }: { value: number; label: string }) {
+function DeltaBadge({ value, label, icon }: { value: number; label: string; icon?: string }) {
   if (value === 0) return null;
   const positive = value > 0;
   return (
@@ -42,7 +42,7 @@ function DeltaBadge({ value, label }: { value: number; label: string }) {
         positive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
       }`}
     >
-      {positive ? '+' : ''}{value} {label}
+      {icon && <span>{icon}</span>}{positive ? '+' : ''}{value} {label}
     </span>
   );
 }
@@ -76,13 +76,13 @@ function ActivityCard({ result }: { result: DowntimeActivityResult }) {
       {hasRep && (
         <div className="flex flex-wrap gap-1.5">
           {result.reputationDeltas.fanbase !== undefined && result.reputationDeltas.fanbase !== 0 && (
-            <DeltaBadge value={result.reputationDeltas.fanbase} label="Fanbase" />
+            <DeltaBadge value={result.reputationDeltas.fanbase} label="Fanbase" icon="👥" />
           )}
           {result.reputationDeltas.hype !== undefined && result.reputationDeltas.hype !== 0 && (
-            <DeltaBadge value={result.reputationDeltas.hype} label="Hype" />
+            <DeltaBadge value={result.reputationDeltas.hype} label="Hype" icon="🔥" />
           )}
           {result.reputationDeltas.sponsorTrust !== undefined && result.reputationDeltas.sponsorTrust !== 0 && (
-            <DeltaBadge value={result.reputationDeltas.sponsorTrust} label="Sponsor Trust" />
+            <DeltaBadge value={result.reputationDeltas.sponsorTrust} label="Sponsor Trust" icon="💰" />
           )}
         </div>
       )}
@@ -90,7 +90,7 @@ function ActivityCard({ result }: { result: DowntimeActivityResult }) {
       {/* Morale changes */}
       {hasMorale && (
         <div className="space-y-1">
-          <div className="text-xs text-vct-gray uppercase tracking-wide">Morale</div>
+          <div className="text-xs text-vct-gray uppercase tracking-wide">💙 Morale</div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             {result.moraleChanges.map(({ playerId, playerName, delta }) => (
               <div key={playerId} className="flex items-center justify-between gap-2">

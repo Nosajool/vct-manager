@@ -105,20 +105,28 @@ interface EffectHint {
   icon: string;
   label: string;
   arrow: string;
+  value?: number;
   positive: boolean;
 }
 
 function getEffectHints(effects: InterviewEffects): EffectHint[] {
   const hints: EffectHint[] = [];
-  if (effects.fanbase)      hints.push({ icon: '👥', label: 'Fans',    arrow: getArrow(effects.fanbase),      positive: effects.fanbase > 0 });
-  if (effects.morale)       hints.push({ icon: '💙', label: 'Morale',  arrow: getArrow(effects.morale),       positive: effects.morale > 0 });
-  if (effects.hype)         hints.push({ icon: '🔥', label: 'Hype',    arrow: getArrow(effects.hype),         positive: effects.hype > 0 });
-  if (effects.sponsorTrust) hints.push({ icon: '💰', label: 'Sponsor', arrow: getArrow(effects.sponsorTrust), positive: effects.sponsorTrust > 0 });
-  if (effects.rivalryDelta) hints.push({ icon: '⚔️', label: 'Rival',   arrow: getArrow(effects.rivalryDelta), positive: effects.rivalryDelta > 0 });
+  if (effects.fanbase)      hints.push({ icon: '👥', label: 'Fans',    arrow: getArrow(effects.fanbase),      value: effects.fanbase,      positive: effects.fanbase > 0 });
+  if (effects.morale)       hints.push({ icon: '💙', label: 'Morale',  arrow: getArrow(effects.morale),       value: effects.morale,       positive: effects.morale > 0 });
+  if (effects.hype)         hints.push({ icon: '🔥', label: 'Hype',    arrow: getArrow(effects.hype),         value: effects.hype,         positive: effects.hype > 0 });
+  if (effects.sponsorTrust) hints.push({ icon: '💰', label: 'Sponsor', arrow: getArrow(effects.sponsorTrust), value: effects.sponsorTrust, positive: effects.sponsorTrust > 0 });
+  if (effects.rivalryDelta) hints.push({ icon: '⚔️', label: 'Rival',   arrow: getArrow(effects.rivalryDelta), value: effects.rivalryDelta, positive: effects.rivalryDelta > 0 });
   if (effects.dramaChance && effects.dramaChance > 0) {
     hints.push({ icon: '🎲', label: '+Drama', arrow: '', positive: false });
   }
   return hints;
+}
+
+function formatOutcomeHint(hint: EffectHint): string {
+  if (hint.value != null) {
+    return `${hint.value > 0 ? '+' : ''}${hint.value} ${hint.label}`;
+  }
+  return hint.arrow ? `${hint.label} ${hint.arrow}` : hint.label;
 }
 
 // ============================================================================
@@ -263,8 +271,8 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                     return (
                       <div className="flex items-center gap-2 flex-wrap">
                         {hints.map((hint, i) => (
-                          <span key={i} className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
-                            {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                          <span key={i} className={`text-xs font-mono ${hint.arrow === '' && hint.value == null ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
+                            {hint.icon} {formatOutcomeHint(hint)}
                           </span>
                         ))}
                       </div>

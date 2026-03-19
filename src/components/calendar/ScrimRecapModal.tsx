@@ -7,6 +7,7 @@ import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl, getMapImageUrl, getAgentImageUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 import { useVisibleMapStats } from '../../hooks/useFeatureGate';
+import { SCRIM_ATTR_ICONS } from '../../utils/statIcons';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
 import type { MapStrengthAttributes } from '../../types/scrim';
 
@@ -17,13 +18,13 @@ interface ScrimRecapModalProps {
   date: string;
 }
 
-const ATTRIBUTE_LABELS: Record<keyof MapStrengthAttributes, string> = {
-  executes: 'Executes',
-  retakes: 'Retakes',
-  utility: 'Utility',
-  communication: 'Comms',
-  mapControl: 'Map Control',
-  antiStrat: 'Anti-Strat',
+const ATTRIBUTE_INFO: Record<keyof MapStrengthAttributes, { icon: string; label: string }> = {
+  executes:      { icon: SCRIM_ATTR_ICONS.executes,      label: 'Executes' },
+  retakes:       { icon: SCRIM_ATTR_ICONS.retakes,       label: 'Retakes' },
+  utility:       { icon: SCRIM_ATTR_ICONS.utility,       label: 'Utility' },
+  communication: { icon: SCRIM_ATTR_ICONS.communication, label: 'Comms' },
+  mapControl:    { icon: SCRIM_ATTR_ICONS.mapControl,    label: 'Map Control' },
+  antiStrat:     { icon: SCRIM_ATTR_ICONS.antiStrat,     label: 'Anti-Strat' },
 };
 
 const INTENSITY_LABELS: Record<string, { label: string; color: string }> = {
@@ -32,7 +33,7 @@ const INTENSITY_LABELS: Record<string, { label: string; color: string }> = {
   competitive: { label: 'Competitive', color: 'bg-red-500/20 text-red-400' },
 };
 
-function AttributeBar({ label, before, delta }: { label: string; before: number; delta: number }) {
+function AttributeBar({ label, icon, before, delta }: { label: string; icon?: string; before: number; delta: number }) {
   const after = Math.round((before + delta) * 10) / 10;
   const maxVal = 85;
   const beforePct = Math.round((before / maxVal) * 100);
@@ -40,8 +41,8 @@ function AttributeBar({ label, before, delta }: { label: string; before: number;
   const isPositive = delta > 0;
 
   return (
-    <div className="grid grid-cols-[5rem_1fr_auto] items-center gap-2 text-xs">
-      <span className="text-vct-gray truncate">{label}</span>
+    <div className="grid grid-cols-[6rem_1fr_auto] items-center gap-2 text-xs">
+      <span className="text-vct-gray truncate">{icon && <span className="mr-1">{icon}</span>}{label}</span>
       <div className="relative h-2 bg-vct-gray/20 rounded-full overflow-hidden">
         <div
           className="absolute inset-y-0 left-0 bg-vct-gray/40 rounded-full"
@@ -118,7 +119,7 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
               <span className="text-vct-light font-medium">{skillsImproved} skill{skillsImproved !== 1 ? 's' : ''} improved</span>
               {mapsWithImprovements > 0 && <span> across {mapsWithImprovements} map{mapsWithImprovements !== 1 ? 's' : ''}</span>}
               {scrimResult.chemistryChange !== 0 && (
-                <span> · Team Chemistry {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange}</span>
+                <span> · 🤝 Team Chemistry {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange}</span>
               )}
             </p>
           )}
@@ -191,10 +192,12 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
                     <div className="px-4 pb-3 space-y-2">
                       {positiveAttrs.map(([attr, delta]) => {
                         const before = beforeSnapshot?.[attr as keyof MapStrengthAttributes] ?? 0;
+                        const info = ATTRIBUTE_INFO[attr as keyof MapStrengthAttributes];
                         return (
                           <AttributeBar
                             key={attr}
-                            label={ATTRIBUTE_LABELS[attr as keyof MapStrengthAttributes] ?? attr}
+                            label={info?.label ?? attr}
+                            icon={info?.icon}
                             before={before}
                             delta={delta as number}
                           />
@@ -221,7 +224,7 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
             </span>
             {scrimResult.chemistryChange !== 0 && (
               <span className={`text-xs font-medium ${scrimResult.chemistryChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                Team Chemistry {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange}
+                🤝 Team Chemistry {scrimResult.chemistryChange > 0 ? '+' : ''}{scrimResult.chemistryChange}
               </span>
             )}
           </div>

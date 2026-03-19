@@ -9,6 +9,7 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl, getAgentImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
 import { TRAINING_GOAL_MAPPINGS } from '../../types/economy';
+import { PLAYER_STAT_ICONS } from '../../utils/statIcons';
 import type { ActivityResolutionResult } from '../../types/activityPlan';
 
 interface TrainingRecapModalProps {
@@ -18,27 +19,27 @@ interface TrainingRecapModalProps {
   date: string;
 }
 
-const STAT_LABELS: Record<string, string> = {
-  mechanics: 'Mechanics',
-  igl: 'IGL',
-  mental: 'Mental',
-  clutch: 'Clutch',
-  lurking: 'Lurking',
-  entry: 'Entry',
-  support: 'Support',
-  vibes: 'Vibes',
-  stamina: 'Stamina',
+const STAT_INFO: Record<string, { icon: string; label: string }> = {
+  mechanics: { icon: PLAYER_STAT_ICONS.mechanics, label: 'Mechanics' },
+  igl:       { icon: PLAYER_STAT_ICONS.igl,       label: 'IGL' },
+  mental:    { icon: PLAYER_STAT_ICONS.mental,    label: 'Mental' },
+  clutch:    { icon: PLAYER_STAT_ICONS.clutch,    label: 'Clutch' },
+  lurking:   { icon: PLAYER_STAT_ICONS.lurking,   label: 'Lurking' },
+  entry:     { icon: PLAYER_STAT_ICONS.entry,     label: 'Entry' },
+  support:   { icon: PLAYER_STAT_ICONS.support,   label: 'Support' },
+  vibes:     { icon: PLAYER_STAT_ICONS.vibes,     label: 'Vibes' },
+  stamina:   { icon: PLAYER_STAT_ICONS.stamina,   label: 'Stamina' },
 };
 
-function StatBar({ label, before, after }: { label: string; before: number; after: number }) {
+function StatBar({ label, icon, before, after }: { label: string; icon?: string; before: number; after: number }) {
   const maxVal = 100;
   const beforePct = Math.min((before / maxVal) * 100, 100);
   const delta = after - before;
   const deltaPct = Math.min((delta / maxVal) * 100, 100);
 
   return (
-    <div className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-2">
-      <span className="text-xs text-vct-gray truncate">{label}</span>
+    <div className="grid grid-cols-[5.5rem_1fr_auto] items-center gap-2">
+      <span className="text-xs text-vct-gray truncate">{icon && <span className="mr-1">{icon}</span>}{label}</span>
       <div className="relative h-1.5 bg-vct-dark/60 rounded-full overflow-hidden">
         <div
           className="absolute inset-y-0 left-0 bg-vct-gray/40 rounded-full"
@@ -207,11 +208,14 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
                             {statChanges.map(([stat, value]) => {
                               const currentVal = (player.stats as unknown as Record<string, number>)[stat] ?? 0;
                               const beforeVal = result.statsBefore?.[stat] ?? (currentVal - value);
-                              const label = STAT_LABELS[stat] ?? stat;
+                              const info = STAT_INFO[stat];
+                              const label = info?.label ?? stat;
+                              const icon = info?.icon;
                               return (
                                 <StatBar
                                   key={stat}
                                   label={label}
+                                  icon={icon}
                                   before={beforeVal}
                                   after={beforeVal + value}
                                 />
@@ -233,7 +237,7 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
                                 : 'bg-red-500/20 text-red-400'
                             }`}
                           >
-                            {result.moraleChange > 0 ? '+' : ''}{result.moraleChange} Morale
+                            💙 {result.moraleChange > 0 ? '+' : ''}{result.moraleChange} Morale
                           </div>
                         )}
                       </div>

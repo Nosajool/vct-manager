@@ -164,20 +164,20 @@ const SKIP_TARGETS = new Set([
 ]);
 
 function getDramaEffectHints(effects: DramaChoice['effects']) {
-  const hints: { icon: string; label: string; arrow: string; positive: boolean }[] = [];
+  const hints: { icon: string; label: string; arrow: string; value: number | null; positive: boolean }[] = [];
   for (const e of effects) {
     if (e.target === 'player_contract_extension') {
       const years = e.contractYearsToAdd ?? 2;
       const pct = e.contractSalaryMultiplier
         ? Math.round((e.contractSalaryMultiplier - 1) * 100)
         : 50;
-      hints.push({ icon: '📄', label: `Contract +${years}yr +${pct}%`, arrow: '', positive: true });
+      hints.push({ icon: '📄', label: `Contract +${years}yr +${pct}%`, arrow: '', value: null, positive: true });
       continue;
     }
     if (!e.delta || SKIP_TARGETS.has(e.target)) continue;
     const key = e.stat ?? e.target;
     const meta = DRAMA_EFFECT_DISPLAY[key] ?? { icon: '📊', label: key.replace(/_/g, ' ') };
-    hints.push({ ...meta, arrow: getArrow(e.delta), positive: e.delta > 0 });
+    hints.push({ ...meta, arrow: getArrow(e.delta), value: e.delta, positive: e.delta > 0 });
   }
   return hints;
 }
@@ -361,8 +361,8 @@ export function DramaEventModal({
                     return (
                       <div className="flex items-center gap-2 flex-wrap">
                         {hints.map((hint, i) => (
-                          <span key={i} className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
-                            {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                          <span key={i} className={`text-xs font-mono ${hint.value === null ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}>
+                            {hint.icon} {hint.value !== null ? `${hint.value > 0 ? '+' : ''}${hint.value}` : ''}{hint.value !== null ? ' ' : ''}{hint.label}
                           </span>
                         ))}
                       </div>
