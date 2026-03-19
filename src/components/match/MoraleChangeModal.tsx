@@ -89,7 +89,7 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
           <div className="flex items-center gap-3 px-3 pb-1 mb-1">
             <div className="flex-1 min-w-0 text-xs text-vct-gray/60 font-medium">Player</div>
             <div className="w-28 flex-shrink-0 text-xs text-vct-gray/60 font-medium">Agent</div>
-            <div className="w-12 flex-shrink-0 text-xs text-vct-gray/60 font-medium text-right">Morale</div>
+            <div className="w-12 flex-shrink-0 text-xs text-vct-gray/60 font-medium text-right">💙 Morale</div>
             <div className="w-10 flex-shrink-0 text-xs text-vct-gray/60 font-medium text-right">Mastery</div>
           </div>
           <div className="space-y-2">
@@ -131,7 +131,7 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
                   <div className={`text-sm font-bold w-12 text-right flex-shrink-0 whitespace-nowrap ${
                     player.delta >= 0 ? 'text-green-400' : 'text-red-400'
                   }`}>
-                    {player.delta >= 0 ? '+' : ''}{player.delta} {player.delta >= 0 ? '▲' : '▼'}
+                    💙 {player.delta >= 0 ? '+' : ''}{player.delta} {player.delta >= 0 ? '▲' : '▼'}
                   </div>
 
                   {/* Mastery delta with agent icon */}
