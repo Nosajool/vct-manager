@@ -53,12 +53,14 @@ function PreMatchPrepModalWrapper({
   isOpen,
   playerTeamId,
   opponentTeam,
+  matchId,
   onConfirm,
   onCancel,
 }: {
   isOpen: boolean;
   playerTeamId: string | null;
   opponentTeam: Team | null;
+  matchId: string | null;
   onConfirm: (config: PreMatchConfig) => void;
   onCancel: () => void;
 }) {
@@ -81,6 +83,7 @@ function PreMatchPrepModalWrapper({
       playerAgentPrefs={state.playerAgentPreferences}
       onConfirm={onConfirm}
       onCancel={onCancel}
+      matchId={matchId ?? undefined}
     />
   );
 }
@@ -918,6 +921,7 @@ export function TimeBar() {
         isOpen={showPreMatchPrep}
         playerTeamId={playerTeamId}
         opponentTeam={opponentTeam}
+        matchId={todaysMatch?.id ?? null}
         onConfirm={handlePreMatchPrepConfirm}
         onCancel={handlePreMatchPrepCancel}
       />

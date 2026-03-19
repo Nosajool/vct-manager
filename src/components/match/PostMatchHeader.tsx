@@ -1,13 +1,24 @@
 // PostMatchHeader - Shared match result header used in InterviewModal and MoraleChangeModal
 // Shows team logos, names, score, round name, and per-map breakdown.
+// Also shows tournament name, round stakes, and roster icons when available.
 // Clickable — opens the full MatchResult modal.
 
 import { useState } from 'react';
 import { useGameStore } from '../../store';
 import { GameImage } from '../shared/GameImage';
-import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { getTeamLogoUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 import { getMatchRoundName } from '../../utils/matchRoundName';
 import { MatchResult } from './MatchResult';
+import type { Destination } from '../../types/competition';
+
+function stakeLabel(dest: Destination): string {
+  switch (dest.type) {
+    case 'champion': return 'Win Championship';
+    case 'eliminated': return 'Eliminated';
+    case 'match': return 'Advances';
+    case 'placement': return `#${dest.place} Place`;
+  }
+}
 
 interface PostMatchHeaderProps {
   matchId: string;
@@ -20,6 +31,10 @@ export function PostMatchHeader({ matchId }: PostMatchHeaderProps) {
   const result = useGameStore((state) => state.results[matchId]);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+  const tournament = useGameStore((state) =>
+    match?.tournamentId ? state.tournaments[match.tournamentId] : null
+  );
+  const players = useGameStore((state) => state.players);
 
   if (!match || !result || !playerTeamId) return null;
 
@@ -28,6 +43,23 @@ export function PostMatchHeader({ matchId }: PostMatchHeaderProps) {
   const opponentTeam = teams[opponentTeamId];
 
   if (!playerTeam || !opponentTeam) return null;
+
+  // Find bracketMatch for stakes
+  let bracketMatch = null;
+  if (tournament) {
+    const bracket = tournament.bracket;
+    const allMatches = [
+      ...bracket.upper.flatMap((r) => r.matches),
+      ...(bracket.middle ?? []).flatMap((r) => r.matches),
+      ...(bracket.lower ?? []).flatMap((r) => r.matches),
+      ...(bracket.grandfinal ? [bracket.grandfinal] : []),
+    ];
+    bracketMatch = allMatches.find((m) => m.matchId === matchId) ?? null;
+  }
+
+  // Roster icons (up to 5 each)
+  const playerRoster = playerTeam.playerIds.slice(0, 5).map((id) => players[id]).filter(Boolean);
+  const opponentRoster = opponentTeam.playerIds.slice(0, 5).map((id) => players[id]).filter(Boolean);
 
   const isTeamA = match.teamAId === playerTeamId;
   const playerTeamScore = isTeamA ? result.scoreTeamA : result.scoreTeamB;
@@ -102,6 +134,49 @@ export function PostMatchHeader({ matchId }: PostMatchHeaderProps) {
             ))}
           </div>
         )}
+
+        {/* Tournament + stakes row */}
+        {tournament && (
+          <div className="mt-2 flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-xs text-vct-gray/70">
+            <span>{tournament.name}</span>
+            {bracketMatch && (
+              <>
+                <span>·</span>
+                <span className="text-green-400/80">WIN → {stakeLabel(bracketMatch.winnerDestination)}</span>
+                <span>·</span>
+                <span className="text-red-400/80">LOSE → {stakeLabel(bracketMatch.loserDestination)}</span>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Roster icons */}
+        <div className="mt-2 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            {playerRoster.map((player) => (
+              <div key={player.id} title={player.name}>
+                <GameImage
+                  src={getPlayerImageUrl(player.name)}
+                  alt={player.name}
+                  className="w-6 h-6 rounded-full object-cover"
+                  fallbackClassName="w-6 h-6 rounded-full bg-vct-gray/20"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1">
+            {opponentRoster.map((player) => (
+              <div key={player.id} title={player.name}>
+                <GameImage
+                  src={getPlayerImageUrl(player.name)}
+                  alt={player.name}
+                  className="w-6 h-6 rounded-full object-cover"
+                  fallbackClassName="w-6 h-6 rounded-full bg-vct-gray/20"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {showMatchResult && (

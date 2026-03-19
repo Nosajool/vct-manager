@@ -11,6 +11,7 @@ import { MAPS, AGENTS } from '../../utils/constants';
 import { COMPOSITION_CONSTANTS } from '../../engine/match/constants';
 import { GameImage } from '../shared/GameImage';
 import { getAgentImageUrl, getMapImageUrl, getTeamLogoUrl, getPlayerImageUrl } from '../../utils/imageAssets';
+import { PreMatchHeader } from './PreMatchHeader';
 
 // ============================================================
 // Types
@@ -79,6 +80,7 @@ interface PreMatchPrepModalProps {
   playerAgentPrefs: Record<string, PlayerAgentPreferences>;
   onConfirm: (config: PreMatchConfig) => void;
   onCancel: () => void;
+  matchId?: string;
 }
 
 // ============================================================
@@ -805,6 +807,7 @@ export function PreMatchPrepModal({
   playerAgentPrefs,
   onConfirm,
   onCancel,
+  matchId,
 }: PreMatchPrepModalProps) {
   const [phase, setPhase] = useState<ModalPhase>('veto');
   const [agentMapIndex, setAgentMapIndex] = useState(0);
@@ -932,6 +935,9 @@ export function PreMatchPrepModal({
             ✕
           </button>
         </div>
+
+        {/* Match context header */}
+        {matchId && <PreMatchHeader matchId={matchId} />}
 
         {/* Phase content */}
         <div className="px-5 py-4">
