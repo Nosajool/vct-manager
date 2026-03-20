@@ -269,6 +269,7 @@ export class DramaService {
       form: player.form,
       contract: player.contract,
       personality: player.personality,
+      personalityTraits: player.personalityTraits,
       region: player.region,
       agentPreferences: state.playerAgentPreferences[player.id],
       isActive: playerTeam.playerIds.includes(player.id),

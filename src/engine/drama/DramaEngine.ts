@@ -266,6 +266,51 @@ function filterEligibleTemplates(
 // ============================================================================
 
 /**
+ * Calculates personality-trait-based probability boost for a drama category.
+ * Returns additional percentage points (0-30) to add to base probability.
+ */
+function getTraitProbabilityBoost(
+  category: DramaCategory,
+  teamPlayers: DramaGameStateSnapshot['players']
+): number {
+  let boost = 0;
+
+  // Global drama tendency — powder-keg players raise all drama odds
+  const highDramaCount = teamPlayers.filter(
+    p => (p.personalityTraits?.dramaTendency ?? 50) > 60
+  ).length;
+  boost += Math.min(10, highDramaCount * 3);
+
+  // Category-specific boosts
+  switch (category) {
+    case 'player_ego': {
+      const hasHighEgo = teamPlayers.some(p => (p.personalityTraits?.ego ?? 50) > 70);
+      if (hasHighEgo) boost += 15;
+      break;
+    }
+    case 'practice_burnout': {
+      const hasLowWorkEthic = teamPlayers.some(p => (p.personalityTraits?.workEthic ?? 50) < 30);
+      if (hasLowWorkEthic) boost += 15;
+      break;
+    }
+    case 'player_conflict': {
+      const hasHighEgoAndDrama = teamPlayers.some(
+        p => (p.personalityTraits?.ego ?? 50) > 65 && (p.personalityTraits?.dramaTendency ?? 50) > 60
+      );
+      if (hasHighEgoAndDrama) boost += 12;
+      break;
+    }
+    case 'free_agent_pursuit': {
+      const hasLowLoyalty = teamPlayers.some(p => (p.personalityTraits?.loyalty ?? 50) < 35);
+      if (hasLowLoyalty) boost += 10;
+      break;
+    }
+  }
+
+  return boost;
+}
+
+/**
  * Rolls probability check for a template with category boost if applicable
  */
 export function rollForEvent(
@@ -298,6 +343,10 @@ export function rollForEvent(
       }
     }
   }
+
+  // Apply personality trait boosts based on category
+  const teamPlayers = snapshot.players.filter(p => p.teamId === snapshot.playerTeamId);
+  probability += getTraitProbabilityBoost(template.category, teamPlayers);
 
   // Cap at 100%
   probability = Math.min(100, probability);

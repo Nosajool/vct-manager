@@ -1,7 +1,7 @@
 // PlayerGenerator - Pure engine class for generating players
 // No React or store dependencies - pure functions only
 
-import type { Player, PlayerPersonality, PlayerStats, Region } from '../../types';
+import type { Player, PersonalityTraits, PlayerPersonality, PlayerStats, Region } from '../../types';
 import {
   FIRST_NAMES,
   LAST_NAMES,
@@ -331,12 +331,38 @@ export class PlayerGenerator {
   }
 
   /**
+   * Generate hidden personality traits from personality archetype.
+   * Ranges are set so each archetype has distinct tendencies.
+   */
+  generatePersonalityTraits(personality: PlayerPersonality): PersonalityTraits {
+    const r = (min: number, max: number) => this.randomBetween(min, max);
+    switch (personality) {
+      case 'FAME_SEEKER':
+        return { ego: r(70, 90), loyalty: r(40, 60), dramaTendency: r(55, 80), workEthic: r(45, 70) };
+      case 'TEAM_FIRST':
+        return { ego: r(10, 30), loyalty: r(70, 90), dramaTendency: r(20, 45), workEthic: r(60, 80) };
+      case 'INTROVERT':
+        return { ego: r(20, 50), loyalty: r(50, 70), dramaTendency: r(10, 30), workEthic: r(50, 80) };
+      case 'BIG_STAGE':
+        return { ego: r(50, 80), loyalty: r(40, 65), dramaTendency: r(40, 70), workEthic: r(60, 90) };
+      case 'STABLE':
+      default:
+        return { ego: r(40, 60), loyalty: r(40, 60), dramaTendency: r(30, 55), workEthic: r(40, 65) };
+    }
+  }
+
+  /**
    * Migration helper: assign personality to any player that is missing it.
    * Call once on game load to back-fill existing saves.
    */
   assignMissingPersonality(player: Player): Player {
     if (player.personality !== undefined) return player;
-    return { ...player, personality: this.generatePersonality(player.stats, player.age) };
+    const personality = this.generatePersonality(player.stats, player.age);
+    return {
+      ...player,
+      personality,
+      personalityTraits: player.personalityTraits ?? this.generatePersonalityTraits(personality),
+    };
   }
 
   /**
@@ -384,7 +410,10 @@ export class PlayerGenerator {
       careerStats: this.generateCareerStats(age),
       seasonStats: this.generateSeasonStats(),
       preferences: this.generatePreferences(),
-      personality: this.generatePersonality(stats, age),
+      ...(() => {
+        const personality = this.generatePersonality(stats, age);
+        return { personality, personalityTraits: this.generatePersonalityTraits(personality) };
+      })(),
     };
   }
 

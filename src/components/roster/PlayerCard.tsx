@@ -1,7 +1,7 @@
 // PlayerCard Component - Displays a player's summary info
 
 import type { Player } from '../../types';
-import type { PlayerPersonality } from '../../types/player';
+import type { PersonalityTraits, PlayerPersonality } from '../../types/player';
 import { playerGenerator } from '../../engine/player';
 import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
@@ -268,6 +268,9 @@ export function PlayerCard({
               {player.personality && (
                 <PersonalityBadge personality={player.personality} />
               )}
+              {player.personalityTraits && (
+                <TraitBadge traits={player.personalityTraits} />
+              )}
             </div>
           )}
 
@@ -356,6 +359,43 @@ function PersonalityBadge({ personality }: { personality: PlayerPersonality }) {
       title={`Personality: ${config.label}`}
     >
       {config.label}
+    </span>
+  );
+}
+
+/**
+ * Returns qualitative trait badge if a player has a standout trait value.
+ * Only fires for extreme values so badges feel meaningful, not spammy.
+ */
+function getTraitBadge(traits: PersonalityTraits): { label: string; icon: string; color: string; bg: string } | null {
+  // Powder Keg: high ego + high drama
+  if (traits.ego >= 75 && traits.dramaTendency >= 65) {
+    return { label: 'Powder Keg', icon: '💥', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' };
+  }
+  // Franchise Player: high loyalty
+  if (traits.loyalty >= 80) {
+    return { label: 'Franchise Player', icon: '🏆', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' };
+  }
+  // Silent Grinder: high work ethic + low drama
+  if (traits.workEthic >= 75 && traits.dramaTendency <= 35) {
+    return { label: 'Silent Grinder', icon: '💪', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' };
+  }
+  // Mercenary: very low loyalty
+  if (traits.loyalty <= 25) {
+    return { label: 'Mercenary', icon: '💸', color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20' };
+  }
+  return null;
+}
+
+function TraitBadge({ traits }: { traits: PersonalityTraits }) {
+  const badge = getTraitBadge(traits);
+  if (!badge) return null;
+  return (
+    <span
+      className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide ${badge.color} ${badge.bg}`}
+      title={`Trait: ${badge.label}`}
+    >
+      {badge.icon} {badge.label}
     </span>
   );
 }

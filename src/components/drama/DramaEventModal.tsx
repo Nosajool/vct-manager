@@ -455,27 +455,48 @@ export function DramaEventModal({
                 <h3 className="text-sm font-medium text-vct-gray mb-3">
                   How do you respond?
                 </h3>
-                {choices.map((choice) => (
-                  <button
-                    key={choice.id}
-                    onClick={() => handleChoose(choice)}
-                    onMouseEnter={() => setSelectedChoice(choice.id)}
-                    onMouseLeave={() => setSelectedChoice(null)}
-                    className={`
-                      w-full text-left p-4 rounded-lg border transition-all
-                      ${
-                        selectedChoice === choice.id
-                          ? 'border-vct-red bg-vct-red/10'
-                          : 'border-vct-gray/20 hover:border-vct-gray/40'
-                      }
-                    `}
-                  >
-                    <div className="font-bold text-vct-light mb-1">{choice.text}</div>
-                    {choice.description && (
-                      <div className="text-sm text-vct-gray">{choice.description}</div>
-                    )}
-                  </button>
-                ))}
+                {choices.map((choice) => {
+                  const hints = getDramaEffectHints(choice.effects);
+                  return (
+                    <button
+                      key={choice.id}
+                      onClick={() => handleChoose(choice)}
+                      onMouseEnter={() => setSelectedChoice(choice.id)}
+                      onMouseLeave={() => setSelectedChoice(null)}
+                      className={`
+                        w-full text-left p-4 rounded-lg border transition-all
+                        ${
+                          selectedChoice === choice.id
+                            ? 'border-vct-red bg-vct-red/10'
+                            : 'border-vct-gray/20 hover:border-vct-gray/40'
+                        }
+                      `}
+                    >
+                      <div className="font-bold text-vct-light mb-1">{choice.text}</div>
+                      {hints.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          {hints.map((hint, i) => (
+                            <span
+                              key={i}
+                              className={`text-xs font-mono ${
+                                hint.value === null
+                                  ? 'text-purple-400'
+                                  : hint.positive
+                                  ? 'text-green-400'
+                                  : 'text-red-400'
+                              }`}
+                            >
+                              {hint.icon} {hint.arrow} {hint.value !== null ? `${hint.value > 0 ? '+' : ''}${hint.value} ` : ''}{hint.label}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {choice.description && (
+                        <div className="text-xs text-vct-gray/70">{choice.description}</div>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </>

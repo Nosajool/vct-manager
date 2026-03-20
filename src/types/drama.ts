@@ -1,7 +1,7 @@
 // Drama System Types
 // Defines narrative events, conditions, effects, and player/team dynamics
 
-import type { PlayerContract, PlayerPersonality, PlayerStats, Region } from './player';
+import type { PlayerContract, PersonalityTraits, PlayerPersonality, PlayerStats, Region } from './player';
 import type { PlayerAgentPreferences } from './strategy';
 import type { SeasonPhase } from './calendar';
 import type { CompositionPattern } from './strategy';
@@ -508,6 +508,7 @@ export interface DramaGameStateSnapshot {
     form: number;           // 0-100
     contract?: PlayerContract | null;
     personality?: PlayerPersonality;
+    personalityTraits?: PersonalityTraits;
     region?: Region;        // Player's home region (for import detection)
     agentPreferences?: PlayerAgentPreferences;
     isActive?: boolean;     // true = active roster, false = reserve

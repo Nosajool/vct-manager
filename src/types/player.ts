@@ -54,6 +54,14 @@ export type Region = 'Americas' | 'EMEA' | 'Pacific' | 'China';
 
 export type PlayerPersonality = 'FAME_SEEKER' | 'TEAM_FIRST' | 'INTROVERT' | 'BIG_STAGE' | 'STABLE';
 
+/** Hidden personality traits (0-100, not shown directly to player) */
+export interface PersonalityTraits {
+  ego: number;            // 0=selfless, 100=star-ego
+  loyalty: number;        // 0=mercenary, 100=ride-or-die
+  dramaTendency: number;  // 0=zen, 100=powder keg
+  workEthic: number;      // 0=coasts, 100=obsessive
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -87,6 +95,9 @@ export interface Player {
 
   // Personality archetype (for narrative system)
   personality?: PlayerPersonality;
+
+  // Hidden personality traits (seeded from personality archetype)
+  personalityTraits?: PersonalityTraits;
 
   // IGL status
   isFormerIGL?: boolean;

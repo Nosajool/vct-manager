@@ -10,6 +10,7 @@ export type {
   PlayerPreferences,
   Player,
   PlayerPersonality,
+  PersonalityTraits,
   Coach,
   CoachType,
   Region,
