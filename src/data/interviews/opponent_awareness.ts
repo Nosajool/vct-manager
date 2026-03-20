@@ -208,6 +208,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         tone: 'CONFIDENT',
         label: "This is what we came here for",
         quote: "Forgive me lord, but I love watching their smiles fade.",
+        attribution: "Real quote",
         effects: { hype: 6, morale: 4, fanbase: 4, rivalryDelta: 5 },
       },
       {
@@ -270,6 +271,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         tone: 'TRASH_TALK',
         label: "Good humans, bad players",
         quote: "I think they're good humans. They're just dog shit players.",
+        attribution: "Real quote",
         effects: { hype: 4, rivalryDelta: 5, dramaChance: 12, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
       },
       {

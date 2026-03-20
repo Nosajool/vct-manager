@@ -401,13 +401,17 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                         "{option.quote}"
                       </p>
 
-                      {/* Footer: tone badge + label + effect hints */}
+                      {/* Attribution — only on iconic/real-world quotes */}
+                      {option.attribution && (
+                        <p className="text-xs text-vct-gray/40 mb-2">📌 {option.attribution}</p>
+                      )}
+
+                      {/* Footer: tone badge + effect hints */}
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-2">
                           <span className={`text-xs px-2 py-0.5 rounded font-medium ${toneStyle.badge}`}>
                             {option.tone.replace('_', ' ')}
                           </span>
-                          <span className="text-xs text-vct-gray/70">{option.label}</span>
                           {isOnBrand && (
                             <span className="text-xs text-vct-gray/50" title="On-brand for your archetype">✓</span>
                           )}

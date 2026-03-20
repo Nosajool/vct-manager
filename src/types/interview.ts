@@ -37,8 +37,9 @@ export interface InterviewEffects {
 
 export interface InterviewOption {
   tone: InterviewTone;
-  label: string;          // Short label shown in UI (e.g. "Stay confident")
+  label: string;          // Short label used in history logs and NarrativeCollectionModal
   quote: string;          // What the manager/player says verbatim
+  attribution?: string;   // Optional: marks a real-world iconic quote (e.g. "Real quote")
   effects: InterviewEffects;
   personalityWeights?: Partial<Record<PlayerPersonality, number>>;
   // Weight per personality (0 = locked out, 1 = normal, 2 = preferred).
