@@ -12,11 +12,14 @@ interface PreMatchHeaderProps {
   matchId: string;
 }
 
-function stakeLabel(dest: Destination): string {
+function stakeLabel(dest: Destination, tournamentId?: string): string {
   switch (dest.type) {
     case 'champion': return 'Win Championship';
     case 'eliminated': return 'Eliminated';
-    case 'match': return 'Advances';
+    case 'match': {
+      const roundName = getMatchRoundName(dest.matchId, tournamentId);
+      return roundName ? `Advances to ${roundName}` : 'Advances';
+    }
     case 'placement': return `#${dest.place} Place`;
   }
 }
@@ -97,9 +100,9 @@ export function PreMatchHeader({ matchId }: PreMatchHeaderProps) {
           {bracketMatch && (
             <>
               <span>·</span>
-              <span className="text-green-400/80">WIN → {stakeLabel(bracketMatch.winnerDestination)}</span>
+              <span className="text-green-400/80">WIN → {stakeLabel(bracketMatch.winnerDestination, tournament.id)}</span>
               <span>·</span>
-              <span className="text-red-400/80">LOSE → {stakeLabel(bracketMatch.loserDestination)}</span>
+              <span className="text-red-400/80">LOSE → {stakeLabel(bracketMatch.loserDestination, tournament.id)}</span>
             </>
           )}
         </div>

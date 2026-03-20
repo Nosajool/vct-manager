@@ -11,11 +11,14 @@ import { getMatchRoundName } from '../../utils/matchRoundName';
 import { MatchResult } from './MatchResult';
 import type { Destination } from '../../types/competition';
 
-function stakeLabel(dest: Destination): string {
+function stakeLabel(dest: Destination, tournamentId?: string): string {
   switch (dest.type) {
     case 'champion': return 'Win Championship';
     case 'eliminated': return 'Eliminated';
-    case 'match': return 'Advances';
+    case 'match': {
+      const roundName = getMatchRoundName(dest.matchId, tournamentId);
+      return roundName ? `Advances to ${roundName}` : 'Advances';
+    }
     case 'placement': return `#${dest.place} Place`;
   }
 }
@@ -139,14 +142,17 @@ export function PostMatchHeader({ matchId }: PostMatchHeaderProps) {
         {tournament && (
           <div className="mt-2 flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-xs text-vct-gray/70">
             <span>{tournament.name}</span>
-            {bracketMatch && (
-              <>
-                <span>·</span>
-                <span className="text-green-400/80">WIN → {stakeLabel(bracketMatch.winnerDestination)}</span>
-                <span>·</span>
-                <span className="text-red-400/80">LOSE → {stakeLabel(bracketMatch.loserDestination)}</span>
-              </>
-            )}
+            {bracketMatch && (() => {
+              const dest = playerWon ? bracketMatch.winnerDestination : bracketMatch.loserDestination;
+              const label = stakeLabel(dest, tournament.id);
+              const color = playerWon ? 'text-green-400/80' : 'text-red-400/80';
+              return (
+                <>
+                  <span>·</span>
+                  <span className={color}>{label}</span>
+                </>
+              );
+            })()}
           </div>
         )}
 

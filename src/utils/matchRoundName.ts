@@ -6,12 +6,12 @@ import { useGameStore } from '../store';
  * Determine a human-readable round name for a given matchId by scanning
  * the tournament bracket that contains it.
  */
-export function getMatchRoundName(matchId: string): string | undefined {
+export function getMatchRoundName(matchId: string, tournamentId?: string): string | undefined {
   const state = useGameStore.getState();
-  const match = state.matches[matchId];
-  if (!match?.tournamentId) return undefined;
+  const resolvedTournamentId = tournamentId ?? state.matches[matchId]?.tournamentId;
+  if (!resolvedTournamentId) return undefined;
 
-  const tournament = state.tournaments[match.tournamentId];
+  const tournament = state.tournaments[resolvedTournamentId];
   if (!tournament) return undefined;
 
   const bracket = tournament.bracket;
