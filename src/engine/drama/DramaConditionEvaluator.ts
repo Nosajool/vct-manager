@@ -45,6 +45,16 @@ export function evaluateCondition(
         ? snapshot.playerTeamChemistry > condition.threshold
         : false;
 
+    // Team fanbase checks
+    case 'team_fanbase_below':
+      return condition.threshold !== undefined && snapshot.playerTeamFanbase !== undefined
+        ? snapshot.playerTeamFanbase < condition.threshold
+        : false;
+    case 'team_fanbase_above':
+      return condition.threshold !== undefined && snapshot.playerTeamFanbase !== undefined
+        ? snapshot.playerTeamFanbase > condition.threshold
+        : false;
+
     // Team streak checks
     case 'team_win_streak':
       return evaluateWinStreakCondition(condition, snapshot);

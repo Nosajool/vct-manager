@@ -423,6 +423,7 @@ export interface MatchMoraleResult {
   playerChanges: PlayerMoraleChange[];
   specialEvents: SpecialMoraleEvent[];
   isWin: boolean;
+  fanbaseChange?: number; // Fan approval delta from this match result
 }
 
 export interface MoraleCalculationInput {

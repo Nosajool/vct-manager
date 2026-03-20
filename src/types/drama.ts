@@ -80,6 +80,8 @@ export type DramaConditionType =
   | 'team_chemistry_above'
   | 'team_win_streak'
   | 'team_loss_streak'
+  | 'team_fanbase_below'   // Team fan approval < threshold
+  | 'team_fanbase_above'   // Team fan approval > threshold
 
   // Game state checks
   | 'season_phase'
@@ -497,6 +499,7 @@ export interface DramaGameStateSnapshot {
   // Player's team
   playerTeamId: string;
   playerTeamChemistry: number; // 0-100
+  playerTeamFanbase?: number;  // 0-100, fan approval rating
 
   // Players
   players: Array<{

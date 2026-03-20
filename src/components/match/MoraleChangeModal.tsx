@@ -156,6 +156,17 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
           </div>
         </div>
 
+        {result.fanbaseChange !== undefined && (
+          <div className="px-4 py-3 border-t border-vct-gray/20 bg-vct-dark/40">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-vct-gray uppercase tracking-wide">👥 Fan Approval</span>
+              <span className={`text-sm font-bold ${result.fanbaseChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {result.fanbaseChange >= 0 ? '+' : ''}{result.fanbaseChange} {result.fanbaseChange >= 0 ? '▲' : '▼'}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="p-4 border-t border-vct-gray/20 flex justify-end">
           <button
             onClick={onClose}

@@ -8,6 +8,7 @@ import { getMatchForResult } from '../../utils/matchResultUtils';
 import { formatKD } from '../../utils/formatNumber';
 import { getReputationTier } from '../../types/team';
 import type { ReputationTier } from '../../types/team';
+import { getPublicNarrative } from '../../engine/reputation/publicNarrative';
 
 interface TeamStatsViewProps {
   teamId?: string;
@@ -112,6 +113,7 @@ function PublicImageSection({
 
   const { hypeLevel, fanbase, sponsorTrust } = team.reputation;
   const tier = getReputationTier(fanbase);
+  const publicNarrative = getPublicNarrative(team);
 
   const tierConfig: Record<ReputationTier, { label: string; color: string }> = {
     UNDERGROUND: { label: 'Underground', color: 'text-vct-gray' },
@@ -133,6 +135,11 @@ function PublicImageSection({
           Public Image
         </h3>
       </div>
+      {/* Public Narrative */}
+      <div className="px-4 py-2 bg-vct-dark/60 border-b border-vct-gray/10">
+        <p className="text-xs text-vct-gray/70 italic">"{publicNarrative}"</p>
+      </div>
+
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Hype */}
         <PublicImageStat

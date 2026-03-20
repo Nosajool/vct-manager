@@ -307,6 +307,19 @@ export class CalendarService {
                 state.updatePlayer(change.playerId, { morale: change.newMorale });
               }
 
+              // Compute and apply fan approval change based on match outcome and streak
+              {
+                const updatedTeam = state.teams[state.playerTeamId!];
+                if (updatedTeam) {
+                  const newStreak = updatedTeam.standings.currentStreak;
+                  const isWin = result.winnerId === state.playerTeamId;
+                  const streakTier = Math.min(2, Math.max(0, Math.abs(newStreak) - 2));
+                  const fanbaseDelta = isWin ? (3 + streakTier) : -(3 + streakTier);
+                  state.updateReputation(state.playerTeamId!, { fanbase: fanbaseDelta });
+                  moraleChanges.fanbaseChange = fanbaseDelta;
+                }
+              }
+
               // Check for post-match press conference (at most once; first match wins)
               if (!interviewQueue?.length) {
                 const tournamentContext = this.computeTournamentMatchContext(

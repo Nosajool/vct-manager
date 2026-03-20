@@ -41,6 +41,9 @@ export interface TeamSlice {
   // Chemistry updates
   updateTeamChemistry: (teamId: string, chemistry: TeamChemistry) => void;
 
+  // Reputation updates
+  updateReputation: (teamId: string, delta: { fanbase?: number; hypeLevel?: number; sponsorTrust?: number }) => void;
+
   // Standings updates
   recordWin: (teamId: string, roundDiff: number) => void;
   recordLoss: (teamId: string, roundDiff: number) => void;
@@ -274,6 +277,34 @@ export const createTeamSlice: StateCreator<
           [teamId]: {
             ...team,
             chemistry,
+          },
+        },
+      };
+    }),
+
+  // Reputation updates
+  updateReputation: (teamId, delta) =>
+    set((state) => {
+      const team = state.teams[teamId];
+      if (!team) return state;
+
+      const rep = team.reputation;
+      return {
+        teams: {
+          ...state.teams,
+          [teamId]: {
+            ...team,
+            reputation: {
+              fanbase: delta.fanbase !== undefined
+                ? Math.max(0, Math.min(100, rep.fanbase + delta.fanbase))
+                : rep.fanbase,
+              hypeLevel: delta.hypeLevel !== undefined
+                ? Math.max(0, Math.min(100, rep.hypeLevel + delta.hypeLevel))
+                : rep.hypeLevel,
+              sponsorTrust: delta.sponsorTrust !== undefined
+                ? Math.max(0, Math.min(100, rep.sponsorTrust + delta.sponsorTrust))
+                : rep.sponsorTrust,
+            },
           },
         },
       };

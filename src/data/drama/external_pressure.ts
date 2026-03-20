@@ -131,4 +131,136 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
+  {
+    id: 'fan_approval_crisis',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Fan Approval Crisis',
+    description: 'Fan approval has hit rock bottom. The community is openly questioning the org\'s direction and calling for major changes.',
+    conditions: [
+      {
+        type: 'team_fanbase_below',
+        threshold: 28,
+      },
+    ],
+    probability: 70,
+    cooldownDays: 14,
+    oncePerSeason: false,
+    requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 7800 },
+    },
+    choices: [
+      {
+        id: 'crisis_address_directly',
+        text: 'Address fans directly',
+        description: 'Post a public apology and accountability statement',
+        effects: [
+          {
+            target: 'team_hype',
+            delta: 8,
+          },
+          {
+            target: 'set_flag',
+            flag: 'manager_accountability_shown',
+            flagDuration: 14,
+          },
+        ],
+        outcomeText: 'The community appreciates the transparency. Trust starts to rebuild, slowly.',
+      },
+      {
+        id: 'crisis_results_only',
+        text: 'Let results speak',
+        description: 'Stay silent — wins will fix this faster than words',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 3,
+          },
+        ],
+        outcomeText: 'No statement, just work. The players feel the pressure to deliver.',
+      },
+      {
+        id: 'crisis_blame_meta',
+        text: 'Blame the meta',
+        description: 'Publicly attribute struggles to the current patch',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'org_pressure',
+            flagDuration: 7,
+          },
+        ],
+        outcomeText: 'Fans aren\'t buying it. The excuse tour just made things worse.',
+      },
+    ],
+  },
+
+  {
+    id: 'fan_expectations_too_high',
+    category: 'external_pressure',
+    severity: 'major',
+    title: 'Unrealistic Expectations',
+    description: 'After a streak of success, fans have built {teamName} up to near-mythical status. Any stumble now feels catastrophic to the community.',
+    conditions: [
+      {
+        type: 'team_fanbase_above',
+        threshold: 78,
+      },
+      {
+        type: 'team_loss_streak',
+        streakLength: 2,
+      },
+    ],
+    probability: 65,
+    cooldownDays: 10,
+    requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'twitter',
+      handle: '@VCTInsider',
+      flavorReactions: { likes: 12400, retweets: 3200 },
+    },
+    choices: [
+      {
+        id: 'expectations_embrace',
+        text: 'Embrace the standard',
+        description: 'Acknowledge the expectations and commit to meeting them',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: -3,
+          },
+          {
+            target: 'set_flag',
+            flag: 'org_pressure',
+            flagDuration: 10,
+          },
+        ],
+        outcomeText: 'You own it. Now there\'s nowhere to hide — the team feels the weight of every match.',
+      },
+      {
+        id: 'expectations_reset',
+        text: 'Reset expectations',
+        description: 'Publicly recalibrate — remind fans every team goes through rough patches',
+        effects: [
+          {
+            target: 'player_morale',
+            effectPlayerSelector: 'all',
+            delta: 4,
+          },
+        ],
+        outcomeText: 'Some fans are frustrated, but the pressure on the team decreases. They can breathe again.',
+      },
+    ],
+  },
+
 ];

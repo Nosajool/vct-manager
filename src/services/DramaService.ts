@@ -336,6 +336,7 @@ export class DramaService {
       currentPhase: calendar.currentPhase,
       playerTeamId,
       playerTeamChemistry: playerTeam.chemistry.overall,
+      playerTeamFanbase: playerTeam.reputation.fanbase,
       iglPlayerId: playerTeam.iglPlayerId,
       players: playersSnapshot,
       recentMatchResults,

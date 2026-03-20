@@ -15,6 +15,7 @@ import { PostMatchHeader } from '../match/PostMatchHeader';
 import { PreMatchHeader } from '../match/PreMatchHeader';
 import { NewBadge } from './NewBadge';
 import { NarrativeCollectionModal } from './NarrativeCollectionModal';
+import { getInterviewApprovalContext } from '../../engine/reputation/publicNarrative';
 
 interface InterviewModalProps {
   interview: PendingInterview;
@@ -156,6 +157,9 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
   const teams = useGameStore((state) => state.teams);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const interviewHistory = useGameStore((state) => state.interviewHistory);
+  const fanbase = useGameStore((state) =>
+    state.playerTeamId ? state.teams[state.playerTeamId]?.reputation.fanbase : undefined
+  );
 
   const contextMeta = CONTEXT_META[interview.context];
   const managerProfile = selectManagerProfile(interviewHistory);
@@ -361,6 +365,16 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                 <blockquote className="border-l-4 border-vct-gray/30 pl-4 text-vct-light leading-relaxed">
                   {interview.prompt}
                 </blockquote>
+                {fanbase !== undefined && (() => {
+                  const ctx = getInterviewApprovalContext(fanbase);
+                  if (!ctx) return null;
+                  const isLow = fanbase < 40;
+                  return (
+                    <p className={`mt-3 text-xs ${isLow ? 'text-red-400/80' : 'text-green-400/80'}`}>
+                      👥 {ctx}
+                    </p>
+                  );
+                })()}
               </div>
 
               <div className="h-px bg-vct-gray/20" />
