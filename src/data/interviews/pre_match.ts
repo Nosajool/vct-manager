@@ -150,6 +150,34 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
   },
 
 
+  {
+    id: 'pre_player_spotlight',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'player_ego',
+    prompt: "What should fans know about {starPlayerName} heading into today's match?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'They defy description',
+        quote: "Who is {starPlayerName}?? For the blind, they are balkd. For the hungry, they are bald. For the sick, they are bald.",
+        effects: { hype: 5, fanbase: 3, dramaChance: 8 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: 'They let their play do the talking',
+        quote: "{starPlayerName} doesn't need me hyping them up. They show up, they execute, and the team is better for it. Watch them today.",
+        effects: { morale: 2, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Focus on the match, not one player",
+        quote: "With respect to {starPlayerName}, this is a team effort. I'd rather fans watch the whole unit and see how we work together.",
+        effects: { morale: 1, sponsorTrust: 1 },
+      },
+    ],
+  },
+
   // ==========================================================================
   // COACH — PRE_MATCH (2 templates)
   // ==========================================================================

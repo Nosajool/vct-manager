@@ -803,6 +803,12 @@ export class InterviewService {
         }
       }
 
+      // If template targets the IGL role specifically
+      if (!subjectId && template.subjectRole === 'igl') {
+        const team = state.teams[state.playerTeamId!];
+        subjectId = team?.iglPlayerId;
+      }
+
       // Fallback: pick random from active roster
       if (!subjectId) {
         const team = state.teams[state.playerTeamId!];
@@ -901,6 +907,11 @@ export class InterviewService {
       substitutions['{mapName}'] = matchResult?.maps?.[0]?.map ?? 'this map';
     }
 
+    if (hasPlaceholder('{teamName}')) {
+      const team = state.teams[state.playerTeamId!];
+      substitutions['{teamName}'] = team?.name ?? 'our team';
+    }
+
     if (hasPlaceholder('{rivalTeamName}')) {
       const rivalTeam = opponentTeamId ? state.teams[opponentTeamId] : undefined;
       substitutions['{rivalTeamName}'] = rivalTeam?.name ?? 'them';
@@ -919,6 +930,23 @@ export class InterviewService {
       } else {
         substitutions['{rivalPlayerName}'] = 'that player';
       }
+    }
+
+    if (hasPlaceholder('{regionName}') || hasPlaceholder('{iglPlayerName}') || hasPlaceholder('{player1Name}') || hasPlaceholder('{player2Name}') || hasPlaceholder('{player3Name}') || hasPlaceholder('{preferredAgentRole}')) {
+      const opponentTeam = opponentTeamId ? state.teams[opponentTeamId] : undefined;
+      substitutions['{regionName}'] = opponentTeam?.region ?? 'the region';
+
+      const igl = opponentTeam?.iglPlayerId ? state.players[opponentTeam.iglPlayerId] : undefined;
+      substitutions['{iglPlayerName}'] = igl?.name ?? 'their IGL';
+
+      const nonIglPlayerIds = (opponentTeam?.playerIds ?? []).filter(id => id !== opponentTeam?.iglPlayerId);
+      const nonIglPlayers = nonIglPlayerIds.map(id => state.players[id]).filter(Boolean);
+      nonIglPlayers.sort((a, b) => (b.stats.mechanics ?? 0) - (a.stats.mechanics ?? 0));
+
+      substitutions['{player1Name}'] = nonIglPlayers[0]?.name ?? 'their player';
+      substitutions['{player2Name}'] = nonIglPlayers[1]?.name ?? 'their player';
+      substitutions['{player3Name}'] = nonIglPlayers[2]?.name ?? 'their player';
+      substitutions['{preferredAgentRole}'] = nonIglPlayers[1]?.agentPreferences?.primaryRole ?? 'support';
     }
 
     if (hasPlaceholder('{tournamentName}')) {

@@ -35,6 +35,12 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         quote: "People want to make this about the rivalry. It's not. It's a match in a tournament bracket and we need to win it. Everything else is noise.",
         effects: { morale: 2 },
       },
+      {
+        tone: 'RESPECTFUL',
+        label: 'Pure respect for their player',
+        quote: "{rivalPlayerName} is the most good looking Valorant player ever. They are the only one in history to get it popping. Genetically, a chad on and off the server.",
+        effects: { fanbase: 3, hype: 4, rivalryDelta: 2 },
+      },
     ],
   },
 
@@ -834,6 +840,47 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
         quote: "Right now I'm just trying to recover and think about the next one. The feeling of surviving — I'll have time to process that later. We're still in it. That's what matters.",
         personalityWeights: { INTROVERT: 3, STABLE: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
         effects: { morale: 3, fanbase: 2 },
+      },
+    ],
+  },
+
+  // pre_opponent_roster_praise — PRE_MATCH generic opponent roster awareness
+  {
+    id: 'pre_opponent_roster_praise',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
+    prompt: "What's your read on the team you're facing today?",
+    options: [
+      {
+        tone: 'RESPECTFUL',
+        label: "They have some of the best talent in the region",
+        quote: "This team have the greatest set of raw aimers in {regionName}, perhaps even the world. {iglPlayerName} is genius IGL who knows how to keep his team calm when the going gets tough. {player1Name} is just the best raw aimer in {regionName}. {player2Name} is one of the best {preferredAgentRole} players in {regionName}. {player3Name} will pull out a clutch out of nowhere.",
+        effects: { fanbase: 2, sponsorTrust: 2, rivalryDelta: -2 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "They're good — but so are we",
+        quote: "They have real talent. We respect that. But we've prepared for every one of them and we believe in our system.",
+        effects: { morale: 2, fanbase: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "We focus on ourselves",
+        quote: "We don't spend too much time on the opponent. We trust our prep and play our game.",
+        effects: { morale: 2 },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "Their IGL's genius is one simple tactic",
+        quote: "{iglPlayerName} is a tactical genius. They are best known for their signature tactic {player1Name} go kill.",
+        effects: { hype: 3, rivalryDelta: 3, dramaChance: 8 },
+      },
+      {
+        tone: 'TRASH_TALK',
+        label: "High IQ, zero aim",
+        quote: "{iglPlayerName} was a Dungeons and Dragons character who rolled a natural 20 on intelligence and a natural 1 on aim.",
+        effects: { hype: 4, rivalryDelta: 4, dramaChance: 10 },
       },
     ],
   },

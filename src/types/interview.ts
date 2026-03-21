@@ -52,6 +52,7 @@ export interface InterviewTemplate {
   id: string;
   context: InterviewContext;
   subjectType: InterviewSubject;
+  subjectRole?: 'igl'; // If set and subjectType === 'player', targets the team's designated IGL
   prompt: string;         // The question posed by the reporter
   options: InterviewOption[]; // Always exactly 3 options
   conditions?: DramaCondition[]; // Template-level gate: all must pass for eligibility

@@ -31,6 +31,13 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
         quote: "We're not going to dwell on a single result. There are still matches to play and we're focused forward.",
         effects: { morale: 2 },
       },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Hot mic moment',
+        quote: "{teamName} manager here, please delete this.",
+        effects: { fanbase: -5, sponsorTrust: -5, dramaChance: 25 },
+        attribution: 'Real quote',
+      },
     ],
   },
 
@@ -211,6 +218,38 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
         label: "Perfect Tech Pause. GG.",
         quote: "Perfect Tech Pause. GG.",
         effects: { hype: 2, fanbase: 2, dramaChance: 8 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_loss_missed_shots',
+    context: 'POST_MATCH',
+    subjectType: 'player',
+    matchOutcome: 'loss',
+    narrativeCategory: 'player_ego',
+    prompt: "You had a chance to win that round and couldn't secure the kill. Walk us through what happened.",
+    options: [
+      {
+        tone: 'DEFLECTIVE',
+        label: "Let me break it down",
+        quote: "Shots 1-5: Clearly missed. Shots 6-9: Missed due to recoil (bad spray control). Shots 10-11: Very close, but recoil and inaccuracy make these reasonable misses. Shot 12: Likely didn't actually fire because I was already dead.",
+        attribution: 'Real quote',
+        personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 1.5, STABLE: 0.5, TEAM_FIRST: 0.5 },
+        effects: { hype: 2, dramaChance: 10, fanbase: 1 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I should have hit that",
+        quote: "Those are shots I have to make. My spray was off in the worst moment. I'll go to the range and fix it.",
+        personalityWeights: { STABLE: 2, TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0 },
+        effects: { morale: -1, fanbase: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "The situation was tough",
+        quote: "It's easier to analyze it frame-by-frame after the fact. In the moment I was playing on instinct. The round was already difficult.",
+        effects: { morale: 1 },
       },
     ],
   },
