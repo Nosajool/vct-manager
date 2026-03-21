@@ -45,6 +45,7 @@ import type { TrainingActivityConfig, ScrimActivityConfig, DowntimeActivityResul
 import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
+import { TeamBriefingModal } from '../onboarding/TeamBriefingModal';
 
 type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview';
 
@@ -159,12 +160,14 @@ export function TimeBar() {
   const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
   const [downtimeResults, setDowntimeResults] = useState<DowntimeActivityResult[]>([]);
   const [showPreMatchPrep, setShowPreMatchPrep] = useState(false);
+  const [showTeamBriefing, setShowTeamBriefing] = useState(false);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
 
   // Interview state from store
   const pendingInterview = useGameStore((state) => state.pendingInterview);
   const interviewQueue = useGameStore((state) => state.interviewQueue);
+  const onboardingHasSeenBriefing = useGameStore((state) => state.onboardingHasSeenBriefing);
   const currentQuestionNumber = pressConferenceTotal - interviewQueue.length + 1;
 
   // Compute valid enriched drama toasts
@@ -517,6 +520,10 @@ export function TimeBar() {
       state.setPendingInterview(simulationResult.crisisInterview);
       advancePostModals(['interview', ...postModalQueue]);
     } else {
+      // Show team briefing after the first-ever Kickoff interview
+      if (completedContext === 'KICKOFF' && !onboardingHasSeenBriefing) {
+        setShowTeamBriefing(true);
+      }
       advancePostModals(postModalQueue);
     }
   };
@@ -957,6 +964,11 @@ export function TimeBar() {
         onConfirm={handlePreMatchPrepConfirm}
         onCancel={handlePreMatchPrepCancel}
       />
+
+      {/* Team Briefing Modal — shown once after Kickoff interview */}
+      {showTeamBriefing && (
+        <TeamBriefingModal onClose={() => setShowTeamBriefing(false)} />
+      )}
 
       {/* Auto-save indicator - fixed bottom-right, above all modals */}
       <AutoSaveIndicator />

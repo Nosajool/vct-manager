@@ -85,6 +85,20 @@ export interface UISlice {
   // Modal actions
   openModal: (type: string, data?: unknown) => void;
   closeModal: () => void;
+
+  // Onboarding state
+  onboardingHasSeenBriefing: boolean;
+  onboardingHasVisitedRoster: boolean;
+  onboardingHasVisitedTournament: boolean;
+  onboardingHasSeenHintRoster: boolean;
+  onboardingHasSeenHintTournament: boolean;
+  onboardingHasSeenHintFinances: boolean;
+  setOnboardingHasSeenBriefing: () => void;
+  setOnboardingHasVisitedRoster: () => void;
+  setOnboardingHasVisitedTournament: () => void;
+  setOnboardingHasSeenHintRoster: () => void;
+  setOnboardingHasSeenHintTournament: () => void;
+  setOnboardingHasSeenHintFinances: () => void;
 }
 
 export const createUISlice: StateCreator<
@@ -108,6 +122,12 @@ export const createUISlice: StateCreator<
   modalType: null,
   modalData: null,
   autoSaveStatus: 'idle',
+  onboardingHasSeenBriefing: false,
+  onboardingHasVisitedRoster: false,
+  onboardingHasVisitedTournament: false,
+  onboardingHasSeenHintRoster: false,
+  onboardingHasSeenHintTournament: false,
+  onboardingHasSeenHintFinances: false,
 
   // Selection actions
   setSelectedPlayer: (playerId) =>
@@ -203,4 +223,12 @@ export const createUISlice: StateCreator<
       modalType: null,
       modalData: null,
     }),
+
+  // Onboarding actions
+  setOnboardingHasSeenBriefing: () => set({ onboardingHasSeenBriefing: true }),
+  setOnboardingHasVisitedRoster: () => set({ onboardingHasVisitedRoster: true }),
+  setOnboardingHasVisitedTournament: () => set({ onboardingHasVisitedTournament: true }),
+  setOnboardingHasSeenHintRoster: () => set({ onboardingHasSeenHintRoster: true }),
+  setOnboardingHasSeenHintTournament: () => set({ onboardingHasSeenHintTournament: true }),
+  setOnboardingHasSeenHintFinances: () => set({ onboardingHasSeenHintFinances: true }),
 });

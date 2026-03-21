@@ -5,6 +5,7 @@ import { useGameStore } from '../store';
 import { economyService } from '../services';
 import type { Transaction, Loan } from '../types';
 import type { LoanOption, SponsorshipOffer } from '../engine/team';
+import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
 
 type FinanceTab = 'overview' | 'transactions' | 'sponsorships' | 'loans';
 
@@ -17,6 +18,8 @@ export function Finances() {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);
+  const hasSeenHint = useGameStore((state) => state.onboardingHasSeenHintFinances);
+  const setOnboardingHasSeenHintFinances = useGameStore((state) => state.setOnboardingHasSeenHintFinances);
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
@@ -80,6 +83,14 @@ export function Finances() {
 
   return (
     <div className="space-y-6">
+      {/* First-visit hint */}
+      {!hasSeenHint && (
+        <FirstVisitHint
+          message="Keep your salary cap healthy — going negative hurts your ability to sign players. Sponsor deals are your main recurring income. Check this page if you get a budget warning."
+          onDismiss={setOnboardingHasSeenHintFinances}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

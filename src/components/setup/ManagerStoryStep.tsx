@@ -15,17 +15,22 @@ export function ManagerStoryStep({ onContinue, onCancel, onLoadSave }: ManagerSt
         <h2 className="text-3xl font-bold text-vct-light">
           Welcome to VCT Manager
         </h2>
-        <div className="max-w-2xl mx-auto space-y-3">
+        <div className="max-w-2xl mx-auto space-y-4">
           <p className="text-lg text-vct-gray">
             You are a new manager in the competitive world of VALORANT esports.
-          </p>
-          <p className="text-lg text-vct-gray">
             The <span className="text-vct-red font-semibold">2026 VCT season</span> is about to begin.
-            Build your roster, train your players, and lead your team to glory
-            at Masters and Champions.
           </p>
+          <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4 text-left space-y-2">
+            <p className="text-sm font-semibold text-vct-light uppercase tracking-wide">Your job</p>
+            <ul className="text-sm text-vct-gray space-y-1.5">
+              <li className="flex items-start gap-2"><span className="text-vct-red mt-0.5">▸</span> Manage your roster — sign players, set your lineup, handle contracts</li>
+              <li className="flex items-start gap-2"><span className="text-vct-red mt-0.5">▸</span> Schedule training and scrimmages to improve your team's performance</li>
+              <li className="flex items-start gap-2"><span className="text-vct-red mt-0.5">▸</span> Navigate press conferences, team drama, and sponsor relationships</li>
+              <li className="flex items-start gap-2"><span className="text-vct-red mt-0.5">▸</span> Compete through Kickoff, Stage 1, Stage 2, and ultimately <span className="text-vct-red font-medium">Champions</span></li>
+            </ul>
+          </div>
           <p className="text-base text-vct-gray/70">
-            Your journey starts now.
+            Advance days to progress through the season. Your decisions shape everything.
           </p>
         </div>
       </div>

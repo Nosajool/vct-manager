@@ -22,6 +22,7 @@ import { ScrimModal } from '../components/scrim';
 import { DayScheduleService } from '../services/DayScheduleService';
 import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
 import type { Region, TournamentRegion, Match, Team } from '../types';
+import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
 
 type TournamentTab = 'current' | 'schedule';
 type ViewMode = 'bracket' | 'swiss' | 'league';
@@ -62,6 +63,14 @@ export function TournamentPage() {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const matches = useGameStore((state) => state.matches);
+  const hasSeenHint = useGameStore((state) => state.onboardingHasSeenHintTournament);
+  const setOnboardingHasVisitedTournament = useGameStore((state) => state.setOnboardingHasVisitedTournament);
+  const setOnboardingHasSeenHintTournament = useGameStore((state) => state.setOnboardingHasSeenHintTournament);
+
+  // Mark tournament page as visited on first load (for Day 1 checklist)
+  useEffect(() => {
+    setOnboardingHasVisitedTournament();
+  }, [setOnboardingHasVisitedTournament]);
 
   // Reset tournament selection when phase changes (e.g., Stage 1 → Stage 1 Playoffs)
   // This ensures the view updates to show the current phase's tournament
@@ -205,6 +214,14 @@ export function TournamentPage() {
 
   return (
     <div className="space-y-6">
+      {/* First-visit hint */}
+      {!hasSeenHint && (
+        <FirstVisitHint
+          message="This is your competitive path. Your team's results here determine qualification for Masters and Champions. Losses in tournament play can end your season early."
+          onDismiss={setOnboardingHasSeenHintTournament}
+        />
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>

@@ -14,6 +14,7 @@ import { ScrimOverview } from '../components/scrim';
 import { SetupWizard, type SetupOptions } from '../components/setup';
 import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
+import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
 
 type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy' | 'stats' | 'scrims';
 
@@ -28,6 +29,14 @@ export function Roster() {
   const gameStarted = useGameStore((state) => state.gameStarted);
   const teamTab = useGameStore((state) => state.teamTab);
   const setTeamTab = useGameStore((state) => state.setTeamTab);
+  const hasSeenHint = useGameStore((state) => state.onboardingHasSeenHintRoster);
+  const setOnboardingHasVisitedRoster = useGameStore((state) => state.setOnboardingHasVisitedRoster);
+  const setOnboardingHasSeenHintRoster = useGameStore((state) => state.setOnboardingHasSeenHintRoster);
+
+  // Mark roster as visited on first load (for Day 1 checklist)
+  useEffect(() => {
+    setOnboardingHasVisitedRoster();
+  }, [setOnboardingHasVisitedRoster]);
 
   // Pick up teamTab from store (set by navigation from other pages)
   useEffect(() => {
@@ -118,6 +127,14 @@ export function Roster() {
 
   return (
     <div className="space-y-6">
+      {/* First-visit hint */}
+      {!hasSeenHint && (
+        <FirstVisitHint
+          message="Your players are your most important asset. Review contracts, morale, and agent preferences. A strong starting lineup wins matches."
+          onDismiss={setOnboardingHasSeenHintRoster}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-vct-light">Team</h1>
