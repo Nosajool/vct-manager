@@ -28,6 +28,8 @@ import { UnlockNotification } from '../today/UnlockNotification';
 import { DramaEventToast, DramaEventModal } from '../drama';
 import { InterviewModal } from '../narrative/InterviewModal';
 import { MoraleChangeModal } from '../match/MoraleChangeModal';
+import { TournamentContextModal } from '../tournament/TournamentContextModal';
+import type { Tournament } from '../../types';
 import { dramaService } from '../../services/DramaService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
@@ -44,7 +46,7 @@ import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 
-type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'interview';
+type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview';
 
 /**
  * Thin wrapper to pull PreMatchPrepModal data from the store so TimeBar JSX stays clean.
@@ -142,6 +144,7 @@ function enrichEventWithNarrative(
 export function TimeBar() {
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [simulationResult, setSimulationResult] = useState<TimeAdvanceResult | null>(null);
+  const [tournamentForModal, setTournamentForModal] = useState<Tournament | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [postModalQueue, setPostModalQueue] = useState<PostSimulationModalType[]>([]);
   const [activePostModal, setActivePostModal] = useState<PostSimulationModalType | null>(null);
@@ -282,6 +285,25 @@ export function TimeBar() {
     }
     if (result?.moraleChanges) {
       queue.push('morale');
+    }
+    // Show tournament context (standings/bracket) if player played a tournament match
+    {
+      const storeState = useGameStore.getState();
+      const pTeamId = storeState.playerTeamId;
+      const playerMatchResult = result?.simulatedMatches.find((mr) => {
+        const m = storeState.matches[mr.matchId];
+        return m && (m.teamAId === pTeamId || m.teamBId === pTeamId);
+      });
+      if (playerMatchResult) {
+        const match = storeState.matches[playerMatchResult.matchId];
+        if (match?.tournamentId) {
+          const tournament = storeState.tournaments[match.tournamentId];
+          if (tournament) {
+            setTournamentForModal(tournament);
+            queue.push('tournament_context');
+          }
+        }
+      }
     }
     if (result?.interviewQueue?.length) {
       useGameStore.getState().setInterviewQueue(result.interviewQueue);
@@ -889,6 +911,15 @@ export function TimeBar() {
           teamName={playerTeamName}
           matchId={playerMatchId}
           masteryResult={simulationResult.simulatedMatches.find(mr => mr.matchId === playerMatchId)?.masteryResult}
+        />
+      )}
+
+      {/* Tournament Context Modal - shows standings/bracket after match */}
+      {activePostModal === 'tournament_context' && tournamentForModal && (
+        <TournamentContextModal
+          isOpen={true}
+          onClose={handlePostModalClose}
+          tournament={tournamentForModal}
         />
       )}
 
