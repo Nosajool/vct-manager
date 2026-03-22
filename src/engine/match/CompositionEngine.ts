@@ -9,25 +9,61 @@ import type {
   AgentRole,
   PlayerAgentPreferences,
 } from '../../types';
+import type { MetaPatch } from '../../types/meta';
 import { COMPOSITION_CONSTANTS } from './constants';
 import { agentMasteryEngine } from '../player/AgentMasteryEngine';
 
 /**
- * Map-specific agent preferences (some agents are better on certain maps)
+ * Map-specific agent preferences — rankings derived from VLR tournament pick rate data.
+ * Index 0 = best meta pick (S-tier), index 27 = worst (D-tier).
  */
-const MAP_AGENT_PREFERENCES: Record<string, string[]> = {
-  Ascent: ['Sova', 'KAY/O', 'Killjoy', 'Jett', 'Omen'],
-  Bind: ['Raze', 'Skye', 'Brimstone', 'Viper', 'Chamber'],
-  Haven: ['Breach', 'Sova', 'Omen', 'Killjoy', 'Jett'],
-  Split: ['Raze', 'Sage', 'Astra', 'Cypher', 'Jett'],
-  Icebox: ['Sova', 'Viper', 'Sage', 'Jett', 'Chamber'],
-  Breeze: ['Sova', 'Viper', 'Chamber', 'Jett', 'KAY/O'],
-  Fracture: ['Breach', 'Fade', 'Brimstone', 'Cypher', 'Neon'],
-  Pearl: ['Fade', 'Astra', 'Killjoy', 'Jett', 'Harbor'],
-  Lotus: ['Fade', 'Omen', 'Killjoy', 'Raze', 'Harbor'],
-  Sunset: ['Omen', 'Cypher', 'Breach', 'Raze', 'Neon'],
-  Abyss: ['Omen', 'Sage', 'Jett', 'Sova', 'Killjoy'],
+export const MAP_AGENT_PREFERENCES: Record<string, string[]> = {
+  Ascent: ['Sova', 'KAY/O', 'Killjoy', 'Jett', 'Omen', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Neon', 'Iso', 'Waylay', 'Breach', 'Skye', 'Fade', 'Gekko', 'Tejo', 'Brimstone', 'Viper', 'Astra', 'Harbor', 'Clove', 'Sage', 'Cypher', 'Chamber', 'Deadlock', 'Vyse', 'Veto'],
+  Bind: ['Viper', 'Brimstone', 'Yoru', 'Fade', 'Waylay', 'Raze', 'Neon', 'Skye', 'Astra', 'Chamber', 'Harbor', 'Gekko', 'Omen', 'Sova', 'Killjoy', 'Cypher', 'Vyse', 'Tejo', 'Jett', 'Phoenix', 'Iso', 'KAY/O', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Haven: ['Omen', 'Sova', 'Neon', 'Yoru', 'Viper', 'Chamber', 'Killjoy', 'Fade', 'Phoenix', 'Astra', 'Cypher', 'Iso', 'Waylay', 'Raze', 'Skye', 'Vyse', 'Tejo', 'Jett', 'Brimstone', 'Harbor', 'KAY/O', 'Gekko', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Split: ['Viper', 'Omen', 'Fade', 'Yoru', 'Raze', 'Neon', 'Waylay', 'Skye', 'Astra', 'Vyse', 'Sova', 'Killjoy', 'Cypher', 'Chamber', 'Tejo', 'Jett', 'Phoenix', 'Brimstone', 'Harbor', 'Iso', 'KAY/O', 'Gekko', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Icebox: ['Sova', 'Viper', 'Sage', 'Jett', 'Chamber', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Neon', 'Iso', 'Waylay', 'Breach', 'Skye', 'KAY/O', 'Fade', 'Gekko', 'Tejo', 'Brimstone', 'Omen', 'Astra', 'Harbor', 'Clove', 'Cypher', 'Killjoy', 'Deadlock', 'Vyse', 'Veto'],
+  Breeze: ['Yoru', 'Viper', 'Sova', 'Omen', 'Jett', 'Neon', 'Astra', 'Cypher', 'Fade', 'Waylay', 'Raze', 'Killjoy', 'Skye', 'Vyse', 'Chamber', 'Tejo', 'Phoenix', 'Brimstone', 'Harbor', 'Iso', 'KAY/O', 'Gekko', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Fracture: ['Breach', 'Fade', 'Brimstone', 'Cypher', 'Neon', 'Jett', 'Reyna', 'Phoenix', 'Raze', 'Yoru', 'Iso', 'Waylay', 'Sova', 'Skye', 'KAY/O', 'Gekko', 'Tejo', 'Omen', 'Viper', 'Astra', 'Harbor', 'Clove', 'Sage', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse', 'Veto'],
+  Pearl: ['Astra', 'Yoru', 'Sova', 'Neon', 'Killjoy', 'Fade', 'Waylay', 'Cypher', 'Tejo', 'Vyse', 'Viper', 'Raze', 'Skye', 'Phoenix', 'Harbor', 'Veto', 'Omen', 'Chamber', 'Jett', 'Brimstone', 'Iso', 'KAY/O', 'Gekko', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Lotus: ['Fade', 'Omen', 'Killjoy', 'Raze', 'Harbor', 'Jett', 'Reyna', 'Phoenix', 'Yoru', 'Neon', 'Iso', 'Waylay', 'Sova', 'Breach', 'Skye', 'KAY/O', 'Gekko', 'Tejo', 'Brimstone', 'Viper', 'Astra', 'Clove', 'Sage', 'Cypher', 'Chamber', 'Deadlock', 'Vyse', 'Veto'],
+  Sunset: ['Omen', 'Cypher', 'Breach', 'Raze', 'Neon', 'Jett', 'Reyna', 'Phoenix', 'Yoru', 'Iso', 'Waylay', 'Sova', 'Skye', 'KAY/O', 'Fade', 'Gekko', 'Tejo', 'Brimstone', 'Viper', 'Astra', 'Harbor', 'Clove', 'Sage', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse', 'Veto'],
+  Abyss: ['Sova', 'Waylay', 'Omen', 'Yoru', 'Astra', 'Tejo', 'Harbor', 'Viper', 'Neon', 'Cypher', 'Skye', 'Vyse', 'Fade', 'Raze', 'Killjoy', 'Chamber', 'Jett', 'Phoenix', 'Brimstone', 'Iso', 'KAY/O', 'Gekko', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
+  Corrode: ['Viper', 'Omen', 'Fade', 'Waylay', 'Neon', 'Vyse', 'Yoru', 'Astra', 'Skye', 'Sova', 'Iso', 'Chamber', 'Phoenix', 'KAY/O', 'Raze', 'Killjoy', 'Cypher', 'Tejo', 'Jett', 'Brimstone', 'Harbor', 'Gekko', 'Veto', 'Deadlock', 'Sage', 'Reyna', 'Clove', 'Breach'],
 };
+
+/**
+ * Returns the meta-adjusted agent rankings for a map based on the current patch.
+ * Applies patch changes (buffs/nerfs) to the base MAP_AGENT_PREFERENCES order.
+ * Index 0 = highest priority (S-tier), index 27 = lowest (D-tier).
+ */
+export function getMetaAgentRankings(mapName: string, currentPatch: MetaPatch | null): string[] {
+  const rankings = [...(MAP_AGENT_PREFERENCES[mapName] ?? [])];
+  if (!currentPatch) return rankings;
+
+  for (const change of currentPatch.changes) {
+    if (change.map !== mapName) continue;
+    const existing = rankings.indexOf(change.agent);
+    if (existing !== -1) rankings.splice(existing, 1);
+    const insertAt = Math.min(change.toPosition, rankings.length);
+    rankings.splice(insertAt, 0, change.agent);
+  }
+  return rankings;
+}
+
+/**
+ * Converts a position in the meta rankings to a tier label.
+ * Rankings cover all agents per map (28 total).
+ * Position 0 = S, 1–2 = A, 3–7 = B, 8–15 = C, 16+ = D.
+ */
+export function getAgentMetaTier(agent: string, rankings: string[]): 'S' | 'A' | 'B' | 'C' | 'D' {
+  const pos = rankings.indexOf(agent);
+  if (pos === 0) return 'S';
+  if (pos <= 2) return 'A';
+  if (pos <= 7) return 'B';
+  if (pos <= 15) return 'C';
+  return 'D';
+}
 
 export class CompositionEngine {
 
