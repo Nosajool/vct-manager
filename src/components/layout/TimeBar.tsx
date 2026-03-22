@@ -85,6 +85,7 @@ function PreMatchPrepModalWrapper({
       playerTeamPlayers={activePlayers}
       opponentTeam={opponentTeam}
       playerAgentPrefs={state.playerAgentPreferences}
+      currentPatch={state.currentPatch}
       onConfirm={onConfirm}
       onCancel={onCancel}
       matchId={matchId ?? undefined}

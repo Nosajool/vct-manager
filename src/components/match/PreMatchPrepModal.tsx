@@ -7,8 +7,10 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { Team, Player, PlayerAgentPreferences, MapPoolStrength } from '../../types';
 import type { AgentRole } from '../../types/strategy';
 import type { PreMatchConfig, VetoAction } from '../../types/prematch';
+import type { MetaPatch } from '../../types/meta';
 import { MAPS, AGENTS } from '../../utils/constants';
 import { COMPOSITION_CONSTANTS } from '../../engine/match/constants';
+import { getMetaAgentRankings, getAgentMetaTier } from '../../engine/match/CompositionEngine';
 import { GameImage } from '../shared/GameImage';
 import { getAgentImageUrl, getMapImageUrl, getTeamLogoUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 import { PreMatchHeader } from './PreMatchHeader';
@@ -70,6 +72,7 @@ interface PreMatchPrepModalProps {
   playerTeamPlayers: Player[];
   opponentTeam: Team;
   playerAgentPrefs: Record<string, PlayerAgentPreferences>;
+  currentPatch?: MetaPatch | null;
   onConfirm: (config: PreMatchConfig) => void;
   onCancel: () => void;
   matchId?: string;
@@ -341,7 +344,7 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, opponentMapPool
             </p>
           )}
           {!isComplete && isPlayerTurn && currentEntry?.action === 'ban' && suggestBan && availableMaps.includes(suggestBan) && (
-            <p className="text-xs text-vct-gray mt-0.5">Tip: consider banning <span className="text-yellow-400">{suggestBan}</span></p>
+            <p className="text-xs text-vct-gray mt-0.5">Tip: consider banning <span className="text-yellow-400">{suggestBan}</span> <span className="text-vct-gray/50">(your weakest map)</span></p>
           )}
           {!isComplete && isPlayerTurn && currentEntry?.action === 'pick' && suggestPick && availableMaps.includes(suggestPick) && (
             <p className="text-xs text-vct-gray mt-0.5">Tip: consider picking <span className="text-green-400">{suggestPick}</span></p>
@@ -455,7 +458,7 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, opponentMapPool
                   </span>
                 )}
                 {oppIsWeak && !oppIsStrong && (
-                  <span title="Opponent is weak on this map" className="text-[8px] font-bold ml-1 shrink-0 text-vct-gray/60 bg-vct-gray/10 px-1 rounded">
+                  <span title="Opponent struggles here — good map to pick" className="text-[8px] font-bold ml-1 shrink-0 text-green-400/60 bg-green-400/10 px-1 rounded">
                     Opp Weak
                   </span>
                 )}
@@ -498,14 +501,23 @@ interface AgentSelectionPhaseProps {
   players: Player[];
   playerAgentPrefs: Record<string, PlayerAgentPreferences>;
   assignments: Record<string, string>;
+  metaRankings: string[];
   onChange: (playerId: string, agentName: string) => void;
   onNext: () => void;
   onBack?: () => void;
   onAutoPrep: () => void;
 }
 
+const META_TIER_STYLES: Record<string, string> = {
+  S: 'text-amber-400 bg-amber-400/10',
+  A: 'text-green-400 bg-green-400/10',
+  B: 'text-blue-400 bg-blue-400/10',
+  C: 'text-slate-400 bg-slate-400/10',
+  D: 'text-vct-gray/50 bg-vct-gray/5',
+};
+
 function AgentSelectionPhase({
-  mapName, mapIndex, totalMaps, players, playerAgentPrefs, assignments, onChange, onNext, onBack, onAutoPrep,
+  mapName, mapIndex, totalMaps, players, playerAgentPrefs, assignments, metaRankings, onChange, onNext, onBack, onAutoPrep,
 }: AgentSelectionPhaseProps) {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
 
@@ -606,10 +618,11 @@ function AgentSelectionPhase({
                 const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
                 const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
                 const mastery = getMastery(prefs, agent);
+                const tier = getAgentMetaTier(agent, metaRankings);
                 return (
                   <button
                     key={agent}
-                    title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery}`}
+                    title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery} — Meta: ${tier}-tier on ${mapName}`}
                     onClick={() => handleAgentPick(player.id, agent)}
                     className={`flex flex-col items-center gap-0.5 shrink-0 transition-opacity ${
                       isCurrent ? 'opacity-100' :
@@ -625,6 +638,7 @@ function AgentSelectionPhase({
                     <div className="w-7 h-0.5 bg-vct-gray/20 rounded overflow-hidden">
                       <div className={`h-full rounded ${masteryBarColor(mastery)}`} style={{ width: `${mastery}%` }} />
                     </div>
+                    <span className={`text-[9px] font-bold px-0.5 rounded leading-tight ${META_TIER_STYLES[tier]}`}>{tier}</span>
                   </button>
                 );
               })}
@@ -697,10 +711,11 @@ function AgentSelectionPhase({
                         const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
                         const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
                         const mastery = getMastery(prefs, agent);
+                        const tier = getAgentMetaTier(agent, metaRankings);
                         return (
                           <button
                             key={agent}
-                            title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery}`}
+                            title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery} — Meta: ${tier}-tier on ${mapName}`}
                             onClick={() => { handleAgentPick(player.id, agent); setExpandedPlayer(null); }}
                             className={`flex flex-col items-center gap-0.5 shrink-0 transition-opacity ${
                               isCurrent ? 'opacity-100' :
@@ -716,6 +731,7 @@ function AgentSelectionPhase({
                             <div className="w-7 h-0.5 bg-vct-gray/20 rounded overflow-hidden">
                               <div className={`h-full rounded ${masteryBarColor(mastery)}`} style={{ width: `${mastery}%` }} />
                             </div>
+                            <span className={`text-[9px] font-bold px-0.5 rounded leading-tight ${META_TIER_STYLES[tier]}`}>{tier}</span>
                           </button>
                         );
                       })}
@@ -877,6 +893,7 @@ export function PreMatchPrepModal({
   playerTeamPlayers,
   opponentTeam,
   playerAgentPrefs,
+  currentPatch,
   onConfirm,
   onCancel,
   matchId,
@@ -1033,6 +1050,7 @@ export function PreMatchPrepModal({
               players={playerTeamPlayers}
               playerAgentPrefs={playerAgentPrefs}
               assignments={agentAssignments[currentMap] ?? {}}
+              metaRankings={getMetaAgentRankings(currentMap, currentPatch ?? null)}
               onChange={(playerId, agentName) => handleAgentChange(currentMap, playerId, agentName)}
               onNext={handleAgentNext}
               onBack={handleAgentBack}

@@ -36,3 +36,4 @@ ccswitch.sh
 
 # stats snapshots
 src/data/statsSnapshots/*
+src/data/agentStatsSnapshots/*
