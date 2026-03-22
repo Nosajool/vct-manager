@@ -10,8 +10,7 @@ import { useGameStore } from '../store';
 import { seasonManager } from '../engine/competition';
 import {
   BracketView,
-  TournamentCard,
-  TournamentCardMini,
+  TournamentDetailsModal,
   StandingsTable,
   SwissStageView,
   LeagueStageView,
@@ -21,7 +20,7 @@ import { MonthCalendar, DayDetailPanel, TrainingModal } from '../components/cale
 import { ScrimModal } from '../components/scrim';
 import { DayScheduleService } from '../services/DayScheduleService';
 import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
-import type { Region, TournamentRegion, Match, Team } from '../types';
+import type { Region, TournamentRegion, Match } from '../types';
 import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
 
 type TournamentTab = 'current' | 'schedule';
@@ -46,6 +45,7 @@ export function TournamentPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('bracket');
   const [selectedRegion, setSelectedRegion] = useState<RegionFilter>('all');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
   // Schedule view state
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -236,6 +236,25 @@ export function TournamentPage() {
           {/* Region Filter - only show on Current tab */}
           {activeTab === 'current' && (
             <>
+              {/* Tournament Dropdown */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedTournamentId || currentTournament?.id || ''}
+                  onChange={(e) => setSelectedTournamentId(e.target.value || null)}
+                  className="bg-vct-dark border border-vct-gray/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-vct-red"
+                >
+                  {activeTournaments.map((t) => (
+                    <option key={t.id} value={t.id}>● {t.name}</option>
+                  ))}
+                  {upcomingTournaments.map((t) => (
+                    <option key={t.id} value={t.id}>○ {t.name}</option>
+                  ))}
+                  {completedTournaments.map((t) => (
+                    <option key={t.id} value={t.id}>✓ {t.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-vct-gray">Region:</span>
                 <select
@@ -263,7 +282,7 @@ export function TournamentPage() {
               </div>
 
               {/* View Mode Toggle */}
-              {currentTournament && (
+              {currentTournament && getAvailableViewModes().length > 1 && (
                 <div className="flex bg-vct-dark rounded-lg p-1">
                   {getAvailableViewModes().map((mode) => (
                     <button
@@ -315,84 +334,15 @@ export function TournamentPage() {
 
       {/* Current Tab Content */}
       {activeTab === 'current' && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Tournament List Sidebar */}
-        <div className="lg:col-span-1 space-y-4">
-          {/* Active Tournaments */}
-          {activeTournaments.length > 0 && (
-            <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-vct-red uppercase mb-3">
-                Live ({activeTournaments.length})
-              </h3>
-              <div className="space-y-1">
-                {activeTournaments.map((t) => (
-                  <TournamentCardMini
-                    key={t.id}
-                    tournament={t}
-                    onClick={() => setSelectedTournamentId(t.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Upcoming Tournaments */}
-          {upcomingTournaments.length > 0 && (
-            <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-vct-gray uppercase mb-3">
-                Upcoming ({upcomingTournaments.length})
-              </h3>
-              <div className="space-y-1">
-                {upcomingTournaments.map((t) => (
-                  <TournamentCardMini
-                    key={t.id}
-                    tournament={t}
-                    onClick={() => setSelectedTournamentId(t.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Completed Tournaments */}
-          {completedTournaments.length > 0 && (
-            <div className="bg-vct-darker border border-vct-gray/20 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-green-400 uppercase mb-3">
-                Completed ({completedTournaments.length})
-              </h3>
-              <div className="space-y-1">
-                {completedTournaments.slice(-5).map((t) => (
-                  <TournamentCardMini
-                    key={t.id}
-                    tournament={t}
-                    onClick={() => setSelectedTournamentId(t.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Main Content */}
-        <div className="lg:col-span-3 space-y-4">
+        <div className="space-y-4">
           {currentTournament ? (
             <>
-              {/* Tournament Info Card */}
-              <TournamentCard tournament={currentTournament} showDetails />
-
-              {/* Info about simulation */}
-              {currentTournament.status === 'in_progress' && (
-                <div className="bg-vct-dark/50 border border-vct-gray/20 rounded-lg p-3">
-                  <p className="text-sm text-vct-gray text-center">
-                    Tournament matches play automatically when you advance time using the controls above
-                  </p>
-                </div>
-              )}
-
-              {/* Narrative Context Bar */}
-              <NarrativeContextBar
+              {/* Tournament Info Bar */}
+              <TournamentInfoBar
+                tournament={currentTournament}
+                playerTeamId={playerTeamId}
+                onOpenDetails={() => setDetailsModalOpen(true)}
                 playerTeam={playerTeam}
-                tournamentTeamIds={currentTournament.teamIds}
               />
 
               {/* Content based on view mode */}
@@ -417,7 +367,6 @@ export function TournamentPage() {
               <p className="text-vct-gray">Select a tournament to view</p>
             </div>
           )}
-        </div>
         </div>
       )}
 
@@ -479,6 +428,14 @@ export function TournamentPage() {
             />
           </div>
         </div>
+      )}
+
+      {/* Tournament Details Modal */}
+      {detailsModalOpen && currentTournament && (
+        <TournamentDetailsModal
+          tournament={currentTournament}
+          onClose={() => setDetailsModalOpen(false)}
+        />
       )}
 
       {/* Match Result Modal - for Current tab */}
@@ -561,44 +518,98 @@ export function TournamentPage() {
   );
 }
 
-// Narrative context bar: shows rivalry and hype indicators for the player's team
-function NarrativeContextBar({
+// Slim info bar shown above the bracket: name (clickable), prize, dates, narrative badges
+function TournamentInfoBar({
+  tournament,
+  playerTeamId,
+  onOpenDetails,
   playerTeam,
-  tournamentTeamIds,
 }: {
-  playerTeam: Team | null;
-  tournamentTeamIds: string[];
+  tournament: import('../types').Tournament;
+  playerTeamId: string | null;
+  onOpenDetails: () => void;
+  playerTeam: import('../types').Team | null;
 }) {
   const getTopRivalries = useGameStore((state) => state.getTopRivalries);
+  const getStatusDot = () => {
+    switch (tournament.status) {
+      case 'in_progress': return 'bg-vct-red';
+      case 'completed': return 'bg-green-500';
+      default: return 'bg-vct-gray';
+    }
+  };
 
-  if (!playerTeam) return null;
+  const getStatusLabel = () => {
+    switch (tournament.status) {
+      case 'in_progress': return 'Live';
+      case 'completed': return 'Completed';
+      default: return 'Upcoming';
+    }
+  };
 
-  const playerInTournament = tournamentTeamIds.includes(playerTeam.id);
-  if (!playerInTournament) return null;
+  const parseAsLocalDate = (dateStr: string): Date => {
+    const datePart = dateStr.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
 
-  const topRivalry = getTopRivalries(1)[0] ?? null;
+  const formatDate = (dateStr: string) =>
+    parseAsLocalDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  const formatPrize = (amount: number) => {
+    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
+    return `$${(amount / 1000).toFixed(0)}K`;
+  };
+
+  const totalPrize =
+    tournament.prizePool.first + tournament.prizePool.second + tournament.prizePool.third;
+
+  // Narrative badges
+  const playerInTournament = playerTeamId ? tournament.teamIds.includes(playerTeamId) : false;
+  const topRivalry = playerInTournament ? (getTopRivalries(1)[0] ?? null) : null;
   const isRivalryMatchup =
     topRivalry &&
     topRivalry.intensity >= 60 &&
-    tournamentTeamIds.includes(topRivalry.opponentTeamId);
-  const isHyped = playerTeam.reputation.hypeLevel > 70;
-
-  if (!isRivalryMatchup && !isHyped) return null;
+    tournament.teamIds.includes(topRivalry.opponentTeamId);
+  const isHyped = playerTeam && playerInTournament && playerTeam.reputation.hypeLevel > 70;
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-3 bg-vct-darker border border-vct-gray/20 rounded-lg px-4 py-3">
+      {/* Status dot */}
+      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${getStatusDot()}`} />
+
+      {/* Tournament name — clickable */}
+      <button
+        onClick={onOpenDetails}
+        className="text-white font-semibold hover:underline text-left"
+      >
+        {tournament.name}
+      </button>
+
+      <span className="text-vct-gray text-xs">{getStatusLabel()}</span>
+
+      <span className="text-vct-gray/40 text-xs">·</span>
+
+      <span className="text-green-400 text-sm font-medium">{formatPrize(totalPrize)}</span>
+
+      <span className="text-vct-gray/40 text-xs">·</span>
+
+      <span className="text-vct-gray text-sm">
+        {formatDate(tournament.startDate)} – {formatDate(tournament.endDate)}
+      </span>
+
+      {/* Narrative badges */}
       {isRivalryMatchup && (
-        <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 rounded-lg px-3 py-2">
-          <span className="text-orange-400 text-sm">🔥</span>
-          <span className="text-sm font-medium text-orange-300">Rivalry Match in This Tournament</span>
-          <span className="text-xs text-orange-400/60 ml-1">{topRivalry.intensity} intensity</span>
+        <div className="flex items-center gap-1 bg-orange-500/10 border border-orange-500/30 rounded px-2 py-0.5">
+          <span className="text-orange-400 text-xs">🔥</span>
+          <span className="text-xs text-orange-300">Rivalry</span>
+          <span className="text-xs text-orange-400/60">{topRivalry.intensity}</span>
         </div>
       )}
       {isHyped && (
-        <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-3 py-2">
-          <span className="text-yellow-400 text-sm">⚡</span>
-          <span className="text-sm font-medium text-yellow-300">Most Hyped Team</span>
-          <span className="text-xs text-yellow-400/60 ml-1">{playerTeam.reputation.hypeLevel} hype</span>
+        <div className="flex items-center gap-1 bg-yellow-500/10 border border-yellow-500/30 rounded px-2 py-0.5">
+          <span className="text-yellow-400 text-xs">⚡</span>
+          <span className="text-xs text-yellow-300">Hyped</span>
         </div>
       )}
     </div>
