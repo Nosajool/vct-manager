@@ -6,6 +6,7 @@ import type {
   Player,
   TierTeam,
   TeamTier,
+  Region,
   ScrimRelationship,
   ScrimOptions,
   ScrimIntensity,
@@ -20,6 +21,8 @@ import { MAPS, ALL_AGENTS } from '../../utils/constants';
 import { SCRIM_CONSTANTS } from '../../types/scrim';
 import { agentMasteryEngine } from '../player/AgentMasteryEngine';
 import type { PlayerAgentPreferences } from '../../types/strategy';
+import type { TeamArchetype } from './teamArchetypes';
+import { ARCHETYPE_WEIGHTS, REGION_MAP_TENDENCIES } from './teamArchetypes';
 import type { PlayerMasteryChange } from '../../types/match';
 
 /**
@@ -670,21 +673,43 @@ export class ScrimEngine {
   // ============================================
 
   /**
-   * Create a default map pool for a new team
+   * Create a default map pool for a new team.
+   * Pass archetype and region to generate asymmetric starting strengths.
    */
-  createDefaultMapPool(): MapPoolStrength {
+  createDefaultMapPool(options?: { archetype?: TeamArchetype; region?: Region }): MapPoolStrength {
     const maps: Record<string, MapStrength> = {};
+    const weights = options?.archetype ? ARCHETYPE_WEIGHTS[options.archetype] : ARCHETYPE_WEIGHTS.balanced;
+
+    // Determine signature and weak maps from regional tendencies
+    let signatureMaps: string[] = [];
+    let weakMaps: string[] = [];
+    if (options?.region) {
+      const tendencies = REGION_MAP_TENDENCIES[options.region];
+      // Pick 1-2 signature maps and 1-2 weak maps at random from the regional pool
+      const shuffledStrong = [...tendencies.strong].sort(() => Math.random() - 0.5);
+      const shuffledWeak = [...tendencies.weak].sort(() => Math.random() - 0.5);
+      signatureMaps = shuffledStrong.slice(0, 1 + Math.floor(Math.random() * 2)); // 1 or 2
+      weakMaps = shuffledWeak.slice(0, 1 + Math.floor(Math.random() * 2));       // 1 or 2
+    }
 
     for (const mapName of MAPS) {
+      const isSignature = signatureMaps.includes(mapName);
+      const isWeak = weakMaps.includes(mapName);
+
+      // Signature maps get a bonus, weak maps get a penalty
+      const mapBias = isSignature ? 15 + Math.random() * 8 : isWeak ? -(12 + Math.random() * 8) : 0;
+
+      const clamp = (v: number) => Math.min(SCRIM_CONSTANTS.MAX_MAP_ATTRIBUTE, Math.max(5, v));
+
       maps[mapName] = {
         mapName,
         attributes: {
-          executes: 40 + Math.random() * 15,
-          retakes: 40 + Math.random() * 15,
-          utility: 40 + Math.random() * 15,
-          communication: 45 + Math.random() * 15,
-          mapControl: 40 + Math.random() * 15,
-          antiStrat: 30 + Math.random() * 15,
+          executes:      clamp((40 + Math.random() * 15) * weights.executes + mapBias),
+          retakes:       clamp((40 + Math.random() * 15) * weights.retakes + mapBias),
+          utility:       clamp((40 + Math.random() * 15) * weights.utility + mapBias),
+          communication: clamp((45 + Math.random() * 15) * weights.communication + mapBias),
+          mapControl:    clamp((40 + Math.random() * 15) * weights.mapControl + mapBias),
+          antiStrat:     clamp((30 + Math.random() * 15) * weights.antiStrat + mapBias),
         },
         lastPracticedDate: null,
         totalPracticeHours: 0,

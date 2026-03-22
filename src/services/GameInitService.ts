@@ -6,6 +6,7 @@ import { playerGenerator } from '../engine/player';
 import { teamManager } from '../engine/team';
 import { eventScheduler } from '../engine/calendar';
 import { scrimEngine, tierTeamGenerator } from '../engine/scrim';
+import { pickArchetypeForRegion } from '../engine/scrim/teamArchetypes';
 import { globalTournamentScheduler } from './GlobalTournamentScheduler';
 import { strategyService } from './StrategyService';
 import type { Player, Region, MatchEventData, Match } from '../types';
@@ -104,10 +105,11 @@ export class GameInitService {
     // Apply difficulty settings to player's team
     this.applyDifficultySettings(playerTeamId, difficulty);
 
-    // Initialize map pools for all T1 teams (Phase 6 - Scrim System)
+    // Initialize map pools for all T1 teams with regional archetype variety
     console.log('Initializing map pools for teams...');
     for (const team of teams) {
-      const mapPool = scrimEngine.createDefaultMapPool();
+      const archetype = pickArchetypeForRegion(team.region);
+      const mapPool = scrimEngine.createDefaultMapPool({ archetype, region: team.region });
       store.updateTeamMapPool(team.id, mapPool);
     }
 

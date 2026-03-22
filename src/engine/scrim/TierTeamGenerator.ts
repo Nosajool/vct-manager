@@ -4,6 +4,7 @@
 import type { Player, Region, TierTeam, TeamTier, MapPoolStrength } from '../../types';
 import { T2_TEAM_TEMPLATES, T3_TEAM_TEMPLATES, T2_STAT_RANGES, T3_STAT_RANGES } from '../../utils/constants';
 import { scrimEngine } from './ScrimEngine';
+import { pickArchetypeForRegion } from './teamArchetypes';
 
 /**
  * TierTeamGenerator - Creates T2/T3 teams from free agents
@@ -105,7 +106,7 @@ export class TierTeamGenerator {
         region,
         tier,
         playerIds,
-        mapStrengths: this.generateTierMapPool(tier),
+        mapStrengths: this.generateTierMapPool(tier, region),
         averageOverall: avgOverall,
       });
     }
@@ -137,10 +138,11 @@ export class TierTeamGenerator {
   }
 
   /**
-   * Generate a map pool for T2/T3 teams (weaker than T1)
+   * Generate a map pool for T2/T3 teams (weaker than T1, but with regional/archetype variety)
    */
-  private generateTierMapPool(tier: TeamTier): MapPoolStrength {
-    const basePool = scrimEngine.createDefaultMapPool();
+  private generateTierMapPool(tier: TeamTier, region: Region): MapPoolStrength {
+    const archetype = pickArchetypeForRegion(region);
+    const basePool = scrimEngine.createDefaultMapPool({ archetype, region });
 
     // T2/T3 teams have weaker map pools
     const multiplier = tier === 'T2' ? 0.85 : 0.7;

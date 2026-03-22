@@ -4,6 +4,8 @@
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import type { Player } from '../../types';
+import { GameImage } from '../shared/GameImage';
+import { getPlayerImageUrl } from '../../utils/imageAssets';
 
 interface TeamBriefingModalProps {
   onClose: () => void;
@@ -84,6 +86,11 @@ export function TeamBriefingModal({ onClose }: TeamBriefingModalProps) {
                   return (
                     <div key={p.id} className="flex items-center justify-between py-1.5 px-3 bg-vct-dark/50 rounded">
                       <div className="flex items-center gap-2">
+                        <GameImage
+                          src={getPlayerImageUrl(p.name)}
+                          alt={p.name}
+                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                        />
                         <span className="text-sm text-vct-light font-medium">{p.name}</span>
                         {isIGL && (
                           <span className="text-xs px-1.5 py-0.5 bg-blue-500/20 text-blue-400 rounded">IGL</span>

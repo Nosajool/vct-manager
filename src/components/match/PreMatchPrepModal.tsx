@@ -408,7 +408,8 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, opponentMapPool
           const isPicked = !!pickEntry;
           const isAvailable = availableMaps.includes(mapName);
           const playerStrength = getMapOverallStrength(playerMapPool, mapName);
-          const opponentStrength = opponentMapPool ? getMapOverallStrength(opponentMapPool, mapName) : null;
+          const oppIsStrong = opponentMapPool?.strongestMaps.includes(mapName) ?? false;
+          const oppIsWeak = opponentMapPool?.banPriority.includes(mapName) ?? false;
           const canClick = isAvailable && isPlayerTurn && !isAiThinking && !isComplete;
 
           return (
@@ -448,36 +449,28 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, opponentMapPool
               </div>
               <div className="flex items-center justify-between mt-1">
                 <p className="text-xs font-semibold text-vct-light leading-tight truncate">{mapName}</p>
-                {opponentStrength !== null && (
-                  <span className={`text-[9px] font-bold ml-1 shrink-0 ${
-                    playerStrength > opponentStrength + 2 ? 'text-green-400' :
-                    playerStrength < opponentStrength - 2 ? 'text-red-400' :
-                    'text-vct-gray'
-                  }`}>
-                    {playerStrength > opponentStrength + 2 ? '▲' : playerStrength < opponentStrength - 2 ? '▼' : '—'}
+                {oppIsStrong && (
+                  <span title="Opponent is strong on this map" className="text-[8px] font-bold ml-1 shrink-0 text-orange-400 bg-orange-400/15 px-1 rounded">
+                    Opp Strong
+                  </span>
+                )}
+                {oppIsWeak && !oppIsStrong && (
+                  <span title="Opponent is weak on this map" className="text-[8px] font-bold ml-1 shrink-0 text-vct-gray/60 bg-vct-gray/10 px-1 rounded">
+                    Opp Weak
                   </span>
                 )}
               </div>
-              <div className="mt-1 space-y-0.5">
+              <div className="mt-1">
                 <div className="flex items-center gap-1">
                   <span className="text-[9px] text-vct-gray w-4 shrink-0">Us</span>
                   <div className="flex-1 h-1 bg-vct-gray/20 rounded overflow-hidden">
                     <div
-                      className={`h-full rounded ${opponentStrength === null || playerStrength >= opponentStrength ? 'bg-green-400' : 'bg-amber-500'}`}
+                      className="h-full rounded bg-green-400"
                       style={{ width: `${playerStrength}%` }}
                     />
                   </div>
                   <span className="text-[9px] text-vct-gray w-5 text-right shrink-0">{Math.round(playerStrength)}</span>
                 </div>
-                {opponentStrength !== null && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-[9px] text-vct-gray w-4 shrink-0">Opp</span>
-                    <div className="flex-1 h-1 bg-vct-gray/20 rounded overflow-hidden">
-                      <div className="h-full rounded bg-red-400/50" style={{ width: `${opponentStrength}%` }} />
-                    </div>
-                    <span className="text-[9px] text-vct-gray w-5 text-right shrink-0">{Math.round(opponentStrength)}</span>
-                  </div>
-                )}
               </div>
             </button>
           );
