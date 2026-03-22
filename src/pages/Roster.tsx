@@ -11,8 +11,6 @@ import { ReleasePlayerModal } from '../components/roster/ReleasePlayerModal';
 import { TeamStrategy } from '../components/roster/TeamStrategy';
 import { TeamStatsView } from '../components/roster/TeamStatsView';
 import { ScrimOverview } from '../components/scrim';
-import { SetupWizard, type SetupOptions } from '../components/setup';
-import { gameInitService } from '../services/GameInitService';
 import type { Player } from '../types';
 import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
 
@@ -20,13 +18,11 @@ type TeamTab = 'roster' | 'freeagents' | 'allteams' | 'strategy' | 'stats' | 'sc
 
 export function Roster() {
   const [activeTab, setActiveTab] = useState<TeamTab>('roster');
-  const [isInitializing, setIsInitializing] = useState(false);
 
   // Modal states
   const [signingPlayer, setSigningPlayer] = useState<Player | null>(null);
   const [releasingPlayer, setReleasingPlayer] = useState<Player | null>(null);
 
-  const gameStarted = useGameStore((state) => state.gameStarted);
   const teamTab = useGameStore((state) => state.teamTab);
   const setTeamTab = useGameStore((state) => state.setTeamTab);
   const hasSeenHint = useGameStore((state) => state.onboardingHasSeenHintRoster);
@@ -64,21 +60,6 @@ export function Roster() {
       )
     : [];
 
-  // Handle setup wizard completion
-  const handleSetupComplete = async (options: SetupOptions) => {
-    setIsInitializing(true);
-    try {
-      await gameInitService.initializeNewGame({
-        playerRegion: options.region,
-        playerTeamName: options.teamName,
-        difficulty: options.difficulty,
-      });
-    } catch (error) {
-      console.error('Failed to initialize game:', error);
-    }
-    setIsInitializing(false);
-  };
-
   // Open contract negotiation modal for signing
   const handleSignPlayer = (playerId: string) => {
     const player = players[playerId];
@@ -103,27 +84,6 @@ export function Roster() {
   const handleReleaseSuccess = () => {
     setReleasingPlayer(null);
   };
-
-  // Not started yet - auto-show setup wizard
-  if (!gameStarted) {
-    if (isInitializing) {
-      return (
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-24 h-24 bg-vct-darker border border-vct-gray/30 rounded-lg flex items-center justify-center mb-6 animate-pulse">
-            <span className="text-5xl">🎮</span>
-          </div>
-          <h2 className="text-2xl font-bold text-vct-light mb-2">
-            Initializing Game...
-          </h2>
-          <p className="text-vct-gray text-center max-w-md">
-            Generating teams, players, and tournaments. This may take a moment.
-          </p>
-        </div>
-      );
-    }
-
-    return <SetupWizard onComplete={handleSetupComplete} />;
-  }
 
   return (
     <div className="space-y-6">
