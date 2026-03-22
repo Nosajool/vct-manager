@@ -31,6 +31,7 @@ import { MoraleChangeModal } from '../match/MoraleChangeModal';
 import { TournamentContextModal } from '../tournament/TournamentContextModal';
 import type { Tournament } from '../../types';
 import { dramaService } from '../../services/DramaService';
+import { GAME_START_DATE } from '../../services/FeatureGateService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
@@ -722,6 +723,7 @@ export function TimeBar() {
     champions: 'Champions',
   };
   const phaseDisplay = phaseDisplayMap[calendar.currentPhase] || calendar.currentPhase;
+  const isDay1 = calendar.currentDate === GAME_START_DATE;
 
   return (
     <>
@@ -762,7 +764,7 @@ export function TimeBar() {
                   hasMatchToday
                     ? 'bg-vct-red hover:bg-vct-red/80 text-white'
                     : 'bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light'
-                }`}
+                } ${isDay1 ? 'ring-2 ring-vct-red/60 animate-pulse' : ''}`}
               >
                 {hasMatchToday ? 'Play Match' : 'Advance Day'}
               </button>
@@ -785,7 +787,7 @@ export function TimeBar() {
           hasMatchToday
             ? 'bg-vct-red hover:bg-vct-red/80 text-white'
             : 'bg-vct-gray/40 hover:bg-vct-gray/50 text-vct-light'
-        }`}
+        } ${isDay1 ? 'ring-2 ring-vct-red/60 animate-pulse' : ''}`}
       >
         {isAdvancing ? '…' : hasMatchToday ? '▶' : '▷'}
       </button>

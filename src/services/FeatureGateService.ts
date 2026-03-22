@@ -6,7 +6,7 @@ import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar/TimeProgression';
 
 /** The date the game always starts on */
-const GAME_START_DATE = '2026-01-01T00:00:00.000Z';
+export const GAME_START_DATE = '2026-01-01T00:00:00.000Z';
 
 /**
  * FeatureGateService - Controls access to game features based on progression

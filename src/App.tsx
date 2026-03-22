@@ -1,6 +1,6 @@
 // VCT Manager - Main Application
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Layout } from './components/layout/Layout';
 import { Today } from './pages/Today';
 import { Roster } from './pages/Roster';
@@ -27,6 +27,15 @@ function App() {
       setActiveView('team');
     }
   }, [gameStarted, activeView, setActiveView]);
+
+  // Navigate to today when game first starts (setup wizard completion)
+  const prevGameStarted = useRef(gameStarted);
+  useEffect(() => {
+    if (gameStarted && !prevGameStarted.current) {
+      setActiveView('today');
+    }
+    prevGameStarted.current = gameStarted;
+  }, [gameStarted, setActiveView]);
 
   // Backtick toggles debug overlay (skip when focus is in a text input)
   useEffect(() => {

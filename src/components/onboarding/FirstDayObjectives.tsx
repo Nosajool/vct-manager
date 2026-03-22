@@ -2,14 +2,17 @@
 // Guides new players through the three orientation steps before advancing
 
 import { useGameStore } from '../../store';
+import { GAME_START_DATE } from '../../services/FeatureGateService';
 
 export function FirstDayObjectives() {
   const hasVisitedRoster = useGameStore((state) => state.onboardingHasVisitedRoster);
   const hasVisitedTournament = useGameStore((state) => state.onboardingHasVisitedTournament);
+  const currentDate = useGameStore((state) => state.calendar.currentDate);
   const setActiveView = useGameStore((state) => state.setActiveView);
 
-  // Hide once both navigation objectives are done
-  if (hasVisitedRoster && hasVisitedTournament) return null;
+  // Hide once day 1 has been advanced (isDay1 becomes false after advance)
+  const isDay1 = currentDate === GAME_START_DATE;
+  if (!isDay1) return null;
 
   const steps = [
     {
@@ -31,7 +34,7 @@ export function FirstDayObjectives() {
     {
       id: 'advance',
       label: 'Advance Day 1',
-      why: 'Use the Advance Day button at the bottom of the screen',
+      why: 'Use the Advance Day button in the bar above (or the ▷ button bottom-right on mobile)',
       done: false,
       onAction: null,
       actionLabel: null,

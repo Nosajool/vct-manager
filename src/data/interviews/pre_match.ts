@@ -160,7 +160,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'They defy description',
-        quote: "Who is {starPlayerName}?? For the blind, they are balkd. For the hungry, they are bald. For the sick, they are bald.",
+        quote: "Who is {starPlayerName}?? For the blind, they are bald. For the hungry, they are bald. For the sick, they are bald.",
         effects: { hype: 5, fanbase: 3, dramaChance: 8 },
       },
       {

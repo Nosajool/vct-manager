@@ -60,14 +60,6 @@ function getMapOverallStrength(mapPool: MapPoolStrength | undefined, mapName: st
   ) / 6;
 }
 
-function strengthToStars(strength: number): number {
-  if (strength >= 80) return 5;
-  if (strength >= 60) return 4;
-  if (strength >= 40) return 3;
-  if (strength >= 20) return 2;
-  return 1;
-}
-
 // ============================================================
 // Props
 // ============================================================
@@ -197,14 +189,21 @@ function runAutoAgentSelection(
 // Sub-components
 // ============================================================
 
-function StarRating({ stars }: { stars: number }) {
-  return (
-    <span className="text-xs">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className={i < stars ? 'text-yellow-400' : 'text-vct-gray/30'}>★</span>
-      ))}
-    </span>
-  );
+function getMastery(prefs: PlayerAgentPreferences | undefined, agentName: string): number {
+  if (prefs?.agentMastery?.[agentName] !== undefined) return prefs.agentMastery[agentName];
+  // Fallback: infer from preferred position
+  const idx = prefs?.preferredAgents?.indexOf(agentName) ?? -1;
+  if (idx === 0) return 80;
+  if (idx === 1) return 60;
+  if (idx === 2) return 40;
+  return 15;
+}
+
+function masteryBarColor(mastery: number): string {
+  if (mastery >= 80) return 'bg-green-400';
+  if (mastery >= 60) return 'bg-yellow-400';
+  if (mastery >= 40) return 'bg-amber-500';
+  return 'bg-red-400/60';
 }
 
 // ============================================================
@@ -215,11 +214,12 @@ interface MapVetoPhaseProps {
   playerTeam: Team;
   opponentTeam: Team;
   playerMapPool: MapPoolStrength | undefined;
+  opponentMapPool: MapPoolStrength | undefined;
   onVetoComplete: (selectedMaps: string[], vetoLog: VetoAction[]) => void;
   onAutoPrep: () => void;
 }
 
-function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete, onAutoPrep }: MapVetoPhaseProps) {
+function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, opponentMapPool, onVetoComplete, onAutoPrep }: MapVetoPhaseProps) {
   const [availableMaps, setAvailableMaps] = useState<string[]>(MAPS);
   const [bannedMaps, setBannedMaps] = useState<string[]>([]);
   const [pickedMaps, setPickedMaps] = useState<{ mapName: string; byTeam: 'player' | 'opponent' | 'auto' }[]>([]);
@@ -236,6 +236,17 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
   // Suggestion: weakest to ban, strongest to pick
   const suggestBan = playerMapPool?.banPriority?.[0] ?? null;
   const suggestPick = playerMapPool?.strongestMaps?.[0] ?? null;
+
+  const sortedMaps = useMemo(() => {
+    if (!currentEntry || isComplete) return MAPS;
+    return [...MAPS].sort((a, b) => {
+      const aStr = getMapOverallStrength(playerMapPool, a);
+      const bStr = getMapOverallStrength(playerMapPool, b);
+      return currentEntry.action === 'ban'
+        ? aStr - bStr   // worst → best during ban
+        : bStr - aStr;  // best → worst during pick/decider
+    });
+  }, [currentEntry, playerMapPool, isComplete]);
 
   const resolvePhase = useCallback((mapName: string, phase: number) => {
     const entry = VETO_SEQUENCE[phase];
@@ -336,12 +347,21 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
             <p className="text-xs text-vct-gray mt-0.5">Tip: consider picking <span className="text-green-400">{suggestPick}</span></p>
           )}
         </div>
-        <button
-          onClick={onAutoPrep}
-          className="px-3 py-1 text-xs font-medium bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-gray rounded"
-        >
-          Auto Prep
-        </button>
+        <div className="flex items-start gap-3">
+          {opponentMapPool && (
+            <div className="text-right text-xs">
+              <p className="text-vct-gray font-medium mb-0.5">Scouted intel</p>
+              <p className="text-green-400">Best: {opponentMapPool.strongestMaps.slice(0, 2).join(', ')}</p>
+              <p className="text-red-400">Weak: {opponentMapPool.banPriority.slice(0, 2).join(', ')}</p>
+            </div>
+          )}
+          <button
+            onClick={onAutoPrep}
+            className="px-3 py-1 text-xs font-medium bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-gray rounded shrink-0"
+          >
+            Auto Prep
+          </button>
+        </div>
       </div>
 
       {/* Veto sequence pills */}
@@ -382,12 +402,13 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
 
       {/* Map grid */}
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {MAPS.map((mapName) => {
+        {sortedMaps.map((mapName) => {
           const isBanned = bannedMaps.includes(mapName);
           const pickEntry = pickedMaps.find((p) => p.mapName === mapName);
           const isPicked = !!pickEntry;
           const isAvailable = availableMaps.includes(mapName);
-          const stars = strengthToStars(getMapOverallStrength(playerMapPool, mapName));
+          const playerStrength = getMapOverallStrength(playerMapPool, mapName);
+          const opponentStrength = opponentMapPool ? getMapOverallStrength(opponentMapPool, mapName) : null;
           const canClick = isAvailable && isPlayerTurn && !isAiThinking && !isComplete;
 
           return (
@@ -425,9 +446,38 @@ function MapVetoPhase({ playerTeam, opponentTeam, playerMapPool, onVetoComplete,
                   </span>
                 )}
               </div>
-              <p className="text-xs font-semibold text-vct-light leading-tight">{mapName}</p>
-              <div className="mt-0.5">
-                <StarRating stars={stars} />
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs font-semibold text-vct-light leading-tight truncate">{mapName}</p>
+                {opponentStrength !== null && (
+                  <span className={`text-[9px] font-bold ml-1 shrink-0 ${
+                    playerStrength > opponentStrength + 2 ? 'text-green-400' :
+                    playerStrength < opponentStrength - 2 ? 'text-red-400' :
+                    'text-vct-gray'
+                  }`}>
+                    {playerStrength > opponentStrength + 2 ? '▲' : playerStrength < opponentStrength - 2 ? '▼' : '—'}
+                  </span>
+                )}
+              </div>
+              <div className="mt-1 space-y-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="text-[9px] text-vct-gray w-4 shrink-0">Us</span>
+                  <div className="flex-1 h-1 bg-vct-gray/20 rounded overflow-hidden">
+                    <div
+                      className={`h-full rounded ${opponentStrength === null || playerStrength >= opponentStrength ? 'bg-green-400' : 'bg-amber-500'}`}
+                      style={{ width: `${playerStrength}%` }}
+                    />
+                  </div>
+                  <span className="text-[9px] text-vct-gray w-5 text-right shrink-0">{Math.round(playerStrength)}</span>
+                </div>
+                {opponentStrength !== null && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px] text-vct-gray w-4 shrink-0">Opp</span>
+                    <div className="flex-1 h-1 bg-vct-gray/20 rounded overflow-hidden">
+                      <div className="h-full rounded bg-red-400/50" style={{ width: `${opponentStrength}%` }} />
+                    </div>
+                    <span className="text-[9px] text-vct-gray w-5 text-right shrink-0">{Math.round(opponentStrength)}</span>
+                  </div>
+                )}
               </div>
             </button>
           );
@@ -562,18 +612,26 @@ function AgentSelectionPhase({
                 const isCurrent = currentAgent === agent;
                 const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
                 const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
+                const mastery = getMastery(prefs, agent);
                 return (
                   <button
                     key={agent}
-                    title={isTaken ? `Taken by ${takenBy}` : agent}
+                    title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery}`}
                     onClick={() => handleAgentPick(player.id, agent)}
-                    className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
-                      isCurrent ? 'border-vct-red opacity-100' :
-                      isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
-                                  'border-transparent opacity-70 hover:opacity-100'
+                    className={`flex flex-col items-center gap-0.5 shrink-0 transition-opacity ${
+                      isCurrent ? 'opacity-100' :
+                      isTaken   ? 'opacity-40 hover:opacity-70' :
+                                  'opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                    <div className={`w-7 h-7 rounded overflow-hidden border-2 ${
+                      isCurrent ? 'border-vct-red' : 'border-transparent'
+                    }`}>
+                      <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-7 h-0.5 bg-vct-gray/20 rounded overflow-hidden">
+                      <div className={`h-full rounded ${masteryBarColor(mastery)}`} style={{ width: `${mastery}%` }} />
+                    </div>
                   </button>
                 );
               })}
@@ -645,18 +703,26 @@ function AgentSelectionPhase({
                         const isCurrent = currentAgent === agent;
                         const isTaken = !isCurrent && Object.entries(assignments).some(([pid, a]) => pid !== player.id && a === agent);
                         const takenBy = isTaken ? players.find((p) => p.id !== player.id && assignments[p.id] === agent)?.name : undefined;
+                        const mastery = getMastery(prefs, agent);
                         return (
                           <button
                             key={agent}
-                            title={isTaken ? `Taken by ${takenBy}` : agent}
+                            title={isTaken ? `Taken by ${takenBy}` : `${agent} — mastery ${mastery}`}
                             onClick={() => { handleAgentPick(player.id, agent); setExpandedPlayer(null); }}
-                            className={`w-7 h-7 rounded overflow-hidden border-2 shrink-0 transition-opacity ${
-                              isCurrent ? 'border-vct-red opacity-100' :
-                              isTaken   ? 'border-transparent opacity-40 hover:opacity-70' :
-                                          'border-transparent opacity-70 hover:opacity-100'
+                            className={`flex flex-col items-center gap-0.5 shrink-0 transition-opacity ${
+                              isCurrent ? 'opacity-100' :
+                              isTaken   ? 'opacity-40 hover:opacity-70' :
+                                          'opacity-70 hover:opacity-100'
                             }`}
                           >
-                            <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                            <div className={`w-7 h-7 rounded overflow-hidden border-2 ${
+                              isCurrent ? 'border-vct-red' : 'border-transparent'
+                            }`}>
+                              <GameImage src={getAgentImageUrl(agent)} alt={agent} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="w-7 h-0.5 bg-vct-gray/20 rounded overflow-hidden">
+                              <div className={`h-full rounded ${masteryBarColor(mastery)}`} style={{ width: `${mastery}%` }} />
+                            </div>
                           </button>
                         );
                       })}
@@ -959,6 +1025,7 @@ export function PreMatchPrepModal({
               playerTeam={playerTeam}
               opponentTeam={opponentTeam}
               playerMapPool={playerTeam.mapPool}
+              opponentMapPool={opponentTeam.mapPool}
               onVetoComplete={handleVetoComplete}
               onAutoPrep={handleAutoPrep}
             />
