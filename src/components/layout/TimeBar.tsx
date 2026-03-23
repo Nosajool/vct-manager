@@ -48,7 +48,7 @@ import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { TeamBriefingModal } from '../onboarding/TeamBriefingModal';
 
-type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview';
+type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview' | 'patch_preview' | 'patch_notes';
 
 /**
  * Thin wrapper to pull PreMatchPrepModal data from the store so TimeBar JSX stays clean.
@@ -252,11 +252,6 @@ export function TimeBar() {
 
   const handlePatchPreviewClose = () => {
     setPendingPatchPreview(null);
-    // After closing preview, proceed to rest of modal queue (live patch notes or post-sim)
-    if (pendingPatchNotes) {
-      // Live patch notes will show next (handled in JSX ordering)
-      return;
-    }
     advancePostModals(postModalQueue);
   };
 
@@ -267,12 +262,6 @@ export function TimeBar() {
   };
 
   const showPostSimulationModals = (result: TimeAdvanceResult | null) => {
-    // Check for pending patch preview or notes first
-    if (pendingPatchPreview || pendingPatchNotes) {
-      // Patch modal will show first, its close handler will then show the rest
-      return;
-    }
-
     const queue: PostSimulationModalType[] = [];
 
     if (result?.downtimeResults && result.downtimeResults.length > 0) {
@@ -322,6 +311,13 @@ export function TimeBar() {
         setPressConferenceTotal(1);
         queue.push('interview');
       }
+    }
+
+    if (pendingPatchPreview) {
+      queue.push('patch_preview');
+    }
+    if (pendingPatchNotes) {
+      queue.push('patch_notes');
     }
 
     advancePostModals(queue);
@@ -847,7 +843,7 @@ export function TimeBar() {
       />
 
       {/* Patch Preview Modal - shown when an upcoming patch is announced */}
-      {pendingPatchPreview && !pendingPatchNotes && (
+      {activePostModal === 'patch_preview' && pendingPatchPreview && (
         <PatchNotesModal
           patch={pendingPatchPreview}
           isPreview
@@ -856,7 +852,7 @@ export function TimeBar() {
       )}
 
       {/* Patch Notes Modal - shown when a new meta patch is activated */}
-      {pendingPatchNotes && (
+      {activePostModal === 'patch_notes' && pendingPatchNotes && (
         <PatchNotesModal
           patch={pendingPatchNotes}
           onClose={handlePatchNotesClose}
