@@ -955,8 +955,9 @@ export class InterviewService {
     }
 
     // Apply all substitutions to a string via simple split/join (no regex needed)
+    // Values are wrapped in STX/ETX markers (\x02...\x03) so the UI can highlight them
     const applySubstitutions = (text: string): string =>
-      Object.entries(substitutions).reduce((acc, [key, val]) => acc.split(key).join(val), text);
+      Object.entries(substitutions).reduce((acc, [key, val]) => acc.split(key).join(`\x02${val}\x03`), text);
 
     let prompt = applySubstitutions(template.prompt);
 

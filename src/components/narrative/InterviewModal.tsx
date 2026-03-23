@@ -5,7 +5,7 @@
 // Color-coded by tone for instant scanning.
 // Shows manager archetype badge in header when archetype is established.
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useGameStore } from '../../store';
 import type { PendingInterview, InterviewContext, InterviewTone, InterviewEffects } from '../../types/interview';
 import { selectManagerProfile, type ManagerArchetype } from '../../store/slices/interviewSlice';
@@ -90,6 +90,16 @@ const ARCHETYPE_ON_BRAND: Record<NonNullable<ManagerArchetype>, InterviewTone[]>
   ANALYST:        ['DEFLECTIVE'],
 };
 
+// Tooltip descriptions for effect hints
+const EFFECT_TOOLTIP: Record<string, string> = {
+  'Fans':    'Fanbase — public support for your team',
+  'Morale':  'Player morale and team spirit',
+  'Hype':    'Media buzz and narrative momentum',
+  'Sponsor': 'Sponsor confidence in your org',
+  'Rival':   'Rivalry intensity with this opponent',
+  '+Drama':  'Raises chance of a drama event',
+};
+
 // ============================================================================
 // Effect hint helpers
 // ============================================================================
@@ -142,6 +152,22 @@ function MatchupHeader({ interview }: { interview: PendingInterview }) {
     return <PostMatchHeader matchId={interview.matchId} />;
   }
   return <PreMatchHeader matchId={interview.matchId} />;
+}
+
+// Parses STX/ETX markers (\x02...\x03) inserted by InterviewService and renders
+// highlighted spans for substituted values (player names, team names, etc.)
+function renderHighlightedQuote(text: string): ReactNode {
+  const parts = text.split(/(\x02[^\x03]*\x03)/);
+  return parts.map((part, i) => {
+    if (part.startsWith('\x02') && part.endsWith('\x03')) {
+      return (
+        <span key={i} className="font-semibold text-white not-italic">
+          {part.slice(1, -1)}
+        </span>
+      );
+    }
+    return part;
+  });
 }
 
 // ============================================================================
@@ -241,7 +267,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
 
               <div className="p-6 space-y-4">
                 <p className="text-vct-light text-base italic leading-relaxed">
-                  "{chosenOption?.quote}"
+                  "{chosenOption?.quote ? renderHighlightedQuote(chosenOption.quote) : ''}"
                 </p>
 
                 {affectedPlayerIds.length > 0 && (
@@ -300,9 +326,9 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
         ) : (
           // ── Choice view ─────────────────────────────────────────────────
           <>
-            {/* Header */}
+            {/* Top badges + title row */}
             <div className="p-4 border-b border-vct-gray/20">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${contextMeta.badgeColor}`}>
                     {contextMeta.label}
@@ -328,56 +354,56 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                   Collection
                 </button>
               </div>
-              <div className="flex items-center gap-4 mb-3">
-                {subjectImageUrl ? (
-                  <GameImage
-                    src={subjectImageUrl}
-                    alt={subjectLabel}
-                    className="w-20 h-20 rounded-full object-cover flex-shrink-0"
-                    fallbackClassName="w-20 h-20 rounded-full flex-shrink-0"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl font-bold text-vct-gray">{subjectInitial}</span>
-                  </div>
-                )}
-                <div>
-                  <p className="text-lg font-bold text-vct-light">{subjectLabel}</p>
-                  <p className="text-sm text-vct-gray">
-                    {interview.subjectType === 'manager' ? 'Manager' : interview.subjectType === 'coach' ? 'Head Coach' : 'Player'}
-                  </p>
-                </div>
-              </div>
-              <h2 className="text-xl font-bold text-vct-light">Press Conference</h2>
-              {(totalQuestions ?? 0) > 1 && (
-                <p className="text-sm text-vct-gray mt-0.5">
-                  Question {questionNumber} of {totalQuestions}
-                </p>
-              )}
+              <p className="text-sm text-vct-gray">
+                Press Conference{(totalQuestions ?? 0) > 1 ? ` · Q ${questionNumber} of ${totalQuestions}` : ''}
+              </p>
             </div>
 
-            {/* Matchup context header + scrollable body */}
-            <div className="overflow-y-auto flex-1">
-              <MatchupHeader interview={interview} />
-
-              {/* Prompt */}
-              <div className="p-6 bg-vct-darker/50">
-                <blockquote className="border-l-4 border-vct-gray/30 pl-4 text-vct-light leading-relaxed">
-                  {interview.prompt}
-                </blockquote>
+            {/* Scene panel: reporter (left) + subject (right) */}
+            <div className="grid grid-cols-[3fr_2fr] border-b border-vct-gray/20">
+              {/* Reporter column */}
+              <div className="p-4 border-r border-vct-gray/20 flex flex-col gap-2">
+                <p className="text-xs font-medium text-vct-gray/70">🎙️ REPORTER</p>
+                <div className="bg-vct-dark rounded-lg rounded-tl-none p-3">
+                  <p className="text-sm text-vct-light leading-relaxed">"{renderHighlightedQuote(interview.prompt)}"</p>
+                </div>
                 {fanbase !== undefined && (() => {
                   const ctx = getInterviewApprovalContext(fanbase);
                   if (!ctx) return null;
                   const isLow = fanbase < 40;
                   return (
-                    <p className={`mt-3 text-xs ${isLow ? 'text-red-400/80' : 'text-green-400/80'}`}>
+                    <p className={`text-xs ${isLow ? 'text-red-400/80' : 'text-green-400/80'}`}>
                       👥 {ctx}
                     </p>
                   );
                 })()}
               </div>
+              {/* Subject column */}
+              <div className="p-4 flex flex-col items-center justify-center gap-2 text-center">
+                {subjectImageUrl ? (
+                  <GameImage
+                    src={subjectImageUrl}
+                    alt={subjectLabel}
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover flex-shrink-0"
+                    fallbackClassName="w-16 h-16 md:w-20 md:h-20 rounded-full flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-vct-darker border border-vct-gray/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl font-bold text-vct-gray">{subjectInitial}</span>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-bold text-vct-light">{subjectLabel}</p>
+                  <p className="text-xs text-vct-gray">
+                    {interview.subjectType === 'manager' ? 'Manager' : interview.subjectType === 'coach' ? 'Head Coach' : 'Player'}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-              <div className="h-px bg-vct-gray/20" />
+            {/* Matchup context header + scrollable body */}
+            <div className="overflow-y-auto flex-1">
+              <MatchupHeader interview={interview} />
 
               {/* Options — quote-first layout */}
               <div className="p-6 space-y-3">
@@ -398,7 +424,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                     >
                       {/* Quote — primary text */}
                       <p className="text-sm text-vct-light leading-relaxed mb-3">
-                        "{option.quote}"
+                        "{option.quote ? renderHighlightedQuote(option.quote) : ''}"
                       </p>
 
                       {/* Attribution — only on iconic/real-world quotes */}
@@ -421,11 +447,17 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
                         {hints.length > 0 && (
                           <div className="flex items-center gap-2 flex-wrap">
                             {hints.map((hint, i) => (
-                              <span
-                                key={i}
-                                className={`text-xs font-mono ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}
-                              >
-                                {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                              <span key={i} className="relative group/hint">
+                                <span
+                                  className={`text-xs font-mono cursor-help ${hint.arrow === '' ? 'text-purple-400' : hint.positive ? 'text-green-400' : 'text-red-400'}`}
+                                >
+                                  {hint.icon} {hint.label}{hint.arrow ? ` ${hint.arrow}` : ''}
+                                </span>
+                                {EFFECT_TOOLTIP[hint.label] && (
+                                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs bg-vct-darker border border-vct-gray/30 rounded whitespace-nowrap opacity-0 group-hover/hint:opacity-100 transition-opacity pointer-events-none z-10">
+                                    {EFFECT_TOOLTIP[hint.label]}
+                                  </span>
+                                )}
                               </span>
                             ))}
                           </div>

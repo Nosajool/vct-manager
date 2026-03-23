@@ -118,7 +118,9 @@ function runAutoPrepVeto(
 
     if (entry.team === 'player') {
       if (entry.action === 'ban') {
-        chosenMap = pickFromList(playerBanPriority, available);
+        // Counter-ban: target opponent's strongest maps first, fall back to own weakest
+        const counterBanTarget = opponentStrongest.find((m) => available.includes(m));
+        chosenMap = counterBanTarget ?? pickFromList(playerBanPriority, available);
         teamId = playerTeamId;
         available = available.filter((m) => m !== chosenMap);
       } else {
@@ -149,7 +151,8 @@ function runAutoPrepVeto(
 function runAutoAgentSelection(
   maps: string[],
   players: Player[],
-  prefs: Record<string, PlayerAgentPreferences>
+  prefs: Record<string, PlayerAgentPreferences>,
+  currentPatch: MetaPatch | null = null
 ): Record<string, Record<string, string>> {
   const allAgents = Object.values(COMPOSITION_CONSTANTS.AGENTS_BY_ROLE).flat();
   const result: Record<string, Record<string, string>> = {};
@@ -157,6 +160,7 @@ function runAutoAgentSelection(
   for (const mapName of maps) {
     const assignment: Record<string, string> = {};
     const taken = new Set<string>();
+    const metaRankings = getMetaAgentRankings(mapName, currentPatch);
 
     // Sort: players with fewer preferred agents go first (less flexible = higher priority)
     const sorted = [...players].sort((a, b) => {
@@ -170,14 +174,22 @@ function runAutoAgentSelection(
       const preferred = playerPrefs?.preferredAgents ?? [];
 
       // Try preferred agents in order
-      const pick = preferred.find((a) => !taken.has(a))
-        // Fallback: any agent in their primary role
-        ?? (playerPrefs?.primaryRole
-            ? COMPOSITION_CONSTANTS.AGENTS_BY_ROLE[playerPrefs.primaryRole]?.find((a) => !taken.has(a))
-            : undefined)
-        // Last resort: any unused agent
-        ?? allAgents.find((a) => !taken.has(a))
-        ?? 'Jett';
+      const preferredPick = preferred.find((a) => !taken.has(a));
+
+      // Fallback: best meta agent in their primary role
+      const roleAgents = playerPrefs?.primaryRole
+        ? [...(COMPOSITION_CONSTANTS.AGENTS_BY_ROLE[playerPrefs.primaryRole] ?? [])]
+            .sort((a, b) => metaRankings.indexOf(a) - metaRankings.indexOf(b))
+        : [];
+      const rolePick = roleAgents.find((a) => !taken.has(a));
+
+      // Last resort: best meta agent from all agents
+      const metaSortedAll = [...allAgents].sort(
+        (a, b) => metaRankings.indexOf(a) - metaRankings.indexOf(b)
+      );
+      const anyPick = metaSortedAll.find((a) => !taken.has(a));
+
+      const pick = preferredPick ?? rolePick ?? anyPick ?? 'Jett';
 
       assignment[player.id] = pick;
       taken.add(pick);
@@ -978,7 +990,7 @@ export function PreMatchPrepModal({
       playerTeam.mapPool,
       opponentTeam.mapPool
     );
-    const autoAgents = runAutoAgentSelection(autoMaps, playerTeamPlayers, playerAgentPrefs);
+    const autoAgents = runAutoAgentSelection(autoMaps, playerTeamPlayers, playerAgentPrefs, currentPatch ?? null);
     setSelectedMaps(autoMaps);
     setVetoLog(autoLog);
     setAgentAssignments(autoAgents);

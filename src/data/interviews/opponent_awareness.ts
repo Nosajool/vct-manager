@@ -465,12 +465,12 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "You've had history with players on that team from earlier in your career. What does tonight mean?",
+    prompt: "You've had history with {rivalPlayerName} from earlier in your career. What does tonight mean?",
     options: [
       {
         tone: 'TRASH_TALK',
         label: "Welcome to tier 1",
-        quote: "Owned him in tier 2. Welcome to tier 1.",
+        quote: "Owned {rivalPlayerName} in tier 2. Welcome to tier 1.",
         personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2 },
         effects: { hype: 5, rivalryDelta: 5, fanbase: 2, dramaChance: 12 },
       },
