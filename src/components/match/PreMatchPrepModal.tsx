@@ -173,8 +173,13 @@ function runAutoAgentSelection(
       const playerPrefs = prefs[player.id] ?? player.agentPreferences;
       const preferred = playerPrefs?.preferredAgents ?? [];
 
-      // Try preferred agents in order
-      const preferredPick = preferred.find((a) => !taken.has(a));
+      // Try preferred agents, ranked by meta strength on this map
+      const metaSortedPreferred = [...preferred].sort((a, b) => {
+        const aIdx = metaRankings.indexOf(a);
+        const bIdx = metaRankings.indexOf(b);
+        return (aIdx === -1 ? metaRankings.length : aIdx) - (bIdx === -1 ? metaRankings.length : bIdx);
+      });
+      const preferredPick = metaSortedPreferred.find((a) => !taken.has(a));
 
       // Fallback: best meta agent in their primary role
       const roleAgents = playerPrefs?.primaryRole
