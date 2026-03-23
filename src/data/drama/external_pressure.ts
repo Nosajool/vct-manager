@@ -173,7 +173,7 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
       {
         id: 'crisis_results_only',
         text: 'Let results speak',
-        description: 'Stay silent — wins will fix this faster than words',
+        description: 'Stay silent. Wins will fix this faster than words',
         effects: [
           {
             target: 'player_morale',
@@ -245,12 +245,12 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
             flagDuration: 10,
           },
         ],
-        outcomeText: 'You own it. Now there\'s nowhere to hide — the team feels the weight of every match.',
+        outcomeText: 'You own it. Now there\'s nowhere to hide. The team feels the weight of every match.',
       },
       {
         id: 'expectations_reset',
         text: 'Reset expectations',
-        description: 'Publicly recalibrate — remind fans every team goes through rough patches',
+        description: 'Publicly recalibrate. Remind fans every team goes through rough patches',
         effects: [
           {
             target: 'player_morale',

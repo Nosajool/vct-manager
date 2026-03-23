@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   // ==========================================================================
-  // POST_MATCH — WIN, double controller composition
+  // POST_MATCH. WIN, double controller composition
   // ==========================================================================
   {
     id: 'post_comp_double_controller',
@@ -17,33 +17,33 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Map control was everything',
-        quote: "Map control was everything on that map. Two controllers gave us total vision denial — the opponent couldn't set up a single execute without us knowing exactly where they were.",
+        quote: "Map control was everything on that map. Two controllers gave us total vision denial. The opponent couldn't set up a single execute without us knowing exactly where they were.",
         effects: { hype: 5, fanbase: 3, morale: 2 },
       },
       {
         tone: 'HUMBLE',
         label: 'Credit to the players',
-        quote: "The players suggested it, honestly. It worked — credit to them for reading the meta and having the confidence to run something unconventional.",
+        quote: "The players suggested it, honestly. It worked. Credit to them for reading the meta and having the confidence to run something unconventional.",
         effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: 'Comp matters less than execution',
-        quote: "The comp matters less than the execution. Our utility usage was what won rounds — any lineup works when the team is disciplined about it.",
+        quote: "The comp matters less than the execution. Our utility usage was what won rounds. Any lineup works when the team is disciplined about it.",
         effects: { fanbase: 2, morale: 2 },
       },
     ],
   },
 
   // ==========================================================================
-  // POST_MATCH — LOSS, no initiator composition
+  // POST_MATCH. LOSS, no initiator composition
   // ==========================================================================
   {
     id: 'post_comp_no_initiator',
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
-    prompt: "You had no initiator today — no flashes, no recon. Did that hurt your ability to gather info?",
+    prompt: "You had no initiator today. No flashes, no recon. Did that hurt your ability to gather info?",
     conditions: [
       { type: 'composition_type', compositionPattern: 'no_initiator' },
     ],
@@ -57,7 +57,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Calculated risk, bad reads',
-        quote: "It was a calculated risk. The reads just weren't there today — that's not the comp's fault. We'd make the same call again with better execution.",
+        quote: "It was a calculated risk. The reads just weren't there today. That's not the comp's fault. We'd make the same call again with better execution.",
         effects: { morale: -1, fanbase: 1 },
       },
       {
@@ -70,7 +70,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // POST_MATCH — ANY, player on off-preferred agent
+  // POST_MATCH. ANY, player on off-preferred agent
   // ==========================================================================
   {
     id: 'post_comp_off_role',
@@ -90,27 +90,27 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Still finding the right fit',
-        quote: "We're still finding the right fit for everyone. It's a work in progress — the player committed fully and that's all I can ask for at this stage.",
+        quote: "We're still finding the right fit for everyone. It's a work in progress. The player committed fully and that's all I can ask for at this stage.",
         effects: { morale: 2, fanbase: 2, sponsorTrust: 1 },
       },
       {
         tone: 'DEFLECTIVE',
         label: 'Agent picks are internal',
-        quote: "Agent picks are an internal decision — what matters is how we played around it. I don't want to over-explain our prep process publicly.",
+        quote: "Agent picks are an internal decision. What matters is how we played around it. I don't want to over-explain our prep process publicly.",
         effects: { fanbase: 1, morale: 1 },
       },
     ],
   },
 
   // ==========================================================================
-  // POST_MATCH — WIN, aggressive playstyle
+  // POST_MATCH. WIN, aggressive playstyle
   // ==========================================================================
   {
     id: 'post_strat_aggressive_win',
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'win',
-    prompt: "You played with incredible pace today — full-sends, constant pressure. Is that sustainable?",
+    prompt: "You played with incredible pace today. Full-sends, constant pressure. Is that sustainable?",
     conditions: [
       { type: 'team_playstyle', playstyle: 'aggressive' },
     ],
@@ -118,7 +118,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "That's our identity",
-        quote: "That's our identity. Teams can't handle sustained aggression when it's executed correctly. We don't slow down — we make opponents adapt to us.",
+        quote: "That's our identity. Teams can't handle sustained aggression when it's executed correctly. We don't slow down. We make opponents adapt to us.",
         effects: { hype: 6, fanbase: 4, morale: 3 },
       },
       {
@@ -137,7 +137,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // POST_MATCH — LOSS, aggressive playstyle
+  // POST_MATCH. LOSS, aggressive playstyle
   // ==========================================================================
   {
     id: 'post_strat_aggressive_loss',
@@ -152,26 +152,26 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'We were too readable',
-        quote: "We were too readable. We pushed the same timings too often and they had the answer every time. That's on my preparation — I need to give the team more variety.",
+        quote: "We were too readable. We pushed the same timings too often and they had the answer every time. That's on my preparation. I need to give the team more variety.",
         effects: { morale: -2, fanbase: 2, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: 'Aggression was right, fundamentals weren\'t',
-        quote: "The aggression was right — our fundamentals just didn't hold up under pressure. When individual plays miss, aggression looks reckless. It wasn't the strategy.",
+        quote: "The aggression was right. Our fundamentals just didn't hold up under pressure. When individual plays miss, aggression looks reckless. It wasn't the strategy.",
         effects: { morale: -1, fanbase: 1 },
       },
       {
         tone: 'HUMBLE',
         label: 'Back to the drawing board',
-        quote: "They anti-stratted us and we didn't adapt quickly enough. We need to be less predictable. Back to the drawing board — that's competitive Valorant.",
+        quote: "They anti-stratted us and we didn't adapt quickly enough. We need to be less predictable. Back to the drawing board. That's competitive Valorant.",
         effects: { morale: -1, fanbase: 2, sponsorTrust: 2 },
       },
     ],
   },
 
   // ==========================================================================
-  // PRE_MATCH — aggressive playstyle
+  // PRE_MATCH. Aggressive playstyle
   // ==========================================================================
   {
     id: 'pre_strat_aggressive',
@@ -185,13 +185,13 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Pressure creates mistakes',
-        quote: "Pressure creates mistakes. We force the pace and let opponents crumble. The bigger the stage, the more they hesitate — and that's when we punish.",
+        quote: "Pressure creates mistakes. We force the pace and let opponents crumble. The bigger the stage, the more they hesitate. And that's when we punish.",
         effects: { hype: 5, fanbase: 3, morale: 3 },
       },
       {
         tone: 'HUMBLE',
         label: 'Smart aggression, not blind aggression',
-        quote: "We pick our spots. Blind aggression doesn't win matches — smart aggression does. The tempo is a tool, not a plan.",
+        quote: "We pick our spots. Blind aggression doesn't win matches. Smart aggression does. The tempo is a tool, not a plan.",
         effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
       },
       {
@@ -204,7 +204,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // PRE_MATCH — active patch (meta shift)
+  // PRE_MATCH. Active patch (meta shift)
   // ==========================================================================
   {
     id: 'pre_patch_notes_adaptation',
@@ -218,7 +218,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'We adapt faster than anyone',
-        quote: "Meta shifts are where preparation separates contenders from pretenders. We've already rebuilt our approach — I like our position going into this.",
+        quote: "Meta shifts are where preparation separates contenders from pretenders. We've already rebuilt our approach. I like our position going into this.",
         effects: { hype: 5, morale: 3, fanbase: 2 },
       },
       {
@@ -230,14 +230,14 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Patches affect everyone equally',
-        quote: "Every team is dealing with the same patch. We're not going to overthink it — our fundamentals don't change based on ability tweaks.",
+        quote: "Every team is dealing with the same patch. We're not going to overthink it. Our fundamentals don't change based on ability tweaks.",
         effects: { morale: 2, fanbase: 1 },
       },
     ],
   },
 
   // ==========================================================================
-  // PRE_MATCH — risky economy discipline
+  // PRE_MATCH. Risky economy discipline
   // ==========================================================================
   {
     id: 'pre_strat_risky_economy',
@@ -251,33 +251,33 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "We don't play scared",
-        quote: "We don't play scared. A force that wins disrupts their entire game plan — suddenly their full-buy round means nothing. Momentum is worth more than credits.",
+        quote: "We don't play scared. A force that wins disrupts their entire game plan. Suddenly their full-buy round means nothing. Momentum is worth more than credits.",
         effects: { hype: 5, fanbase: 3, morale: 3 },
       },
       {
         tone: 'HUMBLE',
         label: 'Trying to be smarter about it',
-        quote: "I'll be honest — we're trying to be smarter about it. Force-buys are a last resort. We're working on discipline, but we don't want to play predictably either.",
+        quote: "I'll be honest. We're trying to be smarter about it. Force-buys are a last resort. We're working on discipline, but we don't want to play predictably either.",
         effects: { morale: 2, fanbase: 2, sponsorTrust: 2 },
       },
       {
         tone: 'AGGRESSIVE',
         label: 'Passive play loses tempo',
-        quote: "You control the game by staying aggressive. Playing for a full-buy every round gives opponents the rhythm. We dictate the pace — even on a pistol.",
+        quote: "You control the game by staying aggressive. Playing for a full-buy every round gives opponents the rhythm. We dictate the pace. Even on a pistol.",
         effects: { hype: 4, fanbase: 3, morale: 2, dramaChance: 8 },
       },
     ],
   },
 
   // ==========================================================================
-  // POST_MATCH — LOSS, patch active + player off preferred agent
+  // POST_MATCH. LOSS, patch active + player off preferred agent
   // ==========================================================================
   {
     id: 'post_patch_star_player_nerfed',
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'loss',
-    prompt: "One of your players wasn't on their usual agent today — some say the patch forced it. Did that affect your performance?",
+    prompt: "One of your players wasn't on their usual agent today. Some say the patch forced it. Did that affect your performance?",
     conditions: [
       { type: 'flag_active', flag: 'patch_active' },
       { type: 'player_off_preferred_agent' },
@@ -286,7 +286,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: "We weren't ready for the change",
-        quote: "Truthfully, we weren't fully adapted yet. The patch took one of our best tools away and we haven't found a clean replacement. That's on the coaching staff — I need to give the team better options.",
+        quote: "Truthfully, we weren't fully adapted yet. The patch took one of our best tools away and we haven't found a clean replacement. That's on the coaching staff. I need to give the team better options.",
         effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
       },
       {
@@ -305,14 +305,14 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // POST_MATCH — Harbor played (Cove Incident arc)
+  // POST_MATCH. Harbor played (Cove Incident arc)
   // ==========================================================================
   {
     id: 'post_harbor_cove_incident',
     context: 'POST_MATCH',
     subjectType: 'manager',
     matchOutcome: 'any',
-    prompt: "One of your players ran Harbor today, and the community is already calling it 'the Cove moment.' Was that call intentional — and are you prepared to defend it?",
+    prompt: "One of your players ran Harbor today, and the community is already calling it 'the Cove moment.' Was that call intentional. And are you prepared to defend it?",
     conditions: [
       { type: 'agent_played', agentName: 'Harbor' },
       { type: 'flag_not_active', flag: 'cove_interview_cooldown' },
@@ -334,7 +334,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "It was a read that didn't fully land",
-        quote: "Look — Harbor on that map was a calculated read on their setup. Was it the cleanest execution? No. Is the player being roasted for it? Apparently yes. We'll reflect, we'll adjust. The player worked hard and that matters.",
+        quote: "Look. Harbor on that map was a calculated read on their setup. Was it the cleanest execution? No. Is the player being roasted for it? Apparently yes. We'll reflect, we'll adjust. The player worked hard and that matters.",
         effects: {
           morale: 3,
           fanbase: 4,
@@ -363,7 +363,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // POST_MATCH — WIN, patch active
+  // POST_MATCH. WIN, patch active
   // ==========================================================================
   {
     id: 'post_patch_win_meta_adapted',
@@ -378,7 +378,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "We live in the new meta",
-        quote: "We don't complain about patches — we exploit them. Our team found the updated power picks faster than anyone. That's a competitive edge we'll keep pressing.",
+        quote: "We don't complain about patches. We exploit them. Our team found the updated power picks faster than anyone. That's a competitive edge we'll keep pressing.",
         effects: { hype: 6, morale: 4, fanbase: 4 },
       },
       {
@@ -402,7 +402,7 @@ const AGENT_STRATEGY_TEMPLATES_RAW: InterviewTemplate[] = [
 // ==========================================================================
 const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
   // ==========================================================================
-  // POST_MATCH — player has hit 90+ mastery on main agent
+  // POST_MATCH. Player has hit 90+ mastery on main agent
   // ==========================================================================
   {
     id: 'post_agent_mastery_milestone',
@@ -416,7 +416,7 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Mastery is identity",
-        quote: "When a player owns an agent that completely — when the kit is an extension of their instincts — it changes how opponents have to prepare. You can't just ban an agent and neutralize a player at that level of mastery.",
+        quote: "When a player owns an agent that completely. When the kit is an extension of their instincts. It changes how opponents have to prepare. You can't just ban an agent and neutralize a player at that level of mastery.",
         effects: { hype: 6, fanbase: 4, morale: 3 },
       },
       {
@@ -435,7 +435,7 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // POST_MATCH — LOSS, patch forced off high-mastery agent
+  // POST_MATCH. LOSS, patch forced off high-mastery agent
   // ==========================================================================
   {
     id: 'post_mastery_forced_off_agent',
@@ -452,26 +452,26 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: "We over-relied on that identity",
-        quote: "That's on me. I built too much of our game around one player's agent identity and didn't prepare alternatives deeply enough. When the meta moved, we were exposed. We need to rebuild that mastery on new agents — fast.",
+        quote: "That's on me. I built too much of our game around one player's agent identity and didn't prepare alternatives deeply enough. When the meta moved, we were exposed. We need to rebuild that mastery on new agents. Fast.",
         effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
       },
       {
         tone: 'HUMBLE',
         label: "Mastery takes time to transfer",
-        quote: "What took hundreds of matches to build doesn't transfer overnight. We're asking the player to rebuild something that took a full year — in two weeks. The team is handling it better than I could've hoped, but today showed the gap.",
+        quote: "What took hundreds of matches to build doesn't transfer overnight. We're asking the player to rebuild something that took a full year. In two weeks. The team is handling it better than I could've hoped, but today showed the gap.",
         effects: { morale: -2, fanbase: 3, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: "The agent isn't dead, just different",
-        quote: "The agent isn't dead — the patch changed the ceiling, not the floor. We'll adjust the playstyle around it. The player's mastery is still there. Today was about reads, not the agent.",
+        quote: "The agent isn't dead. The patch changed the ceiling, not the floor. We'll adjust the playstyle around it. The player's mastery is still there. Today was about reads, not the agent.",
         effects: { morale: -1, fanbase: 2 },
       },
     ],
   },
 
   // ==========================================================================
-  // POST_MATCH — LOSS, players on low-mastery agents
+  // POST_MATCH. LOSS, players on low-mastery agents
   // ==========================================================================
   {
     id: 'post_low_mastery_comp_loss',
@@ -487,7 +487,7 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: "We asked too much too soon",
-        quote: "We asked players to perform at a high level on agents they haven't fully internalized. The mastery gap was real — you could see it in the decision-making under pressure. That's a coaching problem. I need to give the team more runway on new picks.",
+        quote: "We asked players to perform at a high level on agents they haven't fully internalized. The mastery gap was real. You could see it in the decision-making under pressure. That's a coaching problem. I need to give the team more runway on new picks.",
         effects: { morale: -3, fanbase: 3, sponsorTrust: 2 },
       },
       {
@@ -499,14 +499,14 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "Mechanics were there, reads weren't",
-        quote: "The mechanics were fine — it was the game sense that lagged. When you're not fully comfortable, you rely on muscle memory and it wasn't there for the reads. That'll come with more reps.",
+        quote: "The mechanics were fine. It was the game sense that lagged. When you're not fully comfortable, you rely on muscle memory and it wasn't there for the reads. That'll come with more reps.",
         effects: { morale: -1, fanbase: 1 },
       },
     ],
   },
 
   // ==========================================================================
-  // PRE_MATCH — player on signature agent streak (6+ consecutive)
+  // PRE_MATCH. Player on signature agent streak (6+ consecutive)
   // ==========================================================================
   {
     id: 'pre_signature_agent_pressure',
@@ -519,20 +519,20 @@ const AGENT_MASTERY_TEMPLATES_RAW: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "Let them prepare — we'll still win",
-        quote: "You can gameplan around the agent all you want. When mastery is that deep, you're not just countering a pick — you're trying to counter a player's instincts. Good luck with that.",
+        label: "Let them prepare. We'll still win",
+        quote: "You can gameplan around the agent all you want. When mastery is that deep, you're not just countering a pick. You're trying to counter a player's instincts. Good luck with that.",
         effects: { hype: 6, fanbase: 4, morale: 3, dramaChance: 8 },
       },
       {
         tone: 'HUMBLE',
         label: "Diversifying the threat",
-        quote: "It's something we're actively working on. The player has invested heavily in this agent — that mastery is real. But we don't want to become a one-dimensional threat. We're building depth.",
+        quote: "It's something we're actively working on. The player has invested heavily in this agent. That mastery is real. But we don't want to become a one-dimensional threat. We're building depth.",
         effects: { morale: 3, fanbase: 3, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: "Readable to who?",
-        quote: "I don't think the concern is as large as outsiders make it. Predictability matters less when the execution is elite. Every team knows what we're going to do — very few can stop it.",
+        quote: "I don't think the concern is as large as outsiders make it. Predictability matters less when the execution is elite. Every team knows what we're going to do. Very few can stop it.",
         effects: { hype: 4, fanbase: 3, morale: 2 },
       },
     ],

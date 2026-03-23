@@ -6,7 +6,7 @@ export const FREE_AGENT_PURSUIT_EVENTS: DramaEventTemplate[] = [
     category: 'free_agent_pursuit',
     severity: 'minor',
     title: 'Veteran Eyes Your Team',
-    description: 'Word is getting around that {playerName} is open to a comeback — and they\'ve been watching your results.',
+    description: 'Word is getting around that {playerName} is open to a comeback. And they\'ve been watching your results.',
     conditions: [
       { type: 'team_win_streak', streakLength: 2 },
       { type: 'random_chance', chance: 35, playerSelector: 'any' },

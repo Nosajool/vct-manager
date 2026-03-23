@@ -91,7 +91,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -3 },
           { target: 'clear_flag', flag: 'visa_application_pending_{playerId}' },
         ],
-        outcomeText: "The org goes public — fans rally around the player, but admin scrutiny increases and sponsors are watching closely.",
+        outcomeText: "The org goes public. Fans rally around the player, but admin scrutiny increases and sponsors are watching closely.",
       },
     ],
   },
@@ -101,7 +101,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
     category: 'visa_arc',
     severity: 'major',
     title: 'Last-Minute Visa Approval!',
-    description: "Breaking news — {playerName}'s visa has been approved. They can rejoin the active roster immediately. How do you handle the return?",
+    description: "Breaking news. {playerName}'s visa has been approved. They can rejoin the active roster immediately. How do you handle the return?",
     conditions: [
       { type: 'flag_active', flag: 'visa_delayed_{playerId}', playerSelector: 'condition_match' },
       { type: 'flag_not_active', flag: 'visa_tournament_missed_{playerId}', playerSelector: 'condition_match' },
@@ -130,7 +130,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       {
         id: 'reintegrate_quietly',
         text: 'Bring them back quietly',
-        description: 'No fanfare — just get them back in the rotation without disrupting the team rhythm.',
+        description: 'No fanfare. Just get them back in the rotation without disrupting the team rhythm.',
         effects: [
           { target: 'move_to_active', effectPlayerSelector: 'triggering' },
           { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
@@ -144,7 +144,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       {
         id: 'credit_the_substitute',
         text: 'Welcome them back while crediting the substitute',
-        description: "Balance the moment — honor both the returning player and the substitute who stepped up.",
+        description: "Balance the moment. Honor both the returning player and the substitute who stepped up.",
         effects: [
           { target: 'move_to_active', effectPlayerSelector: 'triggering' },
           { target: 'clear_flag', flag: 'visa_delayed_{playerId}' },
@@ -196,7 +196,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       {
         id: 'public_apology_support',
         text: 'Issue public apology and support the player',
-        description: 'Put the player front and center — the org failed them, not the other way around.',
+        description: 'Put the player front and center. The org failed them, not the other way around.',
         effects: [
           { target: 'set_flag', flag: 'visa_public_apology', flagDuration: 14 },
           { target: 'team_sponsor_trust', delta: -8 },
@@ -227,7 +227,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Substitute Steps Up',
-    description: "The substitute lineup just secured a win. The emergency decision is looking inspired — the team's depth is showing.",
+    description: "The substitute lineup just secured a win. The emergency decision is looking inspired. The team's depth is showing.",
     conditions: [
       { type: 'flag_active', flag: 'substitute_taking_over_{playerId}', playerSelector: 'condition_match' },
       { type: 'team_win_streak', streakLength: 1 },
@@ -288,7 +288,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       {
         id: 'keep_internal_no_comment',
         text: 'Keep it internal, no further comment',
-        description: "Don't feed the story — handle it privately and let it blow over.",
+        description: "Don't feed the story. Handle it privately and let it blow over.",
         effects: [
           { target: 'team_sponsor_trust', delta: -8 },
           { target: 'team_chemistry', delta: -3 },
@@ -325,7 +325,7 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'lean_into_media',
-        text: 'Lean into the narrative — ride the wave',
+        text: 'Lean into the narrative. Ride the wave',
         description: 'Amplify the underdog story publicly and let the momentum build.',
         effects: [
           { target: 'team_hype', delta: 8 },
@@ -337,26 +337,26 @@ export const VISA_ARC_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'shield_team_from_noise',
-        text: 'Shield the team — stay focused internally',
+        text: 'Shield the team. Stay focused internally',
         description: 'Keep the narrative out of the locker room and protect team concentration.',
         effects: [
           { target: 'team_chemistry', delta: 6 },
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
           { target: 'clear_flag', flag: 'team_underdog_refocus' },
         ],
-        outcomeText: "You keep the energy inside the building. The team stays grounded and the chemistry tightens — this group knows what they're doing.",
+        outcomeText: "You keep the energy inside the building. The team stays grounded and the chemistry tightens. This group knows what they're doing.",
       },
       {
         id: 'honor_missing_player',
         text: 'Honor the missing player publicly',
-        description: 'Make sure the absent player is part of the story — this win is for them.',
+        description: 'Make sure the absent player is part of the story. This win is for them.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 10 },
           { target: 'team_chemistry', delta: 8 },
           { target: 'set_flag', flag: 'underdog_narrative_viral', flagDuration: 14 },
           { target: 'clear_flag', flag: 'team_underdog_refocus' },
         ],
-        outcomeText: "You dedicate the moment to the missing player. The entire team feels it — and the gesture resonates far beyond the locker room.",
+        outcomeText: "You dedicate the moment to the missing player. The entire team feels it. And the gesture resonates far beyond the locker room.",
       },
     ],
   },

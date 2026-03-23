@@ -24,7 +24,7 @@ const RAW_ORG_CULTURE_TEMPLATES: InterviewTemplate[] = [
         tone: 'HUMBLE',
         label: "It's just the right thing",
         quote:
-          "Honestly, it wasn't a decision — it was obvious. These players are far from home for most of the year. The least we can do is help when it matters.",
+          "Honestly, it wasn't a decision. It was obvious. These players are far from home for most of the year. The least we can do is help when it matters.",
         effects: { fanbase: 10, morale: 3 },
       },
       {
@@ -49,7 +49,7 @@ const RAW_ORG_CULTURE_TEMPLATES: InterviewTemplate[] = [
         tone: 'CONFIDENT',
         label: "No regrets",
         quote:
-          "Flights get delayed. That's travel. We don't regret the decision for a second — the team's mental health matters more than a single scrim session.",
+          "Flights get delayed. That's travel. We don't regret the decision for a second. The team's mental health matters more than a single scrim session.",
         effects: { morale: 4, fanbase: 5 },
       },
       {
@@ -113,14 +113,14 @@ const RAW_ORG_CULTURE_TEMPLATES: InterviewTemplate[] = [
         tone: 'CONFIDENT',
         label: 'We invest in people',
         quote:
-          "We invest in our players as people first — their mental health, their families, their lives outside the game. The wins follow from that. It's not complicated.",
+          "We invest in our players as people first. Their mental health, their families, their lives outside the game. The wins follow from that. It's not complicated.",
         effects: { fanbase: 10, sponsorTrust: 5, morale: 5 },
       },
       {
         tone: 'HUMBLE',
         label: "We're just doing what's right",
         quote:
-          "I don't think we're doing anything special — we're just doing what any decent employer should do. The bar shouldn't be that low, but here we are.",
+          "I don't think we're doing anything special. We're just doing what any decent employer should do. The bar shouldn't be that low, but here we are.",
         effects: { fanbase: 8, hype: 5 },
       },
       {

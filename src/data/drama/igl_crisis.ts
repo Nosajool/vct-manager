@@ -25,7 +25,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'back_igl_publicly',
-        text: "Back {playerName} publicly — leadership needs stability.",
+        text: "Back {playerName} publicly. Leadership needs stability.",
         description: 'Publicly support the IGL to maintain team stability.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 8 },
@@ -37,7 +37,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'private_warning',
-        text: "Warn {playerName} privately — improve or we reconsider.",
+        text: "Warn {playerName} privately. Improve or we reconsider.",
         description: 'Give the IGL a private ultimatum to improve.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -5 },
@@ -48,7 +48,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'open_discussion',
-        text: 'Open the floor — let players challenge calls constructively.',
+        text: 'Open the floor. Let players challenge calls constructively.',
         description: 'Allow the team to discuss calling openly.',
         effects: [
           { target: 'team_chemistry', delta: 5 },
@@ -78,7 +78,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'ignore_noise',
-        text: "Ignore the noise — social media doesn't call our strats.",
+        text: "Ignore the noise. Social media doesn't call our strats.",
         description: 'Dismiss the criticism publicly and focus on results.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 3 },
@@ -121,7 +121,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Leadership Decision',
     description:
-      "Management must decide whether {playerName} continues as IGL. The team is at a crossroads — stick with current leadership or make a change?",
+      "Management must decide whether {playerName} continues as IGL. The team is at a crossroads. Stick with current leadership or make a change?",
     conditions: [
       { type: 'flag_active', flag: 'igl_replacement_considered', playerSelector: 'igl_player' },
     ],
@@ -140,7 +140,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'igl_redemption_path', flagDuration: 30 },
         ],
         outcomeText:
-          "You commit to {playerName}. They respond with renewed determination — it's do or die now.",
+          "You commit to {playerName}. They respond with renewed determination. It's do or die now.",
       },
       {
         id: 'reassign_igl',
@@ -182,7 +182,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Silencing the Doubters',
     description:
-      "After weeks of scrutiny, {playerName} has led the team to crucial victories. The narrative has shifted — critics are now calling the IGL a 'different player.'",
+      "After weeks of scrutiny, {playerName} has led the team to crucial victories. The narrative has shifted. Critics are now calling the IGL a 'different player.'",
     conditions: [
       { type: 'flag_active', flag: 'igl_redemption_path', playerSelector: 'igl_player' },
       { type: 'team_win_streak', streakLength: 2 },
@@ -205,7 +205,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Management Backing Under Scrutiny',
     description:
-      "The team has dropped consecutive matches after management publicly staked its reputation on {playerName}. The endorsement is now a liability — critics are circling and internal doubts are mounting.",
+      "The team has dropped consecutive matches after management publicly staked its reputation on {playerName}. The endorsement is now a liability. Critics are circling and internal doubts are mounting.",
     conditions: [
       { type: 'flag_active', flag: 'igl_backed_by_management' },
       { type: 'team_loss_streak', streakLength: 2 },
@@ -217,7 +217,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'double_down_endorsement',
-        text: "Double down — we stand behind {playerName}.",
+        text: "Double down. We stand behind {playerName}.",
         description: 'Publicly reaffirm the endorsement despite the losses.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 8 },
@@ -231,7 +231,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'walk_back_privately',
-        text: "Walk it back — have a quiet conversation with {playerName}.",
+        text: "Walk it back. Have a quiet conversation with {playerName}.",
         description: 'Quietly signal that the endorsement has limits without making a public statement.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -8 },
@@ -264,7 +264,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Shared Calling Clicks',
     description:
-      "Two consecutive wins while operating with the shared calling structure — the collaborative approach is working. How does the team lock this in?",
+      "Two consecutive wins while operating with the shared calling structure. The collaborative approach is working. How does the team lock this in?",
     conditions: [
       { type: 'flag_active', flag: 'shared_caller_experiment' },
       { type: 'team_win_streak', streakLength: 2 },
@@ -274,7 +274,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'codify_as_policy',
-        text: 'Make it official — codify shared calling as the system.',
+        text: 'Make it official. Codify shared calling as the system.',
         description: 'Formally commit to a collaborative calling structure going forward.',
         effects: [
           { target: 'team_chemistry', delta: 8 },
@@ -283,7 +283,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
           { target: 'clear_flag', flag: 'shared_caller_experiment' },
         ],
         outcomeText:
-          "The org formally commits to shared calling. Everyone buys in — the team feels ownership over the system, and the chemistry shows it.",
+          "The org formally commits to shared calling. Everyone buys in. The team feels ownership over the system, and the chemistry shows it.",
       },
       {
         id: 'continue_cautiously',
@@ -307,7 +307,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Shared Calling Creates Confusion',
     description:
-      "Two straight losses with the shared calling structure in place. The lack of a clear authority is starting to hurt — players are stepping on each other mid-round.",
+      "Two straight losses with the shared calling structure in place. The lack of a clear authority is starting to hurt. Players are stepping on each other mid-round.",
     conditions: [
       { type: 'flag_active', flag: 'shared_caller_experiment' },
       { type: 'team_loss_streak', streakLength: 2 },
@@ -345,7 +345,7 @@ export const IGL_CRISIS_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'push_through_experiment',
-        text: 'Push through — the system just needs more time.',
+        text: 'Push through. The system just needs more time.',
         description: "Don't change anything. Trust the process to work itself out.",
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -6 },

@@ -10,7 +10,7 @@ const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     conditions: [{ type: 'flag_active', flag: 'scrim_accuse_public' }],
-    prompt: "You've gone on record claiming your scrim footage was shared with an opponent. That's a serious accusation — what's your evidence?",
+    prompt: "You've gone on record claiming your scrim footage was shared with an opponent. That's a serious accusation. What's your evidence?",
     options: [
       {
         tone: 'CONFIDENT',
@@ -24,7 +24,7 @@ const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Walk it back slightly',
-        quote: "Look, we're concerned about what we observed. We're not pointing fingers at anyone specifically — we just want answers from the league.",
+        quote: "Look, we're concerned about what we observed. We're not pointing fingers at anyone specifically. We just want answers from the league.",
         effects: {
           morale: -3,
           sponsorTrust: 3,
@@ -117,7 +117,7 @@ const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Draw the line clearly',
-        quote: "The line is the same for everyone — you prepare with what you earn. VODs your team played in, film your staff breaks down, knowledge you build. Anything else is a shortcut that eventually costs you more than it gives.",
+        quote: "The line is the same for everyone. You prepare with what you earn. VODs your team played in, film your staff breaks down, knowledge you build. Anything else is a shortcut that eventually costs you more than it gives.",
         effects: {
           morale: 5,
           sponsorTrust: 3,
@@ -133,7 +133,7 @@ const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: 'Call out the culture',
-        quote: "Let's be honest about what's happening in this scene. The gray areas that everyone pretends don't exist — they do exist, and they hurt teams that actually respect the rules.",
+        quote: "Let's be honest about what's happening in this scene. The gray areas that everyone pretends don't exist. They do exist, and they hurt teams that actually respect the rules.",
         effects: {
           hype: 6,
           sponsorTrust: -4,
@@ -165,7 +165,7 @@ const RAW_SCRIM_SHARING_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: '"Then show us"',
-        quote: "If they have screenshots, this conversation ends immediately — put them out. Every day they wait is a day the community should be asking why they're still sitting on them.",
+        quote: "If they have screenshots, this conversation ends immediately. Put them out. Every day they wait is a day the community should be asking why they're still sitting on them.",
         effects: {
           hype: 6,
           dramaChance: 20,

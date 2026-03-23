@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   // ============================================================
-  // PRE_MATCH — no condition
+  // PRE_MATCH. No condition
   // ============================================================
   {
     id: 'pre_map_veto_philosophy',
@@ -14,7 +14,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Dictate the veto',
-        quote: "We know exactly what we want and what we don't. We're not reacting to them — we're making them react to us.",
+        quote: "We know exactly what we want and what we don't. We're not reacting to them. We're making them react to us.",
         effects: { hype: 3 },
       },
       {
@@ -33,7 +33,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // PRE_MATCH — map_pool_played_strong_map
+  // PRE_MATCH. Map_pool_played_strong_map
   // ============================================================
   {
     id: 'pre_map_strong_pick',
@@ -46,26 +46,26 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Embrace the edge',
-        quote: "This is where we do our best work. We've played hundreds of rounds here — I expect us to control the pace from the opening gun.",
+        quote: "This is where we do our best work. We've played hundreds of rounds here. I expect us to control the pace from the opening gun.",
         effects: { hype: 4, morale: 2 },
       },
       {
         tone: 'HUMBLE',
         label: 'Stay grounded',
-        quote: "Playing your own map is never as easy as it looks from the outside. We still have to earn it. But yeah — we feel good about today.",
+        quote: "Playing your own map is never as easy as it looks from the outside. We still have to earn it. But yeah. We feel good about today.",
         effects: { hype: 2, morale: 1 },
       },
       {
         tone: 'RESPECTFUL',
         label: 'Credit the opponent',
-        quote: "They'll have prepped for this. We know that. But we've got more depth on this map than almost anyone — so let's find out.",
+        quote: "They'll have prepped for this. We know that. But we've got more depth on this map than almost anyone. So let's find out.",
         effects: { hype: 2, rivalryDelta: 2 },
       },
     ],
   },
 
   // ============================================================
-  // PRE_MATCH — map_pool_played_weak_map
+  // PRE_MATCH. Map_pool_played_weak_map
   // ============================================================
   {
     id: 'pre_map_weak_forced',
@@ -78,7 +78,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Flip the narrative',
-        quote: "Every map in the pool is a learning opportunity. We've put in the reps this week — I'd rather be tested here than dodge it forever.",
+        quote: "Every map in the pool is a learning opportunity. We've put in the reps this week. I'd rather be tested here than dodge it forever.",
         effects: { hype: 3, morale: 2 },
       },
       {
@@ -97,7 +97,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // PRE_MATCH — map_pool_overall_below
+  // PRE_MATCH. Map_pool_overall_below
   // ============================================================
   {
     id: 'pre_map_pool_depth',
@@ -129,7 +129,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // PRE_MATCH — map_pool_has_scrim_data
+  // PRE_MATCH. Map_pool_has_scrim_data
   // ============================================================
   {
     id: 'pre_map_scrim_prep',
@@ -142,7 +142,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'The prep is there',
-        quote: "We've stress-tested a lot of reads over the past few weeks. The answers are in the system — now it's about executing under pressure.",
+        quote: "We've stress-tested a lot of reads over the past few weeks. The answers are in the system. Now it's about executing under pressure.",
         effects: { hype: 3, morale: 2 },
       },
       {
@@ -161,7 +161,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH win — map_pool_played_weak_map
+  // POST_MATCH win. Map_pool_played_weak_map
   // ============================================================
   {
     id: 'post_win_weak_map',
@@ -175,7 +175,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'The prep paid off',
-        quote: "The prep paid off. We put in serious scrim time and it showed. This was a statement — we don't have weak maps anymore.",
+        quote: "The prep paid off. We put in serious scrim time and it showed. This was a statement. We don't have weak maps anymore.",
         effects: { hype: 5, morale: 3 },
       },
       {
@@ -194,7 +194,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH win — map_pool_played_strong_map
+  // POST_MATCH win. Map_pool_played_strong_map
   // ============================================================
   {
     id: 'post_win_strong_map',
@@ -208,7 +208,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Exactly as planned',
-        quote: "Yeah. We've won on this map in conditions way more hostile than today. Confidence was high — we trusted the preparation.",
+        quote: "Yeah. We've won on this map in conditions way more hostile than today. Confidence was high. We trusted the preparation.",
         effects: { hype: 4, morale: 2 },
       },
       {
@@ -220,14 +220,14 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'Acknowledge the fight',
-        quote: "They pushed us harder than I expected, honestly. Credit to them. But our depth on this map carries — we had answers when it mattered.",
+        quote: "They pushed us harder than I expected, honestly. Credit to them. But our depth on this map carries. We had answers when it mattered.",
         effects: { hype: 3, morale: 2, rivalryDelta: 2 },
       },
     ],
   },
 
   // ============================================================
-  // POST_MATCH win — map_pool_has_scrim_data
+  // POST_MATCH win. Map_pool_has_scrim_data
   // ============================================================
   {
     id: 'post_win_scrim_payoff',
@@ -253,14 +253,14 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Protect the playbook',
-        quote: "I'm not going to break down the film right here. But yeah — that stuff doesn't come from thin air.",
+        quote: "I'm not going to break down the film right here. But yeah. That stuff doesn't come from thin air.",
         effects: { hype: 2 },
       },
     ],
   },
 
   // ============================================================
-  // POST_MATCH loss — map_pool_played_weak_map
+  // POST_MATCH loss. Map_pool_played_weak_map
   // ============================================================
   {
     id: 'post_loss_weak_map',
@@ -293,7 +293,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH loss — map_pool_played_strong_map
+  // POST_MATCH loss. Map_pool_played_strong_map
   // ============================================================
   {
     id: 'post_loss_strong_map',
@@ -307,7 +307,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'On the prep',
-        quote: "We were passive when we shouldn't have been. On our map, we should be dictating the pace. That's on me — we prepped the wrong way.",
+        quote: "We were passive when we shouldn't have been. On our map, we should be dictating the pace. That's on me. We prepped the wrong way.",
         effects: { morale: -3, hype: -3 },
       },
       {
@@ -326,7 +326,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH loss — map_pool_overall_below
+  // POST_MATCH loss. Map_pool_overall_below
   // ============================================================
   {
     id: 'post_loss_pool_depth',
@@ -359,7 +359,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // GENERAL — no condition
+  // GENERAL. No condition
   // ============================================================
   {
     id: 'general_map_pool_state',
@@ -390,7 +390,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH any — map_pool_attribute_below (retakes)
+  // POST_MATCH any. Map_pool_attribute_below (retakes)
   // ============================================================
   {
     id: 'post_attr_retakes',
@@ -404,13 +404,13 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Acknowledge the gap',
-        quote: "Yeah, it's an area we need to develop. Retakes are hard — you're down a player or two in a compressed site. We need cleaner reads and better utility usage.",
+        quote: "Yeah, it's an area we need to develop. Retakes are hard. You're down a player or two in a compressed site. We need cleaner reads and better utility usage.",
         effects: { morale: -1, hype: -1 },
       },
       {
         tone: 'DEFLECTIVE',
         label: 'Context matters',
-        quote: "Some of those rounds, the plants were difficult positions to work with. But yes — retake discipline is something we look at every film session.",
+        quote: "Some of those rounds, the plants were difficult positions to work with. But yes. Retake discipline is something we look at every film session.",
         effects: { hype: -1 },
       },
       {
@@ -423,7 +423,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ============================================================
-  // POST_MATCH any — map_pool_attribute_below (executes)
+  // POST_MATCH any. Map_pool_attribute_below (executes)
   // ============================================================
   {
     id: 'post_attr_executes',
@@ -437,7 +437,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'Execution failures',
-        quote: "That's on me for the setups we gave them. Our executes need to be sharper — the timing, the utility, the entry reads. All of it.",
+        quote: "That's on me for the setups we gave them. Our executes need to be sharper. The timing, the utility, the entry reads. All of it.",
         effects: { morale: -2, hype: -2 },
       },
       {
@@ -449,14 +449,14 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Read-dependent day',
-        quote: "Some of it was them making good reads — give credit. But our fundamentals are sound. A few cleanups and we'll be where we need to be.",
+        quote: "Some of it was them making good reads. Give credit. But our fundamentals are sound. A few cleanups and we'll be where we need to be.",
         effects: { hype: 1 },
       },
     ],
   },
 
   // ============================================================
-  // POST_MATCH any — map_pool_attribute_below (antiStrat)
+  // POST_MATCH any. Map_pool_attribute_below (antiStrat)
   // ============================================================
   {
     id: 'post_attr_antiStrat',
@@ -470,7 +470,7 @@ export const MAP_POOL_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'They out-prepped us',
-        quote: "Credit to them — they came prepared. We leaned too hard on our own system and didn't adjust. That's something we need to get better at.",
+        quote: "Credit to them. They came prepared. We leaned too hard on our own system and didn't adjust. That's something we need to get better at.",
         effects: { morale: -2, hype: -2 },
       },
       {

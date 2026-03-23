@@ -2,7 +2,7 @@ import type { DramaEventTemplate } from '../../types/drama';
 
 export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
-  // BRANCH A — VICTIM ARC: "They're using our strats"
+  // BRANCH A. VICTIM ARC: "They're using our strats"
   // ==========================================================================
 
   {
@@ -10,7 +10,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     category: 'scrim_sharing',
     severity: 'minor',
     title: 'Something Doesn\'t Add Up',
-    description: 'Your coaching staff has flagged something suspicious — the opponent walked into your last match knowing exactly where to be. The timing matches your scrim schedule too closely to be coincidence.',
+    description: 'Your coaching staff has flagged something suspicious. The opponent walked into your last match knowing exactly where to be. The timing matches your scrim schedule too closely to be coincidence.',
     conditions: [
       { type: 'scrim_vod_risk_above', threshold: 45 },
       { type: 'scrim_count_min', threshold: 8 },
@@ -33,7 +33,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     category: 'scrim_sharing',
     severity: 'major',
     title: 'The Evidence Is There',
-    description: 'Your assistant coach has compiled timestamps matching your scrim VOD from last week against a coach who played your next opponent. You have enough to make a case — or enough to quietly change your strats and move on.',
+    description: 'Your assistant coach has compiled timestamps matching your scrim VOD from last week against a coach who played your next opponent. You have enough to make a case. Or enough to quietly change your strats and move on.',
     conditions: [
       { type: 'flag_active', flag: 'scrim_leak_arc_active' },
     ],
@@ -51,13 +51,13 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'scrim_accuse_public', flagDuration: 21 },
           { target: 'clear_flag', flag: 'scrim_leak_arc_active' },
         ],
-        outcomeText: 'You post the clips. Within hours it\'s everywhere — VCT Twitter is talking about nothing else. The community is divided, but everyone knows your name.',
+        outcomeText: 'You post the clips. Within hours it\'s everywhere. VCT Twitter is talking about nothing else. The community is divided, but everyone knows your name.',
         triggersEventId: 'scrim_public_fallout',
       },
       {
         id: 'investigate_quietly',
         text: 'Investigate quietly before escalating',
-        description: 'Compile more evidence before going public — or decide this isn\'t worth it.',
+        description: 'Compile more evidence before going public. Or decide this isn\'t worth it.',
         effects: [
           { target: 'set_flag', flag: 'scrim_investigate_quietly', flagDuration: 14 },
           { target: 'clear_flag', flag: 'scrim_leak_arc_active' },
@@ -67,13 +67,13 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
       {
         id: 'adjust_and_move_on',
         text: 'Adjust your strats and move on',
-        description: 'Don\'t feed the drama — change your playbook and make their intel worthless.',
+        description: 'Don\'t feed the drama. Change your playbook and make their intel worthless.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -3 },
           { target: 'set_flag', flag: 'scrim_leak_accepted', flagDuration: 10 },
           { target: 'clear_flag', flag: 'scrim_leak_arc_active' },
         ],
-        outcomeText: 'You swallow it. The team adjusts the book — but there\'s a quiet anger in the building that takes days to fade.',
+        outcomeText: 'You swallow it. The team adjusts the book. But there\'s a quiet anger in the building that takes days to fade.',
       },
     ],
   },
@@ -113,18 +113,18 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'report_to_league',
-        text: 'Evidence found — escalate to league',
+        text: 'Evidence found. Escalate to league',
         description: 'Submit your findings through official channels and let Riot handle it.',
         effects: [
           { target: 'team_sponsor_trust', delta: 5 },
           { target: 'set_flag', flag: 'scrim_reported_to_league', flagDuration: 30 },
           { target: 'clear_flag', flag: 'scrim_investigate_quietly' },
         ],
-        outcomeText: 'You file a formal report with Riot. Whether they act on it is another question — but you\'ve done the right thing.',
+        outcomeText: 'You file a formal report with Riot. Whether they act on it is another question. But you\'ve done the right thing.',
       },
       {
         id: 'inconclusive_drop',
-        text: 'Results inconclusive — drop it',
+        text: 'Results inconclusive. Drop it',
         description: 'The evidence isn\'t airtight. Pushing further could make you look paranoid.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -3 },
@@ -146,7 +146,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // BRANCH B — MORAL DILEMMA: "Someone's offering us their strats"
+  // BRANCH B. MORAL DILEMMA: "Someone's offering us their strats"
   // ==========================================================================
 
   {
@@ -154,7 +154,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     category: 'scrim_sharing',
     severity: 'major',
     title: 'An Offer You Shouldn\'t Consider',
-    description: 'A message arrives through unofficial channels — someone with connections to your next opponent is willing to share their scrim VODs for the right price. No one would know.',
+    description: 'A message arrives through unofficial channels. Someone with connections to your next opponent is willing to share their scrim VODs for the right price. No one would know.',
     conditions: [
       { type: 'scrim_vod_risk_above', threshold: 30 },
       { type: 'scrim_count_min', threshold: 5 },
@@ -249,13 +249,13 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'scrim_accuse_public', flagDuration: 21 },
           { target: 'clear_flag', flag: 'scrim_reported_to_league' },
         ],
-        outcomeText: 'You release a statement detailing what you reported and what happened — or didn\'t happen — next.',
+        outcomeText: 'You release a statement detailing what you reported and what happened. Or didn\'t happen. Next.',
       },
     ],
   },
 
   // ==========================================================================
-  // BRANCH C — DEFENSE ARC: "They're saying it was us"
+  // BRANCH C. DEFENSE ARC: "They're saying it was us"
   // ==========================================================================
 
   {
@@ -263,7 +263,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     category: 'scrim_sharing',
     severity: 'minor',
     title: 'A Rival Points Fingers',
-    description: 'A rival team is dropping hints on social media about a VOD leak — and the timing lines up with your schedule. Your name hasn\'t been said yet, but everyone knows who they\'re talking about.',
+    description: 'A rival team is dropping hints on social media about a VOD leak. And the timing lines up with your schedule. Your name hasn\'t been said yet, but everyone knows who they\'re talking about.',
     conditions: [
       { type: 'scrim_vod_risk_above', threshold: 50 },
       { type: 'has_rivalry' },
@@ -288,7 +288,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
     category: 'scrim_sharing',
     severity: 'major',
     title: 'Your Name Is In the Thread',
-    description: 'The rival coach has gone further — screenshots are circulating. Your coaching staff is furious. The community is waiting for your response.',
+    description: 'The rival coach has gone further. Screenshots are circulating. Your coaching staff is furious. The community is waiting for your response.',
     conditions: [
       { type: 'flag_active', flag: 'scrim_accused_active' },
     ],
@@ -317,7 +317,7 @@ export const SCRIM_SHARING_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'scrim_mediated_discussion', flagDuration: 14 },
           { target: 'clear_flag', flag: 'scrim_accused_active' },
         ],
-        outcomeText: 'You reach out privately through shared contacts. The meeting is tense but professional. No resolution — but no escalation either.',
+        outcomeText: 'You reach out privately through shared contacts. The meeting is tense but professional. No resolution. But no escalation either.',
       },
       {
         id: 'dare_to_name',

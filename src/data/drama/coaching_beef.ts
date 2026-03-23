@@ -2,7 +2,7 @@ import type { DramaEventTemplate } from '../../types/drama';
 
 export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
-  // ENTRY — minor toast
+  // ENTRY. Minor toast
   // ==========================================================================
 
   {
@@ -29,7 +29,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // MAJOR — media storm (arc branching point)
+  // MAJOR. Media storm (arc branching point)
   // ==========================================================================
 
   {
@@ -38,7 +38,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'The clip is everywhere. Now they want your statement.',
     description:
-      'The handshake snub from the post-match stage has hit socials. Every broadcast panel is running the clip in slow motion. The rival coach hasn\'t said anything publicly — but someone from their org just liked a very pointed tweet.',
+      'The handshake snub from the post-match stage has hit socials. Every broadcast panel is running the clip in slow motion. The rival coach hasn\'t said anything publicly. But someone from their org just liked a very pointed tweet.',
     conditions: [
       { type: 'flag_active', flag: 'coaching_beef_arc_active' },
     ],
@@ -53,7 +53,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'accuse_publicly',
-        text: 'Go on record — accuse them of scrim leaks',
+        text: 'Go on record. Accuse them of scrim leaks',
         description: 'Turn the snub into a full accusation. Name it publicly.',
         effects: [
           { target: 'team_hype', delta: 8 },
@@ -61,11 +61,11 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'coaching_beef_accused_public', flagDuration: 21 },
         ],
         outcomeText:
-          'The statement drops at 11pm. By morning it\'s the top post in every community. The rival org hasn\'t responded. Your players are buzzing — not all of them in a good way.',
+          'The statement drops at 11pm. By morning it\'s the top post in every community. The rival org hasn\'t responded. Your players are buzzing. Not all of them in a good way.',
       },
       {
         id: 'stay_vague',
-        text: 'Stay vague — fuel the speculation',
+        text: 'Stay vague. Fuel the speculation',
         description: 'Let the community do the work. Don\'t confirm or deny.',
         effects: [
           { target: 'team_hype', delta: 4 },
@@ -76,7 +76,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'squash_it',
-        text: 'Squash it — reach out and make it right',
+        text: 'Squash it. Reach out and make it right',
         description: 'Professionalism wins. Address it directly with the rival coach.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 5 },
@@ -84,13 +84,13 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
           { target: 'clear_flag', flag: 'coaching_beef_arc_active' },
         ],
         outcomeText:
-          'The DM conversation stays private. A joint statement goes out two days later — "mutual respect, moving forward." The community is mildly disappointed. The team feels lighter.',
+          'The DM conversation stays private. A joint statement goes out two days later. "mutual respect, moving forward." The community is mildly disappointed. The team feels lighter.',
       },
     ],
   },
 
   // ==========================================================================
-  // PATH A — Public Accusation
+  // PATH A. Public Accusation
   // ==========================================================================
 
   {
@@ -99,7 +99,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: '"Prove it or retire."',
     description:
-      'The rival coach has responded — and they didn\'t hold back. A three-paragraph post ending with a direct challenge. The community is demanding your next move.',
+      'The rival coach has responded. And they didn\'t hold back. A three-paragraph post ending with a direct challenge. The community is demanding your next move.',
     conditions: [
       { type: 'flag_active', flag: 'coaching_beef_accused_public' },
     ],
@@ -117,11 +117,11 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'coaching_beef_evidence_submitted', flagDuration: 21 },
         ],
         outcomeText:
-          'The evidence drops in a twitlonger. Timestamps, partial VOD references, a paper trail. Whether it\'s enough to prove anything is unclear — but the community is treating it like a trial.',
+          'The evidence drops in a twitlonger. Timestamps, partial VOD references, a paper trail. Whether it\'s enough to prove anything is unclear. But the community is treating it like a trial.',
       },
       {
         id: 'double_down',
-        text: 'Double down — make it personal',
+        text: 'Double down. Make it personal',
         description: 'Take the gloves off. Don\'t provide evidence, just escalate.',
         effects: [
           { target: 'team_hype', delta: 15 },
@@ -153,7 +153,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Riot opens a review',
     description:
-      'The league office has acknowledged the scrim leak allegations and opened a formal review. No timeline, no public statements — just a confirmation that it\'s being looked into.',
+      'The league office has acknowledged the scrim leak allegations and opened a formal review. No timeline, no public statements. Just a confirmation that it\'s being looked into.',
     conditions: [
       { type: 'flag_active', flag: 'coaching_beef_evidence_submitted' },
     ],
@@ -187,7 +187,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // PATH B — Simmering speculation
+  // PATH B. Simmering speculation
   // ==========================================================================
 
   {
@@ -196,7 +196,7 @@ export const COACHING_BEEF_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'It\'s not about scrim leaks anymore',
     description:
-      'The rival coach just posted a photo from your shared org days — captioned "this is who gives lectures on integrity." The photo is real. The community is losing it.',
+      'The rival coach just posted a photo from your shared org days. Captioned "this is who gives lectures on integrity." The photo is real. The community is losing it.',
     conditions: [
       { type: 'flag_active', flag: 'coaching_beef_media_speculation' },
     ],

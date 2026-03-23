@@ -10,7 +10,7 @@ export const ICONIC_MOMENTS_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     prompt:
-      "That Sage wall boost to an unexpected angle on Sunset mid — was that planned, or did it happen in the moment?",
+      "That Sage wall boost to an unexpected angle on Sunset mid. Was that planned, or did it happen in the moment?",
     conditions: [
       { type: 'agent_played', agentName: 'Raze' },
       { type: 'agent_played', agentName: 'Sage' },
@@ -33,7 +33,7 @@ export const ICONIC_MOMENTS_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         tone: 'HUMBLE',
         label: "Pure in-game genius",
         quote:
-          "Pure in-game genius from the players — I can't take credit for that one. That kind of creativity can't be coached. You just give them space to make those calls and try not to get in the way.",
+          "Pure in-game genius from the players. I can't take credit for that one. That kind of creativity can't be coached. You just give them space to make those calls and try not to get in the way.",
         effects: { morale: 5, fanbase: 4, sponsorTrust: 2 },
       },
       {
@@ -55,7 +55,7 @@ export const ICONIC_MOMENTS_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     prompt:
-      "The Omen ultimate on Breeze — it looked like a teleport that never committed. Was that a deliberate mind game, or something else entirely?",
+      "The Omen ultimate on Breeze. It looked like a teleport that never committed. Was that a deliberate mind game, or something else entirely?",
     conditions: [
       { type: 'agent_played', agentName: 'Omen' },
       { type: 'map_played', mapName: 'Breeze' },
@@ -77,7 +77,7 @@ export const ICONIC_MOMENTS_INTERVIEW_TEMPLATES: InterviewTemplate[] = [
         tone: 'HUMBLE',
         label: "Misclick that accidentally worked",
         quote:
-          "Honestly? Misclick. The TP got cancelled mid-cast — full panic from the player. But the sound cue still went out, the rotation happened anyway, and somehow it worked. Mission failed successfully.",
+          "Honestly? Misclick. The TP got cancelled mid-cast. Full panic from the player. But the sound cue still went out, the rotation happened anyway, and somehow it worked. Mission failed successfully.",
         effects: { morale: 4, fanbase: 6, hype: 5 },
       },
       {

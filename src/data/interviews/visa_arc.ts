@@ -15,7 +15,7 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Blame bureaucracy',
-        quote: "International esports travel has unpredictable bureaucracy. We followed every process correctly — some things are simply outside our control.",
+        quote: "International esports travel has unpredictable bureaucracy. We followed every process correctly. Some things are simply outside our control.",
         effects: {
           hype: -2,
           setsFlags: [{ key: 'interview_deflected_visa_blame', durationDays: 14 }],
@@ -54,7 +54,7 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "It's their moment",
-        quote: "They've trained for this exact moment. I have full confidence in them — go out there and show the world what you can do.",
+        quote: "They've trained for this exact moment. I have full confidence in them. Go out there and show the world what you can do.",
         effects: { morale: 5 },
       },
       {
@@ -98,7 +98,7 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_TEAM',
         label: 'Stay measured',
-        quote: "We'll see — let's not get ahead of ourselves. There's more to prove before I'll start talking about depth.",
+        quote: "We'll see. Let's not get ahead of ourselves. There's more to prove before I'll start talking about depth.",
         effects: { morale: -3 },
       },
     ],
@@ -127,7 +127,7 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Character test',
-        quote: "These moments test character. We'll find out what we're made of — and I believe this group has what it takes.",
+        quote: "These moments test character. We'll find out what we're made of. And I believe this group has what it takes.",
         effects: { morale: 3 },
       },
     ],
@@ -199,13 +199,13 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Back to full strength',
-        quote: "We're back to full strength. No excuses now — this team is ready to show what we can really do.",
+        quote: "We're back to full strength. No excuses now. This team is ready to show what we can really do.",
         effects: { morale: 5, hype: 3 },
       },
       {
         tone: 'HUMBLE',
         label: 'Everyone earned respect',
-        quote: "Having them back is huge, but I want to be clear — the substitute earned the respect of everyone in that locker room. This is a stronger team now.",
+        quote: "Having them back is huge, but I want to be clear. The substitute earned the respect of everyone in that locker room. This is a stronger team now.",
         effects: { morale: 3 },
       },
       {
@@ -237,7 +237,7 @@ const RAW_VISA_ARC_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'We owed it to the player',
-        quote: "We owed that player a public acknowledgment of how we failed them. The apology was the least we could do — now we have to back it up.",
+        quote: "We owed that player a public acknowledgment of how we failed them. The apology was the least we could do. Now we have to back it up.",
         effects: {
           fanbase: 3,
           sponsorTrust: 2,

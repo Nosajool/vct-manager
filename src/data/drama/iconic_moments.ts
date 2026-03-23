@@ -2,7 +2,7 @@ import type { DramaEventTemplate } from '../../types/drama';
 
 export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
-  // MINOR EVENTS — auto-apply flavor toasts
+  // MINOR EVENTS. Auto-apply flavor toasts
   // ==========================================================================
 
   {
@@ -35,7 +35,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Chronicle ace type beat',
     description:
-      '{playerName} clears the site solo — five kills, no help needed. The round is theirs.',
+      '{playerName} clears the site solo. Five kills, no help needed. The round is theirs.',
     conditions: [
       {
         type: 'flag_active',
@@ -85,7 +85,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'The rope ace. Except it\'s {playerName}.',
     description:
-      'Three players in the wrong place at the wrong time. {playerName} doesn\'t even think about it — they just pull the trigger.',
+      'Three players in the wrong place at the wrong time. {playerName} doesn\'t even think about it. They just pull the trigger.',
     conditions: [
       {
         type: 'flag_active',
@@ -109,7 +109,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'The force buy that changed everything',
     description:
-      'The economy looked unwinnable. They forced anyway. The round — and maybe the map — swings on it.',
+      'The economy looked unwinnable. They forced anyway. The round. And maybe the map. Swings on it.',
     conditions: [
       { type: 'flag_active', flag: 'iconic_force_buy_comeback' },
     ],
@@ -144,7 +144,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // MAJOR EVENTS — player choices required
+  // MAJOR EVENTS. Player choices required
   // ==========================================================================
 
   {
@@ -198,7 +198,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'deflect_to_opponent',
-        text: 'Deflect — credit the opponent',
+        text: 'Deflect. Credit the opponent',
         description: 'Classy move. Acknowledge the opponent set the situation up.',
         effects: [
           { target: 'team_sponsor_trust', delta: 5 },
@@ -234,7 +234,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'chaos_brand_owned', flagDuration: 30 },
         ],
         outcomeText:
-          'The clip becomes a bit. The team leans into it. Whoever was carrying that spike is never going to hear the end of it — but at least it\'s funny.',
+          'The clip becomes a bit. The team leans into it. Whoever was carrying that spike is never going to hear the end of it. But at least it\'s funny.',
       },
       {
         id: 'treat_seriously',
@@ -256,7 +256,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'spike_blame_flag', flagDuration: 21 },
         ],
         outcomeText:
-          'The debrief gets tense. Fingers point. The IGL ends it early but the conversation doesn\'t actually end — it just moves to the team chat.',
+          'The debrief gets tense. Fingers point. The IGL ends it early but the conversation doesn\'t actually end. It just moves to the team chat.',
       },
     ],
   },
@@ -307,7 +307,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
           { target: 'team_hype', delta: -3 },
         ],
         outcomeText:
-          '"Don\'t box us in." The community is mildly annoyed — they were enjoying the storyline. Sponsors appreciate the measured response.',
+          '"Don\'t box us in." The community is mildly annoyed. They were enjoying the storyline. Sponsors appreciate the measured response.',
       },
     ],
   },
@@ -337,7 +337,7 @@ export const ICONIC_MOMENT_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'igl_economy_authority', flagDuration: 21 },
         ],
         outcomeText:
-          'The IGL stands firm. Some players trust it. Others exchange glances. The authority holds — for now.',
+          'The IGL stands firm. Some players trust it. Others exchange glances. The authority holds. For now.',
       },
       {
         id: 'team_vote_reset',

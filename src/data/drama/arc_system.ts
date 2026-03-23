@@ -516,7 +516,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // INTERVIEW-BRIDGE EVENTS (5 new events — interview flags → earned drama)
+  // INTERVIEW-BRIDGE EVENTS (5 new events. Interview flags → earned drama)
   // ==========================================================================
 
   {
@@ -619,7 +619,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'major',
     title: 'Contract Year Ultimatum',
-    description: "{playerName}'s agent has called mid-season citing market value and demanding a contract extension — at double the current salary.",
+    description: "{playerName}'s agent has called mid-season citing market value and demanding a contract extension. At double the current salary.",
     conditions: [
       {
         type: 'min_season_day',
@@ -674,7 +674,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'promise_renegotiation',
         text: 'Promise to renegotiate after the tournament',
-        description: 'Buy time — link extension talks to performance',
+        description: 'Buy time. Link extension talks to performance',
         effects: [
           {
             target: 'player_morale',
@@ -787,7 +787,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'push_harder',
-        text: 'Push harder — they will snap out of it',
+        text: 'Push harder. They will snap out of it',
         description: 'Increase pressure to force a breakthrough',
         effects: [
           {
@@ -799,7 +799,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'You demand more. Sometimes pressure breeds clarity — and sometimes it breaks people.',
+        outcomeText: 'You demand more. Sometimes pressure breeds clarity. And sometimes it breaks people.',
       },
     ],
   },
@@ -835,7 +835,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You double down and the internet explodes. Your fans are hyped — but if you lose the next match, the fall will be hard.',
+        outcomeText: 'You double down and the internet explodes. Your fans are hyped. But if you lose the next match, the fall will be hard.',
       },
       {
         id: 'stay_classy',
@@ -860,7 +860,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'meme_it',
-        text: 'Meme it — laugh it off',
+        text: 'Meme it. Laugh it off',
         description: 'Turn the situation into content',
         effects: [
           {
@@ -937,7 +937,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You acknowledge the assistant coach\'s concerns. Uncertainty spreads through the roster — everyone wonders if they\'re on the chopping block.',
+        outcomeText: 'You acknowledge the assistant coach\'s concerns. Uncertainty spreads through the roster. Everyone wonders if they\'re on the chopping block.',
       },
       {
         id: 'fire_assistant_coach',
@@ -964,7 +964,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // CHAIN CLOSERS — Consuming orphaned flags from earlier decisions
+  // CHAIN CLOSERS. Consuming orphaned flags from earlier decisions
   // ==========================================================================
 
   {
@@ -972,7 +972,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'major',
     title: 'Deferred Demand Resurfaces',
-    description: "{playerName} hasn't forgotten the conversation you put off. They're back — and this time they're not asking politely.",
+    description: "{playerName} hasn't forgotten the conversation you put off. They're back. And this time they're not asking politely.",
     conditions: [
       {
         type: 'flag_active',
@@ -990,7 +990,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'accommodate_now',
-        text: 'Accommodate now — late is better than never',
+        text: 'Accommodate now. Late is better than never',
         description: 'Give them the role change they originally asked for',
         effects: [
           {
@@ -1011,7 +1011,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'refuse_again',
-        text: 'Refuse again — hold the line',
+        text: 'Refuse again. Hold the line',
         description: 'Stick to your original decision',
         effects: [
           {
@@ -1061,7 +1061,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'major',
     title: 'Broken Promise',
-    description: "{playerName} is watching. You promised changes weeks ago — but nothing has shifted. They're done being patient.",
+    description: "{playerName} is watching. You promised changes weeks ago. But nothing has shifted. They're done being patient.",
     conditions: [
       {
         type: 'flag_active',
@@ -1079,7 +1079,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'make_changes_now',
         text: 'Deliver on the promise immediately',
-        description: 'Follow through — better late than never',
+        description: 'Follow through. Better late than never',
         effects: [
           {
             target: 'player_morale',
@@ -1150,7 +1150,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'team_synergy',
     severity: 'minor',
     title: 'Departure Shockwave',
-    description: "The locker room hasn't processed {playerName}'s exit. Everyone is quieter than usual — and wondering if they're next.",
+    description: "The locker room hasn't processed {playerName}'s exit. Everyone is quieter than usual. And wondering if they're next.",
     conditions: [
       {
         type: 'flag_active',
@@ -1291,7 +1291,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'immediate_rest',
         text: 'Pull them from practice immediately',
-        description: 'Mandatory rest — no negotiations',
+        description: 'Mandatory rest. No negotiations',
         effects: [
           {
             target: 'player_morale',
@@ -1346,12 +1346,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: "The sessions reveal patterns {playerName} wasn't even aware of. It's an investment in the long game — and it shows.",
+        outcomeText: "The sessions reveal patterns {playerName} wasn't even aware of. It's an investment in the long game. And it shows.",
       },
       {
         id: 'push_through_anyway',
         text: "Remind them what's at stake",
-        description: 'Keep the pressure on — results are on the line',
+        description: 'Keep the pressure on. Results are on the line',
         effects: [
           {
             target: 'player_morale',
@@ -1411,12 +1411,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'coach_micromanaging',
           },
         ],
-        outcomeText: "You loosen the reins. The team exhales. In the next practice, the energy is noticeably different — players are calling with conviction again.",
+        outcomeText: "You loosen the reins. The team exhales. In the next practice, the energy is noticeably different. Players are calling with conviction again.",
       },
       {
         id: 'double_down',
         text: 'Defend the system publicly',
-        description: "Stand firm — the process is correct, the results aren't there yet",
+        description: "Stand firm. The process is correct, the results aren't there yet",
         effects: [
           {
             target: 'player_morale',
@@ -1433,7 +1433,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: "You stand firm. Players go quiet — not because they agree, but because they've stopped fighting it. That silence is more worrying than the complaints.",
+        outcomeText: "You stand firm. Players go quiet. Not because they agree, but because they've stopped fighting it. That silence is more worrying than the complaints.",
       },
       {
         id: 'hybrid_delegation',
@@ -1459,7 +1459,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: "You draw clearer lines. Players feel trusted where it counts most — mid-round. The structure isn't perfect, but the locker room settles.",
+        outcomeText: "You draw clearer lines. Players feel trusted where it counts most. Mid-round. The structure isn't perfect, but the locker room settles.",
       },
     ],
   },
@@ -1469,7 +1469,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'external_pressure',
     severity: 'major',
     title: 'Public Backing Backfired',
-    description: "You put yourself on the line publicly — and then the team lost. The same fans who nodded along are now using your words against you.",
+    description: "You put yourself on the line publicly. And then the team lost. The same fans who nodded along are now using your words against you.",
     conditions: [
       {
         type: 'flag_active',
@@ -1485,7 +1485,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'double_down',
-        text: 'Stay the course — one loss changes nothing',
+        text: 'Stay the course. One loss changes nothing',
         description: "Refuse to walk back your public stance",
         effects: [
           {
@@ -1499,7 +1499,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 7,
           },
         ],
-        outcomeText: "You refuse to flinch. Players respect the loyalty, but the media is circling. You're all-in now — another loss and it gets ugly.",
+        outcomeText: "You refuse to flinch. Players respect the loyalty, but the media is circling. You're all-in now. Another loss and it gets ugly.",
       },
       {
         id: 'temper_expectations',
@@ -1551,7 +1551,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'external_pressure',
     severity: 'major',
     title: 'Loyalty Test: Decision Time',
-    description: "The rival org's offer window is closing. {playerName} needs to give them an answer — and they've come to you first asking what staying would look like.",
+    description: "The rival org's offer window is closing. {playerName} needs to give them an answer. And they've come to you first asking what staying would look like.",
     conditions: [
       {
         type: 'flag_active',
@@ -1586,7 +1586,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 60,
           },
         ],
-        outcomeText: "{playerName} signs the new deal. They feel valued. The org feels the financial strain — but the roster stays intact and focused.",
+        outcomeText: "{playerName} signs the new deal. They feel valued. The org feels the financial strain. But the roster stays intact and focused.",
       },
       {
         id: 'let_them_go',
@@ -1633,7 +1633,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'loyalty_tested_{playerId}',
           },
         ],
-        outcomeText: "{playerName} stays — for now. They turned down the money, but you'd better make sure they don't regret the choice.",
+        outcomeText: "{playerName} stays. For now. They turned down the money, but you'd better make sure they don't regret the choice.",
       },
     ],
   },
@@ -1699,7 +1699,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: -5,
           },
         ],
-        outcomeText: "{playerName} is frustrated but accepts the conditional terms. Every match now carries contract implications — the pressure is palpable.",
+        outcomeText: "{playerName} is frustrated but accepts the conditional terms. Every match now carries contract implications. The pressure is palpable.",
         triggersEventId: 'contract_year_ultimatum',
       },
       {
@@ -1741,7 +1741,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'practice_burnout',
     severity: 'minor',
     title: 'Regular Season Malaise',
-    description: "{playerName} plays their best when everything is on the line — but regular season matches have them visibly disengaged. They're saving themselves for the moments that matter.",
+    description: "{playerName} plays their best when everything is on the line. But regular season matches have them visibly disengaged. They're saving themselves for the moments that matter.",
     conditions: [
       {
         type: 'player_personality',
@@ -1831,7 +1831,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'major',
     title: 'Stability Pushback',
-    description: "{playerName} is one of the most grounded players on your roster — and they've heard about the scouting activity. They come to you directly: am I part of this team's future?",
+    description: "{playerName} is one of the most grounded players on your roster. And they've heard about the scouting activity. They come to you directly: am I part of this team's future?",
     conditions: [
       {
         type: 'player_personality',
@@ -1848,7 +1848,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'reassure_them',
-        text: "Reassure them — they're not going anywhere",
+        text: "Reassure them. They're not going anywhere",
         description: 'Give a direct, honest answer',
         effects: [
           {
@@ -1865,7 +1865,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'acknowledge_uncertainty',
-        text: 'Be honest — all options remain open',
+        text: 'Be honest. All options remain open',
         description: "Tell them the truth even if it's uncomfortable",
         effects: [
           {
@@ -1883,7 +1883,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: "{playerName} takes it with grace — that's who they are. But you can see them recalibrate internally. A STABLE player forced into instability is a slow-burning risk.",
+        outcomeText: "{playerName} takes it with grace. That's who they are. But you can see them recalibrate internally. A STABLE player forced into instability is a slow-burning risk.",
       },
       {
         id: 'give_leadership_role',
@@ -1905,7 +1905,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: "You ask {playerName} to be the steady center this team needs. They light up quietly — that's exactly the kind of purpose they play for.",
+        outcomeText: "You ask {playerName} to be the steady center this team needs. They light up quietly. That's exactly the kind of purpose they play for.",
       },
     ],
   },
@@ -1957,7 +1957,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'practice_burnout',
     severity: 'major',
     title: 'Public Criticism Hits Different',
-    description: "Public criticism rarely lands the same way for everyone. For {playerName}, it's clearly landed hard — your assistant coach reports they've been isolating themselves and their play has quietly regressed.",
+    description: "Public criticism rarely lands the same way for everyone. For {playerName}, it's clearly landed hard. Your assistant coach reports they've been isolating themselves and their play has quietly regressed.",
     conditions: [
       {
         type: 'player_personality',
@@ -1979,7 +1979,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'private_check_in',
         text: 'Have a quiet one-on-one',
-        description: 'No agenda, no pressure — just check in',
+        description: 'No agenda, no pressure. Just check in',
         effects: [
           {
             target: 'player_morale',
@@ -1993,7 +1993,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 4,
           },
         ],
-        outcomeText: "The conversation is short, but it lands. {playerName} didn't need advice — they needed to feel seen. You gave them that.",
+        outcomeText: "The conversation is short, but it lands. {playerName} didn't need advice. They needed to feel seen. You gave them that.",
       },
       {
         id: 'shield_from_media',
@@ -2217,7 +2217,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // KICKOFF TOURNAMENT ARCS — DRAMA EVENTS
+  // KICKOFF TOURNAMENT ARCS. DRAMA EVENTS
   // ==========================================================================
 
   // Arc 1: Veteran Legacy Pressure
@@ -2226,7 +2226,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'major',
     title: 'The Weight of Legacy',
-    description: "{playerName} has been reflecting publicly on what remains of their career — and now, facing what could be a defining moment, they've asked for a private meeting. The question in the room is unspoken but impossible to ignore: is this the run?",
+    description: "{playerName} has been reflecting publicly on what remains of their career. And now, facing what could be a defining moment, they've asked for a private meeting. The question in the room is unspoken but impossible to ignore: is this the run?",
     conditions: [
       {
         type: 'flag_active',
@@ -2263,11 +2263,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'interview_veteran_legacy_hinted',
           },
         ],
-        outcomeText: "{playerName} commits publicly to a final championship run. The fanbase erupts — but the pressure that comes with those words is now immense. Every result will be measured against this moment.",
+        outcomeText: "{playerName} commits publicly to a final championship run. The fanbase erupts. But the pressure that comes with those words is now immense. Every result will be measured against this moment.",
       },
       {
         id: 'private_support',
-        text: 'Back them quietly — no circus',
+        text: 'Back them quietly. No circus',
         description: "Tell them they have your full support without making it a media event. Let results carry the story.",
         effects: [
           {
@@ -2284,7 +2284,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'interview_veteran_legacy_hinted',
           },
         ],
-        outcomeText: "You and {playerName} share a quiet moment of understanding. No spotlight, no ceremony — just a handshake and renewed purpose. The team senses something settled without knowing what was said.",
+        outcomeText: "You and {playerName} share a quiet moment of understanding. No spotlight, no ceremony. Just a handshake and renewed purpose. The team senses something settled without knowing what was said.",
       },
       {
         id: 'honest_conversation',
@@ -2306,18 +2306,18 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: "{playerName} goes quiet. The idea clearly unsettles them — but they promise to think it over. The locker room senses that something shifted in that room, even if no one knows what.",
+        outcomeText: "{playerName} goes quiet. The idea clearly unsettles them. But they promise to think it over. The locker room senses that something shifted in that room, even if no one knows what.",
       },
     ],
   },
 
-  // Arc 2: Breakout Star — Personal Sponsor Offer
+  // Arc 2: Breakout Star. Personal Sponsor Offer
   {
     id: 'prodigy_sponsor_offer',
     category: 'external_pressure',
     severity: 'major',
     title: 'Life-Changing Offer',
-    description: "A major brand has reached out directly to {playerName} with a personal sponsorship deal — independent of any team arrangement. They've brought it to you privately, excited but clearly uncertain how to navigate it. The number is serious.",
+    description: "A major brand has reached out directly to {playerName} with a personal sponsorship deal. Independent of any team arrangement. They've brought it to you privately, excited but clearly uncertain how to navigate it. The number is serious.",
     conditions: [
       {
         type: 'flag_active',
@@ -2349,11 +2349,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: "The arrangement is negotiated — the org takes a cut. {playerName} accepts, though they aren't thrilled. The team benefits financially. The star feels slightly constrained, but the relationship remains intact.",
+        outcomeText: "The arrangement is negotiated. The org takes a cut. {playerName} accepts, though they aren't thrilled. The team benefits financially. The star feels slightly constrained, but the relationship remains intact.",
       },
       {
         id: 'full_support',
-        text: 'Support them fully — no conditions',
+        text: 'Support them fully. No conditions',
         description: "This is their moment. A happy, motivated star lifts the whole team.",
         effects: [
           {
@@ -2371,7 +2371,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'prodigy_hype_{playerId}',
           },
         ],
-        outcomeText: "{playerName} is overwhelmed with gratitude. The deal is signed. Their profile skyrockets. For now the energy is contagious — though distractions may follow when the content calendar starts filling up.",
+        outcomeText: "{playerName} is overwhelmed with gratitude. The deal is signed. Their profile skyrockets. For now the energy is contagious. Though distractions may follow when the content calendar starts filling up.",
       },
       {
         id: 'decline_carefully',
@@ -2388,7 +2388,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'prodigy_hype_{playerId}',
           },
         ],
-        outcomeText: "{playerName} listens. Disappointment shows in their face for the rest of the day. A window that doesn't always stay open has been closed — you hope the championship you're promising them is worth it.",
+        outcomeText: "{playerName} listens. Disappointment shows in their face for the rest of the day. A window that doesn't always stay open has been closed. You hope the championship you're promising them is worth it.",
       },
     ],
   },
@@ -2399,7 +2399,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'practice_burnout',
     severity: 'major',
     title: 'The Elimination Wall',
-    description: "After surviving multiple consecutive must-win matches, the team is visibly hitting a wall. {playerName} and others are showing signs of physical and mental fatigue — practice sessions are shorter, focus is fragmenting, and another must-win match looms.",
+    description: "After surviving multiple consecutive must-win matches, the team is visibly hitting a wall. {playerName} and others are showing signs of physical and mental fatigue. Practice sessions are shorter, focus is fragmenting, and another must-win match looms.",
     conditions: [
       {
         type: 'flag_active',
@@ -2416,7 +2416,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'forced_rest',
-        text: 'Cut practice — recovery only',
+        text: 'Cut practice. Recovery only',
         description: "No film sessions tonight. Rest, food, sleep. Go in fresh rather than over-prepared.",
         effects: [
           {
@@ -2435,7 +2435,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 7,
           },
         ],
-        outcomeText: "The team visibly exhales. Morale lifts the moment they realize they're being treated like humans, not machines. The preparation is lighter — but the energy walking into that match is something different.",
+        outcomeText: "The team visibly exhales. Morale lifts the moment they realize they're being treated like humans, not machines. The preparation is lighter. But the energy walking into that match is something different.",
       },
       {
         id: 'mental_coach',
@@ -2460,7 +2460,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'grind_through',
-        text: 'Push through — the work matters most',
+        text: 'Push through. The work matters most',
         description: "You didn't survive three elimination rounds to go soft now. Keep reviewing, keep drilling.",
         effects: [
           {
@@ -2483,13 +2483,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 10,
           },
         ],
-        outcomeText: "The session runs late. Clips are reviewed, callouts are rehearsed, adjustments are made. The work is undeniably there — but so is the exhaustion. You'll know soon if the tradeoff was worth it.",
+        outcomeText: "The session runs late. Clips are reviewed, callouts are rehearsed, adjustments are made. The work is undeniably there. But so is the exhaustion. You'll know soon if the tradeoff was worth it.",
       },
     ],
   },
 
   // ==========================================================================
-  // PSYCH SUPPORT ARC — Follow-up events for psych_support_given_{playerId}
+  // PSYCH SUPPORT ARC. Follow-up events for psych_support_given_{playerId}
   // ==========================================================================
 
   {
@@ -2516,7 +2516,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'give_spotlight',
         text: 'Give them a starting spotlight',
-        description: 'Feature them prominently in the upcoming match — show the team you believe in them',
+        description: 'Feature them prominently in the upcoming match. Show the team you believe in them',
         effects: [
           {
             target: 'player_morale',
@@ -2542,7 +2542,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'keep_supporting_quietly',
         text: 'Keep supporting quietly',
-        description: 'Continue the low-key approach — let them find their footing at their own pace',
+        description: 'Continue the low-key approach. Let them find their footing at their own pace',
         effects: [
           {
             target: 'player_morale',
@@ -2559,7 +2559,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'psych_support_given_{playerId}',
           },
         ],
-        outcomeText: "{playerName} appreciates the space. No grand gestures, no pressure — just steady improvement over time.",
+        outcomeText: "{playerName} appreciates the space. No grand gestures, no pressure. Just steady improvement over time.",
       },
     ],
   },
@@ -2591,7 +2591,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'extend_support',
-        text: 'Extend the support — this takes time',
+        text: 'Extend the support. This takes time',
         description: 'Double down on the investment. Recovery is not linear.',
         effects: [
           {
@@ -2651,7 +2651,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'external_pressure',
     severity: 'major',
     title: 'Public Villain',
-    description: "Fan forums, social media, and content creators have coalesced around a harsh verdict: your IGL is the reason the team is struggling. The pressure has become impossible to ignore — {playerName} arrived to practice looking hollow, visibly distracted by the discourse. Something has to be addressed.",
+    description: "Fan forums, social media, and content creators have coalesced around a harsh verdict: your IGL is the reason the team is struggling. The pressure has become impossible to ignore. {playerName} arrived to practice looking hollow, visibly distracted by the discourse. Something has to be addressed.",
     conditions: [
       {
         type: 'flag_active',
@@ -2673,7 +2673,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'public_defense',
         text: 'Defend them publicly',
-        description: "Issue a statement. Speak on stream. Your IGL has your complete confidence — say it loudly.",
+        description: "Issue a statement. Speak on stream. Your IGL has your complete confidence. Say it loudly.",
         effects: [
           {
             target: 'player_morale',
@@ -2691,7 +2691,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'internal_protection',
-        text: 'Shield them internally — say nothing publicly',
+        text: 'Shield them internally. Say nothing publicly',
         description: "Don't feed the discourse. Check in daily and quietly adjust responsibilities to cover exposed weaknesses.",
         effects: [
           {
@@ -2704,7 +2704,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: "The silence reads as avoidance to the public — but the locker room knows differently. {playerName} plays with less weight this week. The team adapts quietly, covering gaps without announcing it.",
+        outcomeText: "The silence reads as avoidance to the public. But the locker room knows differently. {playerName} plays with less weight this week. The team adapts quietly, covering gaps without announcing it.",
       },
       {
         id: 'redistribute_quietly',
@@ -2730,18 +2730,18 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: "{playerName} notices the shift before you can frame it. The conversation is difficult. They don't quit — but something in their eyes changes. The team's calls are cleaner. The cost is still being calculated.",
+        outcomeText: "{playerName} notices the shift before you can frame it. The conversation is difficult. They don't quit. But something in their eyes changes. The team's calls are cleaner. The cost is still being calculated.",
       },
     ],
   },
 
-  // Arc 5: Historic Win — Expectations Spike
+  // Arc 5: Historic Win. Expectations Spike
   {
     id: 'historic_win_expectations_spike',
     category: 'external_pressure',
     severity: 'major',
     title: 'The Weight of History',
-    description: "The historic result has set off a chain reaction. Sponsor calls are flooding in. Media requests have tripled. And in the locker room, an unspoken pressure has taken root — what if we can't do it again? {playerName} confided to a teammate: 'Everyone is watching us now.'",
+    description: "The historic result has set off a chain reaction. Sponsor calls are flooding in. Media requests have tripled. And in the locker room, an unspoken pressure has taken root. What if we can't do it again? {playerName} confided to a teammate: 'Everyone is watching us now.'",
     conditions: [
       {
         type: 'flag_active',
@@ -2758,7 +2758,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'embrace_spotlight',
-        text: 'Embrace the spotlight — full media tour',
+        text: 'Embrace the spotlight. Full media tour',
         description: "Lean into the moment. The exposure builds the org's brand and demonstrates your arrival at the top.",
         effects: [
           {
@@ -2776,7 +2776,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: "The team becomes a household name overnight. The org is thrilled with the exposure. The players are exhausted and slightly overwhelmed — but for now the energy in every room they walk into is electric.",
+        outcomeText: "The team becomes a household name overnight. The org is thrilled with the exposure. The players are exhausted and slightly overwhelmed. But for now the energy in every room they walk into is electric.",
       },
       {
         id: 'protect_the_bubble',
@@ -2797,11 +2797,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'interview_historic_win',
           },
         ],
-        outcomeText: "You draw a line around the team. The press questions your handling. Inside the bubble, the team is calm, focused, and grateful. The work continues — and that normalcy is exactly what they needed.",
+        outcomeText: "You draw a line around the team. The press questions your handling. Inside the bubble, the team is calm, focused, and grateful. The work continues. And that normalcy is exactly what they needed.",
       },
       {
         id: 'channel_hunger',
-        text: "Use history as fuel — raise the target immediately",
+        text: "Use history as fuel. Raise the target immediately",
         description: "One speech: 'Now that you know what winning feels like, is one enough?' Redirect the emotion forward.",
         effects: [
           {
@@ -2819,12 +2819,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: "The room goes quiet after you speak. Then someone nods. The hunger is redirected — this team does not want to be a one-hit wonder. Training intensity lifts the next morning without you having to say another word.",
+        outcomeText: "The room goes quiet after you speak. Then someone nods. The hunger is redirected. This team does not want to be a one-hit wonder. Training intensity lifts the next morning without you having to say another word.",
       },
     ],
   },
 
-  // Arc 6: Underdog Miracle Run — minor spark event
+  // Arc 6: Underdog Miracle Run. Minor spark event
   {
     id: 'elimination_survival_spark',
     category: 'breakthrough',
@@ -2868,7 +2868,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     ],
   },
 
-  // Arc 6: Underdog Miracle Run — major culmination
+  // Arc 6: Underdog Miracle Run. Major culmination
   {
     id: 'elimination_miracle_run',
     category: 'breakthrough',
@@ -2895,7 +2895,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'let_it_breathe',
-        text: 'Step back — let it grow on its own',
+        text: 'Step back. Let it grow on its own',
         description: "Don't over-coach this moment. They found something themselves. Trust it.",
         effects: [
           {
@@ -2917,7 +2917,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flag: 'elimination_run_momentum',
           },
         ],
-        outcomeText: "You step back and watch something rare unfold. Players organize their own film sessions. Everyone arrives early. The belief is self-sustaining — a managed fire that doesn't need your oxygen to keep burning.",
+        outcomeText: "You step back and watch something rare unfold. Players organize their own film sessions. Everyone arrives early. The belief is self-sustaining. A managed fire that doesn't need your oxygen to keep burning.",
       },
       {
         id: 'channel_into_structure',
@@ -2944,11 +2944,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: "You redirect the energy into the most focused practice block the team has had all season. The belief is still burning — but now it has a blueprint. This team is dangerous and organized.",
+        outcomeText: "You redirect the energy into the most focused practice block the team has had all season. The belief is still burning. But now it has a blueprint. This team is dangerous and organized.",
       },
       {
         id: 'make_bold_statement',
-        text: 'Declare publicly — this team is not going home',
+        text: 'Declare publicly. This team is not going home',
         description: "Announce your intent. Let everyone watching know what's about to happen.",
         effects: [
           {
@@ -2966,7 +2966,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: "The statement lands across social media. Opponents take notice. Inside the team there's a mix of excitement and weight — 'now we have to back this up.' The pressure is chosen, and that makes all the difference.",
+        outcomeText: "The statement lands across social media. Opponents take notice. Inside the team there's a mix of excitement and weight. 'now we have to back this up.' The pressure is chosen, and that makes all the difference.",
       },
     ],
   },
@@ -2977,7 +2977,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'meta_rumors',
     severity: 'major',
     title: 'Foreign Meta Envy',
-    description: "After reviewing tournament footage, a vocal faction within the team — led by {playerName} — is pushing hard for a complete overhaul of your regional playstyle. 'We're playing last year's game. Look at what they're doing across regions — we need to adapt or we'll keep falling short.'",
+    description: "After reviewing tournament footage, a vocal faction within the team. Led by {playerName}. Is pushing hard for a complete overhaul of your regional playstyle. 'We're playing last year's game. Look at what they're doing across regions. We need to adapt or we'll keep falling short.'",
     conditions: [
       {
         type: 'tournament_active',
@@ -3024,11 +3024,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: "The overhaul begins. Players built on structure struggle. But {playerName} is energized, running sessions with an enthusiasm the team hasn't seen before. It will get messier before it gets better — the question is whether better comes in time.",
+        outcomeText: "The overhaul begins. Players built on structure struggle. But {playerName} is energized, running sessions with an enthusiasm the team hasn't seen before. It will get messier before it gets better. The question is whether better comes in time.",
       },
       {
         id: 'hybrid_merge',
-        text: 'Build a hybrid — adapt without abandoning identity',
+        text: 'Build a hybrid. Adapt without abandoning identity',
         description: "Take what works from their meta without throwing out your regional DNA.",
         effects: [
           {
@@ -3052,7 +3052,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: "You task {playerName} with proposing specific adaptations. The result is a creative hybrid that feels genuinely fresh — not a copy, not a rejection. Something that belongs to this team and no one else.",
+        outcomeText: "You task {playerName} with proposing specific adaptations. The result is a creative hybrid that feels genuinely fresh. Not a copy, not a rejection. Something that belongs to this team and no one else.",
       },
       {
         id: 'trust_regional_identity',
@@ -3074,13 +3074,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: -8,
           },
         ],
-        outcomeText: "{playerName} accepts the decision without argument — but their disappointment is visible through the rest of practice. For now the team is more settled and cohesive. The debate about adaptation has only been postponed.",
+        outcomeText: "{playerName} accepts the decision without argument. But their disappointment is visible through the rest of practice. For now the team is more settled and cohesive. The debate about adaptation has only been postponed.",
       },
     ],
   },
 
   // ==========================================================================
-  // ARC SYSTEM — ENTRY EVENTS (6 events)
+  // ARC SYSTEM. ENTRY EVENTS (6 events)
   // Sets primary arc flags. All minor (no choices), player-triggered.
   // Arc flag conventions:
   //   Primary (30-90 days, one per player): arc_redemption_{playerId},
@@ -3094,7 +3094,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Redemption Arc Begins',
-    description: '{playerName} is carrying the weight of recent losses personally. You can see it in how they carry themselves — they need something to prove.',
+    description: '{playerName} is carrying the weight of recent losses personally. You can see it in how they carry themselves. They need something to prove.',
     conditions: [
       {
         type: 'player_personality',
@@ -3127,7 +3127,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Prodigy Arc Recognized',
-    description: 'The hype around {playerName} has reached a tipping point. Analysts, fans, and opposing coaches are all tracking them. This is no longer a fluke — this is a rising star.',
+    description: 'The hype around {playerName} has reached a tipping point. Analysts, fans, and opposing coaches are all tracking them. This is no longer a fluke. This is a rising star.',
     conditions: [
       {
         type: 'flag_active',
@@ -3160,7 +3160,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Contender Arc Emerges',
-    description: '{playerName} has been one of the most consistent performers through this winning run. The narrative around them is shifting — they\'re no longer just a solid player, they\'re someone expected to carry.',
+    description: '{playerName} has been one of the most consistent performers through this winning run. The narrative around them is shifting. They\'re no longer just a solid player, they\'re someone expected to carry.',
     conditions: [
       {
         type: 'team_win_streak',
@@ -3263,7 +3263,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'minor',
     title: 'Identity Crisis Arc',
-    description: '{playerName} looks lost right now — not from lack of effort but from lack of clarity. Their role, their voice on the team, their sense of where they fit: all of it feels uncertain.',
+    description: '{playerName} looks lost right now. Not from lack of effort but from lack of clarity. Their role, their voice on the team, their sense of where they fit: all of it feels uncertain.',
     conditions: [
       {
         type: 'team_chemistry_below',
@@ -3296,7 +3296,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // ARC SYSTEM — PROGRESSION EVENTS (9 events)
+  // ARC SYSTEM. PROGRESSION EVENTS (9 events)
   // Modifies existing arcs via modifier flags. Mix of minor and major.
   // Modifier flags (14-30 days): arc_mod_momentum_{playerId},
   //   arc_mod_fragile_{playerId}, arc_mod_resilient_{playerId},
@@ -3370,12 +3370,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // OPPONENT AWARENESS EVENTS (Phase 3 — 6 events)
+  // OPPONENT AWARENESS EVENTS (Phase 3. 6 events)
   // Conditions: flag_active (rivalry_scorched_earth), bracket_position,
   //             elimination_risk, team_win_streak, tournament_active
   // ==========================================================================
 
-  // 1. opponent_mental_edge — rivalry noise seeps into camp before lower bracket match
+  // 1. opponent_mental_edge. Rivalry noise seeps into camp before lower bracket match
   {
     id: 'opponent_mental_edge',
     category: 'external_pressure',
@@ -3409,13 +3409,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     requiresPlayerTeam: true,
   },
 
-  // 2. revenge_match_tension — major choice when a player can't let go before elimination match
+  // 2. revenge_match_tension. Major choice when a player can't let go before elimination match
   {
     id: 'revenge_match_tension',
     category: 'player_ego',
     severity: 'major',
     title: 'Revenge Match Pressure',
-    description: '{playerName} pulled you aside before practice. The upcoming match against the rival team is different for them — there\'s unfinished business they haven\'t been able to let go of. They want to channel it, but you can see the weight it\'s carrying.',
+    description: '{playerName} pulled you aside before practice. The upcoming match against the rival team is different for them. There\'s unfinished business they haven\'t been able to let go of. They want to channel it, but you can see the weight it\'s carrying.',
     conditions: [
       {
         type: 'flag_active',
@@ -3471,12 +3471,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 7,
           },
         ],
-        outcomeText: '{playerName} appreciates the honesty. The rivalry noise quiets. The locker room feels calmer going in — focused on rounds, not on payback.',
+        outcomeText: '{playerName} appreciates the honesty. The rivalry noise quiets. The locker room feels calmer going in. Focused on rounds, not on payback.',
       },
       {
         id: 'let_it_ride',
         text: 'Give them space to manage it their own way',
-        description: 'Let them process the emotion privately — trust they know themselves',
+        description: 'Let them process the emotion privately. Trust they know themselves',
         effects: [
           {
             target: 'player_morale',
@@ -3494,13 +3494,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     requiresPlayerTeam: true,
   },
 
-  // 3. upset_victim_media_frenzy — momentum narrative builds after consecutive tournament wins
+  // 3. upset_victim_media_frenzy. Momentum narrative builds after consecutive tournament wins
   {
     id: 'upset_victim_media_frenzy',
     category: 'external_pressure',
     severity: 'minor',
     title: 'Upset Narrative Builds',
-    description: 'The media is running with the story. Analysts are calling the recent results one of the tournament\'s biggest surprises. The coverage is positive — but the sudden spotlight has a weight that {teamName} is only now beginning to feel.',
+    description: 'The media is running with the story. Analysts are calling the recent results one of the tournament\'s biggest surprises. The coverage is positive. But the sudden spotlight has a weight that {teamName} is only now beginning to feel.',
     conditions: [
       {
         type: 'team_win_streak',
@@ -3532,13 +3532,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     requiresPlayerTeam: true,
   },
 
-  // 4. rematch_spotlight — major event when scorched-earth rivalry collides with lower bracket
+  // 4. rematch_spotlight. Major event when scorched-earth rivalry collides with lower bracket
   {
     id: 'rematch_spotlight',
     category: 'external_pressure',
     severity: 'major',
     title: "The Rematch Everyone's Watching",
-    description: 'Word has gotten out that an opponent with major rivalry history is potentially on a collision course with {teamName} again. Fans, analysts, and broadcast are locked into the rematch narrative — and it hasn\'t even been confirmed yet.',
+    description: 'Word has gotten out that an opponent with major rivalry history is potentially on a collision course with {teamName} again. Fans, analysts, and broadcast are locked into the rematch narrative. And it hasn\'t even been confirmed yet.',
     conditions: [
       {
         type: 'flag_active',
@@ -3572,7 +3572,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'The team leans into the story. There\'s something energizing about being at the center of the narrative — every player steps into the bracket feeling like they\'re playing in front of the whole world. The pressure becomes fuel.',
+        outcomeText: 'The team leans into the story. There\'s something energizing about being at the center of the narrative. Every player steps into the bracket feeling like they\'re playing in front of the whole world. The pressure becomes fuel.',
       },
       {
         id: 'control_the_narrative',
@@ -3589,12 +3589,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'You handle the press with care. The team stays focused and the external noise stays external. They go in grounded — no extra weight, just preparation and purpose.',
+        outcomeText: 'You handle the press with care. The team stays focused and the external noise stays external. They go in grounded. No extra weight, just preparation and purpose.',
       },
       {
         id: 'shut_it_out_completely',
         text: 'Full media blackout',
-        description: 'No interviews, no engagement — complete silence',
+        description: 'No interviews, no engagement. Complete silence',
         effects: [
           {
             target: 'player_morale',
@@ -3606,19 +3606,19 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: 'The blackout creates its own story — the silence becomes part of the narrative. Players feel protected from the noise, but some quietly wonder if the withdrawal signals anxiety rather than focus.',
+        outcomeText: 'The blackout creates its own story. The silence becomes part of the narrative. Players feel protected from the noise, but some quietly wonder if the withdrawal signals anxiety rather than focus.',
       },
     ],
     requiresPlayerTeam: true,
   },
 
-  // 5. lower_bracket_belief — consecutive lower bracket wins spark genuine team belief
+  // 5. lower_bracket_belief. Consecutive lower bracket wins spark genuine team belief
   {
     id: 'lower_bracket_belief',
     category: 'breakthrough',
     severity: 'minor',
     title: 'Lower Bracket Believers',
-    description: 'After consecutive wins in the lower bracket, something has shifted in {teamName}\'s energy. What started as survival mode has evolved into genuine belief. You can hear it in how they talk about the upcoming match — not "can we win" but "we\'re going to win."',
+    description: 'After consecutive wins in the lower bracket, something has shifted in {teamName}\'s energy. What started as survival mode has evolved into genuine belief. You can hear it in how they talk about the upcoming match. Not "can we win" but "we\'re going to win."',
     conditions: [
       {
         type: 'bracket_position',
@@ -3650,13 +3650,13 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     requiresPlayerTeam: true,
   },
 
-  // 6. rival_eliminated_mixed_feelings — rival eliminated; satisfaction mixed with strange hollowness
+  // 6. rival_eliminated_mixed_feelings. Rival eliminated; satisfaction mixed with strange hollowness
   {
     id: 'rival_eliminated_mixed_feelings',
     category: 'breakthrough',
     severity: 'minor',
-    title: 'Rivals Out — Mixed Emotions',
-    description: 'Word spreads fast: the rival organization is out of the tournament. For some of your players it\'s pure satisfaction. For others there\'s a strange hollowness — they wanted to be the ones to do it, or they realize the rivalry had been sharpening their focus all along.',
+    title: 'Rivals Out. Mixed Emotions',
+    description: 'Word spreads fast: the rival organization is out of the tournament. For some of your players it\'s pure satisfaction. For others there\'s a strange hollowness. They wanted to be the ones to do it, or they realize the rivalry had been sharpening their focus all along.',
     conditions: [
       {
         type: 'flag_active',
@@ -3729,7 +3729,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Underdog Awakening',
-    description: '{playerName} has been written off by most of the scene. But these recent wins have reignited something. They\'re not playing with desperation anymore — they\'re playing with defiance.',
+    description: '{playerName} has been written off by most of the scene. But these recent wins have reignited something. They\'re not playing with desperation anymore. They\'re playing with defiance.',
     conditions: [
       {
         type: 'flag_active',
@@ -3762,7 +3762,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Clutch Reputation Established',
-    description: '{playerName} keeps showing up in the moments that define matches. It\'s not luck — it\'s a pattern. The team has started looking to them when things are on the line.',
+    description: '{playerName} keeps showing up in the moments that define matches. It\'s not luck. It\'s a pattern. The team has started looking to them when things are on the line.',
     conditions: [
       {
         type: 'flag_active',
@@ -3838,12 +3838,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: '{playerName} appreciates the honesty. The standards conversation hurts, but they\'d rather have clarity than be strung along. They\'re not done — they just need to rebuild.',
+        outcomeText: '{playerName} appreciates the honesty. The standards conversation hurts, but they\'d rather have clarity than be strung along. They\'re not done. They just need to rebuild.',
       },
       {
         id: 'protect_their_confidence',
         text: 'Shield them from the pressure',
-        description: 'Keep expectations publicly high — protect their confidence privately',
+        description: 'Keep expectations publicly high. Protect their confidence privately',
         effects: [
           {
             target: 'player_morale',
@@ -3856,7 +3856,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'You hold the public line on their potential. Internally, {playerName} senses the gap between what\'s being said and what\'s being felt. The pressure hasn\'t disappeared — it\'s just been postponed.',
+        outcomeText: 'You hold the public line on their potential. Internally, {playerName} senses the gap between what\'s being said and what\'s being felt. The pressure hasn\'t disappeared. It\'s just been postponed.',
       },
       {
         id: 'redistribute_burden',
@@ -3961,7 +3961,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: -5,
           },
         ],
-        outcomeText: '{playerName} steps into the narrative with full conviction. The fanbase responds with intensity — but some teammates feel they\'re playing in someone else\'s story now. The energy is electric and fragile in equal measure.',
+        outcomeText: '{playerName} steps into the narrative with full conviction. The fanbase responds with intensity. But some teammates feel they\'re playing in someone else\'s story now. The energy is electric and fragile in equal measure.',
       },
       {
         id: 'redirect_to_team',
@@ -3978,12 +3978,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: -3,
           },
         ],
-        outcomeText: '{playerName} publicly frames the tournament as a team mission. They carry that unsaid private weight themselves. The team bonds over the shared goal, and the legacy narrative recedes — for now.',
+        outcomeText: '{playerName} publicly frames the tournament as a team mission. They carry that unsaid private weight themselves. The team bonds over the shared goal, and the legacy narrative recedes. For now.',
       },
       {
         id: 'let_it_unfold',
         text: 'Let it unfold naturally',
-        description: 'Don\'t position anything — just compete',
+        description: 'Don\'t position anything. Just compete',
         effects: [
           {
             target: 'player_morale',
@@ -3996,7 +3996,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: '{playerName} plays without declared intent. The performances will say what words won\'t. There\'s something freeing about it — and dangerously compelling to watch.',
+        outcomeText: '{playerName} plays without declared intent. The performances will say what words won\'t. There\'s something freeing about it. And dangerously compelling to watch.',
       },
     ],
   },
@@ -4006,7 +4006,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Identity Clarified',
-    description: '{playerName} has found their footing. The stretch of uncertainty is ending — their role on the team is clearer, their confidence is returning, and you can see it in how they move in practice.',
+    description: '{playerName} has found their footing. The stretch of uncertainty is ending. Their role on the team is clearer, their confidence is returning, and you can see it in how they move in practice.',
     conditions: [
       {
         type: 'flag_active',
@@ -4038,7 +4038,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // ARC SYSTEM — RESOLUTION EVENTS (5 events)
+  // ARC SYSTEM. RESOLUTION EVENTS (5 events)
   // Major events with meaningful choices that close or transform arcs.
   // ==========================================================================
 
@@ -4088,12 +4088,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: '{playerName} steps forward with the conviction that something real has changed. The fanbase and media pick it up immediately. The redemption arc closes — and a contender arc opens. The story is just getting interesting.',
+        outcomeText: '{playerName} steps forward with the conviction that something real has changed. The fanbase and media pick it up immediately. The redemption arc closes. And a contender arc opens. The story is just getting interesting.',
       },
       {
         id: 'stay_humble',
         text: 'Tell them to stay quiet and keep performing',
-        description: 'The work speaks — don\'t let the narrative distract',
+        description: 'The work speaks. Don\'t let the narrative distract',
         effects: [
           {
             target: 'player_morale',
@@ -4110,11 +4110,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: '{playerName} keeps their head down. The arc doesn\'t get its public moment — but their teammates respect the quiet conviction. Something is being built here that\'s more durable than a media narrative.',
+        outcomeText: '{playerName} keeps their head down. The arc doesn\'t get its public moment. But their teammates respect the quiet conviction. Something is being built here that\'s more durable than a media narrative.',
       },
       {
         id: 'credit_the_team',
-        text: 'Redirect — frame it as a team triumph',
+        text: 'Redirect. Frame it as a team triumph',
         description: 'Deflect the personal narrative onto collective achievement',
         effects: [
           {
@@ -4127,7 +4127,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 4,
           },
         ],
-        outcomeText: '{playerName} channels their redemption energy into team pride. It\'s generous — maybe too generous. The arc doesn\'t close cleanly. Something personal is left unresolved, but the team is stronger for their selflessness.',
+        outcomeText: '{playerName} channels their redemption energy into team pride. It\'s generous. Maybe too generous. The arc doesn\'t close cleanly. Something personal is left unresolved, but the team is stronger for their selflessness.',
       },
     ],
   },
@@ -4137,7 +4137,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'major',
     title: 'Contender\'s Championship Test',
-    description: '{playerName} has a clutch reputation and they\'re in the grand final. Every contender arc builds to a moment like this. The question isn\'t whether they belong here — it\'s whether they can finish it.',
+    description: '{playerName} has a clutch reputation and they\'re in the grand final. Every contender arc builds to a moment like this. The question isn\'t whether they belong here. It\'s whether they can finish it.',
     conditions: [
       {
         type: 'flag_active',
@@ -4161,7 +4161,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'embrace_the_moment',
         text: 'Tell them this is what they\'ve been built for',
-        description: 'Full confidence — put the weight of the moment on their shoulders',
+        description: 'Full confidence. Put the weight of the moment on their shoulders',
         effects: [
           {
             target: 'player_morale',
@@ -4180,11 +4180,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: '{playerName} takes the weight with both hands. You can see it in warm-up — they\'re locked in like never before. Win or lose, they\'re going to make this moment count.',
+        outcomeText: '{playerName} takes the weight with both hands. You can see it in warm-up. They\'re locked in like never before. Win or lose, they\'re going to make this moment count.',
       },
       {
         id: 'distribute_the_pressure',
-        text: 'Tell them it\'s a team effort — don\'t carry it alone',
+        text: 'Tell them it\'s a team effort. Don\'t carry it alone',
         description: 'Lower individual stakes to keep them clear-headed',
         effects: [
           {
@@ -4197,11 +4197,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 8,
           },
         ],
-        outcomeText: 'You ease the individual burden. {playerName} plays free — and that freedom transfers through the whole team. The contender arc won\'t get its singular heroic moment, but the performance might be even better for it.',
+        outcomeText: 'You ease the individual burden. {playerName} plays free. And that freedom transfers through the whole team. The contender arc won\'t get its singular heroic moment, but the performance might be even better for it.',
       },
       {
         id: 'acknowledge_the_stakes',
-        text: 'Be honest — this is the moment that defines the arc',
+        text: 'Be honest. This is the moment that defines the arc',
         description: 'Name what this match means clearly and trust them to handle it',
         effects: [
           {
@@ -4219,7 +4219,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: 'The conversation is direct and serious. {playerName} thanks you for not softening it. They walk into warm-up with clear eyes — and the weight of every match they\'ve played to get here sitting visibly on their shoulders.',
+        outcomeText: 'The conversation is direct and serious. {playerName} thanks you for not softening it. They walk into warm-up with clear eyes. And the weight of every match they\'ve played to get here sitting visibly on their shoulders.',
       },
     ],
   },
@@ -4274,7 +4274,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 5,
           },
         ],
-        outcomeText: '{playerName} commits to the rebuild. It\'s not the version of themselves they imagined — but it\'s real, and it\'s theirs. The team has a player who chose to stay and fight for something. That matters.',
+        outcomeText: '{playerName} commits to the rebuild. It\'s not the version of themselves they imagined. But it\'s real, and it\'s theirs. The team has a player who chose to stay and fight for something. That matters.',
       },
       {
         id: 'explore_options',
@@ -4296,11 +4296,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 5,
           },
         ],
-        outcomeText: 'The conversation is respectful and honest. {playerName} doesn\'t feel pushed out — they feel seen. But the rest of the team senses something shifted. The uncertainty is real now.',
+        outcomeText: 'The conversation is respectful and honest. {playerName} doesn\'t feel pushed out. They feel seen. But the rest of the team senses something shifted. The uncertainty is real now.',
       },
       {
         id: 'challenge_them_to_prove_it',
-        text: 'Challenge them — prove they belong here',
+        text: 'Challenge them. Prove they belong here',
         description: 'Raise the competitive standard rather than managing around it',
         effects: [
           {
@@ -4320,7 +4320,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: 'The challenge stings. {playerName} is quiet in the days that follow — but practice intensity picks up. Something in them has decided to answer instead of walk away.',
+        outcomeText: 'The challenge stings. {playerName} is quiet in the days that follow. But practice intensity picks up. Something in them has decided to answer instead of walk away.',
       },
     ],
   },
@@ -4349,7 +4349,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
       {
         id: 'own_the_spotlight',
         text: 'Tell them to embrace the moment',
-        description: 'Full send — let them step into the spotlight they\'ve earned',
+        description: 'Full send. Let them step into the spotlight they\'ve earned',
         effects: [
           {
             target: 'player_morale',
@@ -4375,12 +4375,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 45,
           },
         ],
-        outcomeText: '{playerName} steps forward and the room shifts around them. They\'ve crossed the threshold from prodigy to contender. Some teammates feel the change immediately. The prodigy arc is over — something bigger has started.',
+        outcomeText: '{playerName} steps forward and the room shifts around them. They\'ve crossed the threshold from prodigy to contender. Some teammates feel the change immediately. The prodigy arc is over. Something bigger has started.',
       },
       {
         id: 'stay_hungry',
         text: 'Tell them the work isn\'t finished',
-        description: 'Keep them locked in — the prodigy phase isn\'t over yet',
+        description: 'Keep them locked in. The prodigy phase isn\'t over yet',
         effects: [
           {
             target: 'player_morale',
@@ -4398,11 +4398,11 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: '{playerName} takes the advice seriously. No celebration, no grand declaration. The prodigy arc extends — deepening rather than resolving. There\'s something more dangerous being built here.',
+        outcomeText: '{playerName} takes the advice seriously. No celebration, no grand declaration. The prodigy arc extends. Deepening rather than resolving. There\'s something more dangerous being built here.',
       },
       {
         id: 'protect_from_overexposure',
-        text: 'Limit their media exposure — protect the development',
+        text: 'Limit their media exposure. Protect the development',
         description: 'Shield them from the hype cycle and keep the focus on performance',
         effects: [
           {
@@ -4421,7 +4421,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             delta: 3,
           },
         ],
-        outcomeText: 'You run interference on the media cycle. {playerName} notices the protection and focuses entirely on the game. The hype fades slightly — and they quietly get better because of it.',
+        outcomeText: 'You run interference on the media cycle. {playerName} notices the protection and focuses entirely on the game. The hype fades slightly. And they quietly get better because of it.',
       },
     ],
   },
@@ -4468,7 +4468,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 90,
           },
         ],
-        outcomeText: 'The room feels different after the conversation. {playerName} carries themselves with renewed purpose — not desperation, conviction. The rest of the team picks up on it. This chapter isn\'t over.',
+        outcomeText: 'The room feels different after the conversation. {playerName} carries themselves with renewed purpose. Not desperation, conviction. The rest of the team picks up on it. This chapter isn\'t over.',
       },
       {
         id: 'honor_their_decision',
@@ -4490,12 +4490,12 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You tell {playerName} the decision belongs to them entirely. They appreciate the respect. The rest of the team doesn\'t know what was discussed — and that ambiguity has a weight of its own.',
+        outcomeText: 'You tell {playerName} the decision belongs to them entirely. They appreciate the respect. The rest of the team doesn\'t know what was discussed. And that ambiguity has a weight of its own.',
       },
       {
         id: 'make_it_about_the_team',
         text: 'Redirect the conversation to this tournament first',
-        description: 'Table the legacy talk — focus on winning now',
+        description: 'Table the legacy talk. Focus on winning now',
         effects: [
           {
             target: 'player_morale',
@@ -4512,7 +4512,7 @@ export const ARC_SYSTEM_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: 'You close the future conversation and bring everything back to now. {playerName} respects the discipline. For the next few matches, the legacy question goes quiet — and both of you feel lighter for it.',
+        outcomeText: 'You close the future conversation and bring everything back to now. {playerName} respects the discipline. For the next few matches, the legacy question goes quiet. And both of you feel lighter for it.',
       },
     ],
   },

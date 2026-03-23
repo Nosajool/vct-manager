@@ -27,7 +27,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "Let's see what happens",
-        quote: "We'll let our play speak for itself. No predictions from me — just going to head in and compete.",
+        quote: "We'll let our play speak for itself. No predictions from me. Just going to head in and compete.",
         effects: {},
       },
     ],
@@ -39,7 +39,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     narrativeCategory: 'external_pressure',
     conditions: [{ type: 'is_playoff_match' }],
-    prompt: 'This is a playoff match — how does the pressure feel different?',
+    prompt: 'This is a playoff match. How does the pressure feel different?',
     options: [
       {
         tone: 'CONFIDENT',
@@ -50,7 +50,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Staying grounded',
-        quote: "We're not changing anything. Same preparation, same mindset. It's just another match — we have to believe that.",
+        quote: "We're not changing anything. Same preparation, same mindset. It's just another match. We have to believe that.",
         effects: { morale: 2, sponsorTrust: 2 },
       },
       {
@@ -179,7 +179,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // COACH — PRE_MATCH (2 templates)
+  // COACH. PRE_MATCH (2 templates)
   // ==========================================================================
 
   {
@@ -227,7 +227,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'Familiar opponents keep you sharp',
-        quote: "Rematches are always interesting — both sides know each other, so the adjustments matter even more. We've put in the extra work.",
+        quote: "Rematches are always interesting. Both sides know each other, so the adjustments matter even more. We've put in the extra work.",
         effects: { morale: 2, fanbase: 1, rivalryDelta: 2 },
       },
       {
@@ -241,7 +241,7 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // PLAYER — PRE_MATCH (2 templates)
+  // PLAYER. PRE_MATCH (2 templates)
   // ==========================================================================
 
   {
@@ -260,13 +260,13 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Focused and ready',
-        quote: "I've been doing my preparation and I'm in a good headspace. You don't want to get too hyped up — just stay grounded and play your game.",
+        quote: "I've been doing my preparation and I'm in a good headspace. You don't want to get too hyped up. Just stay grounded and play your game.",
         effects: { morale: 2, sponsorTrust: 1 },
       },
       {
         tone: 'DEFLECTIVE',
         label: "Let the match speak for me",
-        quote: "I'll show you how I'm feeling when the server goes live. No point in talking about it — just want to play.",
+        quote: "I'll show you how I'm feeling when the server goes live. No point in talking about it. Just want to play.",
         effects: { hype: 1 },
       },
     ],
@@ -289,13 +289,13 @@ export const PRE_MATCH_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "I'm in my bag right now",
-        quote: "I won't pretend otherwise — I feel really confident right now. Everything is clicking and I want to keep that momentum going.",
+        quote: "I won't pretend otherwise. I feel really confident right now. Everything is clicking and I want to keep that momentum going.",
         effects: { morale: 3, hype: 4, fanbase: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: 'Team is playing great',
-        quote: "It's not just me — everyone is playing well and it makes everything easier. When the team is rolling, individual stats follow.",
+        quote: "It's not just me. Everyone is playing well and it makes everything easier. When the team is rolling, individual stats follow.",
         effects: { morale: 2, fanbase: 1 },
       },
     ],

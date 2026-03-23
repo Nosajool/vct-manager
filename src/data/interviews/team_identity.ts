@@ -2,30 +2,30 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // TEAM IDENTITY (Phase 4b — 6 templates)
+  // TEAM IDENTITY (Phase 4b. 6 templates)
   // ==========================================================================
 
   // PRE_MATCH identity templates
 
-  // 1. pre_star_carry_identity — fires when team_identity_star_carry flag active
+  // 1. pre_star_carry_identity. Fires when team_identity_star_carry flag active
   {
     id: 'pre_star_carry_identity',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }],
-    prompt: "It looks like this team is being built around {starPlayerName}'s performance right now. Is that a conscious decision — or just where the form is taking you?",
+    prompt: "It looks like this team is being built around {starPlayerName}'s performance right now. Is that a conscious decision. Or just where the form is taking you?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "We play through our best player",
-        quote: "When someone is performing at that level, you build around it. It's not a crutch — it's smart game management. The rest of the team understands their role in that.",
+        quote: "When someone is performing at that level, you build around it. It's not a crutch. It's smart game management. The rest of the team understands their role in that.",
         effects: { hype: 4, morale: 3 },
       },
       {
         tone: 'HUMBLE',
         label: "The team enables the individual",
-        quote: "I'd push back on that framing a little. Every player on this roster creates the conditions for that performance to happen. It's still a team effort — it just shows up differently in the stats.",
+        quote: "I'd push back on that framing a little. Every player on this roster creates the conditions for that performance to happen. It's still a team effort. It just shows up differently in the stats.",
         effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
       },
       {
@@ -37,37 +37,37 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 2. pre_balanced_confidence — fires on win_streak_2plus when team_identity_balanced flag active
+  // 2. pre_balanced_confidence. Fires on win_streak_2plus when team_identity_balanced flag active
   {
     id: 'pre_balanced_confidence',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'team_synergy',
     conditions: [{ type: 'flag_active', flag: 'team_identity_balanced' }, { type: 'team_win_streak', streakLength: 2 }],
-    prompt: "Your team has been remarkably consistent. Chemistry clearly isn't an issue — how do you maintain that cohesion heading into a high-stakes match?",
+    prompt: "Your team has been remarkably consistent. Chemistry clearly isn't an issue. How do you maintain that cohesion heading into a high-stakes match?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "Consistency is a culture thing",
-        quote: "You don't manufacture this in a week. We've been building this environment deliberately — the way we communicate, the way we hold each other accountable. It shows up in the results.",
+        quote: "You don't manufacture this in a week. We've been building this environment deliberately. The way we communicate, the way we hold each other accountable. It shows up in the results.",
         effects: { morale: 4, hype: 3, sponsorTrust: 2, fanbase: 2 },
       },
       {
         tone: 'HUMBLE',
         label: "We just focus on the process",
-        quote: "Honestly, we don't talk about chemistry much — we just do the things that produce it. Good preparation, honest communication, trusting each other in the moment. It compounds over time.",
+        quote: "Honestly, we don't talk about chemistry much. We just do the things that produce it. Good preparation, honest communication, trusting each other in the moment. It compounds over time.",
         effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
         label: "Ask me that after today",
-        quote: "Every match is a new test. I don't take any of it for granted — consistency doesn't mean permanent. We'll see today whether what we've built holds up.",
+        quote: "Every match is a new test. I don't take any of it for granted. Consistency doesn't mean permanent. We'll see today whether what we've built holds up.",
         effects: { morale: 2 },
       },
     ],
   },
 
-  // 3. pre_fragile_narrative — fires when team_identity_fragile flag active
+  // 3. pre_fragile_narrative. Fires when team_identity_fragile flag active
   {
     id: 'pre_fragile_narrative',
     context: 'PRE_MATCH',
@@ -99,7 +99,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
 
   // POST_MATCH identity templates (IDs must be added to winIds/lossIds in InterviewService)
 
-  // 4. post_resilient_lower_bracket — POST_MATCH win, lower_bracket + team_identity_resilient
+  // 4. post_resilient_lower_bracket. POST_MATCH win, lower_bracket + team_identity_resilient
   {
     id: 'post_resilient_lower_bracket',
     context: 'POST_MATCH',
@@ -112,7 +112,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "We've been here before",
-        quote: "Adversity doesn't break us — it clarifies us. Every time we've been written off, we've found a way. I don't think that's a coincidence anymore. That's who we are.",
+        quote: "Adversity doesn't break us. It clarifies us. Every time we've been written off, we've found a way. I don't think that's a coincidence anymore. That's who we are.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 1, TEAM_FIRST: 1, INTROVERT: 0 },
         effects: { morale: 5, hype: 5, fanbase: 3 },
       },
@@ -133,7 +133,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 5. post_star_carry_spotlight — POST_MATCH win, team_identity_star_carry (player interview)
+  // 5. post_star_carry_spotlight. POST_MATCH win, team_identity_star_carry (player interview)
   {
     id: 'post_star_carry_spotlight',
     context: 'POST_MATCH',
@@ -141,12 +141,12 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'team_identity_star_carry' }],
-    prompt: "Your team is leaning heavily on your individual performance right now. Is that a role you're comfortable carrying — or does it add pressure you didn't sign up for?",
+    prompt: "Your team is leaning heavily on your individual performance right now. Is that a role you're comfortable carrying. Or does it add pressure you didn't sign up for?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "I want the ball in pressure moments",
-        quote: "This is what I've trained for. When the team needs a play, I want to be the person making it. I'm not running from that responsibility — I'm embracing it.",
+        quote: "This is what I've trained for. When the team needs a play, I want to be the person making it. I'm not running from that responsibility. I'm embracing it.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 3, STABLE: 1, TEAM_FIRST: 0, INTROVERT: 0 },
         effects: { morale: 5, hype: 4, fanbase: 2, dramaChance: 8 },
       },
@@ -160,14 +160,14 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "I'm just trying to contribute",
-        quote: "I don't think about it in those terms. I just focus on my preparation, execute my role, and trust the team to do the same. Whatever the narrative becomes after that — that's for other people to figure out.",
+        quote: "I don't think about it in those terms. I just focus on my preparation, execute my role, and trust the team to do the same. Whatever the narrative becomes after that. That's for other people to figure out.",
         personalityWeights: { INTROVERT: 3, STABLE: 2, TEAM_FIRST: 1, BIG_STAGE: 0, FAME_SEEKER: 0 },
         effects: { morale: 3 },
       },
     ],
   },
 
-  // 6. post_fragile_elimination — POST_MATCH loss, elimination_risk + team_identity_fragile
+  // 6. post_fragile_elimination. POST_MATCH loss, elimination_risk + team_identity_fragile
   {
     id: 'post_fragile_elimination',
     context: 'POST_MATCH',
@@ -175,18 +175,18 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'loss',
     narrativeCategory: 'team_synergy',
     conditions: [{ type: 'flag_active', flag: 'team_identity_fragile' }, { type: 'elimination_risk' }],
-    prompt: "With everything on the line, the cracks in this team are showing. What needs to change — and do you believe this group can actually make those changes before it's too late?",
+    prompt: "With everything on the line, the cracks in this team are showing. What needs to change. And do you believe this group can actually make those changes before it's too late?",
     options: [
       {
         tone: 'BLAME_SELF',
         label: "I take responsibility for where we are",
-        quote: "This is on me as much as anyone. The environment we're playing in, the decisions made — I own my part in this. What I can tell you is the team isn't giving up, and neither am I.",
+        quote: "This is on me as much as anyone. The environment we're playing in, the decisions made. I own my part in this. What I can tell you is the team isn't giving up, and neither am I.",
         effects: { morale: 3, sponsorTrust: 3, fanbase: 2, clearsFlags: ['media_narrative_fragile'] },
       },
       {
         tone: 'CONFIDENT',
         label: "We have one more push in us",
-        quote: "I believe in this team. Not because it's easy to say — but because I've seen what they're capable of when it clicks. We need to execute. The ability is there. It's about bringing it out.",
+        quote: "I believe in this team. Not because it's easy to say. But because I've seen what they're capable of when it clicks. We need to execute. The ability is there. It's about bringing it out.",
         effects: { hype: 3, morale: 4, fanbase: 1 },
       },
       {
@@ -198,7 +198,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // Arc 5: Historic First Title — seed interview
+  // Arc 5: Historic First Title. Seed interview
   {
     id: 'post_win_historic_milestone',
     context: 'POST_MATCH',
@@ -209,14 +209,14 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "This is validation — and just the beginning",
-        quote: "We've been building toward something like this. This is validation — of the roster, the coaching staff, the org's vision. And this is just the beginning of what we intend to do.",
+        label: "This is validation. And just the beginning",
+        quote: "We've been building toward something like this. This is validation. Of the roster, the coaching staff, the org's vision. And this is just the beginning of what we intend to do.",
         effects: { hype: 8, fanbase: 6, morale: 5, setsFlags: [{ key: 'interview_historic_win', durationDays: 21 }] },
       },
       {
         tone: 'HUMBLE',
         label: "This is for everyone who believed",
-        quote: "I keep thinking of everyone who worked to make this possible — players, staff, the fans who stuck with us through the tough stretches. This result belongs to all of them.",
+        quote: "I keep thinking of everyone who worked to make this possible. Players, staff, the fans who stuck with us through the tough stretches. This result belongs to all of them.",
         effects: { fanbase: 7, morale: 4, sponsorTrust: 4 },
       },
       {
@@ -230,7 +230,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // KICKOFF FLAG CONSEQUENCES (4 templates — gate on org_high_expectations,
+  // KICKOFF FLAG CONSEQUENCES (4 templates. Gate on org_high_expectations,
   // manager_development_focused, manager_underdog_mindset)
   // ==========================================================================
 
@@ -328,7 +328,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'org_high_expectations' }, { type: 'team_loss_streak', streakLength: 3 }],
-    prompt: "You declared you'd be in the finals at the start of the season. Three straight losses in — how do you justify that statement now?",
+    prompt: "You declared you'd be in the finals at the start of the season. Three straight losses in. How do you justify that statement now?",
     options: [
       {
         tone: 'CONFIDENT',
@@ -339,7 +339,7 @@ export const TEAM_IDENTITY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "We need to earn it, not declare it",
-        quote: "Looking back, maybe we spoke too soon. We need to show it on the server — not in press conferences.",
+        quote: "Looking back, maybe we spoke too soon. We need to show it on the server. Not in press conferences.",
         effects: { morale: 2, fanbase: -1, clearsFlags: ['org_high_expectations'] },
       },
       {

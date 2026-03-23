@@ -28,7 +28,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'The system needs to change',
-        quote: "The roster isn't the problem — the system around them is. I'm overhauling our approach and this team will look different soon.",
+        quote: "The roster isn't the problem. The system around them is. I'm overhauling our approach and this team will look different soon.",
         effects: { fanbase: 3, sponsorTrust: 1, morale: -1, dramaChance: 12 },
       },
     ],
@@ -94,7 +94,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // COACH — CRISIS (2 templates)
+  // COACH. CRISIS (2 templates)
   // ==========================================================================
 
   {
@@ -157,7 +157,7 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // PLAYER — CRISIS (2 templates)
+  // PLAYER. CRISIS (2 templates)
   // ==========================================================================
 
   {
@@ -171,13 +171,13 @@ export const CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "We keep it in-house",
-        quote: "Every team has disagreements. That's normal. We don't air our business publicly — we handle it as a team and move forward.",
+        quote: "Every team has disagreements. That's normal. We don't air our business publicly. We handle it as a team and move forward.",
         effects: { morale: 1, fanbase: -1 },
       },
       {
         tone: 'HUMBLE',
         label: "It's been a tough stretch",
-        quote: "I won't lie — it's been challenging. But I think adversity either breaks a team or makes it stronger. I'm choosing to believe in the second one.",
+        quote: "I won't lie. It's been challenging. But I think adversity either breaks a team or makes it stronger. I'm choosing to believe in the second one.",
         effects: { morale: 3, fanbase: 2, hype: 1, dramaChance: 5 },
       },
       {

@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // POST_MATCH — LOSS (4 templates)
+  // POST_MATCH. LOSS (4 templates)
   // ==========================================================================
 
   {
@@ -78,12 +78,12 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     matchOutcome: 'loss',
     narrativeCategory: 'external_pressure',
-    prompt: "It came down to the wire. Painful to lose by such a small margin — what happened?",
+    prompt: "It came down to the wire. Painful to lose by such a small margin. What happened?",
     options: [
       {
         tone: 'BLAME_SELF',
         label: 'Preparation let us down',
-        quote: "In close matches, every small edge matters. We left some things on the table today — that's on me to fix.",
+        quote: "In close matches, every small edge matters. We left some things on the table today. That's on me to fix.",
         effects: { fanbase: 2, sponsorTrust: 2, morale: -1 },
       },
       {
@@ -118,7 +118,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_TEAM',
         label: "We didn't compete",
-        quote: "That wasn't good enough — from anyone. I expect more from this roster and I'll make sure we have that conversation internally.",
+        quote: "That wasn't good enough. From anyone. I expect more from this roster and I'll make sure we have that conversation internally.",
         effects: { morale: -4, dramaChance: 20, hype: -2 },
       },
       {
@@ -185,13 +185,13 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "The odds were just against us",
-        quote: "Those are situations where sometimes you're on the wrong end of the math. We fought every round regardless — we just couldn't convert.",
+        quote: "Those are situations where sometimes you're on the wrong end of the math. We fought every round regardless. We just couldn't convert.",
         effects: { morale: 1 },
       },
     ],
   },
 
-  // post_loss_elimination_message — POST_MATCH, manager, loss
+  // post_loss_elimination_message. POST_MATCH, manager, loss
   {
     id: 'post_loss_elimination_message',
     context: 'POST_MATCH',
@@ -203,7 +203,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'HUMBLE',
-        label: "We don't care — we'll only improve",
+        label: "We don't care. We'll only improve",
         quote: "I know people are happy we're eliminated. But we don't care. We'll only improve.",
         effects: { fanbase: 3, sponsorTrust: 2, morale: 2 },
       },
@@ -260,7 +260,7 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     matchOutcome: 'loss',
     narrativeCategory: 'external_pressure',
-    prompt: "You seemed confident coming into this one. After seeing what they brought today — did you have enough respect for this opponent?",
+    prompt: "You seemed confident coming into this one. After seeing what they brought today. Did you have enough respect for this opponent?",
     options: [
       {
         tone: 'HUMBLE',
@@ -271,13 +271,13 @@ export const POST_MATCH_LOSS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: "They surprised us today",
-        quote: "Full credit to them — they came in with something we hadn't fully prepared for. That team is better than I gave them credit for going in.",
+        quote: "Full credit to them. They came in with something we hadn't fully prepared for. That team is better than I gave them credit for going in.",
         effects: { fanbase: 2, sponsorTrust: 2, morale: 1 },
       },
       {
         tone: 'DEFLECTIVE',
-        label: "We respected them — prep let us down",
-        quote: "I always respect every opponent. The issue wasn't underestimating them — it was that our prep for their specific style wasn't sharp enough.",
+        label: "We respected them. Prep let us down",
+        quote: "I always respect every opponent. The issue wasn't underestimating them. It was that our prep for their specific style wasn't sharp enough.",
         effects: { morale: 1, dramaChance: 5 },
       },
     ],

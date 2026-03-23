@@ -2,7 +2,7 @@ import type { DramaEventTemplate } from '../../types/drama';
 
 export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
-  // STAGE 1 — WARNING (1-2 consecutive negative months)
+  // STAGE 1. WARNING (1-2 consecutive negative months)
   // ==========================================================================
 
   {
@@ -44,7 +44,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // STAGE 2 — RESTRICTED (3 consecutive negative months)
+  // STAGE 2. RESTRICTED (3 consecutive negative months)
   // ==========================================================================
 
   {
@@ -82,7 +82,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
           { target: 'team_hype', delta: 5 },
         ],
         outcomeText:
-          'The org secures emergency financing. The immediate pressure eases, but the debt clock starts ticking. At least players can stop worrying — for now.',
+          'The org secures emergency financing. The immediate pressure eases, but the debt clock starts ticking. At least players can stop worrying. For now.',
       },
       {
         id: 'turnaround_promise',
@@ -145,13 +145,13 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -20 },
         ],
         outcomeText:
-          'Word leaks in 48 hours — these things always do. {playerName} is devastated. The locker room is tense. The transfer window is now your lifeline.',
+          'Word leaks in 48 hours. These things always do. {playerName} is devastated. The locker room is tense. The transfer window is now your lifeline.',
       },
     ],
   },
 
   // ==========================================================================
-  // STAGE 3 — CRITICAL (5+ consecutive negative months)
+  // STAGE 3. CRITICAL (5+ consecutive negative months)
   // ==========================================================================
 
   {
@@ -160,7 +160,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Investor Acquisition Offer',
     description:
-      "A private equity firm has approached the org about a controlling stake. It would solve the money problems — but they have opinions about the roster.",
+      "A private equity firm has approached the org about a controlling stake. It would solve the money problems. But they have opinions about the roster.",
     conditions: [
       { type: 'consecutive_negative_months_above', threshold: 5 },
     ],
@@ -171,7 +171,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'accept_majority',
-        text: 'Accept — sell majority stake',
+        text: 'Accept. Sell majority stake',
         description: 'Full acquisition. The money problems end. So does your autonomy.',
         effects: [
           { target: 'team_budget', delta: 500000 },
@@ -184,18 +184,18 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
       {
         id: 'negotiate_minority',
         text: 'Negotiate partial stake',
-        description: 'Take the money but retain control. A compromise — everyone gives something up.',
+        description: 'Take the money but retain control. A compromise. Everyone gives something up.',
         effects: [
           { target: 'team_budget', delta: 200000 },
           { target: 'set_flag', flag: 'investor_minority' },
           { target: 'team_hype', delta: 5 },
         ],
         outcomeText:
-          'You negotiate a minority stake deal. The org gets a cash injection; the investors get a seat at the table. You retain control — for now. These arrangements have a way of evolving.',
+          'You negotiate a minority stake deal. The org gets a cash injection; the investors get a seat at the table. You retain control. For now. These arrangements have a way of evolving.',
       },
       {
         id: 'decline_offer',
-        text: 'Decline — find another way',
+        text: 'Decline. Find another way',
         description: 'Protect the vision. Figure the rest out later.',
         effects: [
           { target: 'team_hype', delta: -5 },
@@ -207,7 +207,7 @@ export const FINANCIAL_STRESS_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // RECOVERY — Board pressure lifts when finances improve
+  // RECOVERY. Board pressure lifts when finances improve
   // ==========================================================================
 
   {

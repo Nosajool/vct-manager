@@ -49,7 +49,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "We're raising our intensity in response",
-        quote: "If anything, watching that match made me want to push harder. We can't afford to be reactive — we need to dictate the terms before they get a chance to.",
+        quote: "If anything, watching that match made me want to push harder. We can't afford to be reactive. We need to dictate the terms before they get a chance to.",
         effects: { morale: 1, hype: 4, dramaChance: 8, clearsFlags: ['downtime_interview_pending'] },
       },
     ],
@@ -70,7 +70,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'The team execution was genuinely impressive',
-        quote: "There was a retake sequence where all five executed on the same read simultaneously. I showed our players that clip and said — that's the level we're chasing.",
+        quote: "There was a retake sequence where all five executed on the same read simultaneously. I showed our players that clip and said. That's the level we're chasing.",
         effects: { morale: 3, fanbase: 2, clearsFlags: ['downtime_interview_pending'] },
       },
       {
@@ -90,13 +90,13 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: 'Up — we match up well against that style',
+        label: 'Up. We match up well against that style',
         quote: "The way they play suits us. I walked out of that session feeling like we're genuinely built to beat this kind of team. The data backs it up.",
         effects: { morale: 3, hype: 3, fanbase: 2, dramaChance: 3, clearsFlags: ['downtime_interview_pending'] },
       },
       {
         tone: 'HUMBLE',
-        label: "Steady — it's always more complicated than it looks",
+        label: "Steady. It's always more complicated than it looks",
         quote: "I never walk out of tape study feeling overly comfortable. You respect every opponent, you prepare for every outcome. Confidence comes from preparation, not assumptions.",
         effects: { morale: 2, fanbase: 2, sponsorTrust: 1, clearsFlags: ['downtime_interview_pending'] },
       },
@@ -130,7 +130,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'The meta is evolving in interesting ways',
-        quote: "There's a real creativity at the highest level right now. The way teams are adapting their side structures is genuinely fascinating — and it raises the bar for everyone.",
+        quote: "There's a real creativity at the highest level right now. The way teams are adapting their side structures is genuinely fascinating. And it raises the bar for everyone.",
         effects: { morale: 2, hype: 2, fanbase: 2, dramaChance: 0, clearsFlags: ['downtime_interview_pending'] },
       },
     ],
@@ -150,7 +150,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'HUMBLE',
-        label: 'Mixed — we had an honest conversation afterward',
+        label: 'Mixed. We had an honest conversation afterward',
         quote: "There were moments that challenged them. Some were motivated, some needed time to process. We had a real conversation after. That kind of honesty builds something.",
         effects: { morale: 2, fanbase: 2, dramaChance: 5, clearsFlags: ['downtime_interview_pending'] },
       },
@@ -178,7 +178,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'It takes time and we keep working at it',
-        quote: "Good chemistry isn't given, it's earned. We saw how clean their communication looked on tape. That's a standard we hold ourselves to — and we're still building toward it.",
+        quote: "Good chemistry isn't given, it's earned. We saw how clean their communication looked on tape. That's a standard we hold ourselves to. And we're still building toward it.",
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1, clearsFlags: ['downtime_interview_pending'] },
       },
       {
@@ -205,7 +205,7 @@ export const WATCH_PARTY_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Respect them, but back ourselves',
-        quote: "I respect what they've built. I also know what we have in this room. This isn't a mismatch — this is a good match, and those are the ones worth winning.",
+        quote: "I respect what they've built. I also know what we have in this room. This isn't a mismatch. This is a good match, and those are the ones worth winning.",
         effects: { morale: 3, hype: 3, fanbase: 1, dramaChance: 3, clearsFlags: ['downtime_interview_pending'] },
       },
       {

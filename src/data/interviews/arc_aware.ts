@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // COACH — POST_MATCH (2 templates)
+  // COACH. POST_MATCH (2 templates)
   // ==========================================================================
 
   {
@@ -16,7 +16,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'The players bought in completely',
-        quote: "When your players trust the system, moments like this happen. Credit to them — they executed a difficult game plan without hesitation.",
+        quote: "When your players trust the system, moments like this happen. Credit to them. They executed a difficult game plan without hesitation.",
         effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
       },
       {
@@ -45,13 +45,13 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'I got outcoached today',
-        quote: "I have to be honest — their coach had answers for things I thought would work. I'll go back to the film and make sure we're better prepared next time.",
+        quote: "I have to be honest. Their coach had answers for things I thought would work. I'll go back to the film and make sure we're better prepared next time.",
         effects: { fanbase: 2, sponsorTrust: 2, morale: 1 },
       },
       {
         tone: 'HUMBLE',
         label: "We'll get the details right",
-        quote: "There are a few areas I want to revisit this week. The fundamentals are solid — it's the execution under pressure that we need to sharpen.",
+        quote: "There are a few areas I want to revisit this week. The fundamentals are solid. It's the execution under pressure that we need to sharpen.",
         effects: { morale: 2, sponsorTrust: 1 },
       },
       {
@@ -65,7 +65,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // PLAYER — POST_MATCH (2 templates)
+  // PLAYER. POST_MATCH (2 templates)
   // ==========================================================================
 
   {
@@ -116,7 +116,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "It hurts, but we learn",
-        quote: "Losses like this sting. But you can't let it break you — you have to look at it honestly and figure out what to fix. That's the process.",
+        quote: "Losses like this sting. But you can't let it break you. You have to look at it honestly and figure out what to fix. That's the process.",
         effects: { morale: 2, sponsorTrust: 1, fanbase: 1 },
       },
       {
@@ -175,7 +175,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "We're aligned — extensions will come",
+        label: "We're aligned. Extensions will come",
         quote: "Contract talks are a normal part of team management. My players know they're valued here. We'll handle the business side when the time is right.",
         effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'org_contract_confidence', durationDays: 14 }] },
       },
@@ -227,7 +227,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
   // ==========================================================================
   // ADDITIONAL FLAG-CONDITIONAL TEMPLATES
-  // Surfaces when specific drama flags are active — closes orphaned flag chains
+  // Surfaces when specific drama flags are active. Closes orphaned flag chains
   // ==========================================================================
 
   {
@@ -241,7 +241,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "Every org evaluates constantly",
-        quote: "Evaluating options is normal professional practice. My players know where I stand — we talk internally. Reading too much into this helps nobody.",
+        quote: "Evaluating options is normal professional practice. My players know where I stand. We talk internally. Reading too much into this helps nobody.",
         effects: { morale: -1, fanbase: 1 },
       },
       {
@@ -252,7 +252,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'AGGRESSIVE',
-        label: "We're building a winner — whatever it takes",
+        label: "We're building a winner. Whatever it takes",
         quote: "I'm not going to apologize for wanting to win. If there are moves that make this team better, I'm going to look at them. That's the job.",
         effects: { morale: -3, hype: 2, dramaChance: 12 },
       },
@@ -328,13 +328,13 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: "Shot-calling structures always evolve",
-        quote: "We're always refining how we make in-game decisions. That's not specific to one player — it's about finding what works best for the team at any given moment.",
+        quote: "We're always refining how we make in-game decisions. That's not specific to one player. It's about finding what works best for the team at any given moment.",
         effects: { morale: 1 },
       },
       {
         tone: 'CONFIDENT',
         label: "We made the right call for the team",
-        quote: "When something isn't producing results, you adjust. Our IGL is still a core part of what we do — just in a more clearly defined role now.",
+        quote: "When something isn't producing results, you adjust. Our IGL is still a core part of what we do. Just in a more clearly defined role now.",
         effects: { morale: -2, hype: 2, sponsorTrust: 1 },
       },
       {
@@ -352,18 +352,18 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'manager',
     narrativeCategory: 'practice_burnout',
     conditions: [{ type: 'flag_active', flag: 'burnout_crisis_ignored' }, { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] }],
-    prompt: "Multiple sources suggest your team pushed through serious burnout warning signs. Players weren't given adequate support — what happened?",
+    prompt: "Multiple sources suggest your team pushed through serious burnout warning signs. Players weren't given adequate support. What happened?",
     options: [
       {
         tone: 'BLAME_SELF',
-        label: "I got it wrong — I should have acted sooner",
+        label: "I got it wrong. I should have acted sooner",
         quote: "In hindsight, I prioritized results over people. That's a mistake I own entirely. We're making immediate changes to how we support our players.",
         effects: { fanbase: 4, morale: 3, sponsorTrust: 2, dramaChance: 5 },
       },
       {
         tone: 'DEFLECTIVE',
         label: "Players had every resource available to them",
-        quote: "We offered support structures and they were available to anyone who needed them. I can't force players to ask for help — but we'll review our approach.",
+        quote: "We offered support structures and they were available to anyone who needed them. I can't force players to ask for help. But we'll review our approach.",
         effects: { morale: -2, sponsorTrust: -1 },
       },
       {
@@ -377,7 +377,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // PLAYER — PLAYOFF / PERSONALITY-WEIGHTED (2 templates)
+  // PLAYER. PLAYOFF / PERSONALITY-WEIGHTED (2 templates)
   // ==========================================================================
 
   {
@@ -386,19 +386,19 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'breakthrough',
     conditions: [{ type: 'is_playoff_match' }],
-    prompt: "This is a playoff match. Some players feel the pressure differently — how does a high-stakes environment affect you personally?",
+    prompt: "This is a playoff match. Some players feel the pressure differently. How does a high-stakes environment affect you personally?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is where I belong",
-        quote: "Honestly? I've been waiting for this all season. Regular matches are fine but this — the crowd, everything on the line — this is when I come alive.",
+        quote: "Honestly? I've been waiting for this all season. Regular matches are fine but this. The crowd, everything on the line. This is when I come alive.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 1 },
         effects: { morale: 4, hype: 5, fanbase: 3 },
       },
       {
         tone: 'HUMBLE',
         label: "Pressure is a privilege",
-        quote: "Being here — in a playoff match — is something a lot of players work their whole careers toward. I don't take that lightly. I just want to do it justice.",
+        quote: "Being here. In a playoff match. Is something a lot of players work their whole careers toward. I don't take that lightly. I just want to do it justice.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1.5, BIG_STAGE: 0.5, FAME_SEEKER: 0.5 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
       },
@@ -437,7 +437,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'DEFLECTIVE',
-        label: "The team doesn't need me to talk — it needs me to play",
+        label: "The team doesn't need me to talk. It needs me to play",
         quote: "My job isn't to give speeches. It's to show up and perform. That's what I'm focused on. Everything else is noise.",
         personalityWeights: { INTROVERT: 2.5, STABLE: 1, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
         effects: { morale: 2 },
@@ -447,12 +447,12 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // BRACKET-AWARE TEMPLATES (Phase 1 — 10 templates)
+  // BRACKET-AWARE TEMPLATES (Phase 1. 10 templates)
   // Conditions: lower_bracket, upper_bracket, elimination_risk, grand_final,
   //             opponent_dropped_from_upper
   // ==========================================================================
 
-  // 1. lower_bracket_dropped — POST_MATCH after falling to lower bracket
+  // 1. lower_bracket_dropped. POST_MATCH after falling to lower bracket
   {
     id: 'lower_bracket_dropped',
     context: 'POST_MATCH',
@@ -470,7 +470,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'BLAME_SELF',
-        label: "That was on me — we'll be ready",
+        label: "That was on me. We'll be ready",
         quote: "The game plan didn't hold up and I take that on myself. I owe this team a better performance from the coaching side. We'll be sharper starting with the next match.",
         effects: { fanbase: 3, sponsorTrust: 2, morale: 1 },
       },
@@ -483,7 +483,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 2. lower_bracket_survival — PRE_MATCH when surviving in lower bracket on a streak
+  // 2. lower_bracket_survival. PRE_MATCH when surviving in lower bracket on a streak
   {
     id: 'lower_bracket_survival',
     context: 'PRE_MATCH',
@@ -501,7 +501,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "One match, one mindset",
-        quote: "We're not thinking about the journey — just the next match. That's the only thing that keeps you alive in lower bracket: absolute focus on what's directly in front of you.",
+        quote: "We're not thinking about the journey. Just the next match. That's the only thing that keeps you alive in lower bracket: absolute focus on what's directly in front of you.",
         effects: { morale: 3, sponsorTrust: 2, setsFlags: [{ key: 'arc_mod_resilient', durationDays: 14 }] },
       },
       {
@@ -513,7 +513,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 3. elimination_risk_pre — PRE_MATCH must-win framing
+  // 3. elimination_risk_pre. PRE_MATCH must-win framing
   {
     id: 'elimination_risk_pre',
     context: 'PRE_MATCH',
@@ -525,7 +525,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Must-win matches are our specialty",
-        quote: "We've been in do-or-die situations before and we know what it takes. I'd rather be in this position — backs against the wall — than cruise through to a final we haven't earned.",
+        quote: "We've been in do-or-die situations before and we know what it takes. I'd rather be in this position. Backs against the wall. Than cruise through to a final we haven't earned.",
         effects: { hype: 5, morale: 4, fanbase: 2 },
       },
       {
@@ -543,7 +543,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 4. grand_final_pre — PRE_MATCH legacy/history framing
+  // 4. grand_final_pre. PRE_MATCH legacy/history framing
   {
     id: 'grand_final_pre',
     context: 'PRE_MATCH',
@@ -554,8 +554,8 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "We earned this — now we take it",
-        quote: "Every match we've played, every decision we've made this tournament has pointed to today. We're ready. I don't want to say much more than that — let the match do the talking.",
+        label: "We earned this. Now we take it",
+        quote: "Every match we've played, every decision we've made this tournament has pointed to today. We're ready. I don't want to say much more than that. Let the match do the talking.",
         effects: { hype: 6, morale: 5, fanbase: 3 },
       },
       {
@@ -573,7 +573,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 5. grand_final_post_win — POST_MATCH triumph framing
+  // 5. grand_final_post_win. POST_MATCH triumph framing
   {
     id: 'grand_final_post_win',
     context: 'POST_MATCH',
@@ -581,18 +581,18 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'is_grand_final' }],
-    prompt: "You're champions. After everything this team went through to get here — what does this moment mean?",
+    prompt: "You're champions. After everything this team went through to get here. What does this moment mean?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is exactly who we are",
-        quote: "People will remember what happened today. We weren't just here to compete — we came here to win. And we did. This is the standard we hold ourselves to from now on.",
+        quote: "People will remember what happened today. We weren't just here to compete. We came here to win. And we did. This is the standard we hold ourselves to from now on.",
         effects: { hype: 9, fanbase: 8, morale: 6, setsFlags: [{ key: 'interview_grand_final_champion', durationDays: 30 }] },
       },
       {
         tone: 'HUMBLE',
         label: "I'm just so proud of this group",
-        quote: "I keep looking around at these players. They gave everything — not just today, but all season. This championship belongs to every person who fought for this team. I couldn't be prouder.",
+        quote: "I keep looking around at these players. They gave everything. Not just today, but all season. This championship belongs to every person who fought for this team. I couldn't be prouder.",
         effects: { fanbase: 9, morale: 6, sponsorTrust: 5 },
       },
       {
@@ -604,7 +604,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 6. grand_final_post_loss — POST_MATCH gracious defeat / revenge setup
+  // 6. grand_final_post_loss. POST_MATCH gracious defeat / revenge setup
   {
     id: 'grand_final_post_loss',
     context: 'POST_MATCH',
@@ -617,25 +617,25 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "We'll be back for this",
-        quote: "This is the hardest thing to process — knowing how close we came. But I refuse to let this team feel like they failed. They made the grand final. That matters. And we'll be back.",
+        quote: "This is the hardest thing to process. Knowing how close we came. But I refuse to let this team feel like they failed. They made the grand final. That matters. And we'll be back.",
         effects: { fanbase: 5, morale: 4, sponsorTrust: 3 },
       },
       {
         tone: 'CONFIDENT',
         label: "This pain becomes our fuel",
-        quote: "Remember this feeling. I want every player on this team to carry it. Because next time we're in this position, we're going to know exactly what it cost us to lose — and we won't let it happen again.",
+        quote: "Remember this feeling. I want every player on this team to carry it. Because next time we're in this position, we're going to know exactly what it cost us to lose. And we won't let it happen again.",
         effects: { hype: 4, morale: 4, fanbase: 3, setsFlags: [{ key: 'interview_grand_final_loss_fuel', durationDays: 30 }] },
       },
       {
         tone: 'BLAME_SELF',
         label: "I owe this team a championship",
-        quote: "These players deserved to lift that trophy today. I'll spend a long time thinking about what I could have done differently. I owe them that honesty — and I owe them another shot.",
+        quote: "These players deserved to lift that trophy today. I'll spend a long time thinking about what I could have done differently. I owe them that honesty. And I owe them another shot.",
         effects: { fanbase: 4, sponsorTrust: 3, morale: 2, dramaChance: 8 },
       },
     ],
   },
 
-  // 7. upper_bracket_confidence — PRE_MATCH commanding narrative
+  // 7. upper_bracket_confidence. PRE_MATCH commanding narrative
   {
     id: 'upper_bracket_confidence',
     context: 'PRE_MATCH',
@@ -647,7 +647,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Upper bracket is where we belong",
-        quote: "This is where we want to be. The comfort we have isn't complacency — it's confidence built from results. We stay up here by being better than everyone else in front of us.",
+        quote: "This is where we want to be. The comfort we have isn't complacency. It's confidence built from results. We stay up here by being better than everyone else in front of us.",
         effects: { hype: 4, morale: 4, fanbase: 2 },
       },
       {
@@ -659,25 +659,25 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "We want to stay on this side of the bracket",
-        quote: "Nobody in this building wants to go to the lower bracket. That's the honest truth. It's not fear — it's hunger. We're going to fight to stay where we are.",
+        quote: "Nobody in this building wants to go to the lower bracket. That's the honest truth. It's not fear. It's hunger. We're going to fight to stay where we are.",
         effects: { hype: 5, morale: 3, rivalryDelta: 1, dramaChance: 5 },
       },
     ],
   },
 
-  // 8. opponent_dropped_from_upper_pre — PRE_MATCH psychological edge framing
+  // 8. opponent_dropped_from_upper_pre. PRE_MATCH psychological edge framing
   {
     id: 'opponent_dropped_from_upper_pre',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'opponent_from_upper' }],
-    prompt: "Your next opponent just dropped from the upper bracket. They're experienced and hungry — does that change your approach at all?",
+    prompt: "Your next opponent just dropped from the upper bracket. They're experienced and hungry. Does that change your approach at all?",
     options: [
       {
         tone: 'AGGRESSIVE',
-        label: "They're wounded — we finish it",
-        quote: "Teams that drop from the upper bracket come in desperate. That desperation is an edge they have — but it's also a weakness we can exploit. We've prepared for exactly this kind of opponent.",
+        label: "They're wounded. We finish it",
+        quote: "Teams that drop from the upper bracket come in desperate. That desperation is an edge they have. But it's also a weakness we can exploit. We've prepared for exactly this kind of opponent.",
         effects: { hype: 5, rivalryDelta: 3, morale: 2, dramaChance: 10 },
       },
       {
@@ -695,37 +695,37 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 9. lower_bracket_vs_dropped_opponent — PRE_MATCH both teams desperate
+  // 9. lower_bracket_vs_dropped_opponent. PRE_MATCH both teams desperate
   {
     id: 'lower_bracket_vs_dropped_opponent',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
-    prompt: "You're in the lower bracket, and your opponent just dropped from the upper. Two teams under the gun — what does that dynamic bring out?",
+    prompt: "You're in the lower bracket, and your opponent just dropped from the upper. Two teams under the gun. What does that dynamic bring out?",
     options: [
       {
         tone: 'CONFIDENT',
-        label: "We've been surviving longer — we're ready for this",
+        label: "We've been surviving longer. We're ready for this",
         quote: "We've been living in elimination pressure since we dropped. They're just getting introduced to it. That experience matters. We're conditioned for exactly this kind of match.",
         effects: { hype: 5, morale: 4, fanbase: 2 },
       },
       {
         tone: 'HUMBLE',
         label: "No favors in a match like this",
-        quote: "Two teams who both needed to fight to stay alive. Neither side is getting a gift today. I expect everything from my players — because we'll need everything to get through.",
+        quote: "Two teams who both needed to fight to stay alive. Neither side is getting a gift today. I expect everything from my players. Because we'll need everything to get through.",
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
       },
       {
         tone: 'AGGRESSIVE',
-        label: "They fell — we stayed alive. That gap matters.",
+        label: "They fell. We stayed alive. That gap matters.",
         quote: "There's a reason they're on this side of the bracket now. We're going to use every bit of the momentum we've built. Today we show the difference between a team that belongs here and one that slipped.",
         effects: { hype: 6, rivalryDelta: 3, morale: 3, dramaChance: 10 },
       },
     ],
   },
 
-  // 10. comeback_lower_bracket_run — POST_MATCH iron will narrative after extended lower bracket run
+  // 10. comeback_lower_bracket_run. POST_MATCH iron will narrative after extended lower bracket run
   {
     id: 'comeback_lower_bracket_run',
     context: 'POST_MATCH',
@@ -733,23 +733,23 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'bracket_position', bracketPosition: 'lower' }],
-    prompt: "Match after match, elimination on the line each time — and this team keeps winning. How do you describe what you've witnessed from this roster through this lower bracket run?",
+    prompt: "Match after match, elimination on the line each time. And this team keeps winning. How do you describe what you've witnessed from this roster through this lower bracket run?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is what we're built for",
-        quote: "Every match they've played down here has required everything they had. And they've delivered. This isn't a fluke — this is who we are. Every team left in this tournament should be watching.",
+        quote: "Every match they've played down here has required everything they had. And they've delivered. This isn't a fluke. This is who we are. Every team left in this tournament should be watching.",
         effects: { hype: 7, morale: 5, fanbase: 4, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 21 }] },
       },
       {
         tone: 'HUMBLE',
         label: "The bracket tested us and we didn't break",
-        quote: "I've coached teams that found reasons to fold under this kind of pressure. These players never even considered it. What they've shown through this run — I'll be honest, it's exceeded everything I hoped for.",
+        quote: "I've coached teams that found reasons to fold under this kind of pressure. These players never even considered it. What they've shown through this run. I'll be honest, it's exceeded everything I hoped for.",
         effects: { morale: 5, sponsorTrust: 3, fanbase: 5, setsFlags: [{ key: 'arc_mod_resilient', durationDays: 21 }] },
       },
       {
         tone: 'AGGRESSIVE',
-        label: "Nobody believed in us — and we didn't need them to",
+        label: "Nobody believed in us. And we didn't need them to",
         quote: "People wrote us off when we dropped to lower bracket. That's fine. We play for each other, not for outside validation. And we are still here. Every team we've beaten can tell you what that looks like up close.",
         effects: { hype: 8, fanbase: 5, morale: 4, rivalryDelta: 1 },
       },
@@ -758,7 +758,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // ARC-AWARE INTERVIEW TEMPLATES (Phase 2 — 10 templates)
+  // ARC-AWARE INTERVIEW TEMPLATES (Phase 2. 10 templates)
   // All gated by conditions[] using arc flag conventions.
   // Arc flags: arc_redemption_{playerId}, arc_prodigy_{playerId},
   //   arc_contender_{playerId}, arc_fallen_{playerId},
@@ -774,12 +774,12 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'breakthrough',
     conditions: [{ type: 'flag_active', flag: 'arc_redemption_{playerId}' }, { type: 'is_playoff_match' }],
-    prompt: "You've spoken about wanting to prove yourself this season. With the playoffs here, does that motivation feel like fuel — or pressure?",
+    prompt: "You've spoken about wanting to prove yourself this season. With the playoffs here, does that motivation feel like fuel. Or pressure?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is exactly what I needed",
-        quote: "I've been waiting for this. The regular season built toward something and I feel it. Pressure turns into fuel when you believe in what you're doing — and right now I believe completely.",
+        quote: "I've been waiting for this. The regular season built toward something and I feel it. Pressure turns into fuel when you believe in what you're doing. And right now I believe completely.",
         personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 1 },
         effects: { morale: 4, hype: 4, fanbase: 2 },
       },
@@ -819,7 +819,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "I'm going through something but I'm still here",
-        quote: "It's been a rough stretch. I'm not going to pretend otherwise. But I keep showing up because this team deserves that from me. I trust the process — I've just got to keep at it.",
+        quote: "It's been a rough stretch. I'm not going to pretend otherwise. But I keep showing up because this team deserves that from me. I trust the process. I've just got to keep at it.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 2, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
       },
@@ -843,7 +843,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "Expectations don't change — we deliver today",
+        label: "Expectations don't change. We deliver today",
         quote: "We don't renegotiate standards because the path got harder. This team came here to win a championship and we're still capable of doing that. Today starts that answer.",
         effects: { hype: 4, morale: 4, fanbase: 2 },
       },
@@ -855,8 +855,8 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'BLAME_SELF',
-        label: "I set expectations — it's on me to back them up",
-        quote: "I was vocal about what I believed this team could achieve. That pressure lives with me as the manager. My players shouldn't feel that weight today. I'll carry it — they just need to compete.",
+        label: "I set expectations. It's on me to back them up",
+        quote: "I was vocal about what I believed this team could achieve. That pressure lives with me as the manager. My players shouldn't feel that weight today. I'll carry it. They just need to compete.",
         effects: { fanbase: 4, sponsorTrust: 2, morale: 3 },
       },
     ],
@@ -901,19 +901,19 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'external_pressure',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_underdog_{playerId}' }],
-    prompt: "Not many people expected you to still be here. Has that changed how you think about yourself — or this tournament?",
+    prompt: "Not many people expected you to still be here. Has that changed how you think about yourself. Or this tournament?",
     options: [
       {
         tone: 'AGGRESSIVE',
         label: "The doubt was the best thing for me",
-        quote: "Everyone who counted us out? I've kept a list. Not out of bitterness — out of gratitude. You needed that to wake something up in me. I play differently when no one believes in me.",
+        quote: "Everyone who counted us out? I've kept a list. Not out of bitterness. Out of gratitude. You needed that to wake something up in me. I play differently when no one believes in me.",
         personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, TEAM_FIRST: 0.5, INTROVERT: 0 },
         effects: { morale: 4, hype: 5, fanbase: 2, rivalryDelta: 1 },
       },
       {
         tone: 'HUMBLE',
         label: "I stopped caring about what others expect",
-        quote: "At a certain point you let go of the outside narrative and play for yourself and your teammates. That was freeing. I'm not trying to prove anyone wrong — I'm just here to compete.",
+        quote: "At a certain point you let go of the outside narrative and play for yourself and your teammates. That was freeing. I'm not trying to prove anyone wrong. I'm just here to compete.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
       },
@@ -939,7 +939,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "Their character showed when things were hardest",
-        quote: "The numbers will never tell you what it took for them to keep showing up when everything was against them. That kind of mental strength — you can't coach it. I'm incredibly proud of who they've been through this.",
+        quote: "The numbers will never tell you what it took for them to keep showing up when everything was against them. That kind of mental strength. You can't coach it. I'm incredibly proud of who they've been through this.",
         effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
       },
       {
@@ -950,7 +950,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'DEFLECTIVE',
-        label: "Let them tell that story — it's not mine to tell",
+        label: "Let them tell that story. It's not mine to tell",
         quote: "I'm not going to narrate their journey for them. What they've done through this tournament has been remarkable and they deserve to own it entirely. Ask them.",
         effects: { morale: 3, fanbase: 2 },
       },
@@ -963,19 +963,19 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_prodigy_{playerId}' }, { type: 'is_playoff_match' }],
-    prompt: "Everyone has been calling you the next big thing since this tournament started. Heading into a playoff match — does the label help or does it start to feel like a weight?",
+    prompt: "Everyone has been calling you the next big thing since this tournament started. Heading into a playoff match. Does the label help or does it start to feel like a weight?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "I want to live up to it and then some",
-        quote: "I've heard the comparisons and the predictions and honestly? I want to exceed every single one of them. The label is motivation. Let people expect great things — I'll deliver them.",
+        quote: "I've heard the comparisons and the predictions and honestly? I want to exceed every single one of them. The label is motivation. Let people expect great things. I'll deliver them.",
         personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0.5 },
         effects: { morale: 4, hype: 5, fanbase: 3 },
       },
       {
         tone: 'HUMBLE',
         label: "I try not to think about what people call me",
-        quote: "Prodigy, breakout star — whatever. Labels come and go. What matters is what I do in the rounds. I just focus on competing and let others write the story.",
+        quote: "Prodigy, breakout star. Whatever. Labels come and go. What matters is what I do in the rounds. I just focus on competing and let others write the story.",
         personalityWeights: { TEAM_FIRST: 1.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 3, sponsorTrust: 2, fanbase: 2 },
       },
@@ -995,12 +995,12 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_veteran_legacy_{playerId}' }, { type: 'is_grand_final' }],
-    prompt: "You've been chasing something like this for a long time. Standing at the grand final — what does this moment feel like compared to everything that came before?",
+    prompt: "You've been chasing something like this for a long time. Standing at the grand final. What does this moment feel like compared to everything that came before?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "Everything I've built has led here",
-        quote: "Every tournament, every season, every time I had to start over — it all pointed to a moment like this. I'm not nervous. I'm grateful. And I'm going to make sure it counts.",
+        quote: "Every tournament, every season, every time I had to start over. It all pointed to a moment like this. I'm not nervous. I'm grateful. And I'm going to make sure it counts.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 1, INTROVERT: 0, TEAM_FIRST: 0.5 },
         effects: { morale: 5, hype: 6, fanbase: 4, setsFlags: [{ key: 'interview_veteran_legacy_hinted', durationDays: 21 }] },
       },
@@ -1033,7 +1033,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "They're going to be wrong",
-        quote: "Anyone writing my career summary right now is going to have to update it. I know who I am and what I'm capable of. This stretch isn't the definition — it's a detour. I'll get back to where I belong.",
+        quote: "Anyone writing my career summary right now is going to have to update it. I know who I am and what I'm capable of. This stretch isn't the definition. It's a detour. I'll get back to where I belong.",
         personalityWeights: { FAME_SEEKER: 2, BIG_STAGE: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
         effects: { morale: 3, hype: 3, fanbase: 2 },
       },
@@ -1046,7 +1046,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'BLAME_SELF',
-        label: "They're not wrong — and that's going to change",
+        label: "They're not wrong. And that's going to change",
         quote: "The form isn't there right now. I know it, the team knows it, and apparently the whole scene knows it. I'm not going to defend a performance level I haven't been hitting. But this version of me isn't the final version.",
         personalityWeights: { STABLE: 2, TEAM_FIRST: 1.5, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 2, fanbase: 4, hype: 2, setsFlags: [{ key: 'arc_mod_underdog_{playerId}', durationDays: 14 }] },
@@ -1060,25 +1060,25 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     subjectType: 'player',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'flag_active', flag: 'arc_mod_clutch_{playerId}' }],
-    prompt: "You've built a reputation for delivering in the biggest moments this tournament. Does knowing that change how you approach pressure situations — or does it just add to the weight?",
+    prompt: "You've built a reputation for delivering in the biggest moments this tournament. Does knowing that change how you approach pressure situations. Or does it just add to the weight?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "I want the ball in the clutch",
-        quote: "Put me in. Seriously. I've been in those situations enough now that they don't feel like pressure — they feel like opportunity. I want to be the one making the calls when it matters most.",
+        quote: "Put me in. Seriously. I've been in those situations enough now that they don't feel like pressure. They feel like opportunity. I want to be the one making the calls when it matters most.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 0.5 },
         effects: { morale: 4, hype: 4, fanbase: 3 },
       },
       {
         tone: 'HUMBLE',
-        label: "The team delivers — I just try to do my part",
+        label: "The team delivers. I just try to do my part",
         quote: "Clutch reputation is a team thing. I'm in positions to make big plays because my teammates set them up. I'd rather be known as someone who made everyone else better in the key moments.",
         personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
-        label: "Reputation doesn't win rounds — execution does",
+        label: "Reputation doesn't win rounds. Execution does",
         quote: "People talk about clutch moments but the truth is you just try to make the right call every time. Whether it's a pressure situation or not, the preparation is the same. Execute the fundamentals.",
         personalityWeights: { STABLE: 2, INTROVERT: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0 },
         effects: { morale: 3, sponsorTrust: 1 },
@@ -1087,7 +1087,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
   },
 
   // ==========================================================================
-  // NEW — POST_MATCH / GENERAL
+  // NEW. POST_MATCH / GENERAL
   // ==========================================================================
 
   {
@@ -1141,7 +1141,7 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'HUMBLE',
-        label: "Fair question — the play will answer it",
+        label: "Fair question. The play will answer it",
         quote: "Fair question. Our play will answer it.",
         effects: { morale: 2, fanbase: 1 },
       },

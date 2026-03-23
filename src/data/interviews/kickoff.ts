@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // KICKOFF (1 template — fires once at season start)
+  // KICKOFF (1 template. Fires once at season start)
   // ==========================================================================
 
   {
@@ -15,7 +15,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "We're here to win",
-        quote: "We're not here to participate. Every team in this league should expect to see us in the finals. That's the standard we're setting — starting today.",
+        quote: "We're not here to participate. Every team in this league should expect to see us in the finals. That's the standard we're setting. Starting today.",
         effects: {
           hype: 5,
           fanbase: 3,
@@ -29,7 +29,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'Build something together',
-        quote: "We've got a talented group and a lot of work ahead of us. My focus is on building a team that plays for each other — something this region can be proud of.",
+        quote: "We've got a talented group and a lot of work ahead of us. My focus is on building a team that plays for each other. Something this region can be proud of.",
         effects: {
           morale: 3,
           sponsorTrust: 2,
@@ -57,10 +57,10 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
 
 
   // ==========================================================================
-  // KICKOFF TOURNAMENT ARCS — INTERVIEW SEEDS & FLAG-CONDITIONAL RESPONSES
+  // KICKOFF TOURNAMENT ARCS. INTERVIEW SEEDS & FLAG-CONDITIONAL RESPONSES
   // ==========================================================================
 
-  // Arc 1: Veteran Legacy Pressure — seed interview
+  // Arc 1: Veteran Legacy Pressure. Seed interview
   {
     id: 'post_player_veteran_return',
     context: 'POST_MATCH',
@@ -70,14 +70,14 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Proving I still belong here",
-        quote: "This is what it's about — proving I still belong here. Every championship I chase now feels bigger than the last. I'm not done and I intend to remind everyone of that.",
+        quote: "This is what it's about. Proving I still belong here. Every championship I chase now feels bigger than the last. I'm not done and I intend to remind everyone of that.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 0.5, TEAM_FIRST: 0.5, INTROVERT: 0 },
         effects: { morale: 2, hype: 4, fanbase: 2, setsFlags: [{ key: 'interview_veteran_legacy_hinted', durationDays: 21 }] },
       },
       {
         tone: 'HUMBLE',
-        label: "The work paid off — that's all",
-        quote: "Honestly, it just means the work paid off. I've been around long enough to know wins don't last — you have to stay hungry and keep earning them.",
+        label: "The work paid off. That's all",
+        quote: "Honestly, it just means the work paid off. I've been around long enough to know wins don't last. You have to stay hungry and keep earning them.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 1.5, INTROVERT: 1, BIG_STAGE: 0.5, FAME_SEEKER: 0 },
         effects: { morale: 3, fanbase: 2, sponsorTrust: 1 },
       },
@@ -91,7 +91,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // Arc 1: Veteran Legacy Pressure — flag-conditional follow-up
+  // Arc 1: Veteran Legacy Pressure. Flag-conditional follow-up
   {
     id: 'pre_championship_pact_pressure',
     context: 'PRE_MATCH',
@@ -102,36 +102,36 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "They thrive on pressure like this",
-        quote: "That's exactly the kind of player they are — the bigger the moment, the more focused they get. The commitment was real and they're delivering on it every day in practice.",
+        quote: "That's exactly the kind of player they are. The bigger the moment, the more focused they get. The commitment was real and they're delivering on it every day in practice.",
         effects: { hype: 3, morale: 3 },
       },
       {
         tone: 'HUMBLE',
-        label: "One match at a time — always",
+        label: "One match at a time. Always",
         quote: "We've talked about managing expectations. The commitment is real but we're taking it one match at a time. Legacy is written by results, not words.",
         effects: { morale: 3, sponsorTrust: 2 },
       },
       {
         tone: 'DEFLECTIVE',
-        label: "I meant what I said — ask me after we win",
+        label: "I meant what I said. Ask me after we win",
         quote: "I'm not going to revisit that statement in the press. I meant every word and we're acting on it every day. Let the result do the talking.",
         effects: { morale: 1, hype: 1 },
       },
     ],
   },
 
-  // Arc 2: Breakout Star Hype — flag-conditional interview after prodigy_hype fires
+  // Arc 2: Breakout Star Hype. Flag-conditional interview after prodigy_hype fires
   {
     id: 'post_player_breakout_media',
     context: 'POST_MATCH',
     subjectType: 'player',
     conditions: [{ type: 'flag_active', flag: 'prodigy_hype_{playerId}' }],
-    prompt: "Your name is everywhere right now — analysts, fans, sponsors are all talking about you. How do you handle becoming the story?",
+    prompt: "Your name is everywhere right now. Analysts, fans, sponsors are all talking about you. How do you handle becoming the story?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "This is what I've worked for",
-        quote: "Honestly? I love it. This is what I've worked toward. I want to be the name that defines what this team — and this region — is capable of.",
+        quote: "Honestly? I love it. This is what I've worked toward. I want to be the name that defines what this team. And this region. Is capable of.",
         personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2, STABLE: 0, INTROVERT: 0, TEAM_FIRST: 0.5 },
         effects: { hype: 6, fanbase: 4, morale: -3, setsFlags: [{ key: 'ego_media_distraction_{playerId}', durationDays: 14 }] },
       },
@@ -152,7 +152,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // Arc 3: Triple-Elimination Mental Fatigue — seed interview
+  // Arc 3: Triple-Elimination Mental Fatigue. Seed interview
   {
     id: 'pre_triple_elim_fatigue',
     context: 'PRE_MATCH',
@@ -162,14 +162,14 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "Battle-hardened — we're sharper for it",
+        label: "Battle-hardened. We're sharper for it",
         quote: "Every match we've survived has stress-tested us. The teams that fall apart under elimination pressure aren't in our situation. We've been forged by this bracket.",
         effects: { morale: 3, hype: 2 },
       },
       {
         tone: 'HUMBLE',
         label: "It's taken a toll, but I believe in their resilience",
-        quote: "There's no hiding it — the schedule has taken a toll. But I've seen what these players are made of when it counts. I'm not worried.",
+        quote: "There's no hiding it. The schedule has taken a toll. But I've seen what these players are made of when it counts. I'm not worried.",
         effects: { morale: 2, sponsorTrust: 1, setsFlags: [{ key: 'interview_mid_bracket_grind', durationDays: 14 }] },
       },
       {
@@ -181,7 +181,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // Arc 4: IGL Community Scapegoat — flag-conditional player interview
+  // Arc 4: IGL Community Scapegoat. Flag-conditional player interview
   {
     id: 'post_igl_public_pressure',
     context: 'CRISIS',
@@ -192,13 +192,13 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Critics are background noise",
-        quote: "You get to a point where the critics are background noise. I trust my process and my teammates trust me — that's what matters. The discourse doesn't get in the server with us.",
+        quote: "You get to a point where the critics are background noise. I trust my process and my teammates trust me. That's what matters. The discourse doesn't get in the server with us.",
         personalityWeights: { BIG_STAGE: 2, FAME_SEEKER: 1.5, STABLE: 0.5, INTROVERT: 0, TEAM_FIRST: 1 },
         effects: { morale: 4, hype: 2 },
       },
       {
         tone: 'HUMBLE',
-        label: "Some of it hits — but I keep coming back",
+        label: "Some of it hits. But I keep coming back",
         quote: "It's hard, honestly. The community has opinions and some of them hit. But I keep coming back to: are my teammates still in the fight? If yes, then so am I.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1.5, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 3, sponsorTrust: 1 },
@@ -206,14 +206,14 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: "Some of the criticism is fair",
-        quote: "I'll be honest — some of the criticism is fair. I can be better. I'm not asking for patience for my ego. I'm asking for it because this team deserves the best version of me.",
+        quote: "I'll be honest. Some of the criticism is fair. I can be better. I'm not asking for patience for my ego. I'm asking for it because this team deserves the best version of me.",
         personalityWeights: { STABLE: 1.5, TEAM_FIRST: 1.5, INTROVERT: 1, BIG_STAGE: 0.5, FAME_SEEKER: 0 },
         effects: { morale: 2, fanbase: 4, hype: 2, setsFlags: [{ key: 'igl_seeking_redemption', durationDays: 21 }] },
       },
     ],
   },
 
-  // Arc 4: IGL Redemption — flag-conditional follow-up
+  // Arc 4: IGL Redemption. Flag-conditional follow-up
   {
     id: 'post_igl_redemption_chance',
     context: 'POST_MATCH',
@@ -230,7 +230,7 @@ export const KICKOFF_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'HUMBLE',
-        label: "Getting there — but the work isn't done",
+        label: "Getting there. But the work isn't done",
         quote: "I'm getting there. But I won't feel fully back until we win something that actually matters. One good performance isn't the answer.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 3, sponsorTrust: 1 },

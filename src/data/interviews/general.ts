@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const GENERAL_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // GENERAL — MANAGER (4 templates)
+  // GENERAL. MANAGER (4 templates)
   // ==========================================================================
 
   {
@@ -15,7 +15,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Intensity breeds excellence',
-        quote: "Elite performance doesn't happen by accident. We work hard, yes — but every hour has a purpose. Our players understand that dedication now means results later.",
+        quote: "Elite performance doesn't happen by accident. We work hard, yes. But every hour has a purpose. Our players understand that dedication now means results later.",
         effects: { hype: 2, morale: -1, sponsorTrust: 1 },
       },
       {
@@ -72,7 +72,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'It took real time and investment',
-        quote: "Chemistry isn't something you buy or manufacture. We spent months building trust — in practice, in team environments, in the conversations nobody sees. It shows now because of that work.",
+        quote: "Chemistry isn't something you buy or manufacture. We spent months building trust. In practice, in team environments, in the conversations nobody sees. It shows now because of that work.",
         effects: { morale: 3, fanbase: 2, hype: 2 },
       },
       {
@@ -95,12 +95,12 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     context: 'GENERAL',
     subjectType: 'manager',
     narrativeCategory: 'team_synergy',
-    prompt: "How would you describe the identity of this team — the way you want people to talk about you by the end of the year?",
+    prompt: "How would you describe the identity of this team. The way you want people to talk about you by the end of the year?",
     options: [
       {
         tone: 'CONFIDENT',
         label: 'Relentless and hard to beat',
-        quote: "I want people to say that facing us is exhausting — that we never let up, never get rattled, and always find a way. That's the standard we're building toward.",
+        quote: "I want people to say that facing us is exhausting. That we never let up, never get rattled, and always find a way. That's the standard we're building toward.",
         effects: { hype: 3, morale: 2, fanbase: 2 },
       },
       {
@@ -112,14 +112,14 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: 'The team nobody wanted to face',
-        quote: "At the end of this year, I want every opponent to dread drawing us in bracket. Not because we're flashy — because we're a problem. That's what we're building.",
+        quote: "At the end of this year, I want every opponent to dread drawing us in bracket. Not because we're flashy. Because we're a problem. That's what we're building.",
         effects: { hype: 4, rivalryDelta: 5, morale: 2, dramaChance: 5 },
       },
     ],
   },
 
   // ==========================================================================
-  // GENERAL — PLAYER (3 templates)
+  // GENERAL. PLAYER (3 templates)
   // ==========================================================================
 
   {
@@ -132,7 +132,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'My mental game has matured',
-        quote: "Mechanically I've always been solid. But learning to stay even in tough moments — not spiking emotionally when things go wrong — that's been the real evolution.",
+        quote: "Mechanically I've always been solid. But learning to stay even in tough moments. Not spiking emotionally when things go wrong. That's been the real evolution.",
         effects: { morale: 3, fanbase: 2, hype: 1 },
         personalityWeights: { STABLE: 2, INTROVERT: 2, FAME_SEEKER: 0 },
       },
@@ -169,7 +169,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "It's genuinely exhausting sometimes",
-        quote: "I won't pretend it's easy. There are days where the fatigue is real and you just have to compete through it. The team helps — when you're running on empty, you lean on each other.",
+        quote: "I won't pretend it's easy. There are days where the fatigue is real and you just have to compete through it. The team helps. When you're running on empty, you lean on each other.",
         effects: { morale: 2, fanbase: 3, hype: 1 },
         personalityWeights: { INTROVERT: 0, FAME_SEEKER: 2, STABLE: 1 },
       },
@@ -192,7 +192,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "Respect my name — I'm the best",
+        label: "Respect my name. I'm the best",
         quote: "Respect my name. I'm the best player in the world.",
         personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2.5, STABLE: 0, INTROVERT: 0 },
         effects: { hype: 5, fanbase: 2, sponsorTrust: -1, dramaChance: 10 },
@@ -206,7 +206,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'DEFLECTIVE',
-        label: "Rankings don't matter — trophies do",
+        label: "Rankings don't matter. Trophies do",
         quote: "Rankings don't matter to me. Trophies do.",
         personalityWeights: { INTROVERT: 2, STABLE: 1.5 },
         effects: { morale: 2, hype: 1 },
@@ -238,7 +238,7 @@ export const GENERAL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'I just want to compete',
-        quote: "I try not to get too caught up in hype cycles. What gets me fired up is the competition itself — solving the game at the highest level with teammates I trust.",
+        quote: "I try not to get too caught up in hype cycles. What gets me fired up is the competition itself. Solving the game at the highest level with teammates I trust.",
         effects: { morale: 2, fanbase: 1 },
         personalityWeights: { INTROVERT: 2, STABLE: 1, BIG_STAGE: 0 },
       },

@@ -82,7 +82,7 @@ export const PLAYER_CONFLICT_EVENTS: DramaEventTemplate[] = [
       {
         id: 'release_both',
         text: 'Release both players immediately',
-        description: 'Cut your losses — toxic players aren\'t worth the disruption',
+        description: 'Cut your losses. Toxic players aren\'t worth the disruption',
         effects: [
           {
             target: 'release_player',
@@ -107,7 +107,7 @@ export const PLAYER_CONFLICT_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You release both players on the spot. The remaining roster is shocked — morale takes a hit — but the fan base buzzes with the bold move. Now you need to rebuild.',
+        outcomeText: 'You release both players on the spot. The remaining roster is shocked. Morale takes a hit. But the fan base buzzes with the bold move. Now you need to rebuild.',
       },
     ],
   },

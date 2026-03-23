@@ -179,7 +179,7 @@ const PRE_OPTIONS_SURVIVAL_B: InterviewOption[] = [
   {
     tone: 'DEFLECTIVE',
     label: 'Ignore the bracket noise',
-    quote: 'Lower bracket, upper bracket — I honestly don\'t care. There\'s a match in front of us and we\'re going to win it.',
+    quote: 'Lower bracket, upper bracket. I honestly don\'t care. There\'s a match in front of us and we\'re going to win it.',
     effects: { dramaChance: 4 },
   },
 ];
@@ -188,7 +188,7 @@ const PRE_OPTIONS_SURVIVAL_C: InterviewOption[] = [
   {
     tone: 'CONFIDENT',
     label: 'Track by track',
-    quote: "We're not trying to win the whole thing right now. We're just laying the next track. One round, one map, one match — and the train keeps moving.",
+    quote: "We're not trying to win the whole thing right now. We're just laying the next track. One round, one map, one match. And the train keeps moving.",
     effects: { morale: 3, hype: 3 },
   },
   {
@@ -200,7 +200,7 @@ const PRE_OPTIONS_SURVIVAL_C: InterviewOption[] = [
   {
     tone: 'DEFLECTIVE',
     label: 'Not thinking about the bracket',
-    quote: "Honestly, I tune all that out. Bracket position, standings — I let the coaches handle that. I just show up and play.",
+    quote: "Honestly, I tune all that out. Bracket position, standings. I let the coaches handle that. I just show up and play.",
     effects: { dramaChance: 3 },
   },
 ];
@@ -209,7 +209,7 @@ const PRE_OPTIONS_GRAND_FINAL: InterviewOption[] = [
   {
     tone: 'CONFIDENT',
     label: 'We came here to win',
-    quote: 'This is why we put in the work. Grand final stage — this is our moment.',
+    quote: 'This is why we put in the work. Grand final stage. This is our moment.',
     effects: { morale: 4, hype: 3 },
   },
   {
@@ -230,7 +230,7 @@ const PRE_OPTIONS_GRAND_FINAL_B: InterviewOption[] = [
   {
     tone: 'TRASH_TALK',
     label: 'We\'re the better team',
-    quote: 'We\'ve earned the right to say it — we\'re the best team in this tournament. Tomorrow, we\'re going to prove it.',
+    quote: 'We\'ve earned the right to say it. We\'re the best team in this tournament. Tomorrow, we\'re going to prove it.',
     effects: { morale: 4, hype: 4, rivalryDelta: 15 },
   },
   {
@@ -242,7 +242,7 @@ const PRE_OPTIONS_GRAND_FINAL_B: InterviewOption[] = [
   {
     tone: 'RESPECTFUL',
     label: 'Respect the opponent, compete to win',
-    quote: 'Our opponent is excellent — they wouldn\'t be in the grand final otherwise. We respect that. And we\'re going to compete with everything we have.',
+    quote: 'Our opponent is excellent. They wouldn\'t be in the grand final otherwise. We respect that. And we\'re going to compete with everything we have.',
     effects: { morale: 2, hype: 1, sponsorTrust: 4 },
   },
 ];
@@ -261,7 +261,7 @@ const POST_WIN_OPTIONS_ADVANCE: InterviewOption[] = [
   {
     tone: 'HUMBLE',
     label: 'Relief and focus',
-    quote: 'Happy to get the win. We reset quickly — there\'s still a lot of work to do.',
+    quote: 'Happy to get the win. We reset quickly. There\'s still a lot of work to do.',
     effects: { morale: 1 },
   },
   {
@@ -282,7 +282,7 @@ const POST_WIN_OPTIONS_ADVANCE_B: InterviewOption[] = [
   {
     tone: 'RESPECTFUL',
     label: 'Hard-earned win',
-    quote: 'Our opponent made us work for that. Credit to them — this was a real test and I think it made us better.',
+    quote: 'Our opponent made us work for that. Credit to them. This was a real test and I think it made us better.',
     effects: { morale: 2, sponsorTrust: 3, fanbase: 2 },
   },
   {
@@ -318,7 +318,7 @@ const POST_WIN_OPTIONS_QUALIFY: InterviewOption[] = [
   {
     tone: 'CONFIDENT',
     label: 'We earned this',
-    quote: 'That\'s what we trained for. We\'re not done yet — there\'s still a tournament to win.',
+    quote: 'That\'s what we trained for. We\'re not done yet. There\'s still a tournament to win.',
     effects: { morale: 4, hype: 3, fanbase: 5 },
   },
   {
@@ -345,7 +345,7 @@ const POST_WIN_OPTIONS_GRAND_FINAL: InterviewOption[] = [
   {
     tone: 'HUMBLE',
     label: 'Grateful and overwhelmed',
-    quote: 'I don\'t even have words right now. This team — they gave everything. I\'m so proud.',
+    quote: 'I don\'t even have words right now. This team. They gave everything. I\'m so proud.',
     effects: { morale: 3, hype: 3, fanbase: 8 },
   },
   {
@@ -385,7 +385,7 @@ const POST_LOSS_OPTIONS_LOWER_B: InterviewOption[] = [
   {
     tone: 'BLAME_SELF',
     label: 'That\'s on me',
-    quote: 'I have to be honest — today wasn\'t good enough and a lot of that falls on my preparation and my decisions. The players showed up. I didn\'t give them what they needed.',
+    quote: 'I have to be honest. Today wasn\'t good enough and a lot of that falls on my preparation and my decisions. The players showed up. I didn\'t give them what they needed.',
     effects: { morale: -1, sponsorTrust: 4, dramaChance: 3 },
   },
   {
@@ -433,7 +433,7 @@ const POST_LOSS_OPTIONS_ELIMINATED_B: InterviewOption[] = [
   {
     tone: 'RESPECTFUL',
     label: 'Credit where it\'s due',
-    quote: 'The teams that went further deserved it. We have to be honest — they were better. We take that on the chin and use it to motivate what comes next.',
+    quote: 'The teams that went further deserved it. We have to be honest. They were better. We take that on the chin and use it to motivate what comes next.',
     effects: { morale: -1, sponsorTrust: 3 },
   },
   {
@@ -519,7 +519,7 @@ export function generateTournamentContextPreMatchInterview(
     const prompt = pick([
       interpolate('This is the grand final of {tournamentName}. What does this moment mean to you?', vars),
       interpolate('You\'ve made it to the grand final of {tournamentName}. How does the team feel heading in?', vars),
-      interpolate('Grand final of {tournamentName} — the biggest match of the tournament. What\'s the mindset?', vars),
+      interpolate('Grand final of {tournamentName}. The biggest match of the tournament. What\'s the mindset?', vars),
     ]);
     return makePending('tc_pre_grand_final', prompt, pick([PRE_OPTIONS_GRAND_FINAL, PRE_OPTIONS_GRAND_FINAL_B]), context.opponent?.teamId);
   }
@@ -536,7 +536,7 @@ export function generateTournamentContextPreMatchInterview(
     return makePending('tc_pre_opening', prompt, options, context.opponent?.teamId);
   }
 
-  // Bracket final — qualifying stakes
+  // Bracket final. Qualifying stakes
   if (context.isBracketFinal && context.qualifiesFor) {
     const prompt = pick([
       interpolate('Winning this match means qualifying for {qualifiesFor}. What does that mean to you and your team?', vars),
@@ -546,21 +546,21 @@ export function generateTournamentContextPreMatchInterview(
     return makePending('tc_pre_bracket_final', prompt, pick([PRE_OPTIONS_PRESSURE, PRE_OPTIONS_PRESSURE_B]), context.opponent?.teamId);
   }
 
-  // Lower bracket — elimination risk
+  // Lower bracket. Elimination risk
   if (context.bracketPosition === 'lower' && context.eliminationRisk) {
     const prompt = pick([
       interpolate('You\'re in the lower bracket of {tournamentName} with a {wins}-{losses} record. One more loss and you\'re out. How do you prepare for a match this high-stakes?', vars),
-      interpolate('This is an elimination match for your team in {tournamentName}. Win or go home — what\'s the mentality in the server room?', vars),
+      interpolate('This is an elimination match for your team in {tournamentName}. Win or go home. What\'s the mentality in the server room?', vars),
       interpolate('Win or you\'re done. That\'s the reality in {tournamentName} right now. How does the team handle that pressure?', vars),
     ]);
     return makePending('tc_pre_lower_elimination', prompt, pick([PRE_OPTIONS_PRESSURE, PRE_OPTIONS_PRESSURE_B]), context.opponent?.teamId);
   }
 
-  // Lower bracket — still alive
+  // Lower bracket. Still alive
   if (context.bracketPosition === 'lower') {
     const prompt = pick([
       interpolate('You\'re fighting through the lower bracket of {tournamentName} at {wins}-{losses}. What\'s the approach going into this one?', vars),
-      interpolate('Lower bracket of {tournamentName}, round {roundNumber}. You\'ve survived so far — what keeps the team focused?', vars),
+      interpolate('Lower bracket of {tournamentName}, round {roundNumber}. You\'ve survived so far. What keeps the team focused?', vars),
       interpolate('Another lower bracket match in {tournamentName}. You\'re still alive at {wins}-{losses}. What does this match mean to the team?', vars),
     ]);
     return makePending('tc_pre_lower_survival', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B, PRE_OPTIONS_SURVIVAL_C]), context.opponent?.teamId);
@@ -570,13 +570,13 @@ export function generateTournamentContextPreMatchInterview(
   if (context.bracketPosition === 'middle') {
     const prompt = pick([
       interpolate('You\'re in the middle bracket of {tournamentName} with a {wins}-{losses} record. How does the team stay focused after the setback?', vars),
-      interpolate('Middle bracket of {tournamentName}, round {roundNumber}. You\'ve still got a path forward — what\'s the mindset?', vars),
+      interpolate('Middle bracket of {tournamentName}, round {roundNumber}. You\'ve still got a path forward. What\'s the mindset?', vars),
       interpolate('You dropped to the middle bracket in {tournamentName}. What does the team need to do to keep the run alive?', vars),
     ]);
     return makePending('tc_pre_middle_bracket', prompt, pick([PRE_OPTIONS_SURVIVAL, PRE_OPTIONS_SURVIVAL_B, PRE_OPTIONS_SURVIVAL_C]), context.opponent?.teamId);
   }
 
-  // Upper bracket — not grand final, not opening
+  // Upper bracket. Not grand final, not opening
   if (context.bracketPosition === 'upper') {
     const prompt = pick([
       interpolate('You\'re in the upper bracket of {tournamentName} heading into round {roundNumber}. How is the team feeling after the results so far?', vars),
@@ -626,133 +626,133 @@ export function generateTournamentContextPostMatchInterview(
     if (context.isGrandFinal) {
       const prompt = pick([
         interpolate('You\'ve just won {tournamentName}! What does this championship mean to you?', vars),
-        interpolate('{tournamentName} champions. Soak it in — what are you feeling right now?', vars),
+        interpolate('{tournamentName} champions. Soak it in. What are you feeling right now?', vars),
         interpolate('You are the {tournamentName} champions. What was the key to winning it all?', vars),
       ]);
       return makePostPending('tc_post_win_grand_final', prompt, POST_WIN_OPTIONS_GRAND_FINAL);
     }
 
-    // Win — opening match
+    // Win. Opening match
     if (context.isOpeningMatch) {
       const prompt = pick([
         interpolate('You open your {tournamentName} campaign with a win. How does it feel to get that first one?', vars),
-        interpolate('Strong start to {tournamentName} — you\'re 1-0 in the tournament. What did that match show about your team?', vars),
+        interpolate('Strong start to {tournamentName}. You\'re 1-0 in the tournament. What did that match show about your team?', vars),
         interpolate('First match, first win in {tournamentName}. What\'s the biggest takeaway from that performance?', vars),
       ]);
       return makePostPending('tc_post_win_first_match', prompt, pick([POST_WIN_OPTIONS_ADVANCE, POST_WIN_OPTIONS_ADVANCE_B]));
     }
 
-    // Win — bracket final (qualifies for next event)
+    // Win. Bracket final (qualifies for next event)
     if (context.isBracketFinal && qualifiesForStr) {
       const prompt = pick([
         interpolate('Congratulations! You\'ve qualified for {qualifiesFor}! What does it mean to your team to reach that stage?', vars),
         interpolate('That win books your ticket to {qualifiesFor}! Are you excited for what\'s next?', vars),
-        interpolate('You\'re going to {qualifiesFor}! Let that sink in — what are you feeling right now?', vars),
+        interpolate('You\'re going to {qualifiesFor}! Let that sink in. What are you feeling right now?', vars),
       ]);
       return makePostPending('tc_post_win_bracket_final', prompt, POST_WIN_OPTIONS_QUALIFY);
     }
 
-    // Win — lower bracket
+    // Win. Lower bracket
     if (context.bracketPosition === 'lower') {
       const prompt = pick([
-        interpolate('You survive another match in the lower bracket of {tournamentName} — now {wins}-{losses}. The run continues. What\'s next?', vars),
+        interpolate('You survive another match in the lower bracket of {tournamentName}. Now {wins}-{losses}. The run continues. What\'s next?', vars),
         interpolate('Lower bracket, another win. You\'re {wins}-{losses} in {tournamentName} and still in it. What keeps the team resilient?', vars),
         interpolate('You stay alive in the lower bracket of {tournamentName}. That makes you {wins}-{losses} in the tournament. What did this match mean?', vars),
       ]);
       return makePostPending('tc_post_win_lower_advancing', prompt, pick([POST_WIN_OPTIONS_ADVANCE, POST_WIN_OPTIONS_LOWER_B]));
     }
 
-    // Win — middle bracket
+    // Win. Middle bracket
     if (context.bracketPosition === 'middle') {
       const prompt = pick([
-        interpolate('You stay alive in the middle bracket of {tournamentName} — now {wins}-{losses}. The fight continues. What\'s next?', vars),
+        interpolate('You stay alive in the middle bracket of {tournamentName}. Now {wins}-{losses}. The fight continues. What\'s next?', vars),
         interpolate('Another win in the middle bracket of {tournamentName}. You\'re {wins}-{losses} and still in it. What keeps the team going?', vars),
         interpolate('Middle bracket, another win. You\'re {wins}-{losses} in {tournamentName} and not done yet. What did this match mean?', vars),
       ]);
       return makePostPending('tc_post_win_middle_advancing', prompt, pick([POST_WIN_OPTIONS_ADVANCE, POST_WIN_OPTIONS_LOWER_B]));
     }
 
-    // Win — upper bracket
+    // Win. Upper bracket
     if (context.bracketPosition === 'upper') {
       const prompt = pick([
-        interpolate('That win keeps you in the upper bracket — you\'re now {wins}-{losses} in {tournamentName}. What\'s the mood in the server room right now?', vars),
+        interpolate('That win keeps you in the upper bracket. You\'re now {wins}-{losses} in {tournamentName}. What\'s the mood in the server room right now?', vars),
         interpolate('Solid performance. You advance in the upper bracket of {tournamentName} with a {wins}-{losses} record. What did this match teach you?', vars),
         interpolate('Another upper bracket win in {tournamentName}. You\'re {wins}-{losses}. How does the team feel about where you\'re sitting?', vars),
       ]);
       return makePostPending('tc_post_win_upper_advancing', prompt, pick([POST_WIN_OPTIONS_ADVANCE, POST_WIN_OPTIONS_ADVANCE_B]));
     }
 
-    // Win — Swiss / league stage
+    // Win. Swiss / league stage
     const prompt = pick([
       interpolate('You improve to {wins}-{losses} in {tournamentName}. How important was that win for your tournament positioning?', vars),
       interpolate('{wins}-{losses} in {tournamentName} now. Walk us through what went well in that match.', vars),
-      interpolate('Good result — you\'re {wins}-{losses} in {tournamentName}. What does this mean for where you stand in the tournament?', vars),
+      interpolate('Good result. You\'re {wins}-{losses} in {tournamentName}. What does this mean for where you stand in the tournament?', vars),
     ]);
     return makePostPending('tc_post_win_swiss', prompt, pick([POST_WIN_OPTIONS_ADVANCE, POST_WIN_OPTIONS_ADVANCE_B]));
 
   } else {
-    // Loss — elimination
+    // Loss. Elimination
     if (context.eliminationRisk) {
       const prompt = pick([
-        interpolate('Your team has been eliminated from {tournamentName}{qualifiesForClause}. That\'s a devastating result — what are you taking away from this?', vars),
+        interpolate('Your team has been eliminated from {tournamentName}{qualifiesForClause}. That\'s a devastating result. What are you taking away from this?', vars),
         interpolate('That\'s it for {tournamentName}. You finish with a {wins}-{losses} record. What went wrong?', vars),
         interpolate('The run is over in {tournamentName}. Eliminated at {wins}-{losses}. What\'s the honest reflection on this campaign?', vars),
       ]);
       return makePostPending('tc_post_loss_eliminated', prompt, pick([POST_LOSS_OPTIONS_ELIMINATED, POST_LOSS_OPTIONS_ELIMINATED_B]));
     }
 
-    // Loss — grand final (runner-up)
+    // Loss. Grand final (runner-up)
     if (context.isGrandFinal) {
       const prompt = pick([
-        interpolate('You came so close — runner-up in {tournamentName}. What went wrong in that final match?', vars),
-        interpolate('Grand final of {tournamentName} — and it slipped away. How does the team process a result like this?', vars),
+        interpolate('You came so close. Runner-up in {tournamentName}. What went wrong in that final match?', vars),
+        interpolate('Grand final of {tournamentName}. And it slipped away. How does the team process a result like this?', vars),
         interpolate('Second place in {tournamentName}. You made it to the end but couldn\'t close it out. What\'s the feeling in the team right now?', vars),
       ]);
       return makePostPending('tc_post_loss_grand_final', prompt, pick([POST_LOSS_OPTIONS_ELIMINATED, POST_LOSS_OPTIONS_ELIMINATED_B]));
     }
 
-    // Loss — dropped from upper bracket
+    // Loss. Dropped from upper bracket
     if (context.bracketPosition === 'upper') {
       const dropsTo = context.tournamentType === 'kickoff' ? 'middle' : 'lower';
       const prompt = pick([
         interpolate(`That loss sends you to the ${dropsTo} bracket of {tournamentName}. You\'re still alive but the margin for error just got smaller. What changes are you making?`, vars),
         interpolate(`You drop to the ${dropsTo} bracket with a {wins}-{losses} record in {tournamentName}. How does the team respond to adversity?`, vars),
-        interpolate(`From upper to ${dropsTo} bracket in {tournamentName} — that\'s a tough result at {wins}-{losses}. What\'s the mindset now?`, vars),
+        interpolate(`From upper to ${dropsTo} bracket in {tournamentName}. That\'s a tough result at {wins}-{losses}. What\'s the mindset now?`, vars),
       ]);
       return makePostPending('tc_post_loss_dropped_to_lower', prompt, pick([POST_LOSS_OPTIONS_LOWER, POST_LOSS_OPTIONS_LOWER_B]));
     }
 
-    // Loss — dropped from middle bracket
+    // Loss. Dropped from middle bracket
     if (context.bracketPosition === 'middle') {
       const prompt = pick([
-        interpolate('That loss sends you to the lower bracket of {tournamentName}. You\'re {wins}-{losses} — one more loss and you\'re out. What changes?', vars),
+        interpolate('That loss sends you to the lower bracket of {tournamentName}. You\'re {wins}-{losses}. One more loss and you\'re out. What changes?', vars),
         interpolate('You drop from the middle to the lower bracket in {tournamentName}. At {wins}-{losses}, the margin for error is gone. How does the team respond?', vars),
-        interpolate('From middle to lower bracket in {tournamentName} — that\'s a tough result at {wins}-{losses}. What\'s the mindset now?', vars),
+        interpolate('From middle to lower bracket in {tournamentName}. That\'s a tough result at {wins}-{losses}. What\'s the mindset now?', vars),
       ]);
       return makePostPending('tc_post_loss_middle_dropped', prompt, pick([POST_LOSS_OPTIONS_LOWER, POST_LOSS_OPTIONS_LOWER_B]));
     }
 
-    // Loss — lower bracket, survived
+    // Loss. Lower bracket, survived
     if (context.bracketPosition === 'lower') {
       const prompt = pick([
-        interpolate('Tough loss in the lower bracket of {tournamentName}. You\'re {wins}-{losses} and still alive — but barely. What does the team need to fix?', vars),
+        interpolate('Tough loss in the lower bracket of {tournamentName}. You\'re {wins}-{losses} and still alive. But barely. What does the team need to fix?', vars),
         interpolate('That one hurt. You drop to {wins}-{losses} in the lower bracket of {tournamentName}. How do you recover mentally before the next match?', vars),
-        interpolate('Still in {tournamentName} but it\'s getting tighter — {wins}-{losses} in the lower bracket. What went wrong today?', vars),
+        interpolate('Still in {tournamentName} but it\'s getting tighter. {wins}-{losses} in the lower bracket. What went wrong today?', vars),
       ]);
       return makePostPending('tc_post_loss_lower_survival', prompt, pick([POST_LOSS_OPTIONS_LOWER, POST_LOSS_OPTIONS_LOWER_B]));
     }
 
-    // Loss — opening match
+    // Loss. Opening match
     if (context.isOpeningMatch) {
       const prompt = pick([
-        interpolate('That\'s a rough start to {tournamentName} — you fall to 0-1. How does the team regroup from this?', vars),
+        interpolate('That\'s a rough start to {tournamentName}. You fall to 0-1. How does the team regroup from this?', vars),
         interpolate('You open {tournamentName} with a loss. What\'s the conversation in the locker room after that?', vars),
         interpolate('0-1 after your first match in {tournamentName}. What went wrong and how quickly can you fix it?', vars),
       ]);
       return makePostPending('tc_post_loss_first_match', prompt, pick([POST_LOSS_OPTIONS_LOWER, POST_LOSS_OPTIONS_LOWER_B]));
     }
 
-    // Loss — Swiss / league stage
+    // Loss. Swiss / league stage
     const prompt = pick([
       interpolate('You fall to {wins}-{losses} in {tournamentName}. How does that affect your confidence going forward?', vars),
       interpolate('A loss drops you to {wins}-{losses} in {tournamentName}. What adjustments need to happen?', vars),

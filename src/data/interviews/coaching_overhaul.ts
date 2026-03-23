@@ -15,7 +15,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'We needed a change.',
-        quote: "This wasn't a reactive decision — it was the right one. Sometimes you have to make hard calls to protect the ceiling of this team. We're doing that now.",
+        quote: "This wasn't a reactive decision. It was the right one. Sometimes you have to make hard calls to protect the ceiling of this team. We're doing that now.",
         effects: {
           hype: 3,
           setsFlags: [{ key: 'coach_change_backed_publicly', durationDays: 14 }],
@@ -24,7 +24,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "It was a hard call. We own it.",
-        quote: "I won't pretend this was easy. We owe it to the players and our fans to be honest — we needed a new direction, and that starts with us taking ownership of this change.",
+        quote: "I won't pretend this was easy. We owe it to the players and our fans to be honest. We needed a new direction, and that starts with us taking ownership of this change.",
         effects: {
           sponsorTrust: 2,
           morale: 1,
@@ -85,7 +85,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'I focus on what I control.',
-        quote: "Coaching decisions are above my pay grade. I focus on what I can control — my performance, my prep, my mindset. Everything else is noise.",
+        quote: "Coaching decisions are above my pay grade. I focus on what I can control. My performance, my prep, my mindset. Everything else is noise.",
         effects: {
           hype: 2,
           setsFlags: [{ key: 'star_skeptical_{playerId}', durationDays: 21 }],
@@ -121,7 +121,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'Every player here is a professional. We reinforced that.',
-        quote: "Every player here is a professional — they know what it takes. We didn't change who they are, we reinforced it. The structure is just clarity.",
+        quote: "Every player here is a professional. They know what it takes. We didn't change who they are, we reinforced it. The structure is just clarity.",
         effects: {
           morale: 2,
           sponsorTrust: 2,
@@ -221,7 +221,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "We have different visions. We're working through it.",
-        quote: "Me and the coaching staff have different visions on some things — that's real. But that doesn't mean we can't work through it. We're professionals.",
+        quote: "Me and the coaching staff have different visions on some things. That's real. But that doesn't mean we can't work through it. We're professionals.",
         effects: {
           morale: 2,
           sponsorTrust: 1,
@@ -283,7 +283,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     context: 'POST_MATCH',
     subjectType: 'manager',
     conditions: [{ type: 'flag_active', flag: 'coaching_overhaul_succeeded' }],
-    prompt: "You pulled off something rare — a mid-season coaching change that actually worked. Looking back, what was the key to making it stick?",
+    prompt: "You pulled off something rare. A mid-season coaching change that actually worked. Looking back, what was the key to making it stick?",
     options: [
       {
         tone: 'CONFIDENT',
@@ -322,12 +322,12 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
     context: 'CRISIS',
     subjectType: 'manager',
     conditions: [{ type: 'flag_active', flag: 'media_narrative_coaching_debate' }],
-    prompt: "Your coach's recent comments about 'repeatable systems' have sparked real debate — some say it's the right philosophy, others say it stifles star players. Where do you personally stand?",
+    prompt: "Your coach's recent comments about 'repeatable systems' have sparked real debate. Some say it's the right philosophy, others say it stifles star players. Where do you personally stand?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "Systems win championships. Full stop.",
-        quote: "I'll back my coach on this. The teams that win consistently — year over year, different metas, different opponents — they all have one thing in common: a system. Individual brilliance gets you to the final. Structure wins it.",
+        quote: "I'll back my coach on this. The teams that win consistently. Year over year, different metas, different opponents. They all have one thing in common: a system. Individual brilliance gets you to the final. Structure wins it.",
         effects: {
           hype: 4,
           sponsorTrust: 2,
@@ -366,7 +366,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'BLAME_SELF',
         label: 'I take full responsibility for this call.',
-        quote: "This call was mine. The decision to shake up the coaching structure mid-season was my call, and it didn't pan out. I take full responsibility for that — our fans and sponsors deserve nothing less.",
+        quote: "This call was mine. The decision to shake up the coaching structure mid-season was my call, and it didn't pan out. I take full responsibility for that. Our fans and sponsors deserve nothing less.",
         effects: {
           sponsorTrust: 3,
           morale: -2,
@@ -376,7 +376,7 @@ const RAW_COACHING_OVERHAUL_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'We tried something ambitious. We move forward.',
-        quote: "We tried something ambitious. It didn't work the way we hoped. In this sport you have to take risks to compete at the top — we knew that going in, and we move forward.",
+        quote: "We tried something ambitious. It didn't work the way we hoped. In this sport you have to take risks to compete at the top. We knew that going in, and we move forward.",
         effects: {
           hype: 1,
           fanbase: -3,

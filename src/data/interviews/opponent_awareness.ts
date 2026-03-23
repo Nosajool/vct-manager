@@ -2,31 +2,31 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // OPPONENT-AWARENESS TEMPLATES (Phase 3 — 8 templates)
+  // OPPONENT-AWARENESS TEMPLATES (Phase 3. 8 templates)
   // Conditions: rivalry_active, opponent_dropped_from_upper, lower_bracket,
   //             elimination_risk. Some gated by conditions[].
   // POST_MATCH IDs added to InterviewService winIds/lossIds for routing.
   // ==========================================================================
 
-  // 1. pre_rivalry_rematch_lower — PRE_MATCH rivalry in survival context
+  // 1. pre_rivalry_rematch_lower. PRE_MATCH rivalry in survival context
   {
     id: 'pre_rivalry_rematch_lower',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "You're facing a rival team with real history between you — and now it's survival for at least one side. Does that history add fuel, or does it complicate the focus?",
+    prompt: "You're facing a rival team with real history between you. And now it's survival for at least one side. Does that history add fuel, or does it complicate the focus?",
     options: [
       {
         tone: 'AGGRESSIVE',
         label: "History makes this personal",
-        quote: "Good luck — you're gonna need it.",
+        quote: "Good luck. You're gonna need it.",
         effects: { hype: 5, rivalryDelta: 6, morale: 3, dramaChance: 12, setsFlags: [{ key: 'rivalry_rematch_stakes', durationDays: 7 }] },
       },
       {
         tone: 'RESPECTFUL',
         label: "Rivalry aside, we respect what they've built",
-        quote: "This team is here because they've earned it. We have history, but I don't want that becoming a distraction. The bracket doesn't care about storylines — you have to win.",
+        quote: "This team is here because they've earned it. We have history, but I don't want that becoming a distraction. The bracket doesn't care about storylines. You have to win.",
         effects: { morale: 3, fanbase: 2, hype: 2 },
       },
       {
@@ -44,7 +44,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 2. pre_revenge_match_scorched — PRE_MATCH scorched-earth revenge narrative
+  // 2. pre_revenge_match_scorched. PRE_MATCH scorched-earth revenge narrative
   {
     id: 'pre_revenge_match_scorched',
     context: 'PRE_MATCH',
@@ -56,13 +56,13 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'AGGRESSIVE',
         label: "The emotion is the fuel",
-        quote: "What happened between us is still fresh. Good. I want my players to remember exactly how that felt. Use it. Channel it. That's not a liability — that's a weapon.",
+        quote: "What happened between us is still fresh. Good. I want my players to remember exactly how that felt. Use it. Channel it. That's not a liability. That's a weapon.",
         effects: { hype: 6, rivalryDelta: 8, morale: 4, dramaChance: 15, setsFlags: [{ key: 'rivalry_revenge_match_active', durationDays: 7 }] },
       },
       {
         tone: 'HUMBLE',
         label: "We have to separate the narrative from the game",
-        quote: "I've spoken with the players. We acknowledge what happened, we've processed it — now we play our game. The best response to what they said is winning, not burning the place down.",
+        quote: "I've spoken with the players. We acknowledge what happened, we've processed it. Now we play our game. The best response to what they said is winning, not burning the place down.",
         effects: { morale: 3, sponsorTrust: 3, fanbase: 2 },
       },
       {
@@ -74,19 +74,19 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 3. pre_mutual_elimination_battle — PRE_MATCH both teams under the gun
+  // 3. pre_mutual_elimination_battle. PRE_MATCH both teams under the gun
   {
     id: 'pre_mutual_elimination_battle',
     context: 'PRE_MATCH',
     subjectType: 'manager',
     narrativeCategory: 'tournament_drama',
     conditions: [{ type: 'opponent_from_upper' }],
-    prompt: "Your opponent fell from the upper bracket and now faces the same elimination pressure you've been carrying. Two teams, everything to lose — what does a match like that look like from inside?",
+    prompt: "Your opponent fell from the upper bracket and now faces the same elimination pressure you've been carrying. Two teams, everything to lose. What does a match like that look like from inside?",
     options: [
       {
         tone: 'CONFIDENT',
         label: "We've been here. They're just arriving.",
-        quote: "We've been living under elimination pressure for matches now. They're getting introduced to it today. That experience is a real advantage — we know exactly what survival looks like.",
+        quote: "We've been living under elimination pressure for matches now. They're getting introduced to it today. That experience is a real advantage. We know exactly what survival looks like.",
         effects: { hype: 4, morale: 4, fanbase: 2 },
       },
       {
@@ -97,14 +97,14 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'AGGRESSIVE',
-        label: "Desperation is dangerous — but so are we",
+        label: "Desperation is dangerous. But so are we",
         quote: "They're backed into a corner and that makes them dangerous. Good. We're not looking for an easy path anyway. We're going to put them away and keep climbing.",
         effects: { hype: 5, morale: 3, rivalryDelta: 2, dramaChance: 8 },
       },
     ],
   },
 
-  // 4. pre_opponent_on_run — PRE_MATCH facing a team with momentum
+  // 4. pre_opponent_on_run. PRE_MATCH facing a team with momentum
   {
     id: 'pre_opponent_on_run',
     context: 'PRE_MATCH',
@@ -114,7 +114,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       { type: 'bracket_position', bracketPosition: 'lower' },
       { type: 'opponent_win_streak', minStreak: 2 },
     ],
-    prompt: "The team you're facing has been on a strong run — consecutive wins, clear momentum behind them. How do you prepare a team to break an opponent who's clearly in form?",
+    prompt: "The team you're facing has been on a strong run. Consecutive wins, clear momentum behind them. How do you prepare a team to break an opponent who's clearly in form?",
     options: [
       {
         tone: 'CONFIDENT',
@@ -125,7 +125,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: "We study what's making them click",
-        quote: "When a team is in form, you study why. Not to copy it — to find where the seams are. Every strong run has a pattern. Our preparation is about finding what disrupts theirs.",
+        quote: "When a team is in form, you study why. Not to copy it. To find where the seams are. Every strong run has a pattern. Our preparation is about finding what disrupts theirs.",
         effects: { morale: 3, sponsorTrust: 2, fanbase: 1 },
       },
       {
@@ -137,14 +137,14 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 5. pre_rivalry_lower_player — PRE_MATCH player in rivalry survival match
+  // 5. pre_rivalry_lower_player. PRE_MATCH player in rivalry survival match
   {
     id: 'pre_rivalry_lower_player',
     context: 'PRE_MATCH',
     subjectType: 'player',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "Facing a rival when it's do-or-die — does the history between these teams add to your focus, or is this just another match you need to win?",
+    prompt: "Facing a rival when it's do-or-die. Does the history between these teams add to your focus, or is this just another match you need to win?",
     options: [
       {
         tone: 'AGGRESSIVE',
@@ -156,7 +156,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "The bracket doesn't care about rivalries",
-        quote: "Once you're on the server, it's just about rounds. All the history, the emotions — you have to park that. If you let it in, you start making decisions based on feeling instead of reads.",
+        quote: "Once you're on the server, it's just about rounds. All the history, the emotions. You have to park that. If you let it in, you start making decisions based on feeling instead of reads.",
         personalityWeights: { STABLE: 2.5, TEAM_FIRST: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 4, sponsorTrust: 2 },
       },
@@ -170,7 +170,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 6. post_upset_momentum_shift — POST_MATCH after beating a team on a run (→ winIds)
+  // 6. post_upset_momentum_shift. POST_MATCH after beating a team on a run (→ winIds)
   {
     id: 'post_upset_momentum_shift',
     context: 'POST_MATCH',
@@ -182,25 +182,25 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Now everyone knows what we're capable of",
-        quote: "We didn't just win a match — we sent a signal. Every team still in this tournament saw what happened today. I hope they're paying attention.",
+        quote: "We didn't just win a match. We sent a signal. Every team still in this tournament saw what happened today. I hope they're paying attention.",
         effects: { hype: 6, morale: 4, fanbase: 3, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 14 }] },
       },
       {
         tone: 'HUMBLE',
         label: "It proves the work is paying off",
-        quote: "I'm proud of how this team prepared. We went in with a specific plan against a team that had momentum on their side — and we executed. That's what good preparation looks like.",
+        quote: "I'm proud of how this team prepared. We went in with a specific plan against a team that had momentum on their side. And we executed. That's what good preparation looks like.",
         effects: { morale: 4, fanbase: 3, sponsorTrust: 3 },
       },
       {
         tone: 'DEFLECTIVE',
-        label: "One win at a time — we keep moving",
+        label: "One win at a time. We keep moving",
         quote: "Great result. Now we reset. The bracket doesn't reward you for celebrating too long. We'll take the win, debrief, and come back focused on the next match.",
         effects: { morale: 3, sponsorTrust: 2 },
       },
     ],
   },
 
-  // 7. post_rivalry_win — POST_MATCH after beating a rival
+  // 7. post_rivalry_win. POST_MATCH after beating a rival
   {
     id: 'post_rivalry_win',
     context: 'POST_MATCH',
@@ -208,7 +208,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'breakthrough',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "You just beat a rival team. After everything the two teams have been through — what does a result like this mean to you beyond the win itself?",
+    prompt: "You just beat a rival team. After everything the two teams have been through. What does a result like this mean to you beyond the win itself?",
     options: [
       {
         tone: 'CONFIDENT',
@@ -220,7 +220,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: "They pushed us to play our best",
-        quote: "This team brought everything. The history between us sharpened us coming in and we needed every bit of that edge today. I have genuine respect for what they built — this result doesn't change that.",
+        quote: "This team brought everything. The history between us sharpened us coming in and we needed every bit of that edge today. I have genuine respect for what they built. This result doesn't change that.",
         effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
       },
       {
@@ -234,7 +234,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
 
   // ---- NEW TEMPLATES ----
 
-  // pre_rivalry_guarantee — PRE_MATCH, manager, has_rivalry
+  // pre_rivalry_guarantee. PRE_MATCH, manager, has_rivalry
   {
     id: 'pre_rivalry_guarantee',
     context: 'PRE_MATCH',
@@ -245,7 +245,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "We are not losing to them — guaranteed",
+        label: "We are not losing to them. Guaranteed",
         quote: "We are not losing to {rivalTeamName}. 100%. I can guarantee you that.",
         effects: { hype: 5, rivalryDelta: 5, dramaChance: 10, setsFlags: [{ key: 'interview_trash_talked_rival', durationDays: 7 }] },
       },
@@ -264,7 +264,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_rivalry_org_dismissal — PRE_MATCH, manager, has_rivalry
+  // pre_rivalry_org_dismissal. PRE_MATCH, manager, has_rivalry
   {
     id: 'pre_rivalry_org_dismissal',
     context: 'PRE_MATCH',
@@ -295,7 +295,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_tournament_exclusion_threat — PRE_MATCH, manager, has_rivalry, is_playoff_match
+  // pre_tournament_exclusion_threat. PRE_MATCH, manager, has_rivalry, is_playoff_match
   {
     id: 'pre_tournament_exclusion_threat',
     context: 'PRE_MATCH',
@@ -325,7 +325,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_champ_dismissal — PRE_MATCH, manager, has_rivalry
+  // pre_champ_dismissal. PRE_MATCH, manager, has_rivalry
   // TODO switch this to tournament winner
   {
     id: 'pre_champ_dismissal',
@@ -356,7 +356,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_match_player_callout — PRE_MATCH, player, has_rivalry, personality-gated
+  // pre_match_player_callout. PRE_MATCH, player, has_rivalry, personality-gated
   {
     id: 'pre_match_player_callout',
     context: 'PRE_MATCH',
@@ -389,7 +389,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_rivalry_win_player_callout — POST_MATCH, player, win, has_rivalry
+  // post_rivalry_win_player_callout. POST_MATCH, player, win, has_rivalry
   {
     id: 'post_rivalry_win_player_callout',
     context: 'POST_MATCH',
@@ -397,12 +397,12 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     matchOutcome: 'win',
     narrativeCategory: 'player_ego',
     conditions: [{ type: 'has_rivalry' }],
-    prompt: "Big win over a rival — what was going through your head when it ended?",
+    prompt: "Big win over a rival. What was going through your head when it ended?",
     options: [
       {
         tone: 'TRASH_TALK',
         label: "This kid is retiring after this game",
-        quote: "Yo, what I just did to {rivalPlayerName} — this kid is retiring after this game.",
+        quote: "Yo, what I just did to {rivalPlayerName}. This kid is retiring after this game.",
         personalityWeights: { FAME_SEEKER: 2.5, BIG_STAGE: 2 },
         effects: { hype: 5, rivalryDelta: 6, fanbase: 2, dramaChance: 15 },
       },
@@ -423,7 +423,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_opponent_whiff_callout — POST_MATCH, player, win, has_rivalry
+  // post_win_opponent_whiff_callout. POST_MATCH, player, win, has_rivalry
   {
     id: 'post_win_opponent_whiff_callout',
     context: 'POST_MATCH',
@@ -457,7 +457,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_rivalry_tier_promotion — POST_MATCH, player, win, has_rivalry
+  // post_rivalry_tier_promotion. POST_MATCH, player, win, has_rivalry
   {
     id: 'post_rivalry_tier_promotion',
     context: 'POST_MATCH',
@@ -491,7 +491,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_international_upset_win — POST_MATCH, manager, win, opponent_from_upper / is_playoff_match
+  // post_international_upset_win. POST_MATCH, manager, win, opponent_from_upper / is_playoff_match
   {
     id: 'post_international_upset_win',
     context: 'POST_MATCH',
@@ -503,8 +503,8 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     options: [
       {
         tone: 'CONFIDENT',
-        label: "Welcome to NA",
-        quote: "Welcome to NA.",
+        label: "Welcome to {regionName}",
+        quote: "Welcome to {regionName}.",
         effects: { hype: 6, morale: 4, fanbase: 4, setsFlags: [{ key: 'arc_mod_momentum', durationDays: 14 }] },
       },
       {
@@ -522,7 +522,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_rival_disrespect_ignition — POST_MATCH, player, win, has_rivalry
+  // post_win_rival_disrespect_ignition. POST_MATCH, player, win, has_rivalry
   {
     id: 'post_win_rival_disrespect_ignition',
     context: 'POST_MATCH',
@@ -556,7 +556,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_rival_pointed_at_me — POST_MATCH, player, win, has_rivalry
+  // post_win_rival_pointed_at_me. POST_MATCH, player, win, has_rivalry
   {
     id: 'post_win_rival_pointed_at_me',
     context: 'POST_MATCH',
@@ -591,7 +591,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_star_player_threat_assessment — PRE_MATCH, manager
+  // pre_star_player_threat_assessment. PRE_MATCH, manager
   {
     id: 'pre_star_player_threat_assessment',
     context: 'PRE_MATCH',
@@ -602,7 +602,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: "Elite in their role, but one player doesn't make a team",
-        quote: "I think {rivalPlayerName} is probably the best in their role that I've ever seen. I tip my hat to them. But overall — I don't really have a read on how they play as a team. {rivalPlayerName} kind of steals the show when you watch their matches.",
+        quote: "I think {rivalPlayerName} is probably the best in their role that I've ever seen. I tip my hat to them. But overall. I don't really have a read on how they play as a team. {rivalPlayerName} kind of steals the show when you watch their matches.",
         effects: { morale: 3, sponsorTrust: 2, fanbase: 2 },
       },
       {
@@ -620,7 +620,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_confident_spectator — PRE_MATCH, player
+  // pre_confident_spectator. PRE_MATCH, player
   {
     id: 'pre_confident_spectator',
     context: 'PRE_MATCH',
@@ -652,7 +652,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_star_player_analysis — POST_MATCH, player, any outcome
+  // post_star_player_analysis. POST_MATCH, player, any outcome
   {
     id: 'post_star_player_analysis',
     context: 'POST_MATCH',
@@ -663,14 +663,14 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: "He plays a completely different game",
-        quote: "The coaches were trying to prep us for two days on how to play against {rivalPlayerName}. It's very difficult. He plays a whole different game of VALORANT — I was so far away and he just one-bullets me with the shotgun. I don't even know how that's possible, but well played.",
+        quote: "The coaches were trying to prep us for two days on how to play against {rivalPlayerName}. It's very difficult. He plays a whole different game of VALORANT. I was so far away and he just one-bullets me with the shotgun. I don't even know how that's possible, but well played.",
         personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 3, fanbase: 3, sponsorTrust: 2 },
       },
       {
         tone: 'RESPECTFUL',
         label: "His pace and decision-making is elite",
-        quote: "When you experience a pace that quick in the actual server, it can feel pretty overwhelming. {rivalPlayerName} is pretty creative — his pathing and on-the-fly decision-making is very strong. We were one bullet away from a 1v3 and winning. So tough luck.",
+        quote: "When you experience a pace that quick in the actual server, it can feel pretty overwhelming. {rivalPlayerName} is pretty creative. His pathing and on-the-fly decision-making is very strong. We were one bullet away from a 1v3 and winning. So tough luck.",
         personalityWeights: { STABLE: 2, TEAM_FIRST: 1.5, INTROVERT: 1, BIG_STAGE: 1 },
         effects: { morale: 2, fanbase: 2, sponsorTrust: 2 },
       },
@@ -684,7 +684,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_speedrun_callout — POST_MATCH, manager, win, has_rivalry
+  // post_win_speedrun_callout. POST_MATCH, manager, win, has_rivalry
   {
     id: 'post_win_speedrun_callout',
     context: 'POST_MATCH',
@@ -715,7 +715,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_duo_carry — POST_MATCH, player, win
+  // post_win_duo_carry. POST_MATCH, player, win
   {
     id: 'post_win_duo_carry',
     context: 'POST_MATCH',
@@ -733,8 +733,8 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'HUMBLE',
-        label: "My teammates are sick — not actually sick",
-        quote: "Fortunately, my teammates are sick — not sick as in ill, we're not ill, don't worry. I mean sick at the game.",
+        label: "My teammates are sick. Not actually sick",
+        quote: "Fortunately, my teammates are sick. Not sick as in ill, we're not ill, don't worry. I mean sick at the game.",
         personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 4, fanbase: 4, sponsorTrust: 2 },
       },
@@ -748,7 +748,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // post_win_agent_mission — POST_MATCH, manager, win
+  // post_win_agent_mission. POST_MATCH, manager, win
   {
     id: 'post_win_agent_mission',
     context: 'POST_MATCH',
@@ -760,7 +760,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "Helping our player complete the mission",
-        quote: "We wanted to put {starPlayerName} on something new — we're helping him complete his mission of playing every single agent. He has one more left. Maybe you'll see it in this tournament.",
+        quote: "We wanted to put {starPlayerName} on something new. We're helping him complete his mission of playing every single agent. He has one more left. Maybe you'll see it in this tournament.",
         effects: { hype: 4, fanbase: 3, morale: 3 },
       },
       {
@@ -778,7 +778,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // pre_international_callout — PRE_MATCH, player
+  // pre_international_callout. PRE_MATCH, player
   {
     id: 'pre_international_callout',
     context: 'PRE_MATCH',
@@ -810,7 +810,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
-  // 8. post_lower_bracket_survival_player — POST_MATCH player survived elimination (→ winIds)
+  // 8. post_lower_bracket_survival_player. POST_MATCH player survived elimination (→ winIds)
   {
     id: 'post_lower_bracket_survival_player',
     context: 'POST_MATCH',
@@ -823,28 +823,28 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "This is where we perform",
-        quote: "I know people thought we might not make it. I didn't. My teammates didn't. When you've prepared the way we have, high-stakes matches aren't bigger — they're just matches. And we win matches.",
+        quote: "I know people thought we might not make it. I didn't. My teammates didn't. When you've prepared the way we have, high-stakes matches aren't bigger. They're just matches. And we win matches.",
         personalityWeights: { BIG_STAGE: 3, FAME_SEEKER: 2, STABLE: 1, INTROVERT: 0, TEAM_FIRST: 1 },
         effects: { morale: 4, hype: 4, fanbase: 3 },
       },
       {
         tone: 'HUMBLE',
-        label: "Stay present — one round at a time",
-        quote: "Survival matches are emotional. You feel everything. I kept it simple — just do your job, one round, one call at a time. We all did that. That's why we're still here.",
+        label: "Stay present. One round at a time",
+        quote: "Survival matches are emotional. You feel everything. I kept it simple. Just do your job, one round, one call at a time. We all did that. That's why we're still here.",
         personalityWeights: { TEAM_FIRST: 2.5, STABLE: 2, INTROVERT: 1.5, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
         effects: { morale: 4, fanbase: 3, sponsorTrust: 2, setsFlags: [{ key: 'arc_mod_resilient', durationDays: 14 }] },
       },
       {
         tone: 'DEFLECTIVE',
         label: "Ask me when the tournament's over",
-        quote: "Right now I'm just trying to recover and think about the next one. The feeling of surviving — I'll have time to process that later. We're still in it. That's what matters.",
+        quote: "Right now I'm just trying to recover and think about the next one. The feeling of surviving. I'll have time to process that later. We're still in it. That's what matters.",
         personalityWeights: { INTROVERT: 3, STABLE: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0 },
         effects: { morale: 3, fanbase: 2 },
       },
     ],
   },
 
-  // pre_opponent_roster_praise — PRE_MATCH generic opponent roster awareness
+  // pre_opponent_roster_praise. PRE_MATCH generic opponent roster awareness
   {
     id: 'pre_opponent_roster_praise',
     context: 'PRE_MATCH',
@@ -860,7 +860,7 @@ export const OPPONENT_AWARENESS_TEMPLATES: InterviewTemplate[] = [
       },
       {
         tone: 'CONFIDENT',
-        label: "They're good — but so are we",
+        label: "They're good. But so are we",
         quote: "They have real talent. We respect that. But we've prepared for every one of them and we believe in our system.",
         effects: { morale: 2, fanbase: 1 },
       },

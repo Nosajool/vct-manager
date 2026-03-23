@@ -105,7 +105,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     category: 'coaching_overhaul',
     severity: 'major',
     title: 'Coach Benches Star in Scrims',
-    description: "{playerName}'s recent scrim performances haven't met the new coaching staff's standards. The coach has benched them — a public message about the new expectations.",
+    description: "{playerName}'s recent scrim performances haven't met the new coaching staff's standards. The coach has benched them. A public message about the new expectations.",
     conditions: [
       { type: 'flag_active', flag: 'strict_regime_active' },
       { type: 'player_form_below', threshold: 60, playerSelector: 'star_player' },
@@ -145,7 +145,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'star_silent_grind_{playerId}', flagDuration: 30 },
           { target: 'team_hype', delta: 3 },
         ],
-        outcomeText: "The quiet determination creates intrigue — media speculates, but the locker room respects the professionalism.",
+        outcomeText: "The quiet determination creates intrigue. Media speculates, but the locker room respects the professionalism.",
       },
     ],
   },
@@ -189,7 +189,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'back_coach_bench_star',
-        text: 'Back the Coach — Bench the Star',
+        text: 'Back the Coach. Bench the Star',
         description: "Management publicly backs the coach. The star is moved to reserve.",
         effects: [
           { target: 'move_to_reserve', effectPlayerSelector: 'triggering' },
@@ -251,7 +251,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'trade_star',
-        text: 'Management Backs Coach — Trade the Star',
+        text: 'Management Backs Coach. Trade the Star',
         description: "The org sides with the coach. The star is made available for trade.",
         effects: [
           { target: 'set_flag', flag: 'player_trade_requested_{playerId}', flagDuration: 30 },
@@ -265,7 +265,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'coach_on_notice',
-        text: 'Management Sides With Players — Coach on Notice',
+        text: 'Management Sides With Players. Coach on Notice',
         description: "Management publicly criticizes the coach's handling of the situation.",
         effects: [
           { target: 'set_flag', flag: 'coach_hot_seat', flagDuration: 30 },
@@ -281,7 +281,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'mutual_reset',
-        text: 'Mutual Reset — Both Compromise',
+        text: 'Mutual Reset. Both Compromise',
         description: "Management brokers a compromise. Both sides give something up.",
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 5 },
@@ -302,7 +302,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     id: 'coaching_overhaul_triumphant',
     category: 'coaching_overhaul',
     severity: 'minor',
-    title: "The System Has Arrived — Team Looks Fundamentally Reborn",
+    title: "The System Has Arrived. Team Looks Fundamentally Reborn",
     description: "Back-to-back wins. Analysts are calling this team a different beast. The coaching overhaul has produced exactly what the org hoped for.",
     conditions: [
       { type: 'flag_active', flag: 'coaching_system_peak' },
@@ -329,7 +329,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     category: 'coaching_overhaul',
     severity: 'minor',
     title: "Coach Speaks Out: 'Championship Teams Rely on Repeatable Systems'",
-    description: "In a wide-ranging media interview, the new head coach laid out their philosophy — drawing praise from analysts and a pointed internal reaction.",
+    description: "In a wide-ranging media interview, the new head coach laid out their philosophy. Drawing praise from analysts and a pointed internal reaction.",
     conditions: [
       { type: 'flag_active', flag: 'coaching_overhaul_active' },
       { type: 'flag_not_active', flag: 'coaching_authority_undermined' },
@@ -349,7 +349,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     category: 'coaching_overhaul',
     severity: 'minor',
     title: "The Quiet Work Is Starting to Show",
-    description: "{playerName}'s form is quietly returning. No press conferences, no tweets — just better reads, sharper utility, and a player who looks like they found something.",
+    description: "{playerName}'s form is quietly returning. No press conferences, no tweets. Just better reads, sharper utility, and a player who looks like they found something.",
     conditions: [
       { type: 'flag_active', flag: 'star_silent_grind_{playerId}', playerSelector: 'condition_match' },
       { type: 'player_form_above', threshold: 55, playerSelector: 'star_player' },
@@ -410,7 +410,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
       {
         id: 'restructure_role',
         text: 'Restructure the Coaching Role',
-        description: "Keep the coach but redefine their authority — less tactical control, more mentorship.",
+        description: "Keep the coach but redefine their authority. Less tactical control, more mentorship.",
         effects: [
           { target: 'clear_flag', flag: 'coach_hot_seat' },
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
@@ -426,7 +426,7 @@ export const COACHING_OVERHAUL_EVENTS: DramaEventTemplate[] = [
     category: 'coaching_overhaul',
     severity: 'minor',
     title: 'Fallout from Coaching Experiment Continues to Ripple',
-    description: "The failed coaching overhaul isn't just a memory — back-to-back losses have reignited criticism from sponsors and media.",
+    description: "The failed coaching overhaul isn't just a memory. Back-to-back losses have reignited criticism from sponsors and media.",
     conditions: [
       { type: 'flag_active', flag: 'coaching_overhaul_failed' },
       { type: 'team_loss_streak', streakLength: 2 },

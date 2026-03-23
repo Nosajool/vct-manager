@@ -15,7 +15,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Nothing unusual',
-        quote: "We give feedback to all our players — nothing unusual here. We hold everyone to a high standard.",
+        quote: "We give feedback to all our players. Nothing unusual here. We hold everyone to a high standard.",
         effects: {
           sponsorTrust: 1,
         },
@@ -58,7 +58,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Acknowledge process',
-        quote: "We explore everything internally. That's our job. Every org does this — we just don't talk about it publicly.",
+        quote: "We explore everything internally. That's our job. Every org does this. We just don't talk about it publicly.",
         effects: {
           sponsorTrust: 2,
         },
@@ -102,7 +102,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'Film room will answer',
-        quote: "We're working through some things. The film room will show us the answers — I want to understand it before I speak on it.",
+        quote: "We're working through some things. The film room will show us the answers. I want to understand it before I speak on it.",
         effects: {
           dramaChance: 5,
         },
@@ -129,7 +129,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'Credit the IGL',
-        quote: "They put their head down and adjusted. That's what great leaders do — they don't make excuses, they make changes.",
+        quote: "They put their head down and adjusted. That's what great leaders do. They don't make excuses, they make changes.",
         effects: {
           morale: 5,
           hype: 3,
@@ -262,7 +262,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Normal adjustment',
-        quote: "The instability people are seeing is the normal adjustment process. Give it time — this will settle.",
+        quote: "The instability people are seeing is the normal adjustment process. Give it time. This will settle.",
         effects: {
           morale: -2,
         },
@@ -353,7 +353,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'I carry it lightly',
-        quote: "I carry it lightly. The best way to honor that backing is to keep my head down and lead well — not think about it every round.",
+        quote: "I carry it lightly. The best way to honor that backing is to keep my head down and lead well. Not think about it every round.",
         effects: {
           morale: 4,
           sponsorTrust: 3,
@@ -410,7 +410,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: 'My voice still shapes every round',
-        quote: "I'm still in every round — just differently. My reads go into the prep, the vod review, the strat board. The mic changed, the impact didn't.",
+        quote: "I'm still in every round. Just differently. My reads go into the prep, the vod review, the strat board. The mic changed, the impact didn't.",
         effects: {
           morale: 4,
           hype: 3,
@@ -426,7 +426,7 @@ const RAW_IGL_CRISIS_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'DEFLECTIVE',
         label: 'Still learning',
-        quote: "Still learning what this role really means. It's a big shift. I don't have it all figured out yet — and that's okay.",
+        quote: "Still learning what this role really means. It's a big shift. I don't have it all figured out yet. And that's okay.",
         effects: {
           morale: -2,
           fanbase: 4,

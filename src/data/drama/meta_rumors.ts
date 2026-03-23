@@ -94,7 +94,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       {
         id: 'force_assignment',
         text: 'Assign them a new agent immediately',
-        description: 'Force a quick pivot before bad habits form — but it may feel dismissive.',
+        description: 'Force a quick pivot before bad habits form. But it may feel dismissive.',
         effects: [
           {
             target: 'player_morale',
@@ -163,7 +163,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // COVE INCIDENT ARC — viral drama event
+  // COVE INCIDENT ARC. Viral drama event
   // ==========================================================================
   {
     id: 'cove_meme_viral',
@@ -181,7 +181,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'lean_into_meme',
-        text: 'Lean into it — sell "Cove Gaming" merch',
+        text: 'Lean into it. Sell "Cove Gaming" merch',
         description: "If you can't beat the meme, monetize it. The org posts a tongue-in-cheek tweet and the community eats it up.",
         effects: [
           { target: 'team_hype', delta: 8 },
@@ -195,7 +195,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       {
         id: 'player_addresses_it',
         text: 'Have the player address it directly on stream',
-        description: "Let the player own the moment. A self-aware explanation tends to land well with fans — and takes the heat off you.",
+        description: "Let the player own the moment. A self-aware explanation tends to land well with fans. And takes the heat off you.",
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 3 },
           { target: 'team_chemistry', delta: 4 },
@@ -207,7 +207,7 @@ export const META_RUMORS_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'stay_silent',
-        text: 'Say nothing — let it die on its own',
+        text: 'Say nothing. Let it die on its own',
         description: "Don't feed the beast. Some memes fade in a week if you ignore them. Some don't.",
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -4 },

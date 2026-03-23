@@ -2,7 +2,7 @@ import type { DramaEventTemplate } from '../../types/drama';
 
 export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
   // ==========================================================================
-  // TEAM IDENTITY (14 templates — Phase 4a/4b)
+  // TEAM IDENTITY (14 templates. Phase 4a/4b)
   // Sets and reacts to team-level identity flags
   // ==========================================================================
 
@@ -39,7 +39,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Balanced Team Identity Recognized',
-    description: '{teamName} is playing as a cohesive unit. No single star — just five players who make each other better. The results are showing.',
+    description: '{teamName} is playing as a cohesive unit. No single star. Just five players who make each other better. The results are showing.',
     conditions: [
       {
         type: 'team_chemistry_above',
@@ -66,7 +66,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Resilient Identity Earned',
-    description: '{teamName} keeps finding ways to win from adversity. Everyone saw them as done — and they\'ve proven everyone wrong.',
+    description: '{teamName} keeps finding ways to win from adversity. Everyone saw them as done. And they\'ve proven everyone wrong.',
     conditions: [
       {
         type: 'bracket_position',
@@ -97,7 +97,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'external_pressure',
     severity: 'minor',
     title: 'Fragile Identity Exposed',
-    description: '{teamName} came in with high expectations — and cracks are showing. The losses are exposing how much of this team\'s confidence was built on momentum.',
+    description: '{teamName} came in with high expectations. And cracks are showing. The losses are exposing how much of this team\'s confidence was built on momentum.',
     conditions: [
       {
         type: 'player_morale_below',
@@ -131,7 +131,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'major',
     title: 'Star Carry Friction',
-    description: '{playerName} has been quietly absorbing the weight of carrying this team — and someone isn\'t comfortable with that dynamic. The team-first voices in the locker room are getting louder.',
+    description: '{playerName} has been quietly absorbing the weight of carrying this team. And someone isn\'t comfortable with that dynamic. The team-first voices in the locker room are getting louder.',
     conditions: [
       {
         type: 'flag_active',
@@ -153,7 +153,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       {
         id: 'redistribute_roles',
         text: 'Redistribute responsibilities',
-        description: 'Break the star dependency — build a flatter structure',
+        description: 'Break the star dependency. Build a flatter structure',
         effects: [
           {
             target: 'team_chemistry',
@@ -169,12 +169,12 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flag: 'team_identity_star_carry',
           },
         ],
-        outcomeText: 'The locker room breathes easier. The star player feels the shift — not hostile, but noticeable. The team starts solving problems collectively again.',
+        outcomeText: 'The locker room breathes easier. The star player feels the shift. Not hostile, but noticeable. The team starts solving problems collectively again.',
       },
       {
         id: 'back_the_carry',
         text: 'Back the star carry structure',
-        description: 'Commit to the identity — ask the team to trust the process',
+        description: 'Commit to the identity. Ask the team to trust the process',
         effects: [
           {
             target: 'player_morale',
@@ -191,12 +191,12 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You tell the room to trust the system. The star player responds — elevated, focused. The team-first voices go quiet, for now. Results will determine whether this was the right call.',
+        outcomeText: 'You tell the room to trust the system. The star player responds. Elevated, focused. The team-first voices go quiet, for now. Results will determine whether this was the right call.',
       },
       {
         id: 'acknowledge_both',
         text: 'Acknowledge the tension without resolving it',
-        description: 'Validate both perspectives — keep the conversation open',
+        description: 'Validate both perspectives. Keep the conversation open',
         effects: [
           {
             target: 'team_chemistry',
@@ -208,7 +208,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'You name the dynamic without forcing a resolution. Some appreciate the honesty. Others wanted a cleaner answer. The underlying tension remains — you\'ve just made it visible.',
+        outcomeText: 'You name the dynamic without forcing a resolution. Some appreciate the honesty. Others wanted a cleaner answer. The underlying tension remains. You\'ve just made it visible.',
       },
     ],
   },
@@ -218,7 +218,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'team_synergy',
     severity: 'major',
     title: 'Balanced Team Tested',
-    description: '{teamName}\'s harmony has been their edge this tournament — but elimination pressure is a different kind of test. You need to decide how to hold the team together when it matters most.',
+    description: '{teamName}\'s harmony has been their edge this tournament. But elimination pressure is a different kind of test. You need to decide how to hold the team together when it matters most.',
     conditions: [
       {
         type: 'flag_active',
@@ -234,7 +234,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
       {
         id: 'lean_on_chemistry',
         text: 'Lean into what got you here',
-        description: 'Trust the collective — no panic, no changes',
+        description: 'Trust the collective. No panic, no changes',
         effects: [
           {
             target: 'player_morale',
@@ -277,7 +277,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: 'You identify the person the team can rally behind and point to them. It shifts the energy — but the balanced identity you built starts to fracture under that weight.',
+        outcomeText: 'You identify the person the team can rally behind and point to them. It shifts the energy. But the balanced identity you built starts to fracture under that weight.',
       },
       {
         id: 'open_team_meeting',
@@ -299,7 +299,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 45,
           },
         ],
-        outcomeText: 'The meeting is honest, even uncomfortable at moments. But something clears in the room. Players speak who rarely do. When it ends, the team feels closer — and more prepared for what\'s ahead.',
+        outcomeText: 'The meeting is honest, even uncomfortable at moments. But something clears in the room. Players speak who rarely do. When it ends, the team feels closer. And more prepared for what\'s ahead.',
       },
     ],
   },
@@ -309,7 +309,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Resilient Spirit Moment',
-    description: '{teamName} just won again. The comeback narrative is no longer just a story — it\'s becoming a defining truth about this squad.',
+    description: '{teamName} just won again. The comeback narrative is no longer just a story. It\'s becoming a defining truth about this squad.',
     conditions: [
       {
         type: 'flag_active',
@@ -345,7 +345,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'external_pressure',
     severity: 'major',
     title: 'Fragile Crisis Point',
-    description: '{teamName} is in freefall. The losses have compounded and the mood has turned dark. This team needs a reset — or it risks becoming a cautionary tale.',
+    description: '{teamName} is in freefall. The losses have compounded and the mood has turned dark. This team needs a reset. Or it risks becoming a cautionary tale.',
     conditions: [
       {
         type: 'flag_active',
@@ -383,7 +383,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 14,
           },
         ],
-        outcomeText: 'You cancel practice and bring everyone into a room. No film, no Xs and Os — just people. What comes out is messy and uncomfortable. But something loosens. The team isn\'t fixed — but they\'re honest again.',
+        outcomeText: 'You cancel practice and bring everyone into a room. No film, no Xs and Os. Just people. What comes out is messy and uncomfortable. But something loosens. The team isn\'t fixed. But they\'re honest again.',
       },
       {
         id: 'double_down_on_work',
@@ -405,7 +405,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You push harder. The team follows — exhausted, mechanical, going through motions. The numbers look right. The energy doesn\'t. Sometimes more work is the answer. Sometimes it\'s avoidance.',
+        outcomeText: 'You push harder. The team follows. Exhausted, mechanical, going through motions. The numbers look right. The energy doesn\'t. Sometimes more work is the answer. Sometimes it\'s avoidance.',
       },
       {
         id: 'give_players_agency',
@@ -431,7 +431,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flag: 'team_identity_fragile',
           },
         ],
-        outcomeText: 'You step back and ask the players what they need. Someone speaks first — then another. The conversation finds its own shape. Leadership emerges from unexpected places. You might not direct this recovery, but it\'s happening.',
+        outcomeText: 'You step back and ask the players what they need. Someone speaks first. Then another. The conversation finds its own shape. Leadership emerges from unexpected places. You might not direct this recovery, but it\'s happening.',
       },
     ],
     escalateDays: 7,
@@ -443,7 +443,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'major',
     title: 'Identity Shift: Star to Balanced',
-    description: '{teamName} is on a win streak and the chemistry has never been higher. {playerName} is starting to distribute the credit — and it\'s changing how the team operates.',
+    description: '{teamName} is on a win streak and the chemistry has never been higher. {playerName} is starting to distribute the credit. And it\'s changing how the team operates.',
     conditions: [
       {
         type: 'flag_active',
@@ -486,12 +486,12 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 45,
           },
         ],
-        outcomeText: 'You name what\'s happening: the team is maturing. The star player doesn\'t shrink — they expand. Everyone rises. The identity shifts, and the squad feels more complete for it.',
+        outcomeText: 'You name what\'s happening: the team is maturing. The star player doesn\'t shrink. They expand. Everyone rises. The identity shifts, and the squad feels more complete for it.',
       },
       {
         id: 'maintain_the_carry_structure',
         text: 'Keep the star carry structure',
-        description: 'What\'s working — don\'t change the formula',
+        description: 'What\'s working. Don\'t change the formula',
         effects: [
           {
             target: 'player_morale',
@@ -508,12 +508,12 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 30,
           },
         ],
-        outcomeText: 'You pull back from the evolution — it\'s working, why change it? The star player appreciates the clarity. The team follows. It might be the right call. Or you might have stopped something beautiful from happening.',
+        outcomeText: 'You pull back from the evolution. It\'s working, why change it? The star player appreciates the clarity. The team follows. It might be the right call. Or you might have stopped something beautiful from happening.',
       },
       {
         id: 'let_it_evolve_naturally',
         text: 'Let it evolve without forcing it',
-        description: 'Watch — and trust the team to find its own shape',
+        description: 'Watch. And trust the team to find its own shape',
         effects: [
           {
             target: 'team_chemistry',
@@ -525,7 +525,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
             flagDuration: 21,
           },
         ],
-        outcomeText: 'You step back and observe. The identity isn\'t decided by you — it\'s decided by the team in small moments, in who passes the ball, in who speaks up. You give it space to breathe.',
+        outcomeText: 'You step back and observe. The identity isn\'t decided by you. It\'s decided by the team in small moments, in who passes the ball, in who speaks up. You give it space to breathe.',
       },
     ],
   },
@@ -591,7 +591,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'player_ego',
     severity: 'minor',
     title: 'Star Carry Feels the Weight',
-    description: '{playerName} is starting to feel the cost of carrying this team. The morale dip is subtle — but visible to anyone paying close attention.',
+    description: '{playerName} is starting to feel the cost of carrying this team. The morale dip is subtle. But visible to anyone paying close attention.',
     conditions: [
       {
         type: 'flag_active',
@@ -661,7 +661,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
     category: 'breakthrough',
     severity: 'minor',
     title: 'Fragile Team Fights Back',
-    description: 'Against all expectations, {teamName} has strung together consecutive wins. The fragile narrative is cracking — but the team knows how quickly it can return.',
+    description: 'Against all expectations, {teamName} has strung together consecutive wins. The fragile narrative is cracking. But the team knows how quickly it can return.',
     conditions: [
       {
         type: 'flag_active',
@@ -692,7 +692,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
   },
 
   // ==========================================================================
-  // KICKOFF FLAG CONSEQUENCES (3 events — consume org_high_expectations,
+  // KICKOFF FLAG CONSEQUENCES (3 events. Consume org_high_expectations,
   // manager_development_focused, manager_underdog_mindset)
   // ==========================================================================
 
@@ -717,7 +717,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 3 },
           { target: 'set_flag', flag: 'org_pressure_doubled', flagDuration: 21 },
         ],
-        outcomeText: 'The boldness lands with the fanbase and the team rallies around it — but now there\'s nowhere to hide if results don\'t come.',
+        outcomeText: 'The boldness lands with the fanbase and the team rallies around it. But now there\'s nowhere to hide if results don\'t come.',
       },
       {
         id: 'reframe',
@@ -737,7 +737,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 2 },
         ],
-        outcomeText: 'The press conference ends without resolution. The question doesn\'t go away — it just waits for the next result.',
+        outcomeText: 'The press conference ends without resolution. The question doesn\'t go away. It just waits for the next result.',
       },
     ],
   },
@@ -784,7 +784,7 @@ export const TEAM_IDENTITY_EVENTS: DramaEventTemplate[] = [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: 8 },
           { target: 'set_flag', flag: 'underdog_chip_active', flagDuration: 21 },
         ],
-        outcomeText: 'The locker room comes alive. Everyone has seen the takes. That energy is real — now it needs results to sustain it.',
+        outcomeText: 'The locker room comes alive. Everyone has seen the takes. That energy is real. Now it needs results to sustain it.',
       },
       {
         id: 'acknowledge',

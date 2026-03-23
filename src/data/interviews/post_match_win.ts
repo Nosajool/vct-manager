@@ -2,7 +2,7 @@ import type { InterviewTemplate } from '../../types/interview';
 
 export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
   // ==========================================================================
-  // POST_MATCH — WIN (4 templates)
+  // POST_MATCH. WIN (4 templates)
   // ==========================================================================
 
   {
@@ -57,7 +57,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'Our opponent made it tough',
-        quote: "Full credit to them — they pushed us hard. We had to dig deep but ultimately our preparation gave us the edge.",
+        quote: "Full credit to them. They pushed us hard. We had to dig deep but ultimately our preparation gave us the edge.",
         effects: { fanbase: 2, morale: 3, hype: 2 },
       },
       {
@@ -92,7 +92,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'HUMBLE',
         label: 'The players did it themselves',
-        quote: "Honestly? I kept it simple. These guys knew what to do — they just needed to trust themselves. The fight came from them.",
+        quote: "Honestly? I kept it simple. These guys knew what to do. They just needed to trust themselves. The fight came from them.",
         effects: { morale: 5, fanbase: 4, sponsorTrust: 3 },
       },
       {
@@ -144,7 +144,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'CONFIDENT',
         label: "There's just no answer for them",
-        quote: "There's 5 {starPlayerName}s to clutch. You just can't lose. You kill 1 {starPlayerName} and there's 4 {starPlayerName}s left, meaning you lose. You kill 2 {starPlayerName}s and there's 3 {starPlayerName}s left, meaning you lose hard. You kill 3 {starPlayerName}s and there's 2 {starPlayerName}s left meaning you lose even harder — unwinnable.",
+        quote: "There's 5 {starPlayerName}s to clutch. You just can't lose. You kill 1 {starPlayerName} and there's 4 {starPlayerName}s left, meaning you lose. You kill 2 {starPlayerName}s and there's 3 {starPlayerName}s left, meaning you lose hard. You kill 3 {starPlayerName}s and there's 2 {starPlayerName}s left meaning you lose even harder. Unwinnable.",
         effects: { hype: 8, fanbase: 5, morale: 4 },
       },
       {
@@ -179,7 +179,7 @@ export const POST_MATCH_WIN_TEMPLATES: InterviewTemplate[] = [
       {
         tone: 'RESPECTFUL',
         label: 'They competed well',
-        quote: "{rivalTeamName} gave us a real game. Credit to them — they're a strong team and I have a lot of respect for how they compete.",
+        quote: "{rivalTeamName} gave us a real game. Credit to them. They're a strong team and I have a lot of respect for how they compete.",
         effects: { fanbase: 4, sponsorTrust: 3, morale: 2 },
       },
       {

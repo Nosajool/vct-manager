@@ -11,7 +11,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Home Visit Request',
     description:
-      "{playerName} has approached the coaching staff — they haven't seen family in months and are asking if they can fly home for a few days. It's a personal request, and how the org responds will say a lot.",
+      "{playerName} has approached the coaching staff. They haven't seen family in months and are asking if they can fly home for a few days. It's a personal request, and how the org responds will say a lot.",
     conditions: [
       { type: 'min_season_day', threshold: 14 },
       { type: 'player_on_active_roster', playerSelector: 'condition_match' },
@@ -27,7 +27,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'pay_for_flights',
-        text: 'Cover everything — flights, hotel, the works',
+        text: 'Cover everything. Flights, hotel, the works',
         description: "The org pays for the trip entirely. Players notice when an org puts its money where its mouth is.",
         effects: [
           { target: 'team_budget', delta: -8000 },
@@ -38,11 +38,11 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
           { target: 'set_flag', flag: 'org_generous' },
         ],
         outcomeText:
-          "The org covers every expense without hesitation. {playerName} is visibly moved — word travels fast in team houses. The whole roster takes notice.",
+          "The org covers every expense without hesitation. {playerName} is visibly moved. Word travels fast in team houses. The whole roster takes notice.",
       },
       {
         id: 'approve_unpaid',
-        text: 'Approve the trip — they cover their own costs',
+        text: 'Approve the trip. They cover their own costs',
         description: 'You give permission but the player pays their own way. Better than nothing.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: 5 },
@@ -54,7 +54,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'deny_request',
-        text: "Deny the request — competition prep comes first",
+        text: "Deny the request. Competition prep comes first",
         description: 'Hard no. The team needs to stay focused.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -20 },
@@ -155,7 +155,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'Equipment Request',
     description:
-      "One of your players wants new peripherals — a new mouse, monitor, maybe a headset. For pros, gear matters. The org's response matters more.",
+      "One of your players wants new peripherals. A new mouse, monitor, maybe a headset. For pros, gear matters. The org's response matters more.",
     conditions: [
       { type: 'team_budget_below', threshold: 50000 },
       { type: 'flag_not_active', flag: 'equipment_covered' },
@@ -190,14 +190,14 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'deny_equipment',
-        text: "Deny the request — use what you have",
+        text: "Deny the request. Use what you have",
         description: 'Budget is tight. The gear works fine.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -15 },
           { target: 'set_flag', flag: 'equipment_denied_{playerId}', flagDuration: 60 },
         ],
         outcomeText:
-          "The player says nothing. But they remember. Cheap orgs have long memories too — from the other direction.",
+          "The player says nothing. But they remember. Cheap orgs have long memories too. From the other direction.",
       },
     ],
   },
@@ -219,7 +219,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'liquidate_pay',
-        text: 'Pay on time — sell assets to cover it',
+        text: 'Pay on time. Sell assets to cover it',
         description: 'Players get paid. The org takes the hit.',
         effects: [
           { target: 'team_budget', delta: -20000 },
@@ -230,7 +230,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'delay_with_explanation',
-        text: "Delay — explain the situation honestly",
+        text: "Delay. Explain the situation honestly",
         description: "Tell the players what's happening. They'll respect transparency.",
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'all', delta: -15 },
@@ -260,7 +260,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Housing Situation Getting Old',
     description:
-      "Players are venting — quietly at first, then less quietly. The housing stipend doesn't cover what it used to, and the team house is showing its age.",
+      "Players are venting. Quietly at first, then less quietly. The housing stipend doesn't cover what it used to, and the team house is showing its age.",
     conditions: [
       { type: 'team_budget_below', threshold: 60000 },
       { type: 'flag_not_active', flag: 'housing_covered' },
@@ -303,7 +303,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'minor',
     title: 'Chicken Nugget Org',
     description:
-      "Someone posted. Now Reddit has a new meme. Your org is the chicken nugget org — underpaid, under-resourced, and apparently subsisting on fast food budgets. The community finds it hilarious.",
+      "Someone posted. Now Reddit has a new meme. Your org is the chicken nugget org. Underpaid, under-resourced, and apparently subsisting on fast food budgets. The community finds it hilarious.",
     conditions: [
       { type: 'team_budget_below', threshold: 40000 },
       { type: 'flag_not_active', flag: 'chicken_nugget_org' },
@@ -326,7 +326,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     severity: 'major',
     title: 'To Embrace or Not to Embrace',
     description:
-      "The chicken nugget meme has reached peak velocity. A coach's tweet is going viral. Players are tagged in memes hourly. The community is watching to see how the org responds — and it's becoming a statement.",
+      "The chicken nugget meme has reached peak velocity. A coach's tweet is going viral. Players are tagged in memes hourly. The community is watching to see how the org responds. And it's becoming a statement.",
     conditions: [
       { type: 'flag_active', flag: 'chicken_nugget_org' },
     ],
@@ -335,7 +335,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'embrace_meme',
-        text: 'Lean in — players bring nuggets on stage',
+        text: 'Lean in. Players bring nuggets on stage',
         description: 'Turn the joke into a brand moment. The crowd will love it.',
         effects: [
           { target: 'team_hype', delta: 20 },
@@ -360,7 +360,7 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
       },
       {
         id: 'ignore_it',
-        text: 'Say nothing — ignore the whole thing',
+        text: 'Say nothing. Ignore the whole thing',
         description: 'Silence. Let it run its course.',
         effects: [],
         outcomeText:
