@@ -77,10 +77,12 @@ function kdStr(kills: number, deaths: number): string {
  * Generate a narrative summary for a match.
  * @param result - The MatchResult from the simulation
  * @param playerSide - Which side is the player's team ('teamA' | 'teamB' | null for neutral)
+ * @param playerRoles - Optional map of playerId → role label string for richer highlight text
  */
 export function generateMatchNarrative(
   result: MatchResult,
-  playerSide: Side | null
+  playerSide: Side | null,
+  playerRoles?: Record<string, string>
 ): MatchNarrative {
   const side: Side = playerSide ?? 'teamA';
   const oppSide: Side = side === 'teamA' ? 'teamB' : 'teamA';
@@ -297,14 +299,16 @@ export function generateMatchNarrative(
   // 1. Best player
   if (bestPlayer) {
     const kd = kdStr(bestPlayer.kills, bestPlayer.deaths);
+    const roleTag = playerRoles?.[bestPlayer.playerId];
+    const roleSuffix = roleTag ? ` (${roleTag})` : '';
     if (bestPlayer.acs >= 260) {
       highlights.push(
-        `${bestPlayer.playerName} (${bestPlayer.agent}) dominated — ${kd} K/D, the best player in the series`
+        `${bestPlayer.playerName}${roleSuffix} dominated — ${kd} K/D, the best player in the series`
       );
     } else {
       const span = bestPlayer.mapCount > 1 ? 'across all maps' : 'on the map';
       highlights.push(
-        `${bestPlayer.playerName} led the team with a ${kd} K/D ${span}`
+        `${bestPlayer.playerName}${roleSuffix} led the team with a ${kd} K/D ${span}`
       );
     }
   }
@@ -390,8 +394,10 @@ export function generateMatchNarrative(
   // 8. Opponent star
   if (!isWin && bestOppPlayer && bestOppPlayer.acs >= 260) {
     const kd = kdStr(bestOppPlayer.kills, bestOppPlayer.deaths);
+    const oppRoleTag = playerRoles?.[bestOppPlayer.playerId];
+    const oppRoleSuffix = oppRoleTag ? ` (${oppRoleTag})` : '';
     highlights.push(
-      `Opponent's ${bestOppPlayer.playerName} (${bestOppPlayer.agent}) went ${kd} — was unstoppable`
+      `Opponent's ${bestOppPlayer.playerName}${oppRoleSuffix} went ${kd} — was unstoppable`
     );
   }
 

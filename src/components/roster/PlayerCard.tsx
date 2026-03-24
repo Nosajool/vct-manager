@@ -7,9 +7,15 @@ import { GameImage } from '../shared/GameImage';
 import { getPlayerImageUrl } from '../../utils/imageAssets';
 import { formatRating } from '../../utils/formatNumber';
 import { usePlayerIGLStatus } from '../../hooks/usePlayerIGLStatus';
-import { useVisibleStats } from '../../hooks/useFeatureGate';
-import type { PlayerStats } from '../../types';
 import type { PlayerRestriction } from '../../services/ContractService';
+import {
+  getPlayerRoleLabel,
+  getPlayerStatusLabel,
+  getRoleLabelStyle,
+  getStatusLabelStyle,
+  type RoleLabel,
+  type StatusLabel,
+} from '../../utils/playerLabels';
 
 interface PlayerCardProps {
   player: Player;
@@ -18,6 +24,8 @@ interface PlayerCardProps {
   showContract?: boolean;
   compact?: boolean;
   teamName?: string;
+  /** Pre-computed team-relative role label. Falls back to self-relative if omitted. */
+  roleLabel?: RoleLabel;
   // Roster management props
   rosterPosition?: 'active' | 'reserve';
   isPlayerTeam?: boolean;
@@ -27,17 +35,6 @@ interface PlayerCardProps {
   onMoveToReserve?: (playerId: string) => void;
 }
 
-const STAT_SHORT_LABELS: Record<keyof PlayerStats, string> = {
-  mechanics: 'MEC',
-  igl: 'IGL',
-  mental: 'MNT',
-  clutch: 'CLU',
-  vibes: 'VIB',
-  lurking: 'LRK',
-  entry: 'ENT',
-  support: 'SUP',
-  stamina: 'STA',
-};
 
 export function PlayerCard({
   player,
@@ -46,6 +43,7 @@ export function PlayerCard({
   showContract = false,
   compact = false,
   teamName,
+  roleLabel: roleLabelProp,
   rosterPosition,
   isPlayerTeam = false,
   canPromote = false,
@@ -55,7 +53,8 @@ export function PlayerCard({
 }: PlayerCardProps) {
   const overall = playerGenerator.calculateOverall(player.stats);
   const { isIGL, isFormerIGL } = usePlayerIGLStatus(player);
-  const visibleStats = useVisibleStats();
+  const roleLabel = roleLabelProp ?? getPlayerRoleLabel(player);
+  const statusLabel = getPlayerStatusLabel(player);
 
   // Get overall color based on rating
   const getOverallColor = (ovr: number): string => {
@@ -106,11 +105,11 @@ export function PlayerCard({
           {overall}
         </div>
 
-        {/* Name and Region */}
+        {/* Name and Role */}
         <div className="flex-1 min-w-0">
           <p className="text-vct-light font-medium truncate">{player.name}</p>
           <p className="text-xs text-vct-gray">
-            {player.age}y • {player.nationality}
+            {player.age}y • {roleLabel}
           </p>
         </div>
 
@@ -275,11 +274,10 @@ export function PlayerCard({
             </div>
           )}
 
-          {/* Stats Preview */}
-          <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-            {visibleStats.slice(0, 3).map((stat) => (
-              <StatMini key={stat} label={STAT_SHORT_LABELS[stat]} value={player.stats[stat]} />
-            ))}
+          {/* Identity Labels */}
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <RoleLabelBadge label={roleLabel} />
+            {statusLabel && <StatusLabelBadge label={statusLabel} />}
           </div>
         </div>
 
@@ -401,18 +399,26 @@ function TraitBadge({ traits }: { traits: PersonalityTraits }) {
   );
 }
 
-// Mini stat display
-function StatMini({ label, value }: { label: string; value: number }) {
-  const getColor = (v: number): string => {
-    if (v >= 80) return 'text-green-400';
-    if (v >= 65) return 'text-vct-light';
-    return 'text-vct-gray';
-  };
-
+function RoleLabelBadge({ label }: { label: RoleLabel }) {
+  const style = getRoleLabelStyle(label);
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-vct-gray">{label}</span>
-      <span className={getColor(value)}>{formatRating(value)}</span>
-    </div>
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide ${style.color} ${style.bg}`}
+      title={`Role: ${label}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function StatusLabelBadge({ label }: { label: StatusLabel }) {
+  const style = getStatusLabelStyle(label);
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide ${style.color} ${style.bg}`}
+      title={`Status: ${label}`}
+    >
+      {label}
+    </span>
   );
 }

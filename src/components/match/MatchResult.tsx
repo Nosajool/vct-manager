@@ -7,6 +7,7 @@ import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
 import { generateMatchNarrative } from '../../utils/matchNarrative';
 import type { NarrativeTag } from '../../utils/matchNarrative';
+import { buildPlayerRoleMap } from '../../utils/playerLabels';
 
 function TagPill({ tag }: { tag: NarrativeTag }) {
   const colors = {
@@ -75,6 +76,7 @@ interface MatchResultProps {
 export function MatchResult({ match, onClose }: MatchResultProps) {
   const teams = useGameStore((state) => state.teams);
   const results = useGameStore((state) => state.results);
+  const players = useGameStore((state) => state.players);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
 
   const teamA = teams[match.teamAId];
@@ -94,7 +96,15 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
         ? 'teamB'
         : null;
 
-  const narrative = generateMatchNarrative(result, playerSide);
+  // Build role map for both teams' players so narrative highlights include role labels
+  const matchPlayerIds = [
+    ...(teamA.playerIds ?? []),
+    ...(teamB.playerIds ?? []),
+  ];
+  const matchPlayers = matchPlayerIds.map((id) => players[id]).filter(Boolean);
+  const playerRoles = buildPlayerRoleMap(matchPlayers);
+
+  const narrative = generateMatchNarrative(result, playerSide, playerRoles);
 
   // Parse date string as local date to avoid timezone shifts
   const parseAsLocalDate = (dateStr: string): Date => {

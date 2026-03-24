@@ -15,6 +15,7 @@ import { getTeamLogoUrl } from '../../utils/imageAssets';
 import { RivalryIndicator } from '../narrative/RivalryIndicator';
 import { generateMatchNarrative } from '../../utils/matchNarrative';
 import type { NarrativeTag } from '../../utils/matchNarrative';
+import { buildPlayerRoleMap } from '../../utils/playerLabels';
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -400,6 +401,8 @@ function MatchCard({
   onViewDetails: () => void;
 }) {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
+  const teams = useGameStore((state) => state.teams);
+  const players = useGameStore((state) => state.players);
   const { match, result, teamAName, teamBName, matchLabel, isPlayerTeamMatch, playerTeamWon } =
     matchDetails;
 
@@ -531,7 +534,15 @@ function MatchCard({
       {/* Match Story — player team matches only */}
       {isHighlighted && isPlayerTeamMatch && playerTeamId && (() => {
         const playerSide = match.teamAId === playerTeamId ? 'teamA' : 'teamB';
-        const narrative = generateMatchNarrative(result, playerSide);
+        const teamA = teams[match.teamAId];
+        const teamB = teams[match.teamBId];
+        const matchPlayerIds = [
+          ...(teamA?.playerIds ?? []),
+          ...(teamB?.playerIds ?? []),
+        ];
+        const matchPlayers = matchPlayerIds.map((id) => players[id]).filter(Boolean);
+        const playerRoles = buildPlayerRoleMap(matchPlayers);
+        const narrative = generateMatchNarrative(result, playerSide, playerRoles);
         const tagColors: Record<NarrativeTag['type'], string> = {
           positive: 'bg-green-500/20 text-green-400 border-green-500/30',
           negative: 'bg-red-500/20 text-red-400 border-red-500/30',

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useGameStore } from '../../store';
 import { PlayerCard } from './PlayerCard';
+import { assignTeamRoleLabels } from '../../utils/playerLabels';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import type { Player, Region, Team } from '../../types';
 import { GameImage } from '../shared/GameImage';
@@ -103,6 +104,7 @@ export function AllTeamsView() {
             team.playerIds.includes(p.id)
           );
           const teamOverall = calculateTeamOverall(team);
+          const activeRoleLabels = isExpanded ? assignTeamRoleLabels(activePlayers) : {};
 
           return (
             <div
@@ -194,6 +196,7 @@ export function AllTeamsView() {
                             player={player}
                             onClick={() => setSelectedPlayer(player)}
                             compact
+                            roleLabel={activeRoleLabels[player.id]}
                           />
                         ))}
                       </div>

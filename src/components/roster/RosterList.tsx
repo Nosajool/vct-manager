@@ -1,8 +1,9 @@
 // RosterList Component - Displays team's active roster and reserves
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Player, Team } from '../../types';
 import { PlayerCard } from './PlayerCard';
+import { assignTeamRoleLabels } from '../../utils/playerLabels';
 import { PlayerDetailModal } from './PlayerDetailModal';
 import { useGameStore } from '../../store';
 import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
@@ -104,6 +105,14 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
   const activePlayers = players.filter((p) => team.playerIds.includes(p.id));
   const reservePlayers = players.filter((p) =>
     team.reservePlayerIds.includes(p.id)
+  );
+
+  // Compute team-relative role labels for the active roster
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const activeRoleLabels = useMemo(
+    () => assignTeamRoleLabels(activePlayers),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [team.playerIds.join(',')]
   );
 
   // Check if active roster has space
@@ -260,6 +269,7 @@ export function RosterList({ team, players, onReleasePlayer }: RosterListProps) 
                   onClick={() => setSelectedPlayer(player)}
                   selected={selectedPlayer?.id === player.id}
                   showContract
+                  roleLabel={activeRoleLabels[player.id]}
                   rosterPosition="active"
                   isPlayerTeam={isPlayerTeam}
                   onMoveToReserve={handleMoveToReserve}
