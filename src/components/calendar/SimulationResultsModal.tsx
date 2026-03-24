@@ -13,6 +13,8 @@ import type { RivalryDelta } from '../../services/RivalryService';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
 import { RivalryIndicator } from '../narrative/RivalryIndicator';
+import { generateMatchNarrative } from '../../utils/matchNarrative';
+import type { NarrativeTag } from '../../utils/matchNarrative';
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -525,6 +527,43 @@ function MatchCard({
           </span>
         ))}
       </div>
+
+      {/* Match Story — player team matches only */}
+      {isHighlighted && isPlayerTeamMatch && playerTeamId && (() => {
+        const playerSide = match.teamAId === playerTeamId ? 'teamA' : 'teamB';
+        const narrative = generateMatchNarrative(result, playerSide);
+        const tagColors: Record<NarrativeTag['type'], string> = {
+          positive: 'bg-green-500/20 text-green-400 border-green-500/30',
+          negative: 'bg-red-500/20 text-red-400 border-red-500/30',
+          neutral: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        };
+        return (
+          <div className="mt-3 pt-3 border-t border-vct-gray/10">
+            <p className={`text-sm font-black tracking-widest mb-2 ${playerTeamWon ? 'text-green-400' : 'text-red-400'}`}>
+              {narrative.headline}
+            </p>
+            {narrative.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {narrative.tags.map((tag) => (
+                  <span key={tag.label} className={`px-1.5 py-0.5 rounded text-xs font-bold tracking-wider border ${tagColors[tag.type]}`}>
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            )}
+            {narrative.highlights.length > 0 && (
+              <ul className="space-y-0.5">
+                {narrative.highlights.slice(0, 3).map((h, i) => (
+                  <li key={i} className="text-xs text-vct-gray flex gap-1.5">
+                    <span className="text-vct-gray/40 shrink-0">&#9733;</span>
+                    <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Player Team Result Badge + Reputation Chips */}
       {isHighlighted && isPlayerTeamMatch && (
