@@ -196,16 +196,19 @@ export function PlayerDetailModal({
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Form</p>
               <p className="text-2xl font-bold text-vct-light">{formatRating(player.form)}</p>
+              <p className="text-vct-gray text-xs mt-1">Recent match performance</p>
             </div>
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Morale</p>
               <p className="text-2xl font-bold text-vct-light">{formatRating(player.morale)}</p>
+              <p className="text-vct-gray text-xs mt-1">Happiness & motivation</p>
             </div>
             <div className="bg-vct-dark rounded-lg p-4 text-center">
               <p className="text-vct-gray text-sm mb-1">Potential</p>
               <p className="text-2xl font-bold text-yellow-400">
                 {formatRating(player.potential)}
               </p>
+              <p className="text-vct-gray text-xs mt-1">Growth ceiling</p>
             </div>
           </div>
 

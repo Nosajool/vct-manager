@@ -68,9 +68,9 @@ export function PlayerCard({
 
   // Get form indicator
   const getFormIndicator = (form: number): { icon: string; color: string } => {
-    if (form >= 80) return { icon: '🔥', color: 'text-green-400' };
-    if (form >= 60) return { icon: '➡️', color: 'text-yellow-400' };
-    return { icon: '📉', color: 'text-red-400' };
+    if (form >= 80) return { icon: 'HOT', color: 'text-green-400' };
+    if (form >= 60) return { icon: 'OK', color: 'text-yellow-400' };
+    return { icon: 'COLD', color: 'text-red-400' };
   };
 
   const formIndicator = getFormIndicator(player.form);
@@ -239,8 +239,9 @@ export function PlayerCard({
             <h3 className="text-lg font-semibold text-vct-light truncate">
               {player.name}
             </h3>
-            <span className={formIndicator.color} title={`Form: ${player.form}`}>
+            <span className={`flex items-center gap-0.5 text-xs ${formIndicator.color}`}>
               {formIndicator.icon}
+              <span className="font-medium">{player.form}</span>
             </span>
           </div>
 

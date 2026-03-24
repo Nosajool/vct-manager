@@ -262,7 +262,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
               </button>
             </div>
 
-            <div className="overflow-y-auto flex-1">
+            <div className="overflow-y-auto overflow-x-hidden flex-1">
               <MatchupHeader interview={interview} />
 
               <div className="p-6 space-y-4">
@@ -402,7 +402,7 @@ export function InterviewModal({ interview, onChoose, onClose, questionNumber, t
             </div>
 
             {/* Matchup context header + scrollable body */}
-            <div className="overflow-y-auto flex-1">
+            <div className="overflow-y-auto overflow-x-hidden flex-1">
               <MatchupHeader interview={interview} />
 
               {/* Options — quote-first layout */}
