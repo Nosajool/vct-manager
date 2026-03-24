@@ -5,6 +5,67 @@ import type { Match } from '../../types';
 import { Scoreboard } from './Scoreboard';
 import { GameImage } from '../shared/GameImage';
 import { getTeamLogoUrl } from '../../utils/imageAssets';
+import { generateMatchNarrative } from '../../utils/matchNarrative';
+import type { NarrativeTag } from '../../utils/matchNarrative';
+
+function TagPill({ tag }: { tag: NarrativeTag }) {
+  const colors = {
+    positive: 'bg-green-500/20 text-green-400 border-green-500/30',
+    negative: 'bg-red-500/20 text-red-400 border-red-500/30',
+    neutral: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  };
+  return (
+    <span
+      className={`inline-block px-2 py-0.5 rounded text-xs font-bold tracking-wider border ${colors[tag.type]}`}
+    >
+      {tag.label}
+    </span>
+  );
+}
+
+function MatchStory({
+  narrative,
+  playerSide,
+}: {
+  narrative: ReturnType<typeof generateMatchNarrative>;
+  playerSide: 'teamA' | 'teamB' | null;
+}) {
+  const headlineColor = playerSide === null
+    ? 'text-vct-light'
+    : narrative.isWin
+      ? 'text-green-400'
+      : 'text-red-400';
+
+  return (
+    <div className="mb-6 p-4 bg-vct-darker rounded-lg border border-vct-gray/20">
+      {/* Headline */}
+      <p className={`text-lg font-black tracking-widest mb-3 ${headlineColor}`}>
+        {narrative.headline}
+      </p>
+
+      {/* Tags */}
+      {narrative.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {narrative.tags.map((tag) => (
+            <TagPill key={tag.label} tag={tag} />
+          ))}
+        </div>
+      )}
+
+      {/* Highlights */}
+      {narrative.highlights.length > 0 && (
+        <ul className="space-y-1">
+          {narrative.highlights.map((h, i) => (
+            <li key={i} className="text-sm text-vct-gray flex gap-2">
+              <span className="text-vct-gray/50 shrink-0">&#9733;</span>
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 interface MatchResultProps {
   match: Match;
@@ -14,6 +75,7 @@ interface MatchResultProps {
 export function MatchResult({ match, onClose }: MatchResultProps) {
   const teams = useGameStore((state) => state.teams);
   const results = useGameStore((state) => state.results);
+  const playerTeamId = useGameStore((state) => state.playerTeamId);
 
   const teamA = teams[match.teamAId];
   const teamB = teams[match.teamBId];
@@ -24,6 +86,15 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
   }
 
   const winnerTeam = result.winnerId === teamA.id ? teamA : teamB;
+
+  const playerSide =
+    match.teamAId === playerTeamId
+      ? 'teamA'
+      : match.teamBId === playerTeamId
+        ? 'teamB'
+        : null;
+
+  const narrative = generateMatchNarrative(result, playerSide);
 
   // Parse date string as local date to avoid timezone shifts
   const parseAsLocalDate = (dateStr: string): Date => {
@@ -133,6 +204,9 @@ export function MatchResult({ match, onClose }: MatchResultProps) {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6">
+          {/* Match Story */}
+          <MatchStory narrative={narrative} playerSide={playerSide} />
+
           <Scoreboard
             result={result}
             teamAName={teamA.name}
