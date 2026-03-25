@@ -16,6 +16,7 @@ import { RivalryIndicator } from '../narrative/RivalryIndicator';
 import { generateMatchNarrative } from '../../utils/matchNarrative';
 import type { NarrativeTag } from '../../utils/matchNarrative';
 import { buildPlayerRoleMap } from '../../utils/playerLabels';
+import { generateCoachMatchAnalysis } from '../../utils/coachMatchAnalysis';
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -403,6 +404,7 @@ function MatchCard({
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
   const players = useGameStore((state) => state.players);
+  const rivalries = useGameStore((state) => state.rivalries);
   const { match, result, teamAName, teamBName, matchLabel, isPlayerTeamMatch, playerTeamWon } =
     matchDetails;
 
@@ -572,6 +574,42 @@ function MatchCard({
                 ))}
               </ul>
             )}
+          </div>
+        );
+      })()}
+
+      {/* Coach's Take — stat attribution for player team matches */}
+      {isHighlighted && isPlayerTeamMatch && playerTeamId && (() => {
+        const team = teams[playerTeamId];
+        if (!team) return null;
+
+        const rosterPlayers = team.playerIds
+          .map((id) => players[id])
+          .filter((p): p is NonNullable<typeof p> => !!p);
+
+        const avgMorale = rosterPlayers.length > 0
+          ? rosterPlayers.reduce((sum, p) => sum + p.morale, 0) / rosterPlayers.length
+          : 70;
+
+        const playerSide = match.teamAId === playerTeamId ? 'teamA' : 'teamB';
+        const mapDiff = playerSide === 'teamA'
+          ? result.scoreTeamA - result.scoreTeamB
+          : result.scoreTeamB - result.scoreTeamA;
+
+        const coachTake = generateCoachMatchAnalysis({
+          won: playerTeamWon ?? false,
+          mapDiff,
+          chemistry: team.chemistry.overall,
+          avgMorale,
+          hypeLevel: team.reputation.hypeLevel,
+          rivalryIntensity: opponentTeamId ? (rivalries[opponentTeamId]?.intensity ?? 0) : 0,
+          matchId: match.id,
+        });
+
+        return (
+          <div className="mt-3 pt-3 border-t border-vct-gray/10">
+            <p className="text-xs font-semibold uppercase tracking-wider text-vct-gray/50 mb-1.5">Coach's Take</p>
+            <p className="text-xs text-vct-gray/70 leading-relaxed italic">{coachTake}</p>
           </div>
         );
       })()}

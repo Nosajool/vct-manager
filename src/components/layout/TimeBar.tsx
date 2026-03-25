@@ -47,8 +47,10 @@ import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
 import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { TeamBriefingModal } from '../onboarding/TeamBriefingModal';
+import { CoachBriefingModal } from '../today/CoachBriefingModal';
+import { generateCoachHints, type CoachHint } from '../../utils/coachNarrative';
 
-type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview' | 'patch_preview' | 'patch_notes';
+type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview' | 'patch_preview' | 'patch_notes' | 'coach_briefing';
 
 /**
  * Thin wrapper to pull PreMatchPrepModal data from the store so TimeBar JSX stays clean.
@@ -163,6 +165,7 @@ export function TimeBar() {
   const [downtimeResults, setDowntimeResults] = useState<DowntimeActivityResult[]>([]);
   const [showPreMatchPrep, setShowPreMatchPrep] = useState(false);
   const [showTeamBriefing, setShowTeamBriefing] = useState(false);
+  const [coachBriefingHints, setCoachBriefingHints] = useState<CoachHint[]>([]);
 
   const [pressConferenceTotal, setPressConferenceTotal] = useState(0);
 
@@ -318,6 +321,37 @@ export function TimeBar() {
     }
     if (pendingPatchNotes) {
       queue.push('patch_notes');
+    }
+
+    // Coach briefing — show after matches or when critical stat conditions exist
+    {
+      const storeState = useGameStore.getState();
+      const pTeamId = storeState.playerTeamId;
+      if (pTeamId) {
+        const team = storeState.teams[pTeamId];
+        if (team) {
+          const rosterPlayers = team.playerIds
+            .map((id) => storeState.players[id])
+            .filter((p): p is NonNullable<typeof p> => !!p);
+
+          const hints = generateCoachHints(
+            team,
+            rosterPlayers,
+            storeState.calendar.currentDate,
+          );
+
+          const hasPlayerMatch = result?.simulatedMatches.some((mr) => {
+            const m = storeState.matches[mr.matchId];
+            return m && (m.teamAId === pTeamId || m.teamBId === pTeamId);
+          });
+          const hasWarnings = hints.some((h) => h.severity === 'warning');
+
+          if (hints.length > 0 && (hasPlayerMatch || hasWarnings)) {
+            setCoachBriefingHints(hints);
+            queue.push('coach_briefing');
+          }
+        }
+      }
     }
 
     advancePostModals(queue);
@@ -963,6 +997,14 @@ export function TimeBar() {
         onConfirm={handlePreMatchPrepConfirm}
         onCancel={handlePreMatchPrepCancel}
       />
+
+      {/* Coach Briefing Modal — shown after matches or when critical stat conditions exist */}
+      {activePostModal === 'coach_briefing' && coachBriefingHints.length > 0 && (
+        <CoachBriefingModal
+          hints={coachBriefingHints}
+          onClose={handlePostModalClose}
+        />
+      )}
 
       {/* Team Briefing Modal — shown once after Kickoff interview */}
       {showTeamBriefing && (

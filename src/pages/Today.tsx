@@ -10,6 +10,7 @@ import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
 import { TournamentContextPanel, AlertsPanel, TodayPlanPanel, WeekPlannerPanel } from '../components/today';
+import { CoachObservationsPanel } from '../components/today/CoachObservationsPanel';
 import { FirstDayObjectives } from '../components/onboarding/FirstDayObjectives';
 import { ScrimModal } from '../components/scrim';
 import { NarrativeHistoryPanel } from '../components/narrative/NarrativeHistoryPanel';
@@ -96,6 +97,9 @@ export function Today() {
 
       {/* Day 1 Onboarding Checklist — hidden once objectives complete */}
       <FirstDayObjectives />
+
+      {/* Coach's observations — soft narrative hints about team state */}
+      <CoachObservationsPanel />
 
       {/* Today's Plan */}
       <TodayPlanPanel />
