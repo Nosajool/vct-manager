@@ -88,7 +88,6 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
           {/* Column headers */}
           <div className="flex items-center gap-3 px-3 pb-1 mb-1">
             <div className="flex-1 min-w-0 text-xs text-vct-gray/60 font-medium">Player</div>
-            <div className="w-28 flex-shrink-0 text-xs text-vct-gray/60 font-medium">Agent</div>
             <div className="w-12 flex-shrink-0 text-xs text-vct-gray/60 font-medium text-right">💙 Morale</div>
             <div className="w-10 flex-shrink-0 text-xs text-vct-gray/60 font-medium text-right">Mastery</div>
           </div>
@@ -116,15 +115,6 @@ export function MoraleChangeModal({ isOpen, onClose, result, matchId, masteryRes
                         {player.reasons.slice(0, 2).map((r) => r.label).join(', ')}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Agent name */}
-                  <div className="w-28 flex-shrink-0">
-                    {mastery ? (
-                      <span className="text-xs text-vct-gray truncate block">{mastery.agentName}</span>
-                    ) : (
-                      <span className="text-xs text-vct-gray/40">—</span>
-                    )}
                   </div>
 
                   {/* Morale delta */}
