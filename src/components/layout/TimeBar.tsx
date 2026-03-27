@@ -46,6 +46,8 @@ import { TeamBriefingModal } from '../onboarding/TeamBriefingModal';
 import { CoachBriefingModal } from '../today/CoachBriefingModal';
 import { generateCoachHints, type CoachHint } from '../../utils/coachNarrative';
 import { BottomNav } from './BottomNav';
+import { RosterIssueModal } from '../today/RosterIssueModal';
+import { validateRosterForMatch, type RosterViolation } from '../../utils/rosterValidation';
 
 type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview' | 'patch_preview' | 'patch_notes' | 'coach_briefing';
 
@@ -154,7 +156,9 @@ export function TimeBar() {
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
   const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
-  const [, setHasInsufficientRoster] = useState(false);
+  const [rosterViolations, setRosterViolations] = useState<RosterViolation[]>([]);
+  const [rosterActiveCount, setRosterActiveCount] = useState(0);
+  const [showRosterIssueModal, setShowRosterIssueModal] = useState(false);
   // Pre-advance sequential modal state (new BitLife-style flow)
   const [showTrainingSetup, setShowTrainingSetup] = useState(false);
   const [showScrimSetup, setShowScrimSetup] = useState(false);
@@ -548,11 +552,20 @@ export function TimeBar() {
   };
 
   const handleAdvanceDay = () => {
-    // Roster warning (non-blocking)
-    const state = useGameStore.getState();
-    const team = playerTeamId ? state.teams[playerTeamId] : null;
-    const rosterShort = team ? team.playerIds.length < 5 : false;
-    setHasInsufficientRoster(rosterShort);
+    // Block advance on match days when the roster is invalid
+    if (hasMatchToday && playerTeamId) {
+      const state = useGameStore.getState();
+      const team = state.teams[playerTeamId];
+      if (team) {
+        const { valid, violations } = validateRosterForMatch(team, state.players, state.activeFlags);
+        if (!valid) {
+          setRosterViolations(violations);
+          setRosterActiveCount(team.playerIds.length);
+          setShowRosterIssueModal(true);
+          return;
+        }
+      }
+    }
 
     // Reset any pending configs from a previous aborted flow
     setPendingTrainingConfig(null);
@@ -569,6 +582,25 @@ export function TimeBar() {
     } else {
       executeAdvance(null, null);
     }
+  };
+
+  const handleRosterAutoFix = () => {
+    if (!playerTeamId) return;
+    const state = useGameStore.getState();
+    for (const v of rosterViolations) {
+      if (v.type === 'insufficient_players') {
+        const needed = 5 - state.teams[playerTeamId].playerIds.length;
+        for (const p of v.promotablePlayers.slice(0, needed)) {
+          state.movePlayerToActive(playerTeamId, p.id);
+        }
+      } else if (v.type === 'no_active_igl' && v.iglInReserves) {
+        if (state.teams[playerTeamId].playerIds.length < 5) {
+          state.movePlayerToActive(playerTeamId, v.iglInReserves.id);
+        }
+      }
+    }
+    setShowRosterIssueModal(false);
+    handleAdvanceDay();
   };
 
   const handlePreMatchPrepConfirm = (config: PreMatchConfig) => {
@@ -936,6 +968,21 @@ export function TimeBar() {
       {/* Team Briefing Modal — shown once after Kickoff interview */}
       {showTeamBriefing && (
         <TeamBriefingModal onClose={() => setShowTeamBriefing(false)} />
+      )}
+
+      {/* Roster Issue Modal — blocks match-day advance when roster is invalid */}
+      {showRosterIssueModal && (
+        <RosterIssueModal
+          violations={rosterViolations}
+          activeCount={rosterActiveCount}
+          canAutoFix={rosterViolations.every((v) => {
+            if (v.type === 'insufficient_players') return v.promotablePlayers.length >= (5 - rosterActiveCount);
+            if (v.type === 'no_active_igl') return v.iglInReserves !== null && rosterActiveCount < 5;
+            return false;
+          })}
+          onAutoFix={handleRosterAutoFix}
+          onFixManually={() => setShowRosterIssueModal(false)}
+        />
       )}
 
       {/* Auto-save indicator - fixed bottom-right, above all modals */}
