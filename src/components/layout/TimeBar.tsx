@@ -24,7 +24,7 @@ import { QualificationModal, type QualificationModalData } from '../tournament/Q
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
 import { UnlockNotification } from '../today/UnlockNotification';
-import { DramaEventToast, DramaEventModal } from '../drama';
+import { DramaEventModal, MinorDramaEventModal } from '../drama';
 import { InterviewModal } from '../narrative/InterviewModal';
 import { MoraleChangeModal } from '../match/MoraleChangeModal';
 import { TournamentContextModal } from '../tournament/TournamentContextModal';
@@ -154,6 +154,8 @@ export function TimeBar() {
   const [activePostModal, setActivePostModal] = useState<PostSimulationModalType | null>(null);
   const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
+  const [showMinorDramaModal, setShowMinorDramaModal] = useState(false);
+  const [minorEventTotal, setMinorEventTotal] = useState(0);
   const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
   const [rosterViolations, setRosterViolations] = useState<RosterViolation[]>([]);
@@ -250,7 +252,12 @@ export function TimeBar() {
     } else {
       setActivePostModal(null);
       setPostModalQueue([]);
-      triggerDramaEvents();
+      if (dramaToasts.length > 0) {
+        setMinorEventTotal(dramaToasts.length);
+        setShowMinorDramaModal(true);
+      } else {
+        triggerDramaEvents();
+      }
     }
   };
 
@@ -675,8 +682,19 @@ export function TimeBar() {
     }
   };
 
-  const handleDismissDramaToast = (index: number) => {
-    setDramaToasts((prev) => prev.filter((_, i) => i !== index));
+  const handleMinorEventNext = () => {
+    const remaining = dramaToasts.slice(1);
+    setDramaToasts(remaining);
+    if (remaining.length === 0) {
+      setShowMinorDramaModal(false);
+      triggerDramaEvents();
+    }
+  };
+
+  const handleMinorEventSkipAll = () => {
+    setDramaToasts([]);
+    setShowMinorDramaModal(false);
+    triggerDramaEvents();
   };
 
 
@@ -886,18 +904,16 @@ export function TimeBar() {
         />
       ))}
 
-      {/* Drama Event Toasts - show minor events one at a time */}
-      {validDramaToasts.length > 0 && (
-        <DramaEventToast
-          key={validDramaToasts[0].id}
+      {/* Minor Drama Event Modal - show minor events one at a time in the modal stack */}
+      {showMinorDramaModal && validDramaToasts.length > 0 && (
+        <MinorDramaEventModal
           event={validDramaToasts[0]}
-          onDismiss={() => handleDismissDramaToast(0)}
-          onSkipAll={() => setDramaToasts([])}
-          queuePosition={
-            validDramaToasts.length > 1
-              ? { current: 1, total: validDramaToasts.length }
-              : undefined
-          }
+          onNext={handleMinorEventNext}
+          onSkipAll={handleMinorEventSkipAll}
+          queuePosition={{
+            current: minorEventTotal - validDramaToasts.length + 1,
+            total: minorEventTotal,
+          }}
         />
       )}
 
