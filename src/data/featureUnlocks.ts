@@ -21,7 +21,8 @@ export type FeatureType =
   // Downtime features
   | 'downtime_activities'   // watch party + fan meetup
   | 'bootcamp'              // regional bootcamp (7-day commit)
-  | 'content_events';       // streamer collab, youtube doc, sponsored content
+  | 'content_events'        // streamer collab, youtube doc, sponsored content
+  | 'coach_briefing';       // daily coach condition briefing
 
 /** Unlock condition - either day-based or phase-based */
 export type UnlockCondition =
@@ -106,5 +107,10 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     feature: 'content_events',
     condition: { type: 'day', day: 30 },
     description: 'Content & brand events unlock on day 30 - streamer collabs, youtube documentaries, and sponsored content',
+  },
+  {
+    feature: 'coach_briefing',
+    condition: { type: 'day', day: 10 },
+    description: "Your coach will now brief you on team conditions after each day — morale concerns, chemistry shifts, momentum, and upcoming rivalries.",
   },
 ];

@@ -68,6 +68,11 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; accent: string; titl
     accent: 'bg-pink-500',
     title: 'Content & Brand Events Unlocked',
   },
+  coach_briefing: {
+    icon: '📋',
+    accent: 'bg-indigo-500',
+    title: "Coach's Briefing Unlocked",
+  },
 };
 
 export function FeatureUnlockModal({

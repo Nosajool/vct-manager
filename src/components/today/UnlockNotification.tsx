@@ -74,6 +74,11 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     color: 'from-pink-500/20 to-rose-600/20 border-rose-500/30',
     title: 'Content & Brand Events Unlocked',
   },
+  coach_briefing: {
+    icon: '📋',
+    color: 'from-indigo-500/20 to-indigo-600/20 border-indigo-500/30',
+    title: "Coach's Briefing Unlocked",
+  },
 };
 
 export function UnlockNotification({

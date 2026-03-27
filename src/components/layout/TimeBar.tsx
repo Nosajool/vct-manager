@@ -361,7 +361,11 @@ export function TimeBar() {
           });
           const hasWarnings = hints.some((h) => h.severity === 'warning');
 
-          if (hints.length > 0 && (hasPlayerMatch || hasWarnings)) {
+          if (
+            featureGateService.isFeatureUnlocked('coach_briefing') &&
+            hints.length > 0 &&
+            (hasPlayerMatch || hasWarnings)
+          ) {
             setCoachBriefingHints(hints);
             queue.push('coach_briefing');
           }
