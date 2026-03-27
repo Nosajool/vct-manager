@@ -14,15 +14,9 @@ export function Layout({ children }: LayoutProps) {
       <Header />
       <TimeBar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 pb-32">
         {children}
       </main>
-
-      <footer className="bg-vct-darker border-t border-vct-gray/20 py-3">
-        <div className="max-w-7xl mx-auto px-4 text-center text-vct-gray text-xs">
-          VCT Manager - Fan-made game, not affiliated with Riot Games. Not for profit.
-        </div>
-      </footer>
     </div>
   );
 }

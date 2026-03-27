@@ -38,8 +38,6 @@ export function Today() {
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
 
-  const setActiveView = useGameStore((state) => state.setActiveView);
-
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
   // Show loading state if not initialized
@@ -72,12 +70,6 @@ export function Today() {
   const phaseDisplay = phaseDisplayMap[calendar.currentPhase] || calendar.currentPhase;
 
   const reputationTier = playerTeam ? getReputationTier(playerTeam.reputation.fanbase) : null;
-
-  const navChips = [
-    { id: 'team' as const, label: 'Team', icon: '👥' },
-    { id: 'tournament' as const, label: 'Tournament', icon: '🏆' },
-    { id: 'finances' as const, label: 'Finances', icon: '💰' },
-  ];
 
   return (
     <div className="space-y-6">
@@ -121,20 +113,6 @@ export function Today() {
 
       {/* Recent Events Section */}
       <NarrativeHistoryPanel limit={20} />
-
-      {/* Navigation Chips */}
-      <div className="flex gap-3 pt-2 pb-4">
-        {navChips.map((chip) => (
-          <button
-            key={chip.id}
-            onClick={() => setActiveView(chip.id)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-vct-darker border border-vct-gray/20 text-vct-gray hover:text-vct-light hover:border-vct-gray/50 transition-colors text-sm font-medium"
-          >
-            <span>{chip.icon}</span>
-            {chip.label}
-          </button>
-        ))}
-      </div>
 
       {/* Scrim Modal for Alerts (DayPlanPanel has its own modals for event cards) */}
       <ScrimModal

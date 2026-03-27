@@ -30,7 +30,6 @@ import { MoraleChangeModal } from '../match/MoraleChangeModal';
 import { TournamentContextModal } from '../tournament/TournamentContextModal';
 import type { Tournament } from '../../types';
 import { dramaService } from '../../services/DramaService';
-import { GAME_START_DATE } from '../../services/FeatureGateService';
 import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
@@ -46,6 +45,7 @@ import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { TeamBriefingModal } from '../onboarding/TeamBriefingModal';
 import { CoachBriefingModal } from '../today/CoachBriefingModal';
 import { generateCoachHints, type CoachHint } from '../../utils/coachNarrative';
+import { BottomNav } from './BottomNav';
 
 type PostSimulationModalType = 'downtime' | 'training' | 'scrim' | 'morale' | 'tournament_context' | 'interview' | 'patch_preview' | 'patch_notes' | 'coach_briefing';
 
@@ -702,7 +702,6 @@ export function TimeBar() {
     champions: 'Champions',
   };
   const phaseDisplay = phaseDisplayMap[calendar.currentPhase] || calendar.currentPhase;
-  const isDay1 = calendar.currentDate === GAME_START_DATE;
 
   return (
     <>
@@ -733,43 +732,16 @@ export function TimeBar() {
               )}
             </div>
 
-            {/* Right: Time Control Buttons (hidden on mobile — FAB used instead) */}
-            <div className="hidden md:flex items-center gap-2">
-              {/* Advance Day */}
-              <button
-                onClick={handleAdvanceDay}
-                disabled={isAdvancing}
-                className={`px-4 py-1.5 text-sm font-medium rounded transition-colors disabled:opacity-50 ${
-                  hasMatchToday
-                    ? 'bg-vct-red hover:bg-vct-red/80 text-white'
-                    : 'bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light'
-                } ${isDay1 ? 'ring-2 ring-vct-red/60 animate-pulse' : ''}`}
-              >
-                {hasMatchToday ? 'Play Match' : 'Advance Day'}
-              </button>
-
-              {/* Loading indicator */}
-              {isAdvancing && (
-                <span className="text-vct-gray text-sm ml-2">Processing...</span>
-              )}
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile FAB — Advance Day / Play Match (hidden on md+) */}
-      <button
-        onClick={handleAdvanceDay}
-        disabled={isAdvancing}
-        title={hasMatchToday ? 'Play Match' : 'Advance Day'}
-        className={`fixed bottom-6 right-4 z-40 md:hidden w-14 h-14 rounded-full shadow-lg text-sm font-bold flex items-center justify-center transition-colors disabled:opacity-50 ${
-          hasMatchToday
-            ? 'bg-vct-red hover:bg-vct-red/80 text-white'
-            : 'bg-vct-gray/40 hover:bg-vct-gray/50 text-vct-light'
-        } ${isDay1 ? 'ring-2 ring-vct-red/60 animate-pulse' : ''}`}
-      >
-        {isAdvancing ? '…' : hasMatchToday ? '▶' : '▷'}
-      </button>
+      {/* Fixed Bottom Navigation — Advance Day / Play Match + page nav chips */}
+      <BottomNav
+        onAdvanceDay={handleAdvanceDay}
+        hasMatchToday={hasMatchToday}
+        isAdvancing={isAdvancing}
+      />
 
       {/* Simulation Progress Modal - shown during worker simulation */}
       <SimulationProgressModal
