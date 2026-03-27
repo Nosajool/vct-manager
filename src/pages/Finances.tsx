@@ -14,6 +14,7 @@ export function Finances() {
   const [showLoanModal, setShowLoanModal] = useState(false);
   const [showSponsorshipModal, setShowSponsorshipModal] = useState(false);
 
+  const setActiveView = useGameStore((state) => state.setActiveView);
   const gameStarted = useGameStore((state) => state.gameStarted);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
@@ -90,6 +91,14 @@ export function Finances() {
           onDismiss={setOnboardingHasSeenHintFinances}
         />
       )}
+
+      {/* Back to Hub */}
+      <button
+        onClick={() => setActiveView('today')}
+        className="flex items-center gap-1.5 text-sm text-vct-gray hover:text-vct-light transition-colors mb-2"
+      >
+        ← Hub
+      </button>
 
       {/* Header */}
       <div className="flex items-center justify-between">

@@ -1,4 +1,21 @@
-import type { SchedulingRule, DayContext, RuleResult } from '../types';
+// Inline types (previously in ../types which was deleted)
+interface DayContext {
+  date: string;
+  playerTeamId: string;
+  getEventsBetweenDates: (start: string, end: string) => import('../../../types/calendar').CalendarEvent[];
+  tournaments: Record<string, import('../../../types/competition').Tournament>;
+}
+interface RuleResult {
+  type: 'allow' | 'block';
+  blockedTypes?: string[];
+  reason?: string;
+}
+interface SchedulingRule {
+  id: string;
+  name: string;
+  priority: number;
+  evaluate(context: DayContext): RuleResult;
+}
 import type { CalendarEvent } from '../../../types/calendar';
 import type { Tournament } from '../../../types/competition';
 import { isTeamMatch, getAllBracketMatches } from '../utils/matchEventUtils';

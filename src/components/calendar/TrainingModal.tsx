@@ -19,6 +19,7 @@ interface TrainingModalProps {
   onClose: () => void;
   eventId?: string; // Optional for backwards compatibility - will be required once all pages are updated
   existingConfig?: TrainingActivityConfig;
+  onConfirm?: (config: TrainingActivityConfig | null) => void; // New flow: called instead of saving to store
 }
 
 const TRAINING_INTENSITIES: {
@@ -57,7 +58,7 @@ function saveLastUsedIntensity(playerId: string, intensity: TrainingIntensity): 
   }
 }
 
-export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: TrainingModalProps) {
+export function TrainingModal({ isOpen, onClose, eventId, existingConfig, onConfirm }: TrainingModalProps) {
   // State: Training plan (Map of playerId -> assignment with skip support)
   const [trainingPlan, setTrainingPlan] = useState<Map<string, TrainingPlayerAssignment>>(new Map());
   // State: Currently selected player (for editing assignment in middle/right columns)
@@ -66,8 +67,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
   const players = useGameStore((state) => state.players);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
-  const setActivityConfig = useGameStore((state) => state.setActivityConfig);
-  const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
   const advancedTrainingUnlocked = useFeatureUnlocked('advancedTraining');
@@ -266,14 +265,14 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
     }
   };
 
+  // Reset modal state (without closing)
+  const resetState = () => {
+    setTrainingPlan(new Map());
+    setSelectedPlayerId(null);
+  };
+
   // Confirm plan - save config to store instead of executing
   const handleConfirmPlan = () => {
-    // Backwards compatibility check - eventId is required for plan-confirm workflow
-    if (!eventId) {
-      console.warn('TrainingModal: eventId is required for plan-confirm workflow');
-      return;
-    }
-
     // Validation: all players in plan must have complete config
     const allValid = Array.from(trainingPlan.values()).every((assignment) => {
       if (assignment.action === 'skip') return true;
@@ -285,39 +284,34 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
       return;
     }
 
-    // Get the event to extract the date
-    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
-    if (!event) {
-      console.error('Event not found:', eventId);
+    if (onConfirm) {
+      // New flow: return config via callback (no eventId or store needed)
+      const config: TrainingActivityConfig = {
+        type: 'training',
+        id: existingConfig?.id ?? crypto.randomUUID(),
+        date: calendar.currentDate,
+        eventId: 'direct',
+        status: 'configured',
+        assignments: Array.from(trainingPlan.values()),
+        autoConfigured: false,
+      };
+      resetState();
+      onConfirm(config);
       return;
     }
 
-    // Create config object
-    const config: TrainingActivityConfig = {
-      type: 'training',
-      id: existingConfig?.id ?? crypto.randomUUID(), // Reuse existing ID or generate new one
-      date: event.date,
-      eventId,
-      status: 'configured',
-      assignments: Array.from(trainingPlan.values()),
-      autoConfigured: false, // User manually configured
-    };
-
-    // Save to store
-    setActivityConfig(config);
-
-    // Update event lifecycle state to 'configured'
-    updateEventLifecycleState(eventId, 'configured');
-
-    // Close modal
+    // Old flow: just close (activityPlanSlice removed, cannot save config)
     handleClose();
   };
 
   // Reset and close
   const handleClose = () => {
-    setTrainingPlan(new Map());
-    setSelectedPlayerId(null);
-    onClose();
+    resetState();
+    if (onConfirm) {
+      onConfirm(null); // In new flow, closing = skip
+    } else {
+      onClose();
+    }
   };
 
   // Auto-assign optimal training for starting 5
@@ -353,10 +347,6 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
 
   // Simple confirm - auto-assign all starting 5 with selected goal + moderate intensity
   const handleSimpleConfirm = (goal: TrainingGoal) => {
-    if (!eventId) return;
-    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
-    if (!event) return;
-
     const assignments: TrainingPlayerAssignment[] = startingPlayers.map((player) => ({
       playerId: player.id,
       action: 'train',
@@ -364,18 +354,23 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
       intensity: 'moderate',
     }));
 
-    const config: TrainingActivityConfig = {
-      type: 'training',
-      id: existingConfig?.id ?? crypto.randomUUID(),
-      date: event.date,
-      eventId,
-      status: 'configured',
-      assignments,
-      autoConfigured: false,
-    };
+    if (onConfirm) {
+      // New flow: return config via callback
+      const config: TrainingActivityConfig = {
+        type: 'training',
+        id: existingConfig?.id ?? crypto.randomUUID(),
+        date: calendar.currentDate,
+        eventId: 'direct',
+        status: 'configured',
+        assignments,
+        autoConfigured: false,
+      };
+      resetState();
+      onConfirm(config);
+      return;
+    }
 
-    setActivityConfig(config);
-    updateEventLifecycleState(eventId, 'configured');
+    // Old flow: just close (activityPlanSlice removed, cannot save config)
     handleClose();
   };
 
@@ -384,13 +379,28 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
       <div className={`bg-vct-darker rounded-lg w-full ${advancedTrainingUnlocked ? 'max-w-7xl' : 'max-w-md'} max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className="p-4 border-b border-vct-gray/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-xl font-bold text-vct-light">Team Training</h2>
-          <button
-            onClick={handleClose}
-            className="text-vct-gray hover:text-vct-light transition-colors"
-          >
-            Close
-          </button>
+          <div>
+            <h2 className="text-xl font-bold text-vct-light">Team Training</h2>
+            {onConfirm && <p className="text-xs text-vct-gray mt-0.5">Configure today's training or skip</p>}
+          </div>
+          <div className="flex items-center gap-3">
+            {onConfirm && (
+              <button
+                onClick={() => { resetState(); onConfirm(null); }}
+                className="text-sm text-vct-gray hover:text-vct-light transition-colors border border-vct-gray/30 rounded px-3 py-1"
+              >
+                Skip Training
+              </button>
+            )}
+            {!onConfirm && (
+              <button
+                onClick={handleClose}
+                className="text-vct-gray hover:text-vct-light transition-colors"
+              >
+                Close
+              </button>
+            )}
+          </div>
         </div>
 
         {advancedTrainingUnlocked ? (
@@ -445,7 +455,7 @@ export function TrainingModal({ isOpen, onClose, eventId, existingConfig }: Trai
                 onSelectIntensity={updateSelectedIntensity}
                 trainingPlan={trainingPlan}
                 onConfirmPlan={handleConfirmPlan}
-                eventId={eventId}
+                eventId={onConfirm ? (eventId ?? 'direct') : eventId}
               />
             </div>
           </>

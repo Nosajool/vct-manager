@@ -3,10 +3,8 @@
 // Note: Match simulation is handled by the global TimeBar.
 // This component just displays day details and allows viewing results.
 
-import { useMemo } from 'react';
 import type { CalendarEvent, MatchEventData, Match } from '../../types';
 import { timeProgression } from '../../engine/calendar';
-import { DayScheduleService } from '../../services/DayScheduleService';
 
 interface DayDetailPanelProps {
   selectedDate: string;
@@ -16,8 +14,8 @@ interface DayDetailPanelProps {
   matches: Record<string, Match>;
   playerTeamId: string | null;
   onViewMatch: (match: Match) => void;
-  onTrainingClick: (date: string) => void;
-  onScrimClick: (date: string) => void;
+  onTrainingClick?: (date: string) => void;
+  onScrimClick?: (date: string) => void;
 }
 
 // Get event styling based on type
@@ -57,8 +55,6 @@ export function DayDetailPanel({
   matches,
   playerTeamId,
   onViewMatch,
-  onTrainingClick,
-  onScrimClick,
 }: DayDetailPanelProps) {
   // Compare dates by their YYYY-MM-DD string to avoid timezone issues
   const selectedDateStr = getDateString(selectedDate);
@@ -68,12 +64,6 @@ export function DayDetailPanel({
   const dayEvents = events.filter((e) => {
     return getDateString(e.date) === selectedDateStr;
   });
-
-  // Use DayScheduleService to determine availability
-  const dayScheduleService = useMemo(() => new DayScheduleService(), []);
-  const daySchedule = useMemo(() => {
-    return dayScheduleService.getDaySchedule(selectedDate);
-  }, [selectedDate, dayScheduleService]);
 
   // Format the selected date
   const formattedDate = timeProgression.formatDate(selectedDate);
@@ -228,48 +218,6 @@ export function DayDetailPanel({
         <p className="text-sm text-vct-gray italic">No events scheduled</p>
       )}
 
-      {/* Available activities - show for current and future days */}
-      {!isPast && (
-        <div className="mt-4 pt-4 border-t border-vct-gray/20">
-          <h4 className="text-sm font-medium text-vct-gray mb-3">
-            {isToday ? 'Available Activities' : 'Schedule Activities'}
-          </h4>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onTrainingClick(selectedDate)}
-              disabled={!daySchedule.availableActivityTypes.includes('training')}
-              className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                !daySchedule.availableActivityTypes.includes('training')
-                  ? 'bg-vct-gray/10 text-vct-gray/50 cursor-not-allowed'
-                  : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
-              }`}
-            >
-              Training
-            </button>
-            <button
-              onClick={() => onScrimClick(selectedDate)}
-              disabled={!daySchedule.availableActivityTypes.includes('scrim')}
-              className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                !daySchedule.availableActivityTypes.includes('scrim')
-                  ? 'bg-vct-gray/10 text-vct-gray/50 cursor-not-allowed'
-                  : 'bg-orange-500/20 text-orange-400 hover:bg-orange-500/30'
-              }`}
-            >
-              Scrim
-            </button>
-          </div>
-          {/* Show blocker reasons */}
-          {daySchedule.blockers.length > 0 && (
-            <div className="mt-2 space-y-1">
-              {daySchedule.blockers.map((blocker, idx) => (
-                <p key={idx} className="text-xs text-vct-gray text-center">
-                  {blocker.reason}
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

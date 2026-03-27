@@ -17,6 +17,7 @@ interface ScrimModalProps {
   existingConfig?: ScrimActivityConfig;
   initialMaps?: string[];
   onScrimComplete?: (result: any) => void; // Deprecated, kept for backward compatibility
+  onConfirm?: (config: ScrimActivityConfig | null) => void; // New flow: called instead of saving to store
 }
 
 const SCRIM_INTENSITIES: { value: ScrimIntensity; label: string; description: string }[] = [
@@ -31,7 +32,7 @@ const TIER_LABELS: Record<TeamTier, { label: string; efficiency: string; color: 
   T3: { label: 'Amateur Teams', efficiency: '40%', color: 'text-vct-gray' },
 };
 
-export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMaps }: ScrimModalProps) {
+export function ScrimModal({ isOpen, onClose, existingConfig, initialMaps, onConfirm }: ScrimModalProps) {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [selectedMaps, setSelectedMaps] = useState<Set<string>>(new Set());
   const [intensity, setIntensity] = useState<ScrimIntensity>('moderate');
@@ -56,8 +57,6 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
 
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
-  const setActivityConfig = useGameStore((state) => state.setActivityConfig);
-  const updateEventLifecycleState = useGameStore((state) => state.updateEventLifecycleState);
   const calendar = useGameStore((state) => state.calendar);
   const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
   const advancedScrimsUnlocked = useFeatureUnlocked('advancedScrims');
@@ -115,82 +114,78 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
     );
   };
 
-  // Confirm scrim configuration (writes to activity plan store)
+  // Reset modal state (without closing)
+  const resetState = () => {
+    setSelectedPartner(null);
+    setSelectedMaps(new Set());
+  };
+
+  // Confirm scrim configuration
   const handleConfirm = () => {
-    // For backward compatibility: if no eventId provided, do nothing
-    // This allows old usages to continue working during migration
-    if (!eventId) {
-      handleClose();
-      return;
-    }
-
-    // Get the event to extract the date
-    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
-    if (!event) {
-      console.error('Event not found:', eventId);
-      return;
-    }
-
-    // Validate play config
     if (!selectedPartner || selectedMaps.size === 0) return;
 
-    const config: ScrimActivityConfig = {
-      type: 'scrim',
-      id: existingConfig?.id ?? crypto.randomUUID(), // Reuse existing ID or generate new one
-      date: event.date,
-      eventId,
-      status: 'configured',
-      action: 'play',
-      autoConfigured: false,
-      partnerTeamId: selectedPartner,
-      maps: Array.from(selectedMaps),
-      intensity,
-    };
+    if (onConfirm) {
+      // New flow: return config via callback
+      const config: ScrimActivityConfig = {
+        type: 'scrim',
+        id: existingConfig?.id ?? crypto.randomUUID(),
+        date: calendar.currentDate,
+        eventId: 'direct',
+        status: 'configured',
+        action: 'play',
+        autoConfigured: false,
+        partnerTeamId: selectedPartner,
+        maps: Array.from(selectedMaps),
+        intensity,
+      };
+      resetState();
+      onConfirm(config);
+      return;
+    }
 
-    // Write config to store
-    setActivityConfig(config);
-
-    // Update event lifecycle state to 'configured'
-    updateEventLifecycleState(eventId, 'configured');
-
-    // Close modal
+    // Old flow: just close (activityPlanSlice removed, cannot save config)
     handleClose();
   };
 
   // Reset and close
   const handleClose = () => {
-    setSelectedPartner(null);
-    setSelectedMaps(new Set());
-    onClose();
+    resetState();
+    if (onConfirm) {
+      onConfirm(null); // In new flow, closing = skip
+    } else {
+      onClose();
+    }
   };
 
   // Simple confirm - auto-select maps + moderate intensity, use selected partner
   const handleSimpleConfirm = () => {
-    if (!eventId) return;
-    const event = calendar.scheduledEvents.find((e) => e.id === eventId);
-    if (!event) return;
-
     if (!selectedPartner) return;
+
     const mapSummary = scrimService.getMapPoolSummary();
     const autoMaps = mapSummary.needsPractice.length > 0
       ? mapSummary.needsPractice.slice(0, 3)
       : MAPS.slice(0, 3);
 
-    const config: ScrimActivityConfig = {
-      type: 'scrim',
-      id: existingConfig?.id ?? crypto.randomUUID(),
-      date: event.date,
-      eventId,
-      status: 'configured',
-      action: 'play',
-      autoConfigured: false,
-      partnerTeamId: selectedPartner,
-      maps: autoMaps,
-      intensity: 'moderate',
-    };
+    if (onConfirm) {
+      // New flow: return config via callback
+      const config: ScrimActivityConfig = {
+        type: 'scrim',
+        id: existingConfig?.id ?? crypto.randomUUID(),
+        date: calendar.currentDate,
+        eventId: 'direct',
+        status: 'configured',
+        action: 'play',
+        autoConfigured: false,
+        partnerTeamId: selectedPartner,
+        maps: autoMaps,
+        intensity: 'moderate',
+      };
+      resetState();
+      onConfirm(config);
+      return;
+    }
 
-    setActivityConfig(config);
-    updateEventLifecycleState(eventId, 'configured');
+    // Old flow: just close (activityPlanSlice removed, cannot save config)
     handleClose();
   };
 
@@ -213,15 +208,25 @@ export function ScrimModal({ isOpen, onClose, eventId, existingConfig, initialMa
           <div>
             <h2 className="text-xl font-bold text-vct-light">Configure Scrim</h2>
             <p className="text-sm text-vct-gray">
-              Practice against other teams
+              {onConfirm ? 'Set up today\'s scrim or skip' : 'Practice against other teams'}
             </p>
           </div>
-          <button
-            onClick={handleClose}
-            className="text-vct-gray hover:text-vct-light transition-colors"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-3">
+            {onConfirm && (
+              <button
+                onClick={() => { resetState(); onConfirm(null); }}
+                className="text-sm text-vct-gray hover:text-vct-light transition-colors border border-vct-gray/30 rounded px-3 py-1"
+              >
+                Skip Scrims
+              </button>
+            )}
+            <button
+              onClick={handleClose}
+              className="text-vct-gray hover:text-vct-light transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
 
         {advancedScrimsUnlocked ? (

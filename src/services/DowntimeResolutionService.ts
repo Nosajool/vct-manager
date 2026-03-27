@@ -18,8 +18,14 @@ export class DowntimeResolutionService {
    */
   resolveDowntimeActivity(event: CalendarEvent): DowntimeActivityResult | null {
     const data = event.data as { activityType?: string; scheduledAt?: string };
-    const activityType = data?.activityType;
+    return this.resolveByType(data?.activityType);
+  }
 
+  /**
+   * Resolve a downtime activity directly by type string.
+   * Used by the advance-day flow where activities are chosen at advance time (no pre-scheduling).
+   */
+  resolveByType(activityType: string | undefined): DowntimeActivityResult | null {
     switch (activityType) {
       case 'watch_party':
         return this.resolveWatchParty();

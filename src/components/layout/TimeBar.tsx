@@ -18,7 +18,6 @@ import { calendarService, interviewService, progressTrackingService, type TimeAd
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
-import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 import { SimulationResultsModal, TrainingRecapModal, ScrimRecapModal, SimulationProgressModal, DowntimeRecapModal } from '../calendar';
 import { PreMatchPrepModal } from '../match/PreMatchPrepModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
@@ -36,12 +35,10 @@ import { DRAMA_EVENT_TEMPLATES } from '../../data/drama';
 import { substituteNarrative } from '../../engine/drama/DramaEngine';
 import type { FeatureUnlock } from '../../data/featureUnlocks';
 import type { DramaEventInstance, DramaChoice } from '../../types/drama';
-import { PreAdvanceValidationModal } from '../today/PreAdvanceValidationModal';
-import { trainingService } from '../../services/TrainingService';
-import { scrimService } from '../../services/ScrimService';
-import { DayScheduleService } from '../../services/DayScheduleService';
-import { getPlayerRestriction } from '../../services/ContractService';
-import type { CalendarEvent, SchedulableActivityType } from '../../types/calendar';
+import { TrainingModal } from '../calendar/TrainingModal';
+import { ScrimModal } from '../scrim/ScrimModal';
+import { DowntimeActivityPicker } from '../today/DowntimeActivityPicker';
+import { featureGateService } from '../../services/FeatureGateService';
 import type { TrainingActivityConfig, ScrimActivityConfig, DowntimeActivityResult } from '../../types/activityPlan';
 import type { MetaPatch } from '../../types/meta';
 import { PatchNotesModal } from '../meta/PatchNotesModal';
@@ -157,9 +154,13 @@ export function TimeBar() {
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
   const [currentMajorEvent, setCurrentMajorEvent] = useState<DramaEventInstance | null>(null);
   const [majorEventQueue, setMajorEventQueue] = useState<DramaEventInstance[]>([]);
-  const [showValidationModal, setShowValidationModal] = useState(false);
-  const [unconfiguredEvents, setUnconfiguredEvents] = useState<CalendarEvent[]>([]);
-  const [hasInsufficientRoster, setHasInsufficientRoster] = useState(false);
+  const [, setHasInsufficientRoster] = useState(false);
+  // Pre-advance sequential modal state (new BitLife-style flow)
+  const [showTrainingSetup, setShowTrainingSetup] = useState(false);
+  const [showScrimSetup, setShowScrimSetup] = useState(false);
+  const [showDowntimePicker, setShowDowntimePicker] = useState(false);
+  const [pendingTrainingConfig, setPendingTrainingConfig] = useState<TrainingActivityConfig | null>(null);
+  const [pendingScrimConfig, setPendingScrimConfig] = useState<ScrimActivityConfig | null>(null);
   const [pendingPatchPreview, setPendingPatchPreview] = useState<MetaPatch | null>(null);
   const [pendingPatchNotes, setPendingPatchNotes] = useState<MetaPatch | null>(null);
   const [downtimeResults, setDowntimeResults] = useState<DowntimeActivityResult[]>([]);
@@ -198,7 +199,6 @@ export function TimeBar() {
 
   const calendar = useGameStore((state) => state.calendar);
   const gameStarted = useGameStore((state) => state.gameStarted);
-  const setActiveView = useGameStore((state) => state.setActiveView);
 
   // Modal state from UISlice
   const isModalOpen = useGameStore((state) => state.isModalOpen);
@@ -209,7 +209,6 @@ export function TimeBar() {
   // Use centralized match day detection
   const { isMatchDay: hasMatchToday, opponentName, todaysMatch, opponent: opponentTeam } = useMatchDay();
 
-  const autoAssignUnlocked = useFeatureUnlocked('auto_assign');
 
   const playerTeamName = useGameStore((state) =>
     state.playerTeamId ? state.teams[state.playerTeamId]?.name : ''
@@ -461,53 +460,114 @@ export function TimeBar() {
     return false;
   };
 
+  // Inline availability check — replaces AvailabilityRulesEngine for this flow
+  const getTodayAvailability = () => {
+    const state = useGameStore.getState();
+    const today = state.calendar.currentDate;
+    const pTeamId = state.playerTeamId;
+
+    const inBootcamp = !!(state.activeBootcamp);
+    const isMatchDay = state.calendar.scheduledEvents.some(
+      (e) => e.date.startsWith(today.slice(0, 10)) && !e.processed &&
+        (e.type === 'match' || e.type === 'placeholder_match')
+    );
+    const isOffseason = state.calendar.currentPhase === 'offseason';
+    const isInActiveTournament = pTeamId
+      ? Object.values(state.tournaments).some((t) => {
+          if (!t.teamIds.includes(pTeamId)) return false;
+          if (t.status === 'completed') return false;
+          if (t.status === 'in_progress') return true;
+          if (t.status === 'upcoming') {
+            const d = today.slice(0, 10);
+            return d >= t.startDate.slice(0, 10) && d <= t.endDate.slice(0, 10);
+          }
+          return false;
+        })
+      : false;
+
+    const isDowntime = !isInActiveTournament;
+    const trainingUnlocked = featureGateService.isFeatureUnlocked('training');
+    const scrimUnlocked = featureGateService.isFeatureUnlocked('scrims');
+
+    return {
+      trainingAvailable: !isMatchDay && !inBootcamp && trainingUnlocked && !isOffseason,
+      scrimAvailable: !isMatchDay && !inBootcamp && scrimUnlocked && !isOffseason,
+      downtimeAvailable: isDowntime && !inBootcamp,
+      bootcampEligible: isDowntime && !inBootcamp,
+    };
+  };
+
+  // Final step: run the simulation with explicitly-passed configs (avoids stale closure issues)
+  const executeAdvance = (
+    trainingConfig: TrainingActivityConfig | null,
+    scrimConfig: ScrimActivityConfig | null,
+    downtimeType: string | null = null
+  ) => {
+    // Store in state so pre-match interview path can read them
+    setPendingTrainingConfig(trainingConfig);
+    setPendingScrimConfig(scrimConfig);
+    if (hasMatchToday && todaysMatch) {
+      setShowPreMatchPrep(true);
+    } else if (!checkAndShowPreMatchInterview()) {
+      handleTimeAdvance(() => calendarService.advanceDay(true, {
+        training: trainingConfig,
+        scrim: scrimConfig,
+        downtimeActivityType: downtimeType,
+      }));
+    }
+  };
+
+  const handleTrainingConfigured = (config: TrainingActivityConfig | null) => {
+    setShowTrainingSetup(false);
+    const avail = getTodayAvailability();
+    if (avail.scrimAvailable) {
+      setPendingTrainingConfig(config); // persist for downtime handler
+      setShowScrimSetup(true);
+    } else if (avail.downtimeAvailable) {
+      setPendingTrainingConfig(config);
+      setShowDowntimePicker(true);
+    } else {
+      executeAdvance(config, null);
+    }
+  };
+
+  const handleScrimConfigured = (scrimConfig: ScrimActivityConfig | null) => {
+    setShowScrimSetup(false);
+    const avail = getTodayAvailability();
+    if (avail.downtimeAvailable) {
+      setPendingScrimConfig(scrimConfig); // persist for downtime handler
+      setShowDowntimePicker(true);
+    } else {
+      executeAdvance(pendingTrainingConfig, scrimConfig);
+    }
+  };
+
+  const handleDowntimeSelected = (activityType: string | null) => {
+    setShowDowntimePicker(false);
+    executeAdvance(pendingTrainingConfig, pendingScrimConfig, activityType);
+  };
+
   const handleAdvanceDay = () => {
-    // Check for roster and unconfigured activities before advancing
+    // Roster warning (non-blocking)
     const state = useGameStore.getState();
     const team = playerTeamId ? state.teams[playerTeamId] : null;
     const rosterShort = team ? team.playerIds.length < 5 : false;
-    const hasUnconfigured = state.hasUnconfiguredActivities();
+    setHasInsufficientRoster(rosterShort);
 
-    if (rosterShort || hasUnconfigured) {
-      let events: CalendarEvent[] = [];
+    // Reset any pending configs from a previous aborted flow
+    setPendingTrainingConfig(null);
+    setPendingScrimConfig(null);
 
-      if (hasUnconfigured) {
-        // Get unconfigured IDs (may include "unscheduled:training" sentinel values)
-        const unconfiguredIds = state.getUnconfiguredActivities();
+    const avail = getTodayAvailability();
 
-        // Auto-schedule any available-but-unscheduled activities so they get CalendarEvents
-        const dayScheduleService = new DayScheduleService();
-        const today = state.calendar?.currentDate;
-
-        for (const id of unconfiguredIds) {
-          if (id.startsWith('unscheduled:') && today) {
-            const activityType = id.replace('unscheduled:', '') as SchedulableActivityType;
-            try {
-              dayScheduleService.scheduleActivity(today, activityType);
-            } catch {
-              // Activity couldn't be scheduled (e.g., blocked), skip it
-            }
-          }
-        }
-
-        // Now collect ALL unconfigured CalendarEvents (existing + newly created)
-        const freshState = useGameStore.getState();
-        const freshUnconfiguredIds = freshState.getUnconfiguredActivities();
-        events = freshState.calendar.scheduledEvents.filter(event =>
-          freshUnconfiguredIds.includes(event.id)
-        );
-      }
-
-      setUnconfiguredEvents(events);
-      setHasInsufficientRoster(rosterShort);
-      setShowValidationModal(true);
+    if (avail.trainingAvailable) {
+      setShowTrainingSetup(true);
+    } else if (avail.scrimAvailable) {
+      setShowScrimSetup(true);
+    } else if (avail.downtimeAvailable) {
+      setShowDowntimePicker(true);
     } else {
-      // All configured — show pre-match prep modal on match days, then interview, then advance
-      if (hasMatchToday && todaysMatch) {
-        setShowPreMatchPrep(true);
-      } else if (!checkAndShowPreMatchInterview()) {
-        handleTimeAdvance(() => calendarService.advanceDay(true));
-      }
+      executeAdvance(null, null);
     }
   };
 
@@ -587,118 +647,6 @@ export function TimeBar() {
     setDramaToasts((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAutoConfigAll = () => {
-    // Generate auto-configs for all unconfigured events
-    const state = useGameStore.getState();
-
-    // Step 1: Auto-fill roster if insufficient
-    if (hasInsufficientRoster && playerTeamId) {
-      const team = state.teams[playerTeamId];
-      const needed = 5 - team.playerIds.length;
-
-      const available = team.reservePlayerIds
-        .filter(id => !getPlayerRestriction(id, state.activeFlags).isRestricted)
-        .map(id => state.players[id])
-        .filter(Boolean)
-        .sort((a, b) => {
-          const scoreA = Object.values(a.stats).reduce((s: number, v) => s + (v as number), 0);
-          const scoreB = Object.values(b.stats).reduce((s: number, v) => s + (v as number), 0);
-          return scoreB - scoreA;
-        });
-
-      for (const player of available.slice(0, needed)) {
-        state.movePlayerToActive(playerTeamId, player.id);
-
-        // Track substitute for visa arc recovery: store promoted player's ID in the flag value
-        const currentFlags = useGameStore.getState().activeFlags;
-        const substituteFlag = Object.keys(currentFlags).find(flagKey => {
-          if (!flagKey.startsWith('substitute_taking_over_')) return false;
-          if (currentFlags[flagKey].value) return false; // already tracked
-          const originalPlayerId = flagKey.replace('substitute_taking_over_', '');
-          return team.reservePlayerIds.includes(originalPlayerId);
-        });
-        if (substituteFlag) {
-          state.setDramaFlag(substituteFlag, {
-            ...currentFlags[substituteFlag],
-            value: player.id,
-          });
-        }
-      }
-    }
-
-    // Step 2: Configure activities
-    for (const event of unconfiguredEvents) {
-      if (event.type === 'scheduled_training') {
-        // Auto-configure training
-        const trainingPlan = trainingService.autoAssignTraining();
-
-        // Convert TrainingPlan to TrainingActivityConfig
-        const assignments = Array.from(trainingPlan.values()).map(assignment => ({
-          playerId: assignment.playerId,
-          action: 'train' as const,
-          goal: assignment.goal,
-          intensity: assignment.intensity,
-        }));
-
-        const config: TrainingActivityConfig = {
-          type: 'training',
-          id: crypto.randomUUID(),
-          date: event.date,
-          eventId: event.id,
-          status: 'configured',
-          assignments,
-          autoConfigured: true,
-        };
-
-        state.setActivityConfig(config);
-      } else if (event.type === 'scheduled_scrim') {
-        // Auto-configure scrim
-        const scrimOptions = scrimService.generateAutoConfig();
-
-        if (scrimOptions) {
-          const config: ScrimActivityConfig = {
-            type: 'scrim',
-            id: crypto.randomUUID(),
-            date: event.date,
-            eventId: event.id,
-            status: 'configured',
-            action: 'play',
-            partnerTeamId: scrimOptions.partnerTeamId,
-            maps: scrimOptions.focusMaps || [],
-            intensity: scrimOptions.intensity || 'moderate',
-            autoConfigured: true,
-          };
-
-          state.setActivityConfig(config);
-        } else {
-          // If auto-config fails, cancel the scrim (no partners available)
-          state.updateEventLifecycleState(event.id, 'cancelled');
-        }
-      }
-    }
-
-    // Close modal and proceed with day advancement
-    setShowValidationModal(false);
-    setUnconfiguredEvents([]);
-    setHasInsufficientRoster(false);
-    handleTimeAdvance(() => calendarService.advanceDay(true));
-  };
-
-  const handleReviewEvents = () => {
-    // Navigate to roster view if roster is the issue, otherwise Today
-    const goToRoster = hasInsufficientRoster;
-    setShowValidationModal(false);
-    setUnconfiguredEvents([]);
-    setHasInsufficientRoster(false);
-    setActiveView(goToRoster ? 'team' : 'today');
-  };
-
-  const handleCancelValidation = () => {
-    // Just close the modal
-    setShowValidationModal(false);
-    setUnconfiguredEvents([]);
-    setHasInsufficientRoster(false);
-  };
 
   // Helper: Get choices for an event from its template with substituted outcome texts
   const getChoicesForEvent = (event: DramaEventInstance): DramaChoice[] => {
@@ -862,18 +810,25 @@ export function TimeBar() {
         />
       )}
 
-      {/* Pre-Advance Validation Modal - shown when unconfigured activities or roster issue */}
-      <PreAdvanceValidationModal
-        isOpen={showValidationModal}
-        unconfiguredEvents={unconfiguredEvents}
-        hasInsufficientRoster={hasInsufficientRoster}
-        activeRosterCount={
-          playerTeamId ? useGameStore.getState().teams[playerTeamId]?.playerIds.length ?? 0 : 0
-        }
-        autoAssignUnlocked={autoAssignUnlocked}
-        onAutoConfigAll={handleAutoConfigAll}
-        onReview={handleReviewEvents}
-        onCancel={handleCancelValidation}
+      {/* Pre-Advance: Training setup modal */}
+      <TrainingModal
+        isOpen={showTrainingSetup}
+        onClose={() => handleTrainingConfigured(null)}
+        onConfirm={handleTrainingConfigured}
+      />
+
+      {/* Pre-Advance: Scrim setup modal */}
+      <ScrimModal
+        isOpen={showScrimSetup}
+        onClose={() => handleScrimConfigured(null)}
+        onConfirm={handleScrimConfigured}
+      />
+
+      {/* Pre-Advance: Downtime activity picker */}
+      <DowntimeActivityPicker
+        isOpen={showDowntimePicker}
+        onSelect={handleDowntimeSelected}
+        bootcampEligible={getTodayAvailability().bootcampEligible}
       />
 
       {/* Patch Preview Modal - shown when an upcoming patch is announced */}

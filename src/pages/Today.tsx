@@ -9,7 +9,8 @@ import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
-import { TournamentContextPanel, AlertsPanel, TodayPlanPanel, WeekPlannerPanel } from '../components/today';
+import { getReputationTier } from '../types/team';
+import { TournamentContextPanel, AlertsPanel } from '../components/today';
 import { CoachObservationsPanel } from '../components/today/CoachObservationsPanel';
 import { FirstDayObjectives } from '../components/onboarding/FirstDayObjectives';
 import { ScrimModal } from '../components/scrim';
@@ -36,6 +37,8 @@ export function Today() {
   const calendar = useGameStore((state) => state.calendar);
   const playerTeamId = useGameStore((state) => state.playerTeamId);
   const teams = useGameStore((state) => state.teams);
+
+  const setActiveView = useGameStore((state) => state.setActiveView);
 
   const playerTeam = playerTeamId ? teams[playerTeamId] : null;
 
@@ -68,31 +71,33 @@ export function Today() {
   };
   const phaseDisplay = phaseDisplayMap[calendar.currentPhase] || calendar.currentPhase;
 
+  const reputationTier = playerTeam ? getReputationTier(playerTeam.reputation.fanbase) : null;
+
+  const navChips = [
+    { id: 'team' as const, label: 'Team', icon: '👥' },
+    { id: 'tournament' as const, label: 'Tournament', icon: '🏆' },
+    { id: 'finances' as const, label: 'Finances', icon: '💰' },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-vct-red/20 to-vct-dark border border-vct-red/30 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-vct-light">Today</h1>
-            <p className="text-vct-gray">
-              {formattedDate} • {phaseDisplay}
-            </p>
-          </div>
-          {playerTeam && (
-            <div className="text-right">
-              <p className="text-lg font-bold text-vct-light">{playerTeam.name}</p>
-              <p className="text-vct-gray text-sm">{playerTeam.region}</p>
-              <p
-                className={`text-sm font-medium ${
-                  playerTeam.finances.balance >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}
-              >
-                {economyService.formatCurrency(playerTeam.finances.balance)}
-              </p>
-            </div>
-          )}
+      {/* Compact Hub Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-vct-gray uppercase tracking-wide">{phaseDisplay}</p>
+          <h1 className="text-xl font-bold text-vct-light">{formattedDate}</h1>
         </div>
+        {playerTeam && (
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-vct-gray">{reputationTier}</span>
+            <span className="text-vct-gray/40">|</span>
+            <span className="text-vct-gray">Hype {playerTeam.reputation.hypeLevel}/100</span>
+            <span className="text-vct-gray/40">|</span>
+            <span className={playerTeam.finances.balance >= 0 ? 'text-green-400 font-medium' : 'text-red-400 font-medium'}>
+              {economyService.formatCurrency(playerTeam.finances.balance)}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Day 1 Onboarding Checklist — hidden once objectives complete */}
@@ -100,12 +105,6 @@ export function Today() {
 
       {/* Coach's observations — soft narrative hints about team state */}
       <CoachObservationsPanel />
-
-      {/* Today's Plan */}
-      <TodayPlanPanel />
-
-      {/* Week Planner */}
-      <WeekPlannerPanel />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -122,6 +121,20 @@ export function Today() {
 
       {/* Recent Events Section */}
       <NarrativeHistoryPanel limit={20} />
+
+      {/* Navigation Chips */}
+      <div className="flex gap-3 pt-2 pb-4">
+        {navChips.map((chip) => (
+          <button
+            key={chip.id}
+            onClick={() => setActiveView(chip.id)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-vct-darker border border-vct-gray/20 text-vct-gray hover:text-vct-light hover:border-vct-gray/50 transition-colors text-sm font-medium"
+          >
+            <span>{chip.icon}</span>
+            {chip.label}
+          </button>
+        ))}
+      </div>
 
       {/* Scrim Modal for Alerts (DayPlanPanel has its own modals for event cards) */}
       <ScrimModal

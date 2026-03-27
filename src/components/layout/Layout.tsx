@@ -2,7 +2,6 @@
 
 import { type ReactNode } from 'react';
 import { Header } from './Header';
-import { Navigation } from './Navigation';
 import { TimeBar } from './TimeBar';
 
 interface LayoutProps {
@@ -13,7 +12,6 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-vct-dark flex flex-col">
       <Header />
-      <Navigation />
       <TimeBar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">

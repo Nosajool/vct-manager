@@ -14,7 +14,6 @@ import { createMatchStrategySlice, type MatchStrategySlice } from './slices/matc
 import { createRoundDataSlice, type RoundDataSlice } from './slices/roundDataSlice';
 import { createSeasonStatsSlice, type SeasonStatsSlice } from './slices/seasonStatsSlice';
 import { createDramaSlice, type DramaSlice } from './slices/dramaSlice';
-import { createActivityPlanSlice, type ActivityPlanSlice } from './slices/activityPlanSlice';
 import { createRivalrySlice, type RivalrySlice } from './slices/rivalrySlice';
 import { createInterviewSlice, type InterviewSlice } from './slices/interviewSlice';
 import { createNarrativeCollectionSlice, type NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';
@@ -29,7 +28,7 @@ import {
 import type { SaveSlotNumber } from '../db/schema';
 
 // Combined game state type
-export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & ActivityPlanSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice & BootcampSlice & MatchPreparationSlice;
+export type GameState = PlayerSlice & TeamSlice & GameSlice & UISlice & MatchSlice & CompetitionSlice & ScrimSlice & StrategySlice & MatchStrategySlice & RoundDataSlice & SeasonStatsSlice & DramaSlice & RivalrySlice & InterviewSlice & NarrativeCollectionSlice & BootcampSlice & MatchPreparationSlice;
 
 export const useGameStore = create<GameState>()(
   autoSave(
@@ -46,7 +45,6 @@ export const useGameStore = create<GameState>()(
       ...createRoundDataSlice(...args),
       ...createSeasonStatsSlice(...args),
       ...createDramaSlice(...args),
-      ...createActivityPlanSlice(...args),
       ...createRivalrySlice(...args),
       ...createInterviewSlice(...args),
       ...createNarrativeCollectionSlice(...args),
@@ -69,7 +67,6 @@ export type { MatchStrategySlice } from './slices/matchStrategySlice';
 export type { RoundDataSlice, MatchRoundData } from './slices/roundDataSlice';
 export type { SeasonStatsSlice } from './slices/seasonStatsSlice';
 export type { DramaSlice } from './slices/dramaSlice';
-export type { ActivityPlanSlice } from './slices/activityPlanSlice';
 export type { RivalrySlice } from './slices/rivalrySlice';
 export type { InterviewSlice } from './slices/interviewSlice';
 export type { NarrativeCollectionSlice } from './slices/narrativeCollectionSlice';

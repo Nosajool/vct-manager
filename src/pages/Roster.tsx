@@ -23,6 +23,7 @@ export function Roster() {
   const [signingPlayer, setSigningPlayer] = useState<Player | null>(null);
   const [releasingPlayer, setReleasingPlayer] = useState<Player | null>(null);
 
+  const setActiveView = useGameStore((state) => state.setActiveView);
   const teamTab = useGameStore((state) => state.teamTab);
   const setTeamTab = useGameStore((state) => state.setTeamTab);
   const hasSeenHint = useGameStore((state) => state.onboardingHasSeenHintRoster);
@@ -94,6 +95,14 @@ export function Roster() {
           onDismiss={setOnboardingHasSeenHintRoster}
         />
       )}
+
+      {/* Back to Hub */}
+      <button
+        onClick={() => setActiveView('today')}
+        className="flex items-center gap-1.5 text-sm text-vct-gray hover:text-vct-light transition-colors mb-2"
+      >
+        ← Hub
+      </button>
 
       {/* Header */}
       <div className="flex items-center justify-between">

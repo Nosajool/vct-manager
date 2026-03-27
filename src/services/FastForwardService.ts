@@ -7,7 +7,9 @@ import { interviewService } from './InterviewService';
 import { dramaService } from './DramaService';
 import { tournamentService } from './TournamentService';
 import { tournamentTransitionService } from './TournamentTransitionService';
-import { DayScheduleService } from './DayScheduleService';
+import { trainingService } from './TrainingService';
+import { scrimService } from './ScrimService';
+import { featureGateService } from './FeatureGateService';
 import type { PendingInterview } from '../types/interview';
 import type { DramaChoice } from '../types/drama';
 import type { Region } from '../types';
@@ -16,7 +18,6 @@ import type { MastersCompletionModalData } from '../components/tournament/Master
 import type { QualificationModalData } from '../components/tournament/QualificationModal';
 import { DRAMA_EVENT_TEMPLATES } from '../data/drama';
 
-const dayScheduleService = new DayScheduleService();
 
 export type AutoResolveStrategy = 'first' | 'random' | 'best';
 
@@ -221,35 +222,70 @@ class FastForwardService {
         action: 'Advancing day…',
       });
 
-      // Auto-schedule training and scrim if not already scheduled for this day
-      const eventsOnDay = state.calendar.scheduledEvents.filter(e => e.date === currentDate);
-
       // Count downtime and bootcamp team_activity events being resolved today
+      const eventsOnDay = state.calendar.scheduledEvents.filter(e => e.date === currentDate);
       const teamActivitiesToday = eventsOnDay.filter(e => e.type === 'team_activity');
       for (const e of teamActivitiesToday) {
         const data = e.data as { activityType?: string };
         if (data?.activityType === 'bootcamp_day') totalBootcampDays++;
         else totalDowntimeActivities++;
       }
-      const hasTraining = eventsOnDay.some(e => e.type === 'scheduled_training');
-      const hasScrim = eventsOnDay.some(e => e.type === 'scheduled_scrim');
-      if (!hasTraining) {
-        try {
-          dayScheduleService.scheduleActivity(currentDate, 'training');
-        } catch {
-          // Ineligible day (match day, feature gate, season phase) — skip silently
+
+      // Auto-generate activity configs for this day (new flow: pass directly to advanceDay)
+      const isMatchDay = eventsOnDay.some(e =>
+        (e.type === 'match' || e.type === 'placeholder_match') && !e.processed
+      );
+      const inBootcamp = !!(state.activeBootcamp);
+      const isOffseason = state.calendar.currentPhase === 'offseason';
+
+      let trainingConfig = null;
+      let scrimConfig = null;
+
+      if (!isMatchDay && !inBootcamp && !isOffseason) {
+        if (featureGateService.isFeatureUnlocked('training')) {
+          const plan = trainingService.autoAssignTraining();
+          if (plan.size > 0) {
+            trainingConfig = {
+              type: 'training' as const,
+              id: crypto.randomUUID(),
+              date: currentDate,
+              eventId: 'direct',
+              status: 'configured' as const,
+              assignments: Array.from(plan.values()).map(a => ({
+                playerId: a.playerId,
+                action: 'train' as const,
+                goal: a.goal,
+                intensity: a.intensity,
+              })),
+              autoConfigured: true,
+            };
+          }
         }
-      }
-      if (!hasScrim) {
-        try {
-          dayScheduleService.scheduleActivity(currentDate, 'scrim');
-        } catch {
-          // Ineligible day — skip silently
+        if (featureGateService.isFeatureUnlocked('scrims')) {
+          const autoScrim = scrimService.generateAutoConfig();
+          if (autoScrim) {
+            scrimConfig = {
+              type: 'scrim' as const,
+              id: crypto.randomUUID(),
+              date: currentDate,
+              eventId: 'direct',
+              status: 'configured' as const,
+              action: 'play' as const,
+              autoConfigured: true,
+              partnerTeamId: autoScrim.partnerTeamId,
+              maps: autoScrim.focusMaps || [],
+              intensity: autoScrim.intensity || 'moderate',
+            };
+          }
         }
       }
 
-      // Advance the day
-      const result = await calendarService.advanceDay();
+      // Advance the day with auto-generated activity configs
+      const result = await calendarService.advanceDay(false, {
+        training: trainingConfig,
+        scrim: scrimConfig,
+        downtimeActivityType: null,
+      });
 
       endDate = result.newDate;
       daysSimulated++;

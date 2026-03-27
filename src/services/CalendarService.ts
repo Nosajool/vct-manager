@@ -19,19 +19,26 @@ import type { MatchMoraleResult } from '../types';
 import type { PendingInterview } from '../types/interview';
 import { activityResolutionService } from './ActivityResolutionService';
 import { downtimeResolutionService } from './DowntimeResolutionService';
-import { trainingService } from './TrainingService';
-import { scrimService } from './ScrimService';
-import { eventLifecycleManager } from '../engine/scheduling/EventLifecycleManager';
 import type { CalendarEvent, MatchResult, MatchEventData, Region, SeasonPhase } from '../types';
 import type { PatchNotesEventData } from '../types/calendar';
 import { META_PATCHES } from '../data/meta/patches';
 import type { BracketMatch, BracketRound, BracketStructure, Tournament } from '../types/competition';
 import type { MultiStageTournament } from '../types/competition';
 import type { TournamentMatchContext } from '../types/interview';
-import type { FeatureUnlock, FeatureType } from '../data/featureUnlocks';
+import type { FeatureUnlock } from '../data/featureUnlocks';
 import type { DramaEventInstance } from '../types/drama';
 import { detect as detectIconicMoments } from '../engine/drama/IconicMomentDetector';
 import type { ActivityResolutionResult, ActivityConfig, TrainingActivityConfig, ScrimActivityConfig, DowntimeActivityResult, BootcampRegion } from '../types/activityPlan';
+
+/**
+ * Options for directly resolving activities during day advancement.
+ * Used when activities are chosen at advance time rather than pre-scheduled.
+ */
+export interface AdvanceDayActivityOptions {
+  training?: TrainingActivityConfig | null;
+  scrim?: ScrimActivityConfig | null;
+  downtimeActivityType?: string | null;
+}
 import { bootcampService, type BootcampDayEventData } from './BootcampService';
 import { isLeagueToPlayoffTournament } from '../types';
 import { agentMasteryEngine } from '../engine/player/AgentMasteryEngine';
@@ -70,15 +77,17 @@ export class CalendarService {
     *
     * Game loop flow:
     * 1. User starts at beginning of Day X
-    * 2. User does activities (training, roster changes, etc.)
-    * 3. User clicks "Advance Day"
+    * 2. User configures activities (training, scrims) via pre-advance modals
+    * 3. User clicks confirm in the modal chain
     * 4. TODAY's matches (Day X) are simulated
-    * 5. User is now at beginning of Day X+1
+    * 5. Activities passed in activityOptions are resolved
+    * 6. User is now at beginning of Day X+1
     *
     * @param withProgress - Whether to track and report progress
+    * @param activityOptions - Directly resolved activities (no pre-scheduling needed)
     * @returns Promise resolving to the time advance result
     */
-   async advanceDay(withProgress?: boolean): Promise<TimeAdvanceResult> {
+   async advanceDay(withProgress?: boolean, activityOptions?: AdvanceDayActivityOptions): Promise<TimeAdvanceResult> {
     const state = useGameStore.getState();
     const currentDate = state.calendar.currentDate;
     const newDate = timeProgression.addDays(currentDate, 1);
@@ -118,90 +127,8 @@ export class CalendarService {
     const currentPhase = state.calendar.currentPhase;
     console.log(`  Current phase: ${currentPhase}`);
 
-    // Separate events into required and scheduled activities
-    const requiredEvents: CalendarEvent[] = [];
-    const scheduledActivities: CalendarEvent[] = []; // scheduled_training, scheduled_scrim
-
-    for (const event of unprocessedEvents) {
-      if (
-        event.type === 'scheduled_training' ||
-        event.type === 'scheduled_scrim'
-      ) {
-        scheduledActivities.push(event);
-      } else {
-        requiredEvents.push(event);
-      }
-    }
-
-    // Phase 4: Lifecycle state transitions for scheduled activities
-    // Handle lifecycle transitions at day start (before processing)
-    for (const event of scheduledActivities) {
-      const config = state.getActivityConfigByEventId(event.id);
-
-      if (config) {
-        // Transition configured → locked
-        if (config.status === 'configured') {
-          const transitionResult = eventLifecycleManager.transitionToLocked(config.status);
-          if (transitionResult.valid) {
-            // Update both the event and the config
-            state.updateEventLifecycleState(event.id, 'locked');
-            state.setActivityConfig({ ...config, status: 'locked' });
-            console.log(`  Transitioned ${event.type} (${event.id}) to locked state`);
-          }
-        }
-      } else {
-        // No config found - check if this is a needs_setup activity
-        // Auto-configure at 80% efficiency
-        if (event.type === 'scheduled_training') {
-          const trainingPlan = trainingService.autoAssignTraining();
-          const assignments = Array.from(trainingPlan.values()).map(assignment => ({
-            playerId: assignment.playerId,
-            action: 'train' as const,
-            goal: assignment.goal,
-            intensity: assignment.intensity,
-          }));
-
-          const autoConfig: TrainingActivityConfig = {
-            type: 'training',
-            id: crypto.randomUUID(),
-            date: event.date,
-            eventId: event.id,
-            status: 'locked', // Immediately locked since it's today
-            assignments,
-            autoConfigured: true,
-          };
-
-          state.setActivityConfig(autoConfig);
-          state.updateEventLifecycleState(event.id, 'locked');
-          console.log(`  Auto-configured training activity (${event.id}) at 80% efficiency`);
-        } else if (event.type === 'scheduled_scrim') {
-          const scrimOptions = scrimService.generateAutoConfig();
-
-          if (scrimOptions) {
-            const autoConfig: ScrimActivityConfig = {
-              type: 'scrim',
-              id: crypto.randomUUID(),
-              date: event.date,
-              eventId: event.id,
-              status: 'locked', // Immediately locked since it's today
-              action: 'play',
-              partnerTeamId: scrimOptions.partnerTeamId,
-              maps: scrimOptions.focusMaps || [],
-              intensity: scrimOptions.intensity || 'moderate',
-              autoConfigured: true,
-            };
-
-            state.setActivityConfig(autoConfig);
-            state.updateEventLifecycleState(event.id, 'locked');
-            console.log(`  Auto-configured scrim activity (${event.id}) at 80% efficiency`);
-          } else {
-            // Auto-config failed - cancel the scrim (no partners available)
-            state.updateEventLifecycleState(event.id, 'cancelled');
-            console.log(`  Cancelled scrim (${event.id}) - no partner available`);
-          }
-        }
-      }
-    }
+    // All unprocessed events today are required events (matches, salary, tournaments, etc.)
+    const requiredEvents = unprocessedEvents;
 
     // Initialize activity resolution result
     let activityResults: ActivityResolutionResult | undefined;
@@ -395,63 +322,29 @@ export class CalendarService {
       }
     }
 
-    // Process scheduled activities (training, scrim) using activity configs
-    if (scheduledActivities.length > 0) {
+    // Resolve directly-passed activity options (training, scrim, downtime)
+    // Activities are now configured in pre-advance modals, not pre-scheduled
+    if (activityOptions) {
       const activityConfigs: ActivityConfig[] = [];
 
-      for (const event of scheduledActivities) {
-        // Feature gate check - map event type to feature name
-        const featureMap: Record<string, FeatureType> = {
-          'scheduled_training': 'training',
-          'scheduled_scrim': 'scrims'
-        };
-        const featureName = featureMap[event.type];
-
-        if (featureName && !featureGateService.isFeatureUnlocked(featureName)) {
-          // Feature is locked - skip this activity
-          state.markEventProcessed(event.id);
-          skippedEvents.push(event);
-          console.log(`  Skipping locked feature: ${event.type} (${event.id})`);
-          continue;
-        }
-
-        const config = state.getActivityConfigByEventId(event.id);
-
-        if (config && config.status === 'locked') {
-          // Collect locked activities for resolution
-          // They will be transitioned to completed after resolution
-          activityConfigs.push(config);
-
-          console.log(`  Processing locked activity: ${event.type} (${event.id})`);
-        } else {
-          // No config or not in locked state - skip the activity
-          state.markEventProcessed(event.id);
-          skippedEvents.push(event);
-
-          console.log(`  Skipping activity not in locked state: ${event.type} (${event.id}) - status: ${config?.status || 'no config'}`);
-        }
+      if (activityOptions.training && featureGateService.isFeatureUnlocked('training')) {
+        activityConfigs.push(activityOptions.training);
+        console.log(`  Resolving direct training activity`);
+      }
+      if (activityOptions.scrim && featureGateService.isFeatureUnlocked('scrims')) {
+        activityConfigs.push(activityOptions.scrim);
+        console.log(`  Resolving direct scrim activity`);
       }
 
-      // Resolve all locked activities
       if (activityConfigs.length > 0) {
-        console.log(`  Resolving ${activityConfigs.length} locked activities`);
         activityResults = await activityResolutionService.resolveAllActivities(activityConfigs);
-
-        // Transition locked → completed after resolution
-        for (const config of activityConfigs) {
-          const transitionResult = eventLifecycleManager.transitionToCompleted('locked');
-          if (transitionResult.valid) {
-            state.updateEventLifecycleState(config.eventId, 'completed');
-            state.setActivityConfig({ ...config, status: 'completed' });
-            state.markEventProcessed(config.eventId);
-            processedEvents.push(scheduledActivities.find(e => e.id === config.eventId)!);
-            console.log(`  Completed activity: ${config.eventId}`);
-          }
-        }
       }
 
-      // Clear today's configs from slice
-      state.clearConfigsForDate(currentDate);
+      if (activityOptions.downtimeActivityType) {
+        const downtimeResult = downtimeResolutionService.resolveByType(activityOptions.downtimeActivityType);
+        if (downtimeResult) downtimeResults.push(downtimeResult);
+        console.log(`  Resolved direct downtime activity: ${activityOptions.downtimeActivityType}`);
+      }
     }
 
     // Mark progress as complete

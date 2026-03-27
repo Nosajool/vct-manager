@@ -16,9 +16,7 @@ import {
   LeagueStageView,
 } from '../components/tournament';
 import { MatchResult } from '../components/match/MatchResult';
-import { MonthCalendar, DayDetailPanel, TrainingModal } from '../components/calendar';
-import { ScrimModal } from '../components/scrim';
-import { DayScheduleService } from '../services/DayScheduleService';
+import { MonthCalendar, DayDetailPanel } from '../components/calendar';
 import { isMultiStageTournament, isLeagueToPlayoffTournament, isSwissToPlayoffTournament } from '../types';
 import type { Region, TournamentRegion, Match } from '../types';
 import { FirstVisitHint } from '../components/onboarding/FirstVisitHint';
@@ -50,12 +48,8 @@ export function TournamentPage() {
   // Schedule view state
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [viewDate, setViewDate] = useState<string | null>(null);
-  const [trainingModalOpen, setTrainingModalOpen] = useState(false);
-  const [scrimModalOpen, setScrimModalOpen] = useState(false);
   const [scheduleSelectedMatch, setScheduleSelectedMatch] = useState<Match | null>(null);
-  const [targetDate, setTargetDate] = useState<string | null>(null);
-
-  const dayScheduleService = useMemo(() => new DayScheduleService(), []);
+  const setActiveView = useGameStore((state) => state.setActiveView);
   const tournaments = useGameStore((state) => state.tournaments);
   const standings = useGameStore((state) => state.standings);
   const calendar = useGameStore((state) => state.calendar);
@@ -221,6 +215,14 @@ export function TournamentPage() {
           onDismiss={setOnboardingHasSeenHintTournament}
         />
       )}
+
+      {/* Back to Hub */}
+      <button
+        onClick={() => setActiveView('today')}
+        className="flex items-center gap-1.5 text-sm text-vct-gray hover:text-vct-light transition-colors mb-2"
+      >
+        ← Hub
+      </button>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -395,36 +397,6 @@ export function TournamentPage() {
               matches={matches}
               playerTeamId={playerTeamId}
               onViewMatch={handleScheduleViewMatch}
-              onTrainingClick={(date) => {
-                setTargetDate(date);
-                const existingEvent = calendar.scheduledEvents.find(
-                  (e) => e.type === 'scheduled_training' && e.date.startsWith(date.split('T')[0])
-                );
-                if (!existingEvent) {
-                  try {
-                    dayScheduleService.scheduleActivity(date, 'training');
-                  } catch (err) {
-                    console.error('Failed to schedule training:', err);
-                    return;
-                  }
-                }
-                setTrainingModalOpen(true);
-              }}
-              onScrimClick={(date) => {
-                setTargetDate(date);
-                const existingEvent = calendar.scheduledEvents.find(
-                  (e) => e.type === 'scheduled_scrim' && e.date.startsWith(date.split('T')[0])
-                );
-                if (!existingEvent) {
-                  try {
-                    dayScheduleService.scheduleActivity(date, 'scrim');
-                  } catch (err) {
-                    console.error('Failed to schedule scrim:', err);
-                    return;
-                  }
-                }
-                setScrimModalOpen(true);
-              }}
             />
           </div>
         </div>
@@ -451,69 +423,6 @@ export function TournamentPage() {
         />
       )}
 
-      {/* Training Modal */}
-      <TrainingModal
-        isOpen={trainingModalOpen}
-        onClose={() => {
-          setTrainingModalOpen(false);
-          setTargetDate(null);
-        }}
-        eventId={
-          targetDate
-            ? calendar.scheduledEvents.find(
-                (e) =>
-                  e.type === 'scheduled_training' &&
-                  e.date.startsWith(targetDate.split('T')[0])
-              )?.id
-            : undefined
-        }
-        existingConfig={
-          targetDate
-            ? (() => {
-                const event = calendar.scheduledEvents.find(
-                  (e) =>
-                    e.type === 'scheduled_training' &&
-                    e.date.startsWith(targetDate.split('T')[0])
-                );
-                if (!event) return undefined;
-                const config = useGameStore.getState().activityConfigs[event.id];
-                return config?.type === 'training' ? config : undefined;
-              })()
-            : undefined
-        }
-      />
-
-      {/* Scrim Modal */}
-      <ScrimModal
-        isOpen={scrimModalOpen}
-        onClose={() => {
-          setScrimModalOpen(false);
-          setTargetDate(null);
-        }}
-        eventId={
-          targetDate
-            ? calendar.scheduledEvents.find(
-                (e) =>
-                  e.type === 'scheduled_scrim' &&
-                  e.date.startsWith(targetDate.split('T')[0])
-              )?.id
-            : undefined
-        }
-        existingConfig={
-          targetDate
-            ? (() => {
-                const event = calendar.scheduledEvents.find(
-                  (e) =>
-                    e.type === 'scheduled_scrim' &&
-                    e.date.startsWith(targetDate.split('T')[0])
-                );
-                if (!event) return undefined;
-                const config = useGameStore.getState().activityConfigs[event.id];
-                return config?.type === 'scrim' ? config : undefined;
-              })()
-            : undefined
-        }
-      />
     </div>
   );
 }
