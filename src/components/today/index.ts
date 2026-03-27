@@ -3,4 +3,4 @@
 export { TournamentContextPanel } from './TournamentContextPanel';
 export { ActionsPanel } from './ActionsPanel';
 export { AlertsPanel } from './AlertsPanel';
-export { UnlockNotification } from './UnlockNotification';
+export { FeatureUnlockModal } from './FeatureUnlockModal';

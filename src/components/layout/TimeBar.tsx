@@ -23,7 +23,7 @@ import { PreMatchPrepModal } from '../match/PreMatchPrepModal';
 import { QualificationModal, type QualificationModalData } from '../tournament/QualificationModal';
 import { MastersCompletionModal, type MastersCompletionModalData } from '../tournament/MastersCompletionModal';
 import { StageCompletionModal, type StageCompletionModalData } from '../tournament/StageCompletionModal';
-import { UnlockNotification } from '../today/UnlockNotification';
+import { FeatureUnlockModal } from '../today/FeatureUnlockModal';
 import { DramaEventModal, MinorDramaEventModal } from '../drama';
 import { InterviewModal } from '../narrative/InterviewModal';
 import { MoraleChangeModal } from '../match/MoraleChangeModal';
@@ -152,7 +152,9 @@ export function TimeBar() {
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [postModalQueue, setPostModalQueue] = useState<PostSimulationModalType[]>([]);
   const [activePostModal, setActivePostModal] = useState<PostSimulationModalType | null>(null);
-  const [unlockedFeatures, setUnlockedFeatures] = useState<FeatureUnlock[]>([]);
+  const [featureUnlockQueue, setFeatureUnlockQueue] = useState<FeatureUnlock[]>([]);
+  const [featureUnlockTotal, setFeatureUnlockTotal] = useState(0);
+  const [showFeatureUnlockModal, setShowFeatureUnlockModal] = useState(false);
   const [dramaToasts, setDramaToasts] = useState<DramaEventInstance[]>([]);
   const [showMinorDramaModal, setShowMinorDramaModal] = useState(false);
   const [minorEventTotal, setMinorEventTotal] = useState(0);
@@ -252,7 +254,10 @@ export function TimeBar() {
     } else {
       setActivePostModal(null);
       setPostModalQueue([]);
-      if (dramaToasts.length > 0) {
+      if (featureUnlockQueue.length > 0) {
+        setFeatureUnlockTotal(featureUnlockQueue.length);
+        setShowFeatureUnlockModal(true);
+      } else if (dramaToasts.length > 0) {
         setMinorEventTotal(dramaToasts.length);
         setShowMinorDramaModal(true);
       } else {
@@ -389,9 +394,9 @@ export function TimeBar() {
         setPendingPatchNotes(patchAfterAdvance);
       }
 
-      // Show newly unlocked features
+      // Queue newly unlocked features for modal display
       if (result.newlyUnlockedFeatures.length > 0) {
-        setUnlockedFeatures(result.newlyUnlockedFeatures);
+        setFeatureUnlockQueue(result.newlyUnlockedFeatures);
       }
 
       // Process drama events - split into minor and major
@@ -659,8 +664,29 @@ export function TimeBar() {
     }
   };
 
-  const handleDismissUnlock = (index: number) => {
-    setUnlockedFeatures((prev) => prev.filter((_, i) => i !== index));
+  const handleFeatureUnlockNext = () => {
+    const remaining = featureUnlockQueue.slice(1);
+    setFeatureUnlockQueue(remaining);
+    if (remaining.length === 0) {
+      setShowFeatureUnlockModal(false);
+      if (dramaToasts.length > 0) {
+        setMinorEventTotal(dramaToasts.length);
+        setShowMinorDramaModal(true);
+      } else {
+        triggerDramaEvents();
+      }
+    }
+  };
+
+  const handleFeatureUnlockSkipAll = () => {
+    setFeatureUnlockQueue([]);
+    setShowFeatureUnlockModal(false);
+    if (dramaToasts.length > 0) {
+      setMinorEventTotal(dramaToasts.length);
+      setShowMinorDramaModal(true);
+    } else {
+      triggerDramaEvents();
+    }
   };
 
   const handleDramaChoice = (choiceId: string) => {
@@ -894,15 +920,18 @@ export function TimeBar() {
         />
       )}
 
-      {/* Unlock Notifications - show newly unlocked features */}
-      {unlockedFeatures.map((unlock, index) => (
-        <UnlockNotification
-          key={`${unlock.feature}-${index}`}
-          feature={unlock.feature}
-          description={unlock.description}
-          onDismiss={() => handleDismissUnlock(index)}
+      {/* Feature Unlock Modal - show newly unlocked features in modal stack */}
+      {showFeatureUnlockModal && featureUnlockQueue.length > 0 && (
+        <FeatureUnlockModal
+          unlock={featureUnlockQueue[0]}
+          onNext={handleFeatureUnlockNext}
+          onSkipAll={handleFeatureUnlockSkipAll}
+          queuePosition={{
+            current: featureUnlockTotal - featureUnlockQueue.length + 1,
+            total: featureUnlockTotal,
+          }}
         />
-      ))}
+      )}
 
       {/* Minor Drama Event Modal - show minor events one at a time in the modal stack */}
       {showMinorDramaModal && validDramaToasts.length > 0 && (
