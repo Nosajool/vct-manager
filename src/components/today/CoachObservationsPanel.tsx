@@ -1,7 +1,7 @@
 // CoachObservationsPanel - Inline coach-voice hints on Today page
 //
-// Shows 1-3 soft narrative observations about current team state.
-// Only renders when there's something worth saying.
+// Shows narrative observations and actionable alerts about current team state.
+// Actionable hints include a navigation link. Only renders when there's something worth saying.
 
 import { useGameStore } from '../../store';
 import { generateCoachHints, type CoachHint } from '../../utils/coachNarrative';
@@ -15,7 +15,9 @@ export function CoachObservationsPanel() {
   const players = useGameStore((state) => state.players);
   const rivalries = useGameStore((state) => state.rivalries);
   const calendar = useGameStore((state) => state.calendar);
-  const { opponent } = useMatchDay();
+  const setActiveView = useGameStore((state) => state.setActiveView);
+  const setTeamTab = useGameStore((state) => state.setTeamTab);
+  const { opponent, isMatchDay } = useMatchDay();
 
   if (!playerTeamId) return null;
 
@@ -36,9 +38,18 @@ export function CoachObservationsPanel() {
     calendar.currentDate,
     upcomingOpponentName,
     rivalryIntensity,
-  ).slice(0, 3);
+    isMatchDay,
+  ).slice(0, 5);
 
   if (hints.length === 0) return null;
+
+  const handleAction = (hint: CoachHint) => {
+    if (!hint.action) return;
+    if (hint.action.teamTab) {
+      setTeamTab(hint.action.teamTab);
+    }
+    setActiveView(hint.action.navigateTo);
+  };
 
   return (
     <div className="bg-vct-dark rounded-lg border border-vct-gray/20 p-4">
@@ -47,14 +58,14 @@ export function CoachObservationsPanel() {
       </h3>
       <div className="space-y-2">
         {hints.map((hint, i) => (
-          <HintLine key={i} hint={hint} />
+          <HintLine key={i} hint={hint} onAction={() => handleAction(hint)} />
         ))}
       </div>
     </div>
   );
 }
 
-function HintLine({ hint }: { hint: CoachHint }) {
+function HintLine({ hint, onAction }: { hint: CoachHint; onAction: () => void }) {
   const colorClass =
     hint.severity === 'warning'
       ? 'text-yellow-400/90'
@@ -80,7 +91,17 @@ function HintLine({ hint }: { hint: CoachHint }) {
       ) : (
         <span className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${dotClass}`} />
       )}
-      <p className={`text-sm leading-snug italic ${colorClass}`}>{hint.text}</p>
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm leading-snug italic ${colorClass}`}>{hint.text}</p>
+      </div>
+      {hint.action && (
+        <button
+          onClick={onAction}
+          className="text-xs text-vct-gray/50 hover:text-vct-light transition-colors shrink-0 mt-0.5"
+        >
+          {hint.action.label} →
+        </button>
+      )}
     </div>
   );
 }

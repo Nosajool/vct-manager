@@ -1,37 +1,18 @@
-// Today Page - Main game hub with tournament context and daily actions
+// Today Page - Main game hub
 //
 // Shows:
-// - Tournament context (position, standings, next match)
-// - Day plan panel (configure training/scrims before advancing)
-// - Alerts (contracts, morale, map practice, finances)
+// - Coach's observations (narrative hints + actionable alerts merged)
+// - Recent narrative history
 
-import { useState } from 'react';
 import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
 import { getReputationTier } from '../types/team';
-import { TournamentContextPanel, AlertsPanel } from '../components/today';
 import { CoachObservationsPanel } from '../components/today/CoachObservationsPanel';
 import { FirstDayObjectives } from '../components/onboarding/FirstDayObjectives';
-import { ScrimModal } from '../components/scrim';
 import { NarrativeHistoryPanel } from '../components/narrative/NarrativeHistoryPanel';
 
 export function Today() {
-  const [scrimModalOpen, setScrimModalOpen] = useState(false);
-  const [scrimInitialMaps, setScrimInitialMaps] = useState<string[] | undefined>(undefined);
-
-  // Handler for opening scrim modal from alerts (with pre-selected maps)
-  const handleOpenScrimModal = (initialMaps?: string[]) => {
-    setScrimInitialMaps(initialMaps);
-    setScrimModalOpen(true);
-  };
-
-  // Handler for closing scrim modal (clears initial maps)
-  const handleCloseScrimModal = () => {
-    setScrimModalOpen(false);
-    setScrimInitialMaps(undefined);
-  };
-
   const initialized = useGameStore((state) => state.initialized);
   const gameStarted = useGameStore((state) => state.gameStarted);
   const calendar = useGameStore((state) => state.calendar);
@@ -95,31 +76,11 @@ export function Today() {
       {/* Day 1 Onboarding Checklist — hidden once objectives complete */}
       <FirstDayObjectives />
 
-      {/* Coach's observations — soft narrative hints about team state */}
+      {/* Coach's observations — narrative hints and actionable alerts */}
       <CoachObservationsPanel />
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Tournament Context (2/3 width on large screens) */}
-        <div className="lg:col-span-2">
-          <TournamentContextPanel />
-        </div>
-
-        {/* Right Column - Alerts */}
-        <div className="space-y-6">
-          <AlertsPanel onOpenScrimModal={handleOpenScrimModal} />
-        </div>
-      </div>
-
       {/* Recent Events Section */}
-      <NarrativeHistoryPanel limit={20} />
-
-      {/* Scrim Modal for Alerts (DayPlanPanel has its own modals for event cards) */}
-      <ScrimModal
-        isOpen={scrimModalOpen}
-        onClose={handleCloseScrimModal}
-        initialMaps={scrimInitialMaps}
-      />
+      <NarrativeHistoryPanel limit={30} />
     </div>
   );
 }

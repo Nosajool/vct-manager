@@ -6,10 +6,17 @@
 
 import type { Team } from '../types/team';
 import type { Player } from '../types/player';
+import type { ActiveView } from '../store/slices/uiSlice';
+
 export interface CoachHint {
   text: string;
   severity: 'warning' | 'positive' | 'neutral';
   playerName?: string;
+  action?: {
+    label: string;
+    navigateTo: ActiveView;
+    teamTab?: string;
+  };
 }
 
 // --- Variant pools ---
@@ -92,8 +99,10 @@ export function generateCoachHints(
   currentDate: string,
   upcomingOpponentName?: string | null,
   rivalryIntensity?: number | null,
+  isMatchDay?: boolean,
 ): CoachHint[] {
-  const hints: CoachHint[] = [];
+  const actionHints: CoachHint[] = [];
+  const narrativeHints: CoachHint[] = [];
   const seed = getWeekSeed(team.id, currentDate);
   const chemistry = team.chemistry.overall;
   const streak = team.standings.currentStreak;
@@ -101,13 +110,108 @@ export function generateCoachHints(
   // Check players on team roster only
   const rosterPlayers = players.filter(p => team.playerIds.includes(p.id));
 
-  // 1. Player morale critical (< 45)
-  const criticalPlayers = rosterPlayers
-    .filter(p => p.morale < 45)
-    .sort((a, b) => a.morale - b.morale);
+  // --- Actionable alert hints (shown first) ---
 
-  criticalPlayers.forEach((player, i) => {
-    hints.push({
+  // Roster incomplete
+  if (team.playerIds.length < 5) {
+    actionHints.push({
+      text: `Only ${team.playerIds.length}/5 active players on the roster.`,
+      severity: 'warning',
+      action: { label: 'Sign Players', navigateTo: 'team', teamTab: 'free-agents' },
+    });
+  }
+
+  // Contract expiring within 30 days
+  const currentDateObj = new Date(currentDate);
+  const thirtyDaysFromNow = new Date(currentDateObj);
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+  const expiringPlayers = rosterPlayers
+    .filter(p => {
+      if (!p.contract?.endDate) return false;
+      const end = new Date(p.contract.endDate);
+      return end <= thirtyDaysFromNow && end > currentDateObj;
+    })
+    .sort((a, b) => new Date(a.contract!.endDate).getTime() - new Date(b.contract!.endDate).getTime());
+  if (expiringPlayers.length > 0) {
+    const first = expiringPlayers[0];
+    const daysUntil = Math.ceil((new Date(first.contract!.endDate).getTime() - currentDateObj.getTime()) / (1000 * 60 * 60 * 24));
+    const others = expiringPlayers.length > 1 ? ` (+${expiringPlayers.length - 1} more)` : '';
+    actionHints.push({
+      text: `${first.name}'s contract expires in ${daysUntil} day${daysUntil === 1 ? '' : 's'}${others}.`,
+      severity: 'warning',
+      playerName: first.name,
+      action: { label: 'View Roster', navigateTo: 'team', teamTab: 'roster' },
+    });
+  }
+
+  // Low morale (< 40)
+  const lowMoralePlayers = rosterPlayers.filter(p => p.morale < 40).sort((a, b) => a.morale - b.morale);
+  if (lowMoralePlayers.length > 0) {
+    const worst = lowMoralePlayers[0];
+    actionHints.push({
+      text: pick(POOLS.playerMoraleLow(worst.name), seed, 0),
+      severity: 'warning',
+      playerName: worst.name,
+      action: { label: 'View Roster', navigateTo: 'team', teamTab: 'roster' },
+    });
+  }
+
+  // Low form (< 40)
+  const lowFormPlayers = rosterPlayers.filter(p => p.form < 40).sort((a, b) => a.form - b.form);
+  if (lowFormPlayers.length > 0) {
+    const worst = lowFormPlayers[0];
+    actionHints.push({
+      text: `${worst.name}'s form has dropped to ${worst.form}%. They need consistent play time.`,
+      severity: 'warning',
+      playerName: worst.name,
+      action: { label: 'View Roster', navigateTo: 'team', teamTab: 'roster' },
+    });
+  }
+
+  // Map practice low (not on match days)
+  if (!isMatchDay && team.mapPool?.maps) {
+    const maps = Object.entries(team.mapPool.maps);
+    const lowMaps = maps.filter(([, strength]) => {
+      const avg = Object.values(strength.attributes).reduce((a, b) => a + b, 0) / 6;
+      return avg < 50;
+    });
+    if (lowMaps.length > 0) {
+      const [lowestMapName, lowestMap] = lowMaps.reduce((prev, curr) => {
+        const prevAvg = Object.values(prev[1].attributes).reduce((a, b) => a + b, 0) / 6;
+        const currAvg = Object.values(curr[1].attributes).reduce((a, b) => a + b, 0) / 6;
+        return prevAvg < currAvg ? prev : curr;
+      });
+      const avgStrength = Math.round(Object.values(lowestMap.attributes).reduce((a, b) => a + b, 0) / 6);
+      actionHints.push({
+        text: `${lowestMapName} practice is lagging at ${avgStrength}% strength.`,
+        severity: 'warning',
+      });
+    }
+  }
+
+  // Low balance (< 2 months runway)
+  const monthlyExpenses =
+    team.finances.monthlyExpenses.playerSalaries +
+    team.finances.monthlyExpenses.coachSalaries +
+    team.finances.monthlyExpenses.facilities +
+    team.finances.monthlyExpenses.travel;
+  if (monthlyExpenses > 0 && team.finances.balance < monthlyExpenses * 2) {
+    const monthsRunway = team.finances.balance > 0 ? (team.finances.balance / monthlyExpenses).toFixed(1) : '0';
+    actionHints.push({
+      text: `Only ${monthsRunway} months of runway left. Finances need attention.`,
+      severity: 'warning',
+      action: { label: 'View Finances', navigateTo: 'finances' },
+    });
+  }
+
+  // --- Narrative hints (morale > 40 but < 45 gets the narrative version without action) ---
+
+  // Player morale narrative (45–40 range already caught above; this covers 40–45 without action)
+  const narrativeMoralePlayers = rosterPlayers
+    .filter(p => p.morale >= 40 && p.morale < 45)
+    .sort((a, b) => a.morale - b.morale);
+  narrativeMoralePlayers.forEach((player, i) => {
+    narrativeHints.push({
       text: pick(POOLS.playerMoraleLow(player.name), seed, i),
       severity: 'warning',
       playerName: player.name,
@@ -116,7 +220,7 @@ export function generateCoachHints(
 
   // 2. Chemistry low (< 55)
   if (chemistry < 55) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.chemistryLow(), seed, 1),
       severity: 'warning',
     });
@@ -124,7 +228,7 @@ export function generateCoachHints(
 
   // 3. Loss streak (2+)
   if (streak <= -2) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.lossStreak(), seed, 2),
       severity: 'warning',
     });
@@ -132,7 +236,7 @@ export function generateCoachHints(
 
   // 4. Hype pressure (> 70)
   if (team.reputation.hypeLevel > 70) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.hypeHigh(), seed, 3),
       severity: 'neutral',
     });
@@ -140,7 +244,7 @@ export function generateCoachHints(
 
   // 5. Rivalry match upcoming
   if (upcomingOpponentName && rivalryIntensity && rivalryIntensity > 40) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.rivalryUpcoming(upcomingOpponentName), seed, 4),
       severity: 'neutral',
     });
@@ -148,7 +252,7 @@ export function generateCoachHints(
 
   // 6. Win streak (2+)
   if (streak >= 2) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.winStreak(), seed, 5),
       severity: 'positive',
     });
@@ -156,13 +260,14 @@ export function generateCoachHints(
 
   // 7. Chemistry high (> 80) — positive
   if (chemistry > 80) {
-    hints.push({
+    narrativeHints.push({
       text: pick(POOLS.chemistryHigh(), seed, 6),
       severity: 'positive',
     });
   }
 
-  return hints;
+  // Actionable hints first, then narrative flavor
+  return [...actionHints, ...narrativeHints];
 }
 
 // --- Trigger condition (for deciding whether to show the briefing modal) ---
