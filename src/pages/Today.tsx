@@ -8,7 +8,6 @@ import { useGameStore } from '../store';
 import { timeProgression } from '../engine/calendar';
 import { economyService } from '../services';
 import { getReputationTier } from '../types/team';
-import { CoachObservationsPanel } from '../components/today/CoachObservationsPanel';
 import { FirstDayObjectives } from '../components/onboarding/FirstDayObjectives';
 import { NarrativeHistoryPanel } from '../components/narrative/NarrativeHistoryPanel';
 
@@ -75,9 +74,6 @@ export function Today() {
 
       {/* Day 1 Onboarding Checklist — hidden once objectives complete */}
       <FirstDayObjectives />
-
-      {/* Coach's observations — narrative hints and actionable alerts */}
-      <CoachObservationsPanel />
 
       {/* Recent Events Section */}
       <NarrativeHistoryPanel limit={30} />
