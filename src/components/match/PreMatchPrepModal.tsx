@@ -14,6 +14,7 @@ import { getMetaAgentRankings, getAgentMetaTier } from '../../engine/match/Compo
 import { GameImage } from '../shared/GameImage';
 import { getAgentImageUrl, getMapImageUrl, getTeamLogoUrl, getPlayerImageUrl } from '../../utils/imageAssets';
 import { PreMatchHeader } from './PreMatchHeader';
+import { useFeatureUnlocked } from '../../hooks/useFeatureGate';
 
 // ============================================================
 // Types
@@ -901,6 +902,67 @@ function ConfirmPhase({ selectedMaps, agentAssignments, players, onConfirm, onBa
 }
 
 // ============================================================
+// Locked Phase Screen
+// ============================================================
+
+interface LockedPhaseScreenProps {
+  featureName: string;
+  unlockDay: number;
+  previewType: 'veto' | 'agents';
+  onContinue: () => void;
+}
+
+function LockedPhaseScreen({ featureName, unlockDay, previewType, onContinue }: LockedPhaseScreenProps) {
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Dimmed preview with lock overlay */}
+      <div className="relative rounded overflow-hidden">
+        {/* Placeholder preview content */}
+        <div className="opacity-20 pointer-events-none select-none p-3">
+          {previewType === 'veto' ? (
+            <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-16 bg-vct-gray/40 rounded" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-10 bg-vct-gray/40 rounded flex items-center px-3 gap-3">
+                  <div className="w-8 h-8 bg-vct-gray/60 rounded-full" />
+                  <div className="flex-1 h-3 bg-vct-gray/60 rounded" />
+                  <div className="w-16 h-6 bg-vct-gray/60 rounded" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Lock overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 rounded">
+          <span className="text-3xl">🔒</span>
+          <p className="text-vct-light font-semibold text-sm">{featureName}</p>
+          <p className="text-vct-gray text-xs">Unlocks on Day {unlockDay}</p>
+          <p className="text-vct-gray/60 text-xs text-center max-w-[220px] mt-0.5">
+            Maps and agents will be auto-selected until then.
+          </p>
+        </div>
+      </div>
+
+      {/* Continue */}
+      <div className="flex justify-end">
+        <button
+          onClick={onContinue}
+          className="px-4 py-1.5 text-sm font-medium bg-vct-red hover:bg-vct-red/80 text-white rounded"
+        >
+          Continue →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // Main Modal
 // ============================================================
 
@@ -920,6 +982,9 @@ export function PreMatchPrepModal({
   const [selectedMaps, setSelectedMaps] = useState<string[]>([]);
   const [vetoLog, setVetoLog] = useState<VetoAction[]>([]);
   const [agentAssignments, setAgentAssignments] = useState<Record<string, Record<string, string>>>({});
+
+  const mapVetoUnlocked = useFeatureUnlocked('map_veto');
+  const agentSelectionUnlocked = useFeatureUnlocked('agent_selection');
 
   // Reset when opened
   useEffect(() => {
@@ -1002,6 +1067,26 @@ export function PreMatchPrepModal({
     setPhase('confirm');
   };
 
+  const handleLockedVetoContinue = () => {
+    const { selectedMaps: autoMaps, vetoLog: autoLog } = runAutoPrepVeto(
+      playerTeam.id,
+      opponentTeam.id,
+      playerTeam.mapPool,
+      opponentTeam.mapPool
+    );
+    setSelectedMaps(autoMaps);
+    setVetoLog(autoLog);
+    setAgentAssignments(prefillMapAgents(autoMaps));
+    setAgentMapIndex(0);
+    setPhase('agents');
+  };
+
+  const handleLockedAgentsContinue = () => {
+    const autoAgents = runAutoAgentSelection(selectedMaps, playerTeamPlayers, playerAgentPrefs, currentPatch ?? null);
+    setAgentAssignments(autoAgents);
+    setPhase('confirm');
+  };
+
   const handleFinalConfirm = () => {
     onConfirm({
       selectedMaps,
@@ -1029,8 +1114,8 @@ export function PreMatchPrepModal({
               <GameImage src={getTeamLogoUrl(opponentTeam.name)} alt={opponentTeam.name} className="w-6 h-6 object-contain" />
             </div>
             <span className="text-vct-gray text-sm">
-              {phase === 'veto' && '· Step 1: Map Veto'}
-              {phase === 'agents' && '· Step 2: Agent Selection'}
+              {phase === 'veto' && (mapVetoUnlocked ? '· Step 1: Map Veto' : '· Step 1: Map Veto (Auto)')}
+              {phase === 'agents' && (agentSelectionUnlocked ? '· Step 2: Agent Selection' : '· Step 2: Agent Selection (Auto)')}
               {phase === 'confirm' && '· Step 3: Confirm'}
             </span>
           </div>
@@ -1048,31 +1133,49 @@ export function PreMatchPrepModal({
         {/* Phase content */}
         <div className="px-5 py-4">
           {phase === 'veto' && (
-            <MapVetoPhase
-              playerTeam={playerTeam}
-              opponentTeam={opponentTeam}
-              playerMapPool={playerTeam.mapPool}
-              opponentMapPool={opponentTeam.mapPool}
-              onVetoComplete={handleVetoComplete}
-              onAutoPrep={handleAutoPrep}
-            />
+            mapVetoUnlocked ? (
+              <MapVetoPhase
+                playerTeam={playerTeam}
+                opponentTeam={opponentTeam}
+                playerMapPool={playerTeam.mapPool}
+                opponentMapPool={opponentTeam.mapPool}
+                onVetoComplete={handleVetoComplete}
+                onAutoPrep={handleAutoPrep}
+              />
+            ) : (
+              <LockedPhaseScreen
+                featureName="Map Veto"
+                unlockDay={5}
+                previewType="veto"
+                onContinue={handleLockedVetoContinue}
+              />
+            )
           )}
 
-          {phase === 'agents' && currentMap && (
-            <AgentSelectionPhase
-              key={currentMap}
-              mapName={currentMap}
-              mapIndex={agentMapIndex}
-              totalMaps={selectedMaps.length}
-              players={playerTeamPlayers}
-              playerAgentPrefs={playerAgentPrefs}
-              assignments={agentAssignments[currentMap] ?? {}}
-              metaRankings={getMetaAgentRankings(currentMap, currentPatch ?? null)}
-              onChange={(playerId, agentName) => handleAgentChange(currentMap, playerId, agentName)}
-              onNext={handleAgentNext}
-              onBack={handleAgentBack}
-              onAutoPrep={handleAutoPrep}
-            />
+          {phase === 'agents' && (
+            agentSelectionUnlocked && currentMap ? (
+              <AgentSelectionPhase
+                key={currentMap}
+                mapName={currentMap}
+                mapIndex={agentMapIndex}
+                totalMaps={selectedMaps.length}
+                players={playerTeamPlayers}
+                playerAgentPrefs={playerAgentPrefs}
+                assignments={agentAssignments[currentMap] ?? {}}
+                metaRankings={getMetaAgentRankings(currentMap, currentPatch ?? null)}
+                onChange={(playerId, agentName) => handleAgentChange(currentMap, playerId, agentName)}
+                onNext={handleAgentNext}
+                onBack={handleAgentBack}
+                onAutoPrep={handleAutoPrep}
+              />
+            ) : !agentSelectionUnlocked ? (
+              <LockedPhaseScreen
+                featureName="Agent Selection"
+                unlockDay={9}
+                previewType="agents"
+                onContinue={handleLockedAgentsContinue}
+              />
+            ) : null
           )}
 
           {phase === 'confirm' && (

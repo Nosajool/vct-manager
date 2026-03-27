@@ -73,6 +73,16 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; accent: string; titl
     accent: 'bg-indigo-500',
     title: "Coach's Briefing Unlocked",
   },
+  map_veto: {
+    icon: '🗺️',
+    accent: 'bg-teal-500',
+    title: 'Map Veto Unlocked',
+  },
+  agent_selection: {
+    icon: '🎭',
+    accent: 'bg-orange-500',
+    title: 'Agent Selection Unlocked',
+  },
 };
 
 export function FeatureUnlockModal({

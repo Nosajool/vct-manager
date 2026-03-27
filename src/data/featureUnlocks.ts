@@ -22,7 +22,9 @@ export type FeatureType =
   | 'downtime_activities'   // watch party + fan meetup
   | 'bootcamp'              // regional bootcamp (7-day commit)
   | 'content_events'        // streamer collab, youtube doc, sponsored content
-  | 'coach_briefing';       // daily coach condition briefing
+  | 'coach_briefing'        // daily coach condition briefing
+  | 'map_veto'              // pre-match map ban/pick phase
+  | 'agent_selection';      // pre-match agent assignment phase
 
 /** Unlock condition - either day-based or phase-based */
 export type UnlockCondition =
@@ -112,5 +114,15 @@ export const FEATURE_UNLOCKS: FeatureUnlock[] = [
     feature: 'coach_briefing',
     condition: { type: 'day', day: 10 },
     description: "Your coach will now brief you on team conditions after each day — morale concerns, chemistry shifts, momentum, and upcoming rivalries.",
+  },
+  {
+    feature: 'map_veto',
+    condition: { type: 'day', day: 5 },
+    description: 'You can now participate in the map veto — ban and pick maps before each match.',
+  },
+  {
+    feature: 'agent_selection',
+    condition: { type: 'day', day: 9 },
+    description: 'You can now assign agents to each player before matches begin.',
   },
 ];

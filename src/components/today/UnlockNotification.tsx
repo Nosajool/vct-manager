@@ -79,6 +79,16 @@ const FEATURE_METADATA: Record<FeatureType, { icon: string; color: string; title
     color: 'from-indigo-500/20 to-indigo-600/20 border-indigo-500/30',
     title: "Coach's Briefing Unlocked",
   },
+  map_veto: {
+    icon: '🗺️',
+    color: 'from-teal-500/20 to-teal-600/20 border-teal-500/30',
+    title: 'Map Veto Unlocked',
+  },
+  agent_selection: {
+    icon: '🎭',
+    color: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
+    title: 'Agent Selection Unlocked',
+  },
 };
 
 export function UnlockNotification({
