@@ -14,7 +14,7 @@
 import { useState, useMemo } from 'react';
 import type { Team } from '../../types';
 import type { PreMatchConfig } from '../../types/prematch';
-import { calendarService, interviewService, progressTrackingService, type TimeAdvanceResult } from '../../services';
+import { calendarService, interviewService, progressTrackingService, contractService, type TimeAdvanceResult } from '../../services';
 import { useGameStore } from '../../store';
 import { timeProgression } from '../../engine/calendar';
 import { useMatchDay } from '../../hooks';
@@ -609,9 +609,22 @@ export function TimeBar() {
         for (const p of v.promotablePlayers.slice(0, needed)) {
           state.movePlayerToActive(playerTeamId, p.id);
         }
-      } else if (v.type === 'no_active_igl' && v.iglInReserves) {
-        if (state.teams[playerTeamId].playerIds.length < 5) {
+      } else if (v.type === 'no_active_igl') {
+        const activeCount = state.teams[playerTeamId].playerIds.length;
+        if (v.iglInReserves && activeCount < 5) {
+          // Room to promote: move IGL from reserve to active (role stays with same player)
           state.movePlayerToActive(playerTeamId, v.iglInReserves.id);
+        } else {
+          // Active roster full (or IGL was released): reassign IGL to best active player
+          const activePlayers = state.teams[playerTeamId].playerIds
+            .map((id) => state.players[id])
+            .filter(Boolean);
+          const bestIGL = activePlayers.reduce((best, p) =>
+            (p.stats.igl ?? 0) > (best.stats.igl ?? 0) ? p : best
+          );
+          if (bestIGL) {
+            contractService.reassignIGL(bestIGL.id, playerTeamId);
+          }
         }
       }
     }
@@ -1026,7 +1039,7 @@ export function TimeBar() {
           activeCount={rosterActiveCount}
           canAutoFix={rosterViolations.every((v) => {
             if (v.type === 'insufficient_players') return v.promotablePlayers.length >= (5 - rosterActiveCount);
-            if (v.type === 'no_active_igl') return v.iglInReserves !== null && rosterActiveCount < 5;
+            if (v.type === 'no_active_igl') return rosterActiveCount > 0;
             return false;
           })}
           onAutoFix={handleRosterAutoFix}
