@@ -1048,19 +1048,12 @@ function IntensityPreviewColumn({
 
       {/* Confirm Plan Button */}
       <div className="p-3 border-t border-vct-gray/20">
-        {!eventId && (
-          <p className="text-xs text-yellow-400 mb-2 text-center">
-            ⚠️ Missing eventId - modal opened in legacy mode
-          </p>
-        )}
         <button
           onClick={onConfirmPlan}
-          disabled={trainingPlan.size === 0 || !eventId}
+          disabled={trainingPlan.size === 0}
           className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
         >
-          {!eventId
-            ? 'Legacy mode (not supported)'
-            : trainingPlan.size === 0
+          {trainingPlan.size === 0
             ? 'Assign players first'
             : `Confirm Plan (${trainingPlan.size} player${trainingPlan.size > 1 ? 's' : ''})`}
         </button>
@@ -1135,7 +1128,7 @@ function SimpleTrainingView({ startingPlayers, eventId, onConfirm }: SimpleTrain
 
       <button
         onClick={() => selectedGoal && onConfirm(selectedGoal)}
-        disabled={!selectedGoal || !eventId}
+        disabled={!selectedGoal}
         className="w-full py-3 bg-vct-red hover:bg-vct-red/80 disabled:bg-vct-gray/20 disabled:text-vct-gray text-white rounded-lg font-medium transition-colors"
       >
         {!selectedGoal ? 'Select a focus first' : 'Confirm Training Plan'}
