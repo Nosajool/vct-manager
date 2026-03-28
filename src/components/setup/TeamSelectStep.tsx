@@ -97,7 +97,7 @@ export function TeamSelectStep({ region, onSelect, onBack, onCancel }: TeamSelec
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between">
+      <div className="sticky bottom-0 bg-vct-darker pt-3 flex justify-between">
         <button
           onClick={onBack}
           className="px-6 py-2 bg-vct-dark border border-vct-gray/30 text-vct-light

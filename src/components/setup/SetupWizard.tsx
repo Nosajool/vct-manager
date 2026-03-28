@@ -66,7 +66,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Progress Indicator - only show for steps 1, 2, 3 */}
         {state.step > 0 && (
           <div className="p-6 border-b border-vct-gray/20">
@@ -100,7 +100,7 @@ export function SetupWizard({ onComplete, onCancel }: SetupWizardProps) {
         )}
 
         {/* Content */}
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto p-6">
           {state.step === 0 && (
             <ManagerStoryStep
               onContinue={handleStoryContinue}

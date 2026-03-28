@@ -784,7 +784,7 @@ function AgentSelectionPhase({
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center">
+      <div className="sticky bottom-0 bg-vct-dark pt-3 pb-2 flex justify-between items-center">
         {mapIndex > 0 ? (
           <button
             onClick={onBack}
@@ -883,7 +883,7 @@ function ConfirmPhase({ selectedMaps, agentAssignments, players, onConfirm, onBa
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-1">
+      <div className="sticky bottom-0 bg-vct-dark py-3 flex items-center justify-between">
         <button
           onClick={onBack}
           className="px-4 py-1.5 text-sm font-medium bg-vct-gray/20 hover:bg-vct-gray/30 text-vct-light rounded"
@@ -950,7 +950,7 @@ function LockedPhaseScreen({ featureName, unlockDay, previewType, onContinue }: 
       </div>
 
       {/* Continue */}
-      <div className="flex justify-end">
+      <div className="sticky bottom-0 bg-vct-dark py-3 flex justify-end">
         <button
           onClick={onContinue}
           className="px-4 py-1.5 text-sm font-medium bg-vct-red hover:bg-vct-red/80 text-white rounded"
@@ -1101,7 +1101,7 @@ export function PreMatchPrepModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="bg-vct-dark border border-vct-gray/20 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="bg-vct-dark border border-vct-gray/20 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         {/* Modal header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-vct-gray/20">
           <div className="flex items-center gap-3">
@@ -1131,7 +1131,7 @@ export function PreMatchPrepModal({
         {matchId && <PreMatchHeader matchId={matchId} />}
 
         {/* Phase content */}
-        <div className="px-5 py-4">
+        <div className="flex-1 overflow-y-auto px-5 py-4">
           {phase === 'veto' && (
             mapVetoUnlocked ? (
               <MapVetoPhase

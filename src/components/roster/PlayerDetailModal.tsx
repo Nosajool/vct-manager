@@ -90,7 +90,7 @@ export function PlayerDetailModal({
   return (
     <>
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
           <div className="flex items-center gap-4">
@@ -163,7 +163,7 @@ export function PlayerDetailModal({
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Stats Grid */}
           <div>
             <h3 className="text-lg font-semibold text-vct-light mb-4">
@@ -381,48 +381,49 @@ export function PlayerDetailModal({
             </div>
           )}
 
-          {/* Agent Preferences */}
-          {isOnPlayerTeam && (
-            <div className="pt-2 border-t border-vct-gray/20 space-y-2">
-              <button
-                onClick={() => setShowAgentEditor(true)}
-                className="w-full px-4 py-2 bg-vct-dark hover:bg-vct-gray/20 text-vct-light border border-vct-gray/30 font-medium rounded transition-colors"
-              >
-                Agent Preferences
-              </button>
-              {canMakeIGL && (
-                <button
-                  onClick={handleMakeIGL}
-                  className="w-full px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 font-medium rounded transition-colors"
-                >
-                  Make IGL
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          {(onSign || onRelease) && (
-            <div className="flex gap-3 pt-2 border-t border-vct-gray/20">
-              {onSign && (
-                <button
-                  onClick={onSign}
-                  className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded transition-colors"
-                >
-                  Sign Player
-                </button>
-              )}
-              {onRelease && (
-                <button
-                  onClick={onRelease}
-                  className="flex-1 px-4 py-2 bg-red-600/80 hover:bg-red-700 text-white font-medium rounded transition-colors"
-                >
-                  Release Player
-                </button>
-              )}
-            </div>
-          )}
         </div>
+
+        {/* Agent Preferences */}
+        {isOnPlayerTeam && (
+          <div className="px-6 pt-2 pb-3 border-t border-vct-gray/20 space-y-2">
+            <button
+              onClick={() => setShowAgentEditor(true)}
+              className="w-full px-4 py-2 bg-vct-dark hover:bg-vct-gray/20 text-vct-light border border-vct-gray/30 font-medium rounded transition-colors"
+            >
+              Agent Preferences
+            </button>
+            {canMakeIGL && (
+              <button
+                onClick={handleMakeIGL}
+                className="w-full px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 font-medium rounded transition-colors"
+              >
+                Make IGL
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        {(onSign || onRelease) && (
+          <div className="px-6 pb-4 pt-2 border-t border-vct-gray/20 flex gap-3">
+            {onSign && (
+              <button
+                onClick={onSign}
+                className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded transition-colors"
+              >
+                Sign Player
+              </button>
+            )}
+            {onRelease && (
+              <button
+                onClick={onRelease}
+                className="flex-1 px-4 py-2 bg-red-600/80 hover:bg-red-700 text-white font-medium rounded transition-colors"
+              >
+                Release Player
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
 
