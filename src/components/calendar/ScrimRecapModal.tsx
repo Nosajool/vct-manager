@@ -112,7 +112,7 @@ export function ScrimRecapModal({ isOpen, onClose, activityResults, date }: Scri
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-5">
+        <div className="flex-1 p-6 overflow-y-auto space-y-5">
           {/* Session headline */}
           {skillsImproved > 0 && (
             <p className="text-sm text-vct-gray">

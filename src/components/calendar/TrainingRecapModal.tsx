@@ -107,7 +107,7 @@ export function TrainingRecapModal({ isOpen, onClose, activityResults, date }: T
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-5">
+        <div className="flex-1 p-6 overflow-y-auto space-y-5">
           {skippedTraining ? (
             <div className="flex items-center justify-center py-12">
               <div className="text-center bg-vct-dark/50 rounded-lg p-8 max-w-sm w-full">

@@ -56,7 +56,7 @@ export function ReleasePlayerModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-md">
+      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
           <div className="flex items-center gap-4">
@@ -85,6 +85,8 @@ export function ReleasePlayerModal({
           </button>
         </div>
 
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
         {/* Result Message */}
         {result && (
           <div
@@ -208,6 +210,8 @@ export function ReleasePlayerModal({
             )}
           </div>
         )}
+
+        </div>{/* end scrollable content */}
 
         {/* Actions */}
         <div className="p-6 border-t border-vct-gray/20 flex justify-end gap-3">

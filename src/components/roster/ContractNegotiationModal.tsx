@@ -209,7 +209,7 @@ export function ContractNegotiationModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-vct-darker border border-vct-gray/30 rounded-lg w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col">
 
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-vct-gray/20">
@@ -243,6 +243,9 @@ export function ContractNegotiationModal({
             ×
           </button>
         </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
 
         {/* Success message */}
         {result?.success && (
@@ -660,6 +663,27 @@ export function ContractNegotiationModal({
           </div>
         )}
 
+        {/* Rejection message with hint */}
+        {result && !result.success && result.negotiationResult && (
+          <div className="mx-6 mb-4 p-4 rounded-lg bg-red-900/30 border border-red-500/50">
+            <p className="font-medium text-red-400">Offer Rejected</p>
+            <p className="text-vct-gray text-sm mt-1">{result.negotiationResult.reason}</p>
+            {result.negotiationResult.rejectionHint && (
+              <p className="text-vct-gray/80 text-sm mt-2 italic">
+                "{result.negotiationResult.rejectionHint}"
+              </p>
+            )}
+          </div>
+        )}
+        {result && !result.success && !result.negotiationResult && result.error && (
+          <div className="mx-6 mb-4 p-4 rounded-lg bg-red-900/30 border border-red-500/50">
+            <p className="font-medium text-red-400">Error</p>
+            <p className="text-vct-gray text-sm mt-1">{result.error}</p>
+          </div>
+        )}
+
+        </div>{/* end scrollable content */}
+
         {/* Action buttons */}
         <div className="p-6 border-t border-vct-gray/20 flex justify-end gap-3">
           {!result?.success && (
@@ -690,25 +714,6 @@ export function ContractNegotiationModal({
             {result?.success ? 'Done' : 'Cancel'}
           </button>
         </div>
-
-        {/* Rejection message with hint */}
-        {result && !result.success && result.negotiationResult && (
-          <div className="mx-6 mb-4 p-4 rounded-lg bg-red-900/30 border border-red-500/50">
-            <p className="font-medium text-red-400">Offer Rejected</p>
-            <p className="text-vct-gray text-sm mt-1">{result.negotiationResult.reason}</p>
-            {result.negotiationResult.rejectionHint && (
-              <p className="text-vct-gray/80 text-sm mt-2 italic">
-                "{result.negotiationResult.rejectionHint}"
-              </p>
-            )}
-          </div>
-        )}
-        {result && !result.success && !result.negotiationResult && result.error && (
-          <div className="mx-6 mb-4 p-4 rounded-lg bg-red-900/30 border border-red-500/50">
-            <p className="font-medium text-red-400">Error</p>
-            <p className="text-vct-gray text-sm mt-1">{result.error}</p>
-          </div>
-        )}
       </div>
     </div>
   );
