@@ -487,10 +487,10 @@ export function TimeBar() {
     const pTeamId = state.playerTeamId;
 
     const inBootcamp = !!(state.activeBootcamp);
-    const isMatchDay = state.calendar.scheduledEvents.some(
-      (e) => e.date.startsWith(today.slice(0, 10)) && !e.processed &&
-        (e.type === 'match' || e.type === 'placeholder_match')
-    );
+    // Use hasMatchToday from outer scope (via useMatchDay hook) — already filters
+    // to the player's team only. The old local isMatchDay checked ALL teams' matches,
+    // which blocked training/scrims on days when other teams had matches.
+    const isPlayerMatchDay = hasMatchToday;
     const isOffseason = state.calendar.currentPhase === 'offseason';
     const isInActiveTournament = pTeamId
       ? Object.values(state.tournaments).some((t) => {
@@ -510,9 +510,9 @@ export function TimeBar() {
     const scrimUnlocked = featureGateService.isFeatureUnlocked('scrims');
 
     return {
-      trainingAvailable: !isMatchDay && !inBootcamp && trainingUnlocked && !isOffseason,
-      scrimAvailable: !isMatchDay && !inBootcamp && scrimUnlocked && !isOffseason,
-      downtimeAvailable: isDowntime && !inBootcamp,
+      trainingAvailable: !isPlayerMatchDay && !inBootcamp && trainingUnlocked && !isOffseason,
+      scrimAvailable: !isPlayerMatchDay && !inBootcamp && scrimUnlocked && !isOffseason,
+      downtimeAvailable: !isPlayerMatchDay && !inBootcamp,
       bootcampEligible: isDowntime && !inBootcamp,
     };
   };
