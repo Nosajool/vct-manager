@@ -1148,4 +1148,260 @@ export const ARC_AWARE_TEMPLATES: InterviewTemplate[] = [
     ],
   },
 
+  // ==========================================================================
+  // PLAYER EGO ARC TEMPLATES
+  // Surfaces during Arc A ("The Star Can't Adapt") flag windows
+  // ==========================================================================
+
+  {
+    id: 'pre_ego_sentinel_pressure',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'player_ego',
+    conditions: [
+      { type: 'flag_active', flag: 'ego_sentinel_request_{playerId}', playerSelector: 'condition_match' },
+    ],
+    prompt: "There's been some chatter about {starPlayerName}'s role in the lineup. Is there tension around how you're deploying them?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "We're doing what's best for the team",
+        quote: "Everyone on this roster is asked to do what the team needs. {starPlayerName} understands that. We build around winning, not around comfort zones.",
+        effects: { hype: 2, morale: -3, setsFlags: [{ key: 'manager_stayed_firm_public', durationDays: 7 }] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I don't address lineup speculation",
+        quote: "I don't comment on internal decisions in the media. What happens in our prep stays in our prep. That goes for every player on the roster.",
+        effects: { morale: 1 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It's a process — we're working through it",
+        quote: "Any time a player adapts their role, there's a period of adjustment. {starPlayerName} is putting in the work. I have full confidence they'll find their rhythm.",
+        effects: { morale: 3, fanbase: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_fanbase_accountability',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'external_pressure',
+    conditions: [{ type: 'flag_active', flag: 'manager_accountability_shown' }],
+    prompt: "You made a public statement to fans earlier this week. Now that you've had another match, how do you feel about where things stand?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "We're making progress — it takes time",
+        quote: "I said what I meant when I posted that. We're not where we want to be yet. But I can see the work paying off in how we're competing. I still believe in this group.",
+        effects: { morale: 3, fanbase: 4, sponsorTrust: 2 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "Results will come — the foundation is there",
+        quote: "I've seen what this team can do behind closed doors. The public statement was the easy part. What comes next is what I'm focused on.",
+        effects: { hype: 3, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I said my piece — I'm focused on the next match",
+        quote: "I addressed it. I meant it. Now I want to talk about the match. We have work to do.",
+        effects: { morale: 2, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_comms_mandate_fallout',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    narrativeCategory: 'team_synergy',
+    conditions: [{ type: 'flag_active', flag: 'synergy_comms_mandate' }],
+    prompt: "You've implemented an English-only communication policy on a multi-region roster. Some are calling it tone-deaf. How do you respond to the criticism?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: 'Clear comms win games — full stop',
+        quote: "Every player on this roster knew what they were signing up for. We play in an English-language circuit. Clear communication isn't a preference, it's a competitive necessity.",
+        effects: { sponsorTrust: 2, morale: -3, hype: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "It's an adjustment — we're working through it together",
+        quote: "It's not easy and I won't pretend it is. But we made this decision together as a team. I have a lot of respect for how our players are adapting to something genuinely difficult.",
+        effects: { morale: 4, fanbase: 3, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: 'Internal decisions stay internal',
+        quote: "How we communicate in our practice environment is not something I'll break down publicly. What I'll say is the team is aligned and we're moving forward.",
+        effects: { morale: 1, sponsorTrust: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'post_ego_goes_public_followup',
+    context: 'POST_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'player_ego',
+    conditions: [
+      { type: 'flag_active', flag: 'ego_goes_public_{playerId}', playerSelector: 'condition_match' },
+    ],
+    prompt: "After {starPlayerName}'s comments this week, there are real questions about team cohesion. How do you respond?",
+    options: [
+      {
+        tone: 'RESPECTFUL',
+        label: "That's between us — we'll work through it",
+        quote: "I'm not going to turn an internal conversation into a public one. We're professionals. We'll handle it the right way, in the right setting.",
+        effects: { sponsorTrust: 3, morale: 2, fanbase: 1 },
+      },
+      {
+        tone: 'CONFIDENT',
+        label: "We're aligned. What you saw was noise",
+        quote: "Teams have hard conversations. That's how you get better. I'm not concerned about cohesion — I'm concerned about winning. And this team is focused on exactly that.",
+        effects: { hype: 3, morale: -2, setsFlags: [{ key: 'manager_downplayed_ego_drama', durationDays: 7 }] },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "We could have handled this better internally",
+        quote: "If something becomes public like that, it means we didn't communicate well enough on our end. That's on me. I'll do better at keeping our conversations where they belong.",
+        effects: { fanbase: 3, sponsorTrust: 3, morale: 2 },
+      },
+    ],
+  },
+
+
+  // ==========================================================================
+  // ICONIC MOMENTS FLAG LOOPS
+  // Closes orphaned flags set by choices in iconic_moments.ts drama events
+  // ==========================================================================
+
+  {
+    id: 'crisis_spike_blame_fallout',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    narrativeCategory: 'iconic_moments',
+    conditions: [
+      { type: 'flag_active', flag: 'spike_blame_flag' },
+      { type: 'or', anyOf: [{ type: 'player_morale_below', threshold: 30 }, { type: 'flag_active', flag: 'crisis_active' }] },
+    ],
+    prompt: "After the spike incident, there were reports of blame being assigned in the debrief. Has that tension actually been resolved, or is it still simmering?",
+    options: [
+      {
+        tone: 'HUMBLE',
+        label: "We talked it through — it's behind us",
+        quote: "We had a direct conversation about it. What I said in that debrief was too sharp and I told them that. We closed it out properly. It's done.",
+        effects: { morale: 3, fanbase: 2, clearsFlags: ['spike_blame_flag'] },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "That was an in-game moment — we've moved on",
+        quote: "These things happen in competition. The emotion in the moment isn't a reflection of where the team is. We reviewed it and moved forward.",
+        effects: { morale: 1 },
+      },
+      {
+        tone: 'BLAME_SELF',
+        label: "I should have stepped in faster",
+        quote: "Honestly, I let that debrief run too hot. When players are in that headspace after a chaotic round, I need to pump the brakes sooner. That's on me.",
+        effects: { morale: 2, fanbase: 3, sponsorTrust: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'crisis_economy_authority_test',
+    context: 'CRISIS',
+    subjectType: 'manager',
+    narrativeCategory: 'iconic_moments',
+    conditions: [
+      { type: 'flag_active', flag: 'igl_economy_authority' },
+      { type: 'team_loss_streak', streakLength: 2 },
+    ],
+    prompt: "Your IGL doubled down on aggressive force buys and you backed them publicly. Now you've dropped two in a row. Was that the right call?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "The reads are right — execution is the issue",
+        quote: "The decision-making isn't the problem. We're putting ourselves in the right spots. What we're not doing is finishing. That's an execution fix, not a strategy rethink.",
+        effects: { morale: -2, hype: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We're reviewing the economy approach this week",
+        quote: "Two losses tells you something. We'll go back to the film and look honestly at whether those force buys were the right reads or a habit we've fallen into.",
+        effects: { morale: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Economy is one piece of a complex picture",
+        quote: "I'm not going to reduce two losses to a single variable. There are multiple areas we need to address and we're addressing all of them.",
+        effects: { morale: 1 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_prx_identity_test',
+    context: 'PRE_MATCH',
+    subjectType: 'manager',
+    narrativeCategory: 'iconic_moments',
+    conditions: [{ type: 'flag_active', flag: 'prx_identity_committed' }],
+    prompt: "You've publicly committed to the aggressive, all-in style. Opponents have had time to prep specifically for that. Does that change anything?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Execution beats anticipation",
+        quote: "You can know exactly what's coming and still not stop it. The question isn't whether they've seen our style — it's whether they can handle the pace of it in a live match.",
+        effects: { hype: 3, morale: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "We adapt within the philosophy",
+        quote: "The identity doesn't mean we're locked into one gameplan. We have layers. What stays constant is the mindset and the pressure — the specific execution changes every map.",
+        effects: { morale: 2, sponsorTrust: 2 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "Opponents should be focused on their own game",
+        quote: "Every team is prepping for us and we're prepping for them. That's how it works at this level. I'd rather they spend time worrying about us than I spend time worrying about what they know.",
+        effects: { hype: 2 },
+      },
+    ],
+  },
+
+  {
+    id: 'pre_viral_fame_check',
+    context: 'PRE_MATCH',
+    subjectType: 'player',
+    narrativeCategory: 'iconic_moments',
+    conditions: [{ type: 'flag_active', flag: 'knife_meme_leaned_in' }],
+    prompt: "Your knife clip has over 500k views and it's still spreading. Heading into this match — is that level of attention a distraction or a motivation?",
+    options: [
+      {
+        tone: 'CONFIDENT',
+        label: "Every clip is motivation",
+        quote: "I love it. I want people watching. When you know the whole community is going to see how you perform, it makes you lock in. That clip isn't in my head — it's fuel.",
+        personalityWeights: { FAME_SEEKER: 3, BIG_STAGE: 2, TEAM_FIRST: 0.5, INTROVERT: 0, STABLE: 1 },
+        effects: { hype: 3, morale: 3, fanbase: 2 },
+      },
+      {
+        tone: 'HUMBLE',
+        label: "I'd rather the team be the story",
+        quote: "Clips are nice. But if I play perfectly and we lose, what was the point? I care about the result. If we win today, that'll get way more attention than a knife from last week.",
+        personalityWeights: { TEAM_FIRST: 2, STABLE: 2, INTROVERT: 1, FAME_SEEKER: 0.5, BIG_STAGE: 0.5 },
+        effects: { morale: 2, fanbase: 2, sponsorTrust: 1 },
+      },
+      {
+        tone: 'DEFLECTIVE',
+        label: "I try not to look at the numbers",
+        quote: "I don't check the metrics. My teammates will send stuff and I'll see it, but I'm not refreshing anything. The match is what matters.",
+        personalityWeights: { INTROVERT: 3, STABLE: 1.5, TEAM_FIRST: 1, FAME_SEEKER: 0, BIG_STAGE: 0.5 },
+        effects: { morale: 2 },
+      },
+    ],
+  },
+
 ];

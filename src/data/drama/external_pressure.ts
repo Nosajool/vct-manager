@@ -1,151 +1,143 @@
 import type { DramaEventTemplate } from '../../types/drama';
 
 export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
+
   // ==========================================================================
-  // EXTERNAL PRESSURE (3 templates)
+  // ARC: "The Analyst Writeoff → Backfire"
+  //
+  // Analysts or prominent community voices publicly declare the team has no
+  // path forward. The manager's response determines whether confidence builds
+  // or credibility gets burned.
+  //
+  // pressure_analyst_writeoff (major)
+  //   "clap back" choice → sets public_backing_risk (7d)
+  //     → [loss + flag] pressure_backing_backfire (major, arc-connected)
+  //
+  // Inspired by: DRX Champions 2022 (written off, won it all),
+  // NRG being dismissed before every major run.
   // ==========================================================================
 
   {
-    id: 'pressure_fan_backlash',
+    id: 'pressure_analyst_writeoff',
     category: 'external_pressure',
     severity: 'major',
-    title: 'Fan Backlash',
-    description: 'Social media is brutal right now. Fans are questioning {teamName}\'s performance and calling for changes.',
+    title: 'Written Off',
+    description: 'A prominent analyst just posted their tournament power rankings. Your team isn\'t in the top half. The quote getting passed around: "They\'re not a real contender this split — the gap between them and the top teams is too large to close." Your players have seen it.',
     conditions: [
-      {
-        type: 'team_loss_streak',
-        streakLength: 2,
-      },
+      { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 60,
-    cooldownDays: 3,
+    cooldownDays: 10,
     socialFormat: {
-      platform: 'reddit',
-      handle: 'r/ValorantCompetitive',
-      flavorReactions: { upvotes: 4200 },
+      platform: 'twitter',
+      handle: '@VCTAnalyst',
+      flavorReactions: { likes: 8700, retweets: 1900 },
     },
     choices: [
       {
-        id: 'public_confidence',
-        text: 'Show public confidence',
-        description: 'Defend the team publicly on social media',
+        id: 'use_as_fuel',
+        text: 'Use it as fuel — say nothing',
+        description: 'Let the team see the disrespect and let it simmer',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: 8,
-          },
-          {
-            target: 'set_flag',
-            flag: 'public_backing_risk',
-            flagDuration: 7,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 8 },
+          { target: 'set_flag', flag: 'rally_against_narrative', flagDuration: 14 },
         ],
-        outcomeText: 'Your public support rallies the team, but you\'ve put yourself on the line. If results don\'t improve, the backlash could intensify.',
+        outcomeText: 'You print the ranking and pin it in the team room. No speech. The players look at it, look at each other. Something shifts.',
       },
       {
-        id: 'internal_focus',
-        text: 'Focus on internal work',
-        description: 'Ignore the noise and double down on practice',
+        id: 'clap_back',
+        text: 'Clap back publicly',
+        description: 'Reply directly — put your credibility on the line',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: 3,
-          },
-          {
-            target: 'team_chemistry',
-            delta: 5,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 5 },
+          { target: 'set_flag', flag: 'public_backing_risk', flagDuration: 7 },
         ],
-        outcomeText: 'You shield the team from the negativity and focus on improvement. The team appreciates the quiet support and gets back to work.',
+        outcomeText: 'You reply: "Noted. See you at the end of the split." It gets 4k likes. The team loves it. Now you have to back it up.',
       },
       {
-        id: 'roster_rumors',
-        text: 'Hint at roster changes',
-        description: 'Suggest changes might be coming',
+        id: 'agree_rebuild',
+        text: 'Acknowledge it — we\'re building',
+        description: 'Take the pressure off by reframing expectations',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: -5,
-          },
-          {
-            target: 'set_flag',
-            flag: 'roster_change_teased',
-            flagDuration: 14,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -5 },
+          { target: 'set_flag', flag: 'org_acknowledged_rebuild', flagDuration: 14 },
         ],
-        outcomeText: 'You subtly hint that roster moves are on the table. Fans calm down a bit, but now your players are anxious about their jobs.',
+        outcomeText: 'You post: "We\'re in a growth phase. The results will come." Sponsors appreciate the honesty. Some players feel like you gave up on them.',
       },
     ],
   },
 
   {
-    id: 'pressure_org_expectations',
+    id: 'pressure_backing_backfire',
     category: 'external_pressure',
-    severity: 'minor',
-    title: 'Organizational Pressure',
-    description: 'Management has sent you a reminder about performance expectations. They\'re watching closely.',
+    severity: 'major',
+    title: 'The Tweet Aged Badly',
+    description: 'Your "see you at the end of the split" reply is getting ratioed. The loss brought everyone back to the thread. "This aged terribly" is the top quote-tweet with 6k likes. The team has gone quiet in the group chat.',
     conditions: [
-      {
-        type: 'season_phase',
-        phase: 'stage1',
-      },
-      {
-        type: 'team_loss_streak',
-        streakLength: 1,
-      },
+      { type: 'flag_active', flag: 'public_backing_risk' },
+      { type: 'team_loss_streak', streakLength: 1 },
     ],
-    probability: 30,
-    cooldownDays: 3,
-    effects: [
+    probability: 85,
+    cooldownDays: 7,
+    socialFormat: {
+      platform: 'reddit',
+      handle: 'r/ValorantCompetitive',
+      flavorReactions: { upvotes: 5300 },
+    },
+    choices: [
       {
-        target: 'player_morale',
-        effectPlayerSelector: 'all',
-        delta: -2,
+        id: 'double_down',
+        text: 'Double down — we\'re still believing',
+        description: 'Refuse to walk it back. Conviction or delusion?',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -5 },
+          { target: 'set_flag', flag: 'public_backing_risk', flagDuration: 7 },
+        ],
+        outcomeText: 'You stay quiet online but tell the team in person: we\'re not folding. Some of them believe it. Others are starting to look at the exit.',
+      },
+      {
+        id: 'walk_it_back',
+        text: 'Walk it back gracefully',
+        description: 'Acknowledge the moment, move on with class',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 3 },
+          { target: 'set_flag', flag: 'manager_accountability_shown', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'public_backing_risk' },
+        ],
+        outcomeText: 'You post: "Fair. We fell short. We\'ll earn the right to talk again." The community respects it. Internally, the team resets.',
+      },
+      {
+        id: 'go_dark',
+        text: 'Go dark — no more social media',
+        description: 'Log off and let the results do the talking',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 5 },
+          { target: 'set_flag', flag: 'manager_media_blackout', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'public_backing_risk' },
+        ],
+        outcomeText: 'You delete the app. The team notices. There\'s something clarifying about removing the noise entirely.',
       },
     ],
   },
 
-  {
-    id: 'pressure_media_hype',
-    category: 'external_pressure',
-    severity: 'minor',
-    title: 'Media Spotlight',
-    description: 'The media can\'t get enough of {teamName} right now. Positive coverage and fan excitement are building.',
-    conditions: [
-      {
-        type: 'team_win_streak',
-        streakLength: 3,
-      },
-    ],
-    probability: 45,
-    cooldownDays: 3,
-    effects: [
-      {
-        target: 'player_morale',
-        effectPlayerSelector: 'all',
-        delta: 5,
-      },
-    ],
-  },
+  // ==========================================================================
+  // STANDALONE: "Fan Approval Crisis"
+  //
+  // Community confidence has collapsed. The org needs a public response.
+  // manager_accountability_shown flag is now read by arc_aware interview template.
+  // ==========================================================================
 
   {
     id: 'fan_approval_crisis',
     category: 'external_pressure',
     severity: 'major',
     title: 'Fan Approval Crisis',
-    description: 'Fan approval has hit rock bottom. The community is openly questioning the org\'s direction and calling for major changes.',
+    description: 'The subreddit is in full meltdown. "Fire everyone," "this org is a joke," "I\'ve given up on this team" — the top posts are all variations on the same theme. Sponsor DMs are starting to come in asking if everything is okay.',
     conditions: [
-      {
-        type: 'team_fanbase_below',
-        threshold: 28,
-      },
+      { type: 'team_fanbase_below', threshold: 28 },
     ],
     probability: 70,
     cooldownDays: 14,
-    oncePerSeason: false,
     requiresPlayerTeam: true,
     socialFormat: {
       platform: 'reddit',
@@ -156,69 +148,51 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
       {
         id: 'crisis_address_directly',
         text: 'Address fans directly',
-        description: 'Post a public apology and accountability statement',
+        description: 'Post a public statement — own it',
         effects: [
-          {
-            target: 'team_hype',
-            delta: 8,
-          },
-          {
-            target: 'set_flag',
-            flag: 'manager_accountability_shown',
-            flagDuration: 14,
-          },
+          { target: 'set_flag', flag: 'manager_accountability_shown', flagDuration: 14 },
         ],
-        outcomeText: 'The community appreciates the transparency. Trust starts to rebuild, slowly.',
+        outcomeText: 'You write a real statement. No PR spin, no excuses. The community response is mixed — some appreciate the transparency, others aren\'t buying it yet. But trust starts moving in the right direction.',
       },
       {
         id: 'crisis_results_only',
         text: 'Let results speak',
         description: 'Stay silent. Wins will fix this faster than words',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: 3,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 3 },
         ],
-        outcomeText: 'No statement, just work. The players feel the pressure to deliver.',
+        outcomeText: 'No statement. Just work. The players feel the weight of every match now.',
       },
       {
-        id: 'crisis_blame_meta',
-        text: 'Blame the meta',
-        description: 'Publicly attribute struggles to the current patch',
+        id: 'crisis_point_to_schedule',
+        text: 'Point to the schedule and roster situation',
+        description: 'Contextualize the results — there are real explanations here',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: -3,
-          },
-          {
-            target: 'set_flag',
-            flag: 'org_pressure',
-            flagDuration: 7,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -3 },
+          { target: 'set_flag', flag: 'org_pressure', flagDuration: 7 },
         ],
-        outcomeText: 'Fans aren\'t buying it. The excuse tour just made things worse.',
+        outcomeText: 'You lay out the context — injuries, schedule density, roster transitions. The community mostly doesn\'t care. "Excuses" is the word getting attached to your name now.',
       },
     ],
   },
 
+  // ==========================================================================
+  // STANDALONE: "Hype Cycle Collapse"
+  //
+  // The org and community built the team up as a real contender.
+  // Two losses later and the narrative flips overnight.
+  // Inspired by: Sentinels 2022, NRG championship windows.
+  // ==========================================================================
+
   {
-    id: 'fan_expectations_too_high',
+    id: 'fan_expectations_collapse',
     category: 'external_pressure',
     severity: 'major',
-    title: 'Unrealistic Expectations',
-    description: 'After a streak of success, fans have built {teamName} up to near-mythical status. Any stumble now feels catastrophic to the community.',
+    title: 'Hype Cycle Collapse',
+    description: 'Three weeks ago the community was calling you a dark horse champion. Today the same accounts are posting "I knew something was off." The pivot from hype to autopsy happened in a single news cycle. VCT Insider has already framed the losses as "the inevitable correction."',
     conditions: [
-      {
-        type: 'team_fanbase_above',
-        threshold: 78,
-      },
-      {
-        type: 'team_loss_streak',
-        streakLength: 2,
-      },
+      { type: 'team_fanbase_above', threshold: 78 },
+      { type: 'team_loss_streak', streakLength: 2 },
     ],
     probability: 65,
     cooldownDays: 10,
@@ -231,34 +205,32 @@ export const EXTERNAL_PRESSURE_EVENTS: DramaEventTemplate[] = [
     choices: [
       {
         id: 'expectations_embrace',
-        text: 'Embrace the standard',
+        text: 'Own the standard — we came to win',
         description: 'Acknowledge the expectations and commit to meeting them',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: -3,
-          },
-          {
-            target: 'set_flag',
-            flag: 'org_pressure',
-            flagDuration: 10,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -3 },
+          { target: 'set_flag', flag: 'org_pressure', flagDuration: 10 },
         ],
-        outcomeText: 'You own it. Now there\'s nowhere to hide. The team feels the weight of every match.',
+        outcomeText: 'You own it. The team hears you. Now there\'s nowhere to hide — every match feels like an audition.',
       },
       {
         id: 'expectations_reset',
-        text: 'Reset expectations',
-        description: 'Publicly recalibrate. Remind fans every team goes through rough patches',
+        text: 'Reset expectations publicly',
+        description: 'Remind fans that every team goes through patches',
         effects: [
-          {
-            target: 'player_morale',
-            effectPlayerSelector: 'all',
-            delta: 4,
-          },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 4 },
         ],
-        outcomeText: 'Some fans are frustrated, but the pressure on the team decreases. They can breathe again.',
+        outcomeText: 'Some fans are frustrated — they want fire and brimstone, not measured takes. But the pressure on the team decreases. They can breathe again.',
+      },
+      {
+        id: 'go_dark',
+        text: 'Stay off socials entirely',
+        description: 'Log off. The noise is making things worse',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 6 },
+          { target: 'set_flag', flag: 'manager_media_blackout', flagDuration: 7 },
+        ],
+        outcomeText: 'No tweets, no statements, no engagement with the discourse. The team notices the silence from the top. Something about it feels steadying.',
       },
     ],
   },

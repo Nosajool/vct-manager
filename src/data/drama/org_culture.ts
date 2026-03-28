@@ -194,10 +194,124 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
         description: 'Budget is tight. The gear works fine.',
         effects: [
           { target: 'player_morale', effectPlayerSelector: 'triggering', delta: -15 },
-          { target: 'set_flag', flag: 'equipment_denied_{playerId}', flagDuration: 60 },
         ],
         outcomeText:
           "The player says nothing. But they remember. Cheap orgs have long memories too. From the other direction.",
+      },
+    ],
+  },
+
+  {
+    id: 'pay_scandal_leaks',
+    category: 'org_culture',
+    severity: 'major',
+    title: 'The Leak',
+    description:
+      "A player's agent quietly shared the payroll situation with a journalist contact. VCT Insider just published: \"Sources claim the org missed payroll last cycle.\" Your name is trending on Twitter.",
+    conditions: [
+      { type: 'flag_active', flag: 'late_pay_scandal' },
+    ],
+    probability: 75,
+    cooldownDays: 7,
+    requiresPlayerTeam: true,
+    socialFormat: {
+      platform: 'twitter',
+      handle: '@VCTInsider',
+      flavorReactions: { likes: 6200, retweets: 2100 },
+    },
+    choices: [
+      {
+        id: 'confirm_address',
+        text: 'Confirm it and address it publicly',
+        description: "Own the mistake. Transparency is the only path that doesn't make it worse.",
+        effects: [
+          { target: 'team_sponsor_trust', delta: -8 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 5 },
+          { target: 'clear_flag', flag: 'late_pay_scandal' },
+        ],
+        outcomeText:
+          'You put out a statement confirming the delay and committing to a payment timeline. Sponsors are unhappy. Players are relieved someone told the truth.',
+      },
+      {
+        id: 'deny_it',
+        text: 'Deny the report',
+        description: "Call it inaccurate. It buys time — if you can back it up.",
+        effects: [
+          { target: 'team_sponsor_trust', delta: 3 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -10 },
+          { target: 'set_flag', flag: 'pay_denial_on_record', flagDuration: 14 },
+          { target: 'clear_flag', flag: 'late_pay_scandal' },
+        ],
+        outcomeText:
+          "Your PR team pushes back on the story. The journalist stands by their sources. The players, who lived through it, go very quiet.",
+      },
+      {
+        id: 'no_comment_legal',
+        text: 'No comment — refer all media to legal',
+        description: 'Lawyer up. Say nothing.',
+        effects: [
+          { target: 'team_sponsor_trust', delta: -5 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -5 },
+          { target: 'clear_flag', flag: 'late_pay_scandal' },
+        ],
+        outcomeText:
+          'A legal hold goes on all statements. The story runs another news cycle, then fades. Nothing is resolved internally.',
+      },
+    ],
+  },
+
+  {
+    id: 'pay_bonus_reckoning',
+    category: 'org_culture',
+    severity: 'major',
+    title: 'The Promised Bonus',
+    description:
+      "Players haven't forgotten. The bonus you promised when payroll was delayed — it's been weeks. Agents are following up. The team is watching.",
+    conditions: [
+      { type: 'flag_active', flag: 'pay_bonus_promised' },
+    ],
+    probability: 85,
+    cooldownDays: 5,
+    requiresPlayerTeam: true,
+    choices: [
+      {
+        id: 'pay_full_bonus',
+        text: 'Pay the full bonus',
+        description: 'Make it right. This is exactly what you said you would do.',
+        effects: [
+          { target: 'team_budget', delta: -25000 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 15 },
+          { target: 'team_chemistry', delta: 5 },
+          { target: 'set_flag', flag: 'org_generous' },
+          { target: 'clear_flag', flag: 'pay_bonus_promised' },
+        ],
+        outcomeText:
+          'The bonuses go out. Players who were quietly looking at exits start to reconsider. A promise kept means something in this industry.',
+      },
+      {
+        id: 'partial_bonus',
+        text: 'Pay a partial bonus — budget isn\'t there for the full amount',
+        description: 'Something is better than nothing.',
+        effects: [
+          { target: 'team_budget', delta: -12000 },
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: 5 },
+          { target: 'clear_flag', flag: 'pay_bonus_promised' },
+        ],
+        outcomeText:
+          'You pay roughly half of what you promised. Most players understand the situation. A few don\'t — and it shows in practice.',
+      },
+      {
+        id: 'break_promise',
+        text: 'Tell them the bonus isn\'t coming',
+        description: 'The money isn\'t there. Breaking this promise will cost you.',
+        effects: [
+          { target: 'player_morale', effectPlayerSelector: 'all_team', delta: -20 },
+          { target: 'team_chemistry', delta: -8 },
+          { target: 'set_flag', flag: 'late_pay_scandal', flagDuration: 21 },
+          { target: 'clear_flag', flag: 'pay_bonus_promised' },
+        ],
+        outcomeText:
+          'You gather the team and tell them. The bonus isn\'t happening. The room goes colder than you expected. By morning, someone has called their agent.',
       },
     ],
   },
@@ -340,7 +454,6 @@ export const ORG_CULTURE_EVENTS: DramaEventTemplate[] = [
         effects: [
           { target: 'team_hype', delta: 20 },
           { target: 'team_sponsor_trust', delta: -5 },
-          { target: 'set_flag', flag: 'nugget_embraced' },
           { target: 'clear_flag', flag: 'chicken_nugget_org' },
         ],
         outcomeText:
